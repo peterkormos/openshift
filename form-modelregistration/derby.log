@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Mon May 23 13:36:53 CEST 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0154-dd67-4592-00000e867c78 
+on database directory D:\Peti\java\openshift-modelregistration\form-modelregistration\makettDB with class loader sun.misc.Launcher$AppClassLoader@25917a08 
+Loaded from file:/D:/Vagrant/M2_REPO/repository/org/apache/derby/derby/10.12.1.1/derby-10.12.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_25-b16
+user.dir=D:\Peti\java\openshift-modelregistration\form-modelregistration
+os.name=Windows 7
+os.arch=amd64
+os.version=6.1
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
