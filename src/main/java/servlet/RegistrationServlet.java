@@ -54,6 +54,7 @@ import datatype.Detailing;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
+import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
@@ -2046,7 +2047,14 @@ public class RegistrationServlet extends HttpServlet
 	response.sendRedirect("jsp/main.jsp");
 
   }
-
+  
+  public void initDB(final HttpServletRequest request, final HttpServletResponse response) throws Exception
+  {
+	  new InitDB();
+	  
+		writeResponse(response, new StringBuffer("initDB done..."));
+  }
+  
   public void statistics(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
 
