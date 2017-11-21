@@ -119,13 +119,6 @@ public class RegistrationServlet extends HttpServlet
 	  cerificateOfMeritBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/cerificateOfMerit.html"));
 	  presentationBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/presentation.html"));
 
-	  try {
-		new InitDB();
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-
 	  updateSystemSettings();
 
 	  System.out.println("OK.....");
@@ -2034,7 +2027,7 @@ public class RegistrationServlet extends HttpServlet
 	}
   }
 
-  private void updateSystemSettings() throws Exception
+  private void updateSystemSettings()
   {
 	preRegistrationAllowed = servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION);
 	onSiteUse = servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.ONSITEUSE);

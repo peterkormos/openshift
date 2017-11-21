@@ -843,7 +843,7 @@ public class ServletDAO
 	}
   }
 
-  public boolean getYesNoSystemParameter(final SYSTEMPARAMETER parameter) throws Exception
+  public boolean getYesNoSystemParameter(final SYSTEMPARAMETER parameter) 
   {
 	final String value = getSystemParameter(parameter);
 	if ("-".equals(value))
@@ -856,7 +856,7 @@ public class ServletDAO
 	}
   }
 
-  public String getSystemParameter(final SYSTEMPARAMETER parameter) throws Exception
+  public String getSystemParameter(final SYSTEMPARAMETER parameter) 
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
@@ -876,6 +876,12 @@ public class ServletDAO
 		return "-";
 	  }
 	}
+          catch (final Exception ex)
+          {
+                logger.fatal(
+                    "!!! ServletDAO.getSystemParameter(): parameterName: " + parameter, ex);
+                return "-";
+          }
 	finally
 	{
 	  try
