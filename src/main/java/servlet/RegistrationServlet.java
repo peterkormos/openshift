@@ -225,7 +225,7 @@ public class RegistrationServlet extends HttpServlet
 
 	  if (request.getCharacterEncoding() == null)
 	  {
-		request.setCharacterEncoding("ISO-8859-1");
+		request.setCharacterEncoding("UTF-8");
 	  }
 
 	  if (ServletFileUpload.isMultipartContent(request))
@@ -1281,12 +1281,12 @@ public class RegistrationServlet extends HttpServlet
 
 	buff.append("<html>");
 	buff.append("<head>");
-	//	buff.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
+		buff.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
 	buff.append("</head>");
 	buff.append("<body>");
 
 	buff.append("<form "
-	    //		+ "accept-charset=\"UTF-8\" "
+	    		+ "accept-charset=\"UTF-8\" "
 	    + "name='input' action='RegistrationServlet' method='POST'>");
 	buff.append("<input type='hidden' name='command' value='addCategory'>");
 	buff.append("<table border='0'>");
@@ -1609,7 +1609,7 @@ public class RegistrationServlet extends HttpServlet
 	final String show = getShowFromReqest(request);
 
 	buff.append("<html>"
-	    //		+ "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /></head>"
+	    		+ "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /></head>"
 	    + "<body>");
 
 	buff.append("<form name='input' action='RegistrationServlet' method='put' >");

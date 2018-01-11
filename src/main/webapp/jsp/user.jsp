@@ -27,6 +27,7 @@
 
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <script type="text/javascript" src="findUser.js"></script>
 
 </head>
@@ -37,7 +38,7 @@
 
 <link href="css/base.css" rel="stylesheet" type="text/css"/>
 <div class="header"></div>
-<form name="input" id="input" action="../RegistrationServlet/<%= action %>" method="put">
+<form name="input" id="input" action="../RegistrationServlet/<%= action %>" method="put" accept-charset="UTF-8">
 	<input type="hidden" name="language" value="<%= languageCode %>">
   <p> 
   </p>

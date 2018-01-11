@@ -10,6 +10,7 @@
 
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 
 <link rel="stylesheet" href="base.css" media="screen" />
@@ -19,7 +20,7 @@
 	<div class="header"></div>
 
 	<form name="input" action="../RegistrationServlet/reminder"
-		method="put">
+		method="put" accept-charset="UTF-8">
 
 		<table border="0">
 			<tr>

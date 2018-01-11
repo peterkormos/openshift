@@ -13,13 +13,14 @@
 
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 
 <link rel="stylesheet" href="base.css" media="screen" />
 
 <body>
 	<form  name="input" 
-		action="../RegistrationServlet" method="post">
+		action="../RegistrationServlet" method="post" accept-charset="UTF-8">
 
 		<input type="hidden" name="command" value="login">
 		<input type="hidden" name="language" value="<%=languageCode%>">

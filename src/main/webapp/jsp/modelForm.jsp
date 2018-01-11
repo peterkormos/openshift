@@ -23,12 +23,13 @@
 
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 
 <link rel="stylesheet" href="base.css" media="screen" />
 
 <body>
-<form name='input' action='../RegistrationServlet' method='POST'>
+<form name='input' action='../RegistrationServlet' method='POST' accept-charset="UTF-8">
 <input type='hidden' name='command' value='<%= action %>'>
 
 	<!-- modelID for modify...-->
