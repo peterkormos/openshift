@@ -1951,9 +1951,9 @@ public class RegistrationServlet extends HttpServlet
 			for (int j = 0; j < detailingCriterias.length; j++)
 			{
 			  print = print.replaceAll("__" + detailingGroups[i] + "_" + detailingCriterias[j] + "__",
-			      model.detailing[i].criterias.get(j) ? "<font size='+3'>&#8226;</font>"
+			      model.detailing[i].criterias.get(j) ? "&#8226;"
 
-			          : "<font size='+3' color='#FFFFFF'>&nbsp</font>");
+			          : "&nbsp");
 			}
 		  }
 
