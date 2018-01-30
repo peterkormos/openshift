@@ -58,7 +58,7 @@ import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
-  public String VERSION = "2015.11.10.";
+  public String VERSION = "2018.01.30.";
   public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
   Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key: HU, EN, ...
@@ -1538,7 +1538,7 @@ public class RegistrationServlet extends HttpServlet
 	  return;
 	}
 
-	buff.append("<form name='input' action='RegistrationServlet' method='post'  enctype='multipart/form-data'>");
+	buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='post'  enctype='multipart/form-data'>");
 	for (final Model model : models)
 	{
 	  buff.append("<input type='radio' name='modelID' value='" + model.modelID + "'/>");
@@ -1562,7 +1562,7 @@ public class RegistrationServlet extends HttpServlet
 	  return buff;
 	}
 
-	buff.append("<form name='input' action='RegistrationServlet' method='put'>");
+	buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put'>");
 	buff.append("<input type='hidden' name='command' value='");
 	buff.append(action);
 	buff.append("'>");
@@ -1612,7 +1612,7 @@ public class RegistrationServlet extends HttpServlet
 	    		+ "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /></head>"
 	    + "<body>");
 
-	buff.append("<form name='input' action='RegistrationServlet' method='put' >");
+	buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put' >");
 	buff.append("<input type='hidden' name='command' value='" + command + "'>");
 	if (show != null)
 	{
@@ -1707,7 +1707,7 @@ public class RegistrationServlet extends HttpServlet
 
 	buff.append("<html><body>");
 
-	buff.append("<form name='input' action='RegistrationServlet' method='put'>");
+	buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put'>");
 	buff.append("<input type='hidden' name='command' value='deleteCategory'>");
 
 	getHTMLCodeForCategorySelect(buff, language.getString("select"), "", false, language, request);
