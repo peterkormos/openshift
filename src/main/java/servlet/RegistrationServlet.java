@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -485,7 +486,7 @@ public class RegistrationServlet extends HttpServlet
       final HttpServletResponse response) throws Exception
   {
 	final User user = servletDAO.getUser(ServletUtil.getRequestAttribute(request, "email"));
-	final String newPassword = "abc123";
+	final String newPassword = UUID.randomUUID().toString().substring(0, 8);
 	user.setPassword(StringEncoder.encode(newPassword));
 	servletDAO.modifyUser(user, user);
 
@@ -494,11 +495,10 @@ public class RegistrationServlet extends HttpServlet
 	final StringBuffer buff = new StringBuffer();
 	buff.append("<html><body>");
 
-	buff.append("<FONT COLOR='#ff0000'><B>Your password is set to: " + newPassword + "</B></FONT>");
+	
+	buff.append(language.getString("password") + ": " + "<FONT COLOR='#ff0000'><B>" + newPassword + "</B></FONT>");
 	buff.append("<BR>");
-	buff.append(
-	    "<FONT COLOR='#ff0000'><B>Please login with: " + newPassword + " and change it after your next login!</B></FONT>");
-	//	buff.append(language.getString("email.was.sent"));
+	buff.append(language.getString("password.change"));
 	buff.append("<p>");
 	buff.append("<a href='../index.html'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
