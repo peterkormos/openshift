@@ -58,7 +58,7 @@ import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
-  public String VERSION = "2018.01.30.";
+  public String VERSION = "2018.01.31.";
   public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
   Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key: HU, EN, ...
@@ -2105,7 +2105,13 @@ public class RegistrationServlet extends HttpServlet
 	{
 	  if (!languages.containsKey(language))
 	  {
-		languages.put(language, ResourceBundle.getBundle("language", new Locale(language, language)));
+		languages.put(language, ResourceBundle.getBundle("language", new Locale(language), new ResourceBundle.Control() {
+	            @Override
+	            public Locale getFallbackLocale(String baseName, Locale locale) {
+	                return Locale.ROOT;
+	            }
+
+	        }));
 	  }
 	}
 	catch (final MissingResourceException e)
@@ -2113,12 +2119,10 @@ public class RegistrationServlet extends HttpServlet
 	  logger.error("getLanguage(): country: " + language, e);
 
 	  // cache default language
-	  languages.put(language, ResourceBundle.getBundle("language", new Locale("", "")));
+	  languages.put(language, ResourceBundle.getBundle("language", Locale.ROOT));
 	}
 
-	logger.trace("getLanguage(): " + language
-	// + " " + languages.get(language).getString("list.models")
-	);
+	logger.trace("getLanguage(): " + language);
 
 	return languages.get(language);
   }
