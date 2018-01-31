@@ -29,7 +29,7 @@ if (show == null)
 %>
 Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 <p>
-<form name="input" id="input" action="../RegistrationServlet"
+<form accept-charset="UTF-8" name="input" id="input" action="../RegistrationServlet"
 	method="post">
 	<p></p>
 	<input type="hidden" id="command" name="command" value=""> <input
@@ -58,7 +58,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		lek&eacute;rdez&eacute;sek</a>
 </form>
 
-<form name="input"  id="input1" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input"  id="input1" action="../RegistrationServlet" method="post">
 	<input type="hidden" id="command1" name="command" value=""> <input
 		type="hidden" name="withDetailing" value="true"> <a href="#"
 		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
@@ -70,7 +70,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a>
 </form>
 
-<form name="input"  id="input1a" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input"  id="input1a" action="../RegistrationServlet" method="post">
 	<input
 		type="hidden" name="onlyPhotos" value="true"> 
 		<a href="#"
@@ -78,7 +78,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		benevezett makett list&aacute;z&aacute;sa (csak k&eacute;pekkel)</a> 
 </form>
 
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<p>
 		<em><strong>Nyomtat&aacute;s...</strong></em>
 	</p>
@@ -89,7 +89,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		lapok nyomtat&aacute;sa (El&ouml;nevezettek)</a>
 </form>
 
-<form name="input" id="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" id="input" action="../RegistrationServlet" method="post">
 	<p></p>
 	<input type="hidden" id="command3" name="command" value=""> <input
 		type="hidden" name="printPreRegisteredModels" value="false">
@@ -143,24 +143,24 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 <p>
 	<em><strong>Adatkezel&eacute;s..</strong>.</em>
 </p>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="exportCategoryData">
 	<input name="exportData" type="submit"
 		value="Csak a kateg&oacute;ri&aacute;k export&aacute;l&aacute;sa">
 </form>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="exportData"> <input
 		type="hidden" name="photos" value="yes"> <input
 		name="exportData" type="submit"
 		value="&Ouml;sszes adat export&aacute;l&aacute;sa">
 </form>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="exportData"> <input
 		type="hidden" name="photos" value="no"> <input
 		name="exportData" type="submit"
 		value="&Ouml;sszes adat export&aacute;l&aacute;sa k&eacute;pek n&eacute;lk&uuml;l">
 </form>
-<form action="../RegistrationServlet" method="post"
+<form accept-charset="UTF-8" action="../RegistrationServlet" method="post"
 	enctype="multipart/form-data" name="input">
 	<input type="hidden" name="command" value="importData"> <input
 		type="file" name="zipFile"> <input type="submit"
@@ -170,7 +170,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
 </p>
 
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" id="command4" name="command" value=""> <input
 		type="hidden" id="paramName" name="paramName" value=""> <input
 		type="hidden" id="paramValue" name="paramValue" value=""> <a
@@ -187,7 +187,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 
 Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
 <p>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="setSystemParameter">
 	<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
 	<textarea name="paramValue" cols="100" rows="5"></textarea>
@@ -195,7 +195,7 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 		value="Rendszer&uuml;zenet">
 </form>
 
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" id="command5"
 		value="deletedirectUsers">
 	<p>
@@ -224,7 +224,7 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 <p>
 	<em><strong>Hibakezel&eacute;s..</strong>.</em>
 </p>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="exceptionHistory"> 
 	<input name="exceptionHistory" type="submit" value="Exception history">
 </form>
@@ -236,39 +236,39 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 	<em><strong><font color="#FF0000">VIGY&Aacute;ZAT!!!!</font></strong></em>
 </p>
 <p>&nbsp;</p>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="inputForDeleteUsers">
 	<input name="inputForDeleteUsers" type="submit"
 		value="1  felhaszn&aacute;l&oacute; t&ouml;rl&eacute;se az adatb&aacute;zisb&oacute;l">
 </form>
 <p>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="deleteDataForShow">
 	<input name="deleteData" type="submit"
 		value="Aktu&aacute;lis verseny &ouml;sszes makettj&eacute;nek, kateg&oacute;ri&aacute;j&aacute;nak t&ouml;rl&eacute;se az adatb&aacute;zisb&oacute;l"
 		style="color: rgb(255, 0, 0); font-weight: bold">
 </form>
 <p>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="deletedirectUsers">
 	<input name="deletedirectUsers" type="submit"
 		value="&Ouml;sszes helysz&iacute;nen regisztr&aacute;lt felhaszn&aacute;l&oacute; t&ouml;rl&eacute;se"
 		style="color: rgb(255, 0, 0); font-weight: bold">
 </form>
 <p>------------------------------------------------------</p>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="newUserIDs"> <input
 		name="newUserIDs" type="submit"
 		value="&Uacute;j regisztr&aacute;ci&oacute;s sz&aacute;mok kioszt&aacute;sa">
 </form>
 <p>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="newUserIDsFromOne">
 	<input name="newUserIDsFromOne" type="submit"
 		value="&Uacute;j regisztr&aacute;ci&oacute;s sz&aacute;mok kioszt&aacute;sa 1-tol">
 </form>
 </p>
-<form name="input" action="../RegistrationServlet" method="post">
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<p>SQL update:</p>
 	<p>
 		<input type="hidden" name="command" value="sql"> <input
