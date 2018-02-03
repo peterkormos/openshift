@@ -9,8 +9,10 @@ public class Detailing implements Serializable
 {
   public final static String DETAILING_GROUPS[] = new String[] { "scratch", "photoEtched", "resin", "documentation" };
 
-  public final static String DETAILING_CRITERIAS[] = new String[] { "externalSurface", "cockpit", "engine", "undercarriage",
-	"gearBay", "armament", "conversion" };
+  public final static String DETAILING_CRITERIAS[] = new String[] { "externalSurface", "cockpit", "engine", 
+		  "undercarriage",
+//	"gearBay", 
+	"armament", "conversion" };
 
   public String group;
 
