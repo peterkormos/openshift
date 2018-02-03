@@ -137,18 +137,29 @@ String modelproducer = model == null ? "" : model.producer;
 </tr>
 
 	<!--	comment-->
-<tr bgcolor='F6F4F0'>
-<td>
-<%=language.getString("comment")%>
-: 
-</td>
-<td><textarea name='modelcomment' cols='50' rows='10' maxlength="250" placeholder="Max. 250 char."><%=  (model != null) ? model.comment : "" %></textarea></td>
-</tr>
+<!-- <tr bgcolor='F6F4F0'> -->
+<!-- <td> -->
+<%-- <%=language.getString("comment")%> --%>
+<!-- :  -->
+<!-- </td> -->
+<%-- <td><textarea name='modelcomment' cols='50' rows='10' maxlength="250" placeholder="Max. 250 char."><%=  (model != null) ? model.comment : "" %></textarea></td> --%>
+<!-- </tr> -->
 
 	<!--	submit-->
 <tr>
 <td></td>
-<td><input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'></td>
+<td>
+<input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
+<%
+	if (action == "addModel")
+	{
+%>
+<input name='finishRegistration' type='submit' value='<%= language.getString("finish.model.registration") %>'>
+<%
+	}
+%>
+
+</td>
 </tr>
 
 	<!--	models.markings-->
@@ -236,8 +247,16 @@ String modelidentification = model == null ? "" : model.identification;
 	<!--	submit -->
 <tr>
 <td></td>
-<td><input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'></td>
-</tr>
+<td><input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
+<%
+	if (action == "addModel")
+	{
+%>
+<input name='finishRegistration' type='submit' value='<%= language.getString("finish.model.registration") %>'>
+<%
+	}
+%>
+</td></tr>
 
 </table>
 
