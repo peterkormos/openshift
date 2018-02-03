@@ -1,4 +1,4 @@
-<input type='text' name='<%= request.getParameter("name") %>'
+<input type='text' maxlength="60" name='<%= request.getParameter("name") %>'
 <%
 	String value = request.getParameter("value");
 
