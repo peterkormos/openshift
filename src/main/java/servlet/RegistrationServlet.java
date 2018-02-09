@@ -16,8 +16,6 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -61,7 +59,7 @@ import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
-  public String VERSION = "2018.02.03.";
+  public String VERSION = "2018.01.31.";
   public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
   Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key: HU, EN, ...
@@ -521,10 +519,10 @@ public class RegistrationServlet extends HttpServlet
 	{
 	  final String httpParameterPostTag = String.valueOf(i);
 
-	  if (ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag).trim().length() == 0)
-	  {
-		continue;
-	  }
+//	  if (ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag).trim().length() == 0)
+//	  {
+//		continue;
+//	  }
 
 	  if (ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag).trim().length() == 0)
 	  {
@@ -532,10 +530,14 @@ public class RegistrationServlet extends HttpServlet
 	  }
 
 	  // register model for new user...
-	  if (i == 1 || !(ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag)
-	      + ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag))
-	          .equals((ServletUtil.getRequestAttribute(request, "firstname" + String.valueOf(i - 1))
-	              + ServletUtil.getRequestAttribute(request, "lastname" + String.valueOf(i - 1)))))
+	  if (i == 1 || !(
+//			  ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag)
+//	      + 
+	      ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag))
+	          .equals((
+//	        		  ServletUtil.getRequestAttribute(request, "firstname" + String.valueOf(i - 1))
+//	              + 
+	              ServletUtil.getRequestAttribute(request, "lastname" + String.valueOf(i - 1)))))
 	  {
 		//		if (user != null && user.email != null && i > 1)
 		//		{
@@ -811,7 +813,8 @@ public class RegistrationServlet extends HttpServlet
   {
 	final String password = "-";
 	final String userName = ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag)
-	    + ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag) + User.LOCAL_USER
+//	    + ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag) 
+	    + User.LOCAL_USER
 	    + System.currentTimeMillis();
 
 	servletDAO.registerNewUser(createUser(request, userName, password, httpParameterPostTag));
@@ -945,10 +948,13 @@ public class RegistrationServlet extends HttpServlet
 
 	message.append("<html><body>");
 
-	String paramNames[] = new String[] { language.getString("last.name"), language.getString("first.name"),
+	String paramNames[] = new String[] { language.getString("last.name"), 
+//			language.getString("first.name"),
 	    language.getString("year.of.birth"), language.getString("city"), language.getString("country") };
 
-	String paramValues[] = new String[] { user.lastName, user.firstName, String.valueOf(user.yearOfBirth), user.city, user.country
+	String paramValues[] = new String[] { user.lastName, 
+//			user.firstName, 
+			String.valueOf(user.yearOfBirth), user.city, user.country
 
 	};
 
@@ -1178,9 +1184,9 @@ public class RegistrationServlet extends HttpServlet
 	buff.append(language.getString("last.name"));
 	buff.append("</th>");
 
-	buff.append("<th style='white-space: nowrap'>");
-	buff.append(language.getString("first.name"));
-	buff.append("</th>");
+//	buff.append("<th style='white-space: nowrap'>");
+//	buff.append(language.getString("first.name"));
+//	buff.append("</th>");
 
 	buff.append("<th style='white-space: nowrap'>");
 	buff.append(language.getString("year.of.birth"));
@@ -1235,9 +1241,9 @@ public class RegistrationServlet extends HttpServlet
 	  buff.append(user.lastName);
 	  buff.append("</td>");
 
-	  buff.append("<td align='center' >");
-	  buff.append(user.firstName);
-	  buff.append("</td>");
+//	  buff.append("<td align='center' >");
+//	  buff.append(user.firstName);
+//	  buff.append("</td>");
 
 	  buff.append("<td align='center' >");
 	  buff.append(user.yearOfBirth);
@@ -1390,7 +1396,7 @@ public class RegistrationServlet extends HttpServlet
   {
 	if (preRegistrationAllowed || onSiteUse)
 	{
-	  getModelForm(request, response, "addModel", "save.and.add.new.model", null);
+	  getModelForm(request, response, "addModel", "add", null);
 	}
 	else
 	{
@@ -1400,10 +1406,6 @@ public class RegistrationServlet extends HttpServlet
 
   public void modifyModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	final HttpSession session = request.getSession(false);
-	if(session == null)
-		return;
-
 	final int modelID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID"));
 
 	final Model model = createModel(modelID, servletDAO.getModel(modelID).userID, request);
@@ -1411,26 +1413,16 @@ public class RegistrationServlet extends HttpServlet
 	servletDAO.deleteModel(request);
 	servletDAO.saveModel(model);
 
-	session.removeAttribute("modelID");
-	
 	response.sendRedirect("jsp/main.jsp");
   }
 
   public void addModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	final User user = getUser(request);
-	final Model model = createModel(servletDAO.getNextID("MODEL", "MODEL_ID"), user.userID, request);
+	final Model model = createModel(servletDAO.getNextID("MODEL", "MODEL_ID"), getUser(request).userID, request);
 
 	servletDAO.saveModel(model);
-	
-	if ("-".equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration")))
-		response.sendRedirect("jsp/modelForm.jsp");
-	else
-	{
-		sendEmail(user, false /*insertUserDetails*/);
-		response.sendRedirect("jsp/main.jsp");
-	}
-		
+
+	response.sendRedirect("jsp/main.jsp");
   }
 
   private Model createModel(final int modelID, final int userID, final HttpServletRequest request) throws Exception
@@ -1647,7 +1639,9 @@ public class RegistrationServlet extends HttpServlet
 
 	  buff.append(
 	      "<input type='checkbox' name='userID" + i + "' value='" + user.userID + "' onClick='document.input.submit()'/>");
-	  buff.append(user.lastName + " " + user.firstName + " (" + user.userID + " - " + user.email + " - " + user.yearOfBirth
+	  buff.append(user.lastName 
+//			  + " " + user.firstName 
+			  + " (" + user.userID + " - " + user.email + " - " + user.yearOfBirth
 	      + " - " + user.country + " - " + user.city + " - " + user.address + " - " + user.telephone + ")<br>");
 	}
 
@@ -1787,15 +1781,7 @@ public class RegistrationServlet extends HttpServlet
 	// Boolean.parseBoolean(getRequestAttribute(request,
 	// "printPreRegisteredModels"));
 
-	List<User> users = servletDAO.getUsers();
-	Collections.sort(users, new Comparator(){
-
-		@Override
-		public int compare(Object o1, Object o2) {
-			return Integer.compare(User.class.cast(o1).userID, User.class.cast(o2).userID);
-		}});
-	
-	for (final User user : users)
+	for (final User user : servletDAO.getUsers())
 	{
 	  // if ((printPreRegisteredModels && user.userName.indexOf(DIRECT_USER) ==
 	  // -1)
@@ -1944,7 +1930,7 @@ public class RegistrationServlet extends HttpServlet
 		if (model != null)
 		{
 		  String print = printBuffer.toString().replaceAll("__LASTNAME__", String.valueOf(user.lastName))
-		      .replaceAll("__FIRSTNAME__", String.valueOf(user.firstName))
+//		      .replaceAll("__FIRSTNAME__", String.valueOf(user.firstName))
 		      .replaceAll("__YEAROFBIRTH__", String.valueOf(user.yearOfBirth))
 
 		      .replaceAll("__CITY__", String.valueOf(user.city)).replaceAll("__COUNTRY__", String.valueOf(user.country))
@@ -2226,7 +2212,7 @@ public class RegistrationServlet extends HttpServlet
 	  final Category category = servletDAO.getCategory(model.categoryID);
 
 	  buff.append(buffer.toString().replaceAll("__LASTNAME__", String.valueOf(user.lastName))
-	      .replaceAll("__FIRSTNAME__", String.valueOf(user.firstName))
+//	      .replaceAll("__FIRSTNAME__", String.valueOf(user.firstName))
 	      .replaceAll("__CATEGORY_CODE__", String.valueOf(category.categoryCode))
 	      .replaceAll("__CATEGORY_CODE__", String.valueOf(category.categoryCode))
 	      .replaceAll("__MODEL_NAME__", String.valueOf(model.name)).replaceAll("__MODEL_ID__", String.valueOf(model.modelID))
@@ -2263,7 +2249,7 @@ public class RegistrationServlet extends HttpServlet
 	    //	    .replaceAll("__COUNTRIES_LIST__", countryBuff.toString())
 
 	    .replaceAll("__LASTNAMELABEL__", language.getString("last.name"))
-	    .replaceAll("__FIRSTNAMELABEL__", language.getString("first.name"))
+//	    .replaceAll("__FIRSTNAMELABEL__", language.getString("first.name"))
 	    .replaceAll("__YEAROFBIRTHLABEL__", language.getString("year.of.birth"))
 	    .replaceAll("__MODEL_SCALE__", language.getString("scale"))
 	    .replaceAll("__MODEL_NAME__", language.getString("models.name"))
@@ -2297,7 +2283,7 @@ public class RegistrationServlet extends HttpServlet
 	// check if all data is sent
 	ServletUtil.getRequestAttribute(request, "language");
 
-	ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag);
+//	ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag);
 	ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag);
 	ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag);
 	ServletUtil.getOptionalRequestAttribute(request, "city" + httpParameterPostTag);
@@ -2307,7 +2293,8 @@ public class RegistrationServlet extends HttpServlet
 	ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag);
 
 	return new User(servletDAO.getNextID("USERS", "USER_ID"), password,
-	    ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag),
+//	    ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag),
+			"-",
 	    ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag),
 	    ServletUtil.getRequestAttribute(request, "language"),
 	    ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag),
@@ -2392,7 +2379,7 @@ public class RegistrationServlet extends HttpServlet
 	return servletDAO;
   }
 
-  private void getModelForm(final HttpServletRequest request, final HttpServletResponse response, final String action,
+  public void getModelForm(final HttpServletRequest request, final HttpServletResponse response, final String action,
       final String submitLabel, final Integer modelID) throws Exception
   {
 	final HttpSession session = request.getSession(true);

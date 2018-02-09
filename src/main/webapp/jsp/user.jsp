@@ -85,11 +85,11 @@ if(directRegister)
           </div>
           </td>    
       </tr>
-    <tr bgcolor='F6F4F0'> 
-      <td><%= language.getString("first.name") %>: </td>
-      <td><input name="firstname" type="text" value="<%= user == null ? "" : user.firstName %>"> <font color="#FF0000" size="+3">&#8226;</font>  
-        </td>
-    </tr>
+<!--     <tr bgcolor='F6F4F0'>  -->
+<%--       <td><%= language.getString("first.name") %>: </td> --%>
+<%--       <td><input name="firstname" type="text" value="<%= user == null ? "" : user.firstName %>"> <font color="#FF0000" size="+3">&#8226;</font>   --%>
+<!--         </td> -->
+<!--     </tr> -->
     <tr> 
       <td><%= language.getString("year.of.birth") %>: </td>
       <td>

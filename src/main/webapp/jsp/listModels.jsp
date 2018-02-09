@@ -49,8 +49,8 @@
 		<th align='center' style='white-space: nowrap'><%=language.getString("last.name")%>
 		</th>
 
-		<th align='center' style='white-space: nowrap'><%=language.getString("first.name")%>
-		</th>
+<%-- 		<th align='center' style='white-space: nowrap'><%=language.getString("first.name")%> --%>
+<!-- 		</th> -->
 
 		<th align='center' style='white-space: nowrap'><%=language.getString("city")%>
 		</th>
@@ -171,7 +171,7 @@
 		%>
 		<td align='center'><%=modelsUser.lastName%></td>
 
-		<td align='center'><%=modelsUser.firstName%></td>
+<%-- 		<td align='center'><%=modelsUser.firstName%></td> --%>
 
 		<td align='center'><%=modelsUser.city%></td>
 
