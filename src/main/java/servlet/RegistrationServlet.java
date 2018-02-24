@@ -59,7 +59,7 @@ import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
-  public String VERSION = "2018.02.11.";
+  public String VERSION = "2018.02.25.";
   public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
   Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key: HU, EN, ...
@@ -1418,11 +1418,19 @@ public class RegistrationServlet extends HttpServlet
 
   public void addModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	final Model model = createModel(servletDAO.getNextID("MODEL", "MODEL_ID"), getUser(request).userID, request);
+	final User user = getUser(request);
 
+	final Model model = createModel(servletDAO.getNextID("MODEL", "MODEL_ID"), user.userID, request);
+		
 	servletDAO.saveModel(model);
 
-	response.sendRedirect("jsp/main.jsp");
+	if ("-".equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration")))
+		response.sendRedirect("jsp/modelForm.jsp");
+	else
+	{
+		sendEmail(user, false /*insertUserDetails*/);
+		response.sendRedirect("jsp/main.jsp");
+	}
   }
 
   private Model createModel(final int modelID, final int userID, final HttpServletRequest request) throws Exception
@@ -1961,7 +1969,7 @@ public class RegistrationServlet extends HttpServlet
 			for (int j = 0; j < detailingCriterias.length; j++)
 			{
 			  print = print.replaceAll("__" + detailingGroups[i] + "_" + detailingCriterias[j] + "__",
-			      model.detailing[i].criterias.get(j) ? "&#8226;"
+			      model.detailing[i].criterias.get(j) ? "X"
 
 			          : "&nbsp");
 			}
