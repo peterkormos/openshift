@@ -1,12 +1,24 @@
 input , select
 {
+/*
 	border-radius: 5px; padding-left: 10px;
 	background: linear-gradient(rgb(235,235,235), white);
+*/
+	border: hidden;
+	padding: 5px;
 }
 
 input[type="submit"]
 {
+	background: DodgerBlue;
+	border: 3px solid DodgerBlue;
+	border-radius: 3px;
+	padding: 5px;
+	color: white;
+	font-weight: bold;
+/*
 	background: linear-gradient(rgba(0,150,0,0.3), white);
+*/
 }
 
 input:focus 
