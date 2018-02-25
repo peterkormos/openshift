@@ -16,6 +16,8 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -1396,7 +1398,7 @@ public class RegistrationServlet extends HttpServlet
   {
 	if (preRegistrationAllowed || onSiteUse)
 	{
-	  getModelForm(request, response, "addModel", "add", null);
+	  getModelForm(request, response, "addModel", "save.and.add.new.model", null);
 	}
 	else
 	{
@@ -1406,6 +1408,11 @@ public class RegistrationServlet extends HttpServlet
 
   public void modifyModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
+	final HttpSession session = request.getSession(false);
+
+	if(session == null)
+		return;
+		
 	final int modelID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID"));
 
 	final Model model = createModel(modelID, servletDAO.getModel(modelID).userID, request);
@@ -1413,6 +1420,8 @@ public class RegistrationServlet extends HttpServlet
 	servletDAO.deleteModel(request);
 	servletDAO.saveModel(model);
 
+	session.removeAttribute("modelID");
+	
 	response.sendRedirect("jsp/main.jsp");
   }
 
@@ -1789,7 +1798,15 @@ public class RegistrationServlet extends HttpServlet
 	// Boolean.parseBoolean(getRequestAttribute(request,
 	// "printPreRegisteredModels"));
 
-	for (final User user : servletDAO.getUsers())
+	List<User> users = servletDAO.getUsers();
+
+	Collections.sort(users, new Comparator(){
+		@Override
+		public int compare(Object o1, Object o2) {
+			return Integer.compare(User.class.cast(o1).userID, User.class.cast(o2).userID);
+		}});
+
+	for (final User user : users)
 	{
 	  // if ((printPreRegisteredModels && user.userName.indexOf(DIRECT_USER) ==
 	  // -1)
@@ -2387,7 +2404,7 @@ public class RegistrationServlet extends HttpServlet
 	return servletDAO;
   }
 
-  public void getModelForm(final HttpServletRequest request, final HttpServletResponse response, final String action,
+  private void getModelForm(final HttpServletRequest request, final HttpServletResponse response, final String action,
       final String submitLabel, final Integer modelID) throws Exception
   {
 	final HttpSession session = request.getSession(true);
