@@ -1,10 +1,12 @@
-input , select
+input, select
 {
 /*
 	border-radius: 5px; padding-left: 10px;
 	background: linear-gradient(rgb(235,235,235), white);
-*/
 	border: hidden;
+*/
+	border-width: 1px;
+	background: LemonChiffon;
 	padding: 5px;
 }
 
