@@ -56,7 +56,7 @@ function checkSubmit()
 </script>
 
 
-<form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put">
+<form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">
   <input type="hidden" id="command"  name="command" value="">
 
   <a href="#" onClick="document.getElementById('command').value='inputForAddModel';this.parentNode.submit();">
@@ -116,7 +116,7 @@ if(servlet.isOnSiteUse())
 	<a href='../helyi.html'> helyi.html</a>
 	<p>
 	<hr>
-	<form name='input' action='../RegistrationServlet' method='put'>
+	<form name='input' action='../RegistrationServlet' method='put' accept-charset="UTF-8">
 	<input type='hidden' name='command' value='printMyModels'>
 	<input name='printMyModels' type='submit' value='<%=language.getString("print.models")%>'>
 	</form>
