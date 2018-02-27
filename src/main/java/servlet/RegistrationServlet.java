@@ -61,7 +61,7 @@ import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
-  public String VERSION = "2018.02.25.";
+  public String VERSION = "2018.02.27.";
   public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
   Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key: HU, EN, ...
@@ -1969,7 +1969,7 @@ public class RegistrationServlet extends HttpServlet
 		      .replaceAll("__MODEL_IDENTIFICATION__", model.identification).replaceAll("__MODEL_PRODUCER__", model.producer)
 		      .replaceAll("__MODEL_COMMENT__", model.comment).replaceAll("__GLUED_TO_BASE__", model.gluedToBase ?
 
-		              language.getString("yes")+"<br>yes" : language.getString("no")+"<br>no"
+		              language.getString("yes")+"<br><em>yes</em>" : language.getString("no")+"<br><em>no</em>"
 
 		  // "<font color='#006600'>Alapra ragasztva</font>"
 		  // :
