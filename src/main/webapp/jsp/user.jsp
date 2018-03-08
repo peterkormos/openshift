@@ -39,7 +39,6 @@
 <link href="css/base.css" rel="stylesheet" type="text/css"/>
 <div class="header"></div>
 <form name="input" id="input" action="../RegistrationServlet/<%= action %>" method="put" accept-charset="UTF-8">
-	<input type="hidden" name="language" value="<%= languageCode %>">
   <p> 
   </p>
   <table width="47%" border="0">
