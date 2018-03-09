@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -1501,15 +1502,15 @@ public class ServletDAO
 
   public StringBuffer execute(final String sql) throws SQLException
   {
-	PreparedStatement queryStatement = null;
+	Statement queryStatement = null;
 	ResultSet rs = null;
 
 	try
 	{
 	  logger.debug("ServletDAO.execute(): " + sql);
-	  queryStatement = getDBConnection().prepareStatement(sql);
 	  if (sql.toLowerCase().indexOf("select") > -1)
 	  {
+		queryStatement = getDBConnection().createStatement();
 		rs = queryStatement.executeQuery(sql);
 
 		final StringBuffer buff = new StringBuffer();
@@ -1535,7 +1536,8 @@ public class ServletDAO
 	  }
 	  else
 	  {
-		queryStatement.executeUpdate();
+		queryStatement = getDBConnection().prepareStatement(sql);
+		PreparedStatement.class.cast(queryStatement).executeUpdate();
 		return null;
 	  }
 	}
