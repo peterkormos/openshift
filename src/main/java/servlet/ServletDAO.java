@@ -1524,12 +1524,12 @@ public class ServletDAO
 			final String columnValue = rs.getString(columnName);
 
 			buff.append(columnName + ": " + columnValue);
-			buff.append("<br>");
+			buff.append("\n<br>\n");
 		  }
 
-		  buff.append("<p>");
-		  buff.append("-------------------------------------------");
-		  buff.append("<p>");
+		  buff.append("<p>\n");
+		  buff.append("-------------------------------------------\n");
+		  buff.append("<p>\n");
 		}
 
 		return buff;
