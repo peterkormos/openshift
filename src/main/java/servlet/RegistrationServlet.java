@@ -61,7 +61,7 @@ import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
-  public String VERSION = "2018.03.11.";
+  public String VERSION = "2018.03.16.";
   public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
   Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key: HU, EN, ...
@@ -366,7 +366,7 @@ public class RegistrationServlet extends HttpServlet
 	  {
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, param));
 
-		printModels(request, response, getLanguage(ServletUtil.getRequestAttribute(request, "language")), userID);
+		printModelsForUser(request, response, getLanguage(ServletUtil.getRequestAttribute(request, "language")), userID, true/*allModelsPrinted*/);
 		showPrintDialog(response);
 		return;
 	  }
@@ -566,7 +566,7 @@ public class RegistrationServlet extends HttpServlet
 	{
 	  for (final User user1 : users)
 	  {
-		writeResponse(response, printModels(language, user1.userID, request));
+		writeResponse(response, printModelsForUser(language, user1.userID, request, true /*allModelsPrinted*/));
 	  }
 	}
 	showPrintDialog(response);
@@ -1813,7 +1813,7 @@ public class RegistrationServlet extends HttpServlet
 	  // -1)
 	  // || (!printPreRegisteredModels && user.userName.indexOf(DIRECT_USER) >
 	  // -1))
-	  printModels(request, response, language, user.userID);
+	  printModelsForUser(request, response, language, user.userID, true /*allModelsPrinted*/);
 	}
 
 	showPrintDialog(response);
@@ -1860,7 +1860,7 @@ public class RegistrationServlet extends HttpServlet
 
 	if ("-".equals(modelID))
 	{
-	  printModels(request, response, getLanguage(user.language), user.userID);
+	  printModelsForUser(request, response, getLanguage(user.language), user.userID, false /*allModelsPrinted*/);
 	}
 	else
 	{
@@ -1874,7 +1874,7 @@ public class RegistrationServlet extends HttpServlet
 		  final List<Model> subList = new LinkedList<Model>();
 		  subList.add(model);
 
-		  buff.append(printModels(getLanguage(user.language), servletDAO.getUser(user.userID), subList, printBuffer, 1, 2, true));
+		  buff.append(printModels(getLanguage(user.language), servletDAO.getUser(user.userID), subList, printBuffer, 1, 3, false));
 		  break;
 		}
 	  }
@@ -1885,17 +1885,18 @@ public class RegistrationServlet extends HttpServlet
 	showPrintDialog(response);
   }
 
-  private void printModels(final HttpServletRequest request, final HttpServletResponse response, final ResourceBundle language,
-      final int userID) throws Exception, IOException
+  private void printModelsForUser(final HttpServletRequest request, final HttpServletResponse response, final ResourceBundle language,
+      final int userID, boolean allModelsPrinted) throws Exception, IOException
   {
-	writeResponse(response, printModels(language, userID, request));
+	writeResponse(response, printModelsForUser(language, userID, request, allModelsPrinted));
   }
 
-  public StringBuffer printModels(final ResourceBundle language, final int userID, final HttpServletRequest request)
+  private StringBuffer printModelsForUser(final ResourceBundle language, final int userID, final HttpServletRequest request, boolean alwaysPageBreak)
       throws Exception, IOException
   {
 	final List<Model> models = servletDAO.getModels(userID);
 
+	//remove models that are not for the current show
 	final String show = getShowFromReqest(request);
 	final Iterator<Model> it = models.iterator();
 	while (it.hasNext())
@@ -1916,14 +1917,19 @@ public class RegistrationServlet extends HttpServlet
 	final StringBuffer buff = new StringBuffer();
 
 	final User user = servletDAO.getUser(userID);
+	int modelsRemainingToPrint = models.size();
 	while (!models.isEmpty())
 	{
 	  final int modelsOnPage = 3;
 
-	  final List<Model> subList = new ArrayList<Model>(models.subList(0, Math.min(modelsOnPage, models.size())));
+	  int currentModelsOnPage = Math.min(modelsOnPage, models.size());
+	  final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
+//	  System.out.println("printModels " + models.size() + " " + subList.size() + " " + !models.isEmpty());
 	  models.removeAll(subList);
 
-	  buff.append(printModels(language, user, subList, printBuffer, 1, modelsOnPage, !models.isEmpty()));
+	  modelsRemainingToPrint-=currentModelsOnPage;
+	  boolean pageBreak = alwaysPageBreak || modelsRemainingToPrint > 0;
+	  buff.append(printModels(language, user, subList, printBuffer, 1, modelsOnPage, pageBreak));
 	}
 
 	return buff;
@@ -1933,13 +1939,13 @@ public class RegistrationServlet extends HttpServlet
   StringBuffer printModels(final ResourceBundle language, final User user, final List<Model> models,
       final StringBuffer printBuffer, final int rows, final int cols, boolean pageBreak) throws Exception, IOException
   {
-	// System.out.println(models.size() + " " + rows + " " + cols);
+//	 System.out.println("printModels " + models.size() + " " + rows + " " + cols + " " + pageBreak);
 
 	final int width = 100 / cols;
 	final int height = 100 / rows;
 
 	final StringBuffer buff = new StringBuffer();
-	buff.append("<table cellpadding='0' cellspacing='10' width='100%' height='100%' "
+	buff.append("\n\n<table cellpadding='0' cellspacing='10' width='100%' height='100%' "
 	    + (pageBreak ? "style='page-break-after: always;' " : "") + "border='0' >");
 
 	int ModelCount = 0;
