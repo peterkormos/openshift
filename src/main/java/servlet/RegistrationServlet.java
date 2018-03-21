@@ -61,7 +61,7 @@ import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
-  public String VERSION = "2018.03.16.";
+  public String VERSION = "2018.03.21.";
   public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
   Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key: HU, EN, ...
