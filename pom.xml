@@ -1,10 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-		<groupId>org.peterkormos.openshift</groupId>
-		<version>1.0</version>
+	<groupId>org.peterkormos.openshift</groupId>
+	<version>1.0</version>
 	<artifactId>form-modelregistration</artifactId>
 	<packaging>war</packaging>
+
+	<scm>
+		<connection>scm:git:https://github.com/peterkormos/openshift.git</connection>
+	</scm>
 
 	<dependencies>
 		<!-- http://mvnrepository.com/artifact/org.apache.derby/derby -->
@@ -71,9 +75,35 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>true</doCheck>
+					<doUpdate>true</doUpdate>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Build>${buildNumber}</Implementation-Build>
+							<Implementation-Branch>${scmBranch}</Implementation-Branch>
+						</manifestEntries>
+					</archive>
 					<webResources>
 						<resource>
 							<directory>${build.sourceDirectory}</directory>
@@ -91,34 +121,34 @@
 	</build>
 
 	<profiles>
-<!-- 		<profile> -->
-<!-- 			<id>openshift</id> -->
-<!-- 			<build> -->
-<!-- 				<finalName>modelregistration</finalName> -->
-<!-- 				<plugins> -->
-<!-- 					<plugin> -->
-<!-- 						<artifactId>maven-war-plugin</artifactId> -->
-<!-- 						<version>2.1.1</version> -->
-<!-- 						<configuration> -->
-<!-- 							<outputDirectory>webapps</outputDirectory> -->
-<!-- 							<warName>ROOT</warName> -->
-<!-- 							<resource> -->
-<!-- 								<directory>${basedir}/src/main/webapp/WEB-INF</directory> -->
-<!-- 								<targetPath>WEB-INF</targetPath> -->
-<!-- 								<filtering>true</filtering> -->
-<!-- 							</resource> -->
-<!-- 						</configuration> -->
-<!-- 					</plugin> -->
-<!-- 				</plugins> -->
-<!-- 			</build> -->
-<!-- 			<properties> -->
-<!-- 				<db.url>jdbc:mysql://${OPENSHIFT_MYSQL_DB_HOST}:${OPENSHIFT_MYSQL_DB_PORT}/${OPENSHIFT_APP_NAME}</db.url> -->
-<!-- 				<db.user>adminFdLe6nH</db.user> -->
-<!-- 				<db.password>FlGKBzJ7u_bJ</db.password> -->
-<!-- 				<db.driver.class>com.mysql.jdbc.Driver</db.driver.class> -->
-<!-- 				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect> -->
-<!-- 			</properties> -->
-<!-- 		</profile> -->
+		<!-- <profile> -->
+		<!-- <id>openshift</id> -->
+		<!-- <build> -->
+		<!-- <finalName>modelregistration</finalName> -->
+		<!-- <plugins> -->
+		<!-- <plugin> -->
+		<!-- <artifactId>maven-war-plugin</artifactId> -->
+		<!-- <version>2.1.1</version> -->
+		<!-- <configuration> -->
+		<!-- <outputDirectory>webapps</outputDirectory> -->
+		<!-- <warName>ROOT</warName> -->
+		<!-- <resource> -->
+		<!-- <directory>${basedir}/src/main/webapp/WEB-INF</directory> -->
+		<!-- <targetPath>WEB-INF</targetPath> -->
+		<!-- <filtering>true</filtering> -->
+		<!-- </resource> -->
+		<!-- </configuration> -->
+		<!-- </plugin> -->
+		<!-- </plugins> -->
+		<!-- </build> -->
+		<!-- <properties> -->
+		<!-- <db.url>jdbc:mysql://${OPENSHIFT_MYSQL_DB_HOST}:${OPENSHIFT_MYSQL_DB_PORT}/${OPENSHIFT_APP_NAME}</db.url> -->
+		<!-- <db.user>adminFdLe6nH</db.user> -->
+		<!-- <db.password>FlGKBzJ7u_bJ</db.password> -->
+		<!-- <db.driver.class>com.mysql.jdbc.Driver</db.driver.class> -->
+		<!-- <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect> -->
+		<!-- </properties> -->
+		<!-- </profile> -->
 	</profiles>
 
 	<properties>
