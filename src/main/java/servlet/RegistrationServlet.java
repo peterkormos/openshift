@@ -498,15 +498,14 @@ public class RegistrationServlet extends HttpServlet
 
 	final StringBuffer buff = new StringBuffer();
 	buff.append("<html><body>");
-
-	
 	buff.append(language.getString("password") + ": " + "<FONT COLOR='#ff0000'><B>" + newPassword + "</B></FONT>");
 	buff.append("<BR>");
 	buff.append(language.getString("password.change"));
-	buff.append("<p>");
-	buff.append("<a href='../index.html'>" + language.getString("proceed.to.login") + "</a></body></html>");
+	buff.append("</body></html>");
 
-	writeResponse(response, buff);
+	sendEmail(user.email, language.getString("email.subject"), buff);
+	
+	writeResponse(response, getEmailWasSentResponse(language));
   }
 
   public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
@@ -561,7 +560,7 @@ public class RegistrationServlet extends HttpServlet
 
 	if (user != null && user.email != null)
 	{
-	  sendEmail(user, true);
+	  sendEmailWithModels(user, true);
 	}
 
 	if (!users.isEmpty())
@@ -857,18 +856,21 @@ public class RegistrationServlet extends HttpServlet
 	final User user = createUser(request, email);
 	servletDAO.registerNewUser(user);
 
-	sendEmail(user, true);
+	sendEmailWithModels(user, true);
 
+	writeResponse(response, getEmailWasSentResponse(language));
+
+  }
+
+private StringBuffer getEmailWasSentResponse(final ResourceBundle language) {
 	final StringBuffer buff = new StringBuffer();
 	buff.append("<html><body>");
 
 	buff.append(language.getString("email.was.sent"));
 	buff.append("<p>");
 	buff.append("<a href='../index.html'>" + language.getString("proceed.to.login") + "</a></body></html>");
-
-	writeResponse(response, buff);
-
-  }
+	return buff;
+}
 
   public void modifyUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
@@ -940,7 +942,7 @@ public class RegistrationServlet extends HttpServlet
 
   }
 
-  public void sendEmail(final User user, final boolean insertUserDetails) throws Exception
+  private void sendEmailWithModels(final User user, final boolean insertUserDetails) throws Exception
   {
 	if (user.email.trim().length() == 0 || user.email.equals("-") || user.email.indexOf("@") == -1)
 	{
@@ -1034,10 +1036,14 @@ public class RegistrationServlet extends HttpServlet
 
 	message.append("</body></html>");
 
-	ServletUtil.sendEmail(getServerConfigParamter("email.smtpServer"), getServerConfigParamter("email.from"), user.email,
-	    language.getString("email.subject"), message.toString(), Boolean.parseBoolean(getServerConfigParamter("email.debugSMTP")),
-	    getServerConfigParamter("email.password"));
+	sendEmail(user.email, language.getString("email.subject"), message);
   }
+
+private void sendEmail(final String to, final String subject, final StringBuffer message) throws Exception {
+	ServletUtil.sendEmail(getServerConfigParamter("email.smtpServer"), getServerConfigParamter("email.from"), to,
+			subject, message.toString(), Boolean.parseBoolean(getServerConfigParamter("email.debugSMTP")),
+	    getServerConfigParamter("email.password"));
+}
 
   public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
@@ -1439,7 +1445,7 @@ public class RegistrationServlet extends HttpServlet
 		response.sendRedirect("jsp/modelForm.jsp");
 	else
 	{
-		sendEmail(user, false /*insertUserDetails*/);
+		sendEmailWithModels(user, false /*insertUserDetails*/);
 		response.sendRedirect("jsp/main.jsp");
 	}
   }
@@ -2040,7 +2046,7 @@ public class RegistrationServlet extends HttpServlet
   {
 	final User user = getUser(request);
 
-	sendEmail(user, false);
+	sendEmailWithModels(user, false);
 
 	response.sendRedirect("jsp/main.jsp");
   }
