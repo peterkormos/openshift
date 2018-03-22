@@ -11,5 +11,5 @@
 
 <%=language.getString("select.another.email")%>
 <p>
-<a href="jsp/reminder.jsp?language=<%= languageCode %>"><%= language.getString("password.reminder") %></a>
+<a href="../jsp/reminder.jsp?language=<%= languageCode %>"><%= language.getString("password.reminder") %></a>
 <p>
