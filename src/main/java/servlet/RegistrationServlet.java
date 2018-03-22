@@ -269,14 +269,16 @@ public class RegistrationServlet extends HttpServlet
 	{
 	  logger.fatal("!!!doPost(): ", e);
 
+	  
+	  Throwable throwable = e;
 	  if (e instanceof InvocationTargetException)
 	  {
-		e = (Exception) ((InvocationTargetException) e).getCause();
+		throwable = ((InvocationTargetException) e).getCause();
 	  }
 
-	  final String message = e.getMessage();
+	  final String message = throwable.getMessage();
 
-	  addExceptionToHistory(System.currentTimeMillis(), e, request);
+	  addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
 	  writeErrorResponse(response, "Server error: <b>" + message + "</b>");
 	}
@@ -2339,16 +2341,17 @@ public class RegistrationServlet extends HttpServlet
   class ExceptionData
   {
 	long timestamp;
-	Exception exception;
+	Throwable throwable;
 	HashMap<String, String> parameters;
 
-	ExceptionData(final long timestamp, final Exception exception, final HttpServletRequest request)
+	ExceptionData(final long timestamp, final Throwable throwable, final HttpServletRequest request)
 	{
 	  this.timestamp = timestamp;
-	  this.exception = exception;
+	  this.throwable = throwable;
 	  parameters = new HashMap<String, String>();
 
-	  final Enumeration<String> e = request.getParameterNames();
+	  @SuppressWarnings("unchecked")
+	final Enumeration<String> e = request.getParameterNames();
 	  while (e.hasMoreElements())
 	  {
 		final String param = e.nextElement();
@@ -2362,9 +2365,9 @@ public class RegistrationServlet extends HttpServlet
 	  buff.append("<b>Timestamp:</b> " + new Date(timestamp));
 
 	  buff.append("<p>");
-	  buff.append("<b>Exception:</b> " + exception.getClass().getName() + " " + exception.getMessage());
+	  buff.append("<b>Exception:</b> " + throwable.getClass().getName() + " " + throwable.getMessage());
 	  buff.append("<br>");
-	  for (final StackTraceElement stackTrace : exception.getStackTrace())
+	  for (final StackTraceElement stackTrace : throwable.getStackTrace())
 	  {
 		buff.append(stackTrace.toString());
 		buff.append("<br>");
@@ -2386,7 +2389,7 @@ public class RegistrationServlet extends HttpServlet
 	}
   }
 
-  void addExceptionToHistory(final long timestamp, final Exception exception, final HttpServletRequest request)
+  void addExceptionToHistory(final long timestamp, final Throwable exception, final HttpServletRequest request)
   {
 	if (exceptionHistory.size() == 10)
 	{
