@@ -27,7 +27,7 @@ public class DumpToFile
 	fw = new FileWriter("forms.html");
 	for (User user : servlet.servletDAO.getUsers())
 	{
-	  fw.write(servlet.printModels(language, user.userID, null).toString());
+//	  fw.write(servlet.printModels(language, user.userID, null).toString());
 	}
 	fw.close();
 	System.out.println("Writing forms done.....");
