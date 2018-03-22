@@ -6,10 +6,11 @@
 	<artifactId>form-modelregistration</artifactId>
 	<packaging>war</packaging>
 
-	<scm>
-		<connection>scm:git:https://github.com/peterkormos/openshift.git</connection>
-	</scm>
-
+     <scm>
+           <connection>scm:git:https://github.com/peterkormos/openshift.git</connection>
+           <url>https://github.com/peterkormos/openshift.git</url>
+     </scm>
+     
 	<dependencies>
 		<!-- http://mvnrepository.com/artifact/org.apache.derby/derby -->
 		<dependency>
@@ -77,6 +78,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.4</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -86,11 +88,10 @@
 					</execution>
 				</executions>
 				<configuration>
-					<doCheck>true</doCheck>
-					<doUpdate>true</doUpdate>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
 				</configuration>
 			</plugin>
-			<plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
