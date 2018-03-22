@@ -38,7 +38,7 @@
 
 <link href="css/base.css" rel="stylesheet" type="text/css"/>
 <div class="header"></div>
-<form name="input" id="input" action="../RegistrationServlet/<%= action %>" method="put" accept-charset="UTF-8">
+<form autocomplete="fuckoffchrome" name="input" id="input" action="../RegistrationServlet/<%= action %>" method="put" accept-charset="UTF-8">
   <p> 
   </p>
   <table width="47%" border="0">
@@ -49,17 +49,17 @@ if(!directRegister)
 %>
     <tr bgcolor='F6F4F0'> 
       <td><%= language.getString("email") %>: </td>
-      <td><input name="email" type="text" value="<%= user == null ? "" : user.email %>"> <font color="#FF0000" size="+3">&#8226;</font>  
+      <td><input autocomplete="fuckoffchrome" name="email" type="text" value="<%= user == null ? "" : user.email %>"> <font color="#FF0000" size="+3">&#8226;</font>  
         </td>
     </tr>
     <tr> 
       <td width="32%"><strong><%= language.getString("password") %>: </strong></td>
-      <td width="68%"><input name="password" type="password" value="<%= user == null ? "" : user.password %>"> 
+      <td width="68%"><input autocomplete="fuckoffchrome" name="password" type="password" value="<%= user == null ? "" : user.password %>"> 
         <font color="#FF0000" size="+3">&#8226;</font>  </td>
     </tr>
     <tr bgcolor='F6F4F0'> 
       <td><strong><%= language.getString("password.again") %>: </strong></td>
-      <td><input name="password2" type="password" value="<%= user == null ? "" : user.password %>"> <font color="#FF0000" size="+3">&#8226;</font>  
+      <td><input autocomplete="fuckoffchrome" name="password2" type="password" value="<%= user == null ? "" : user.password %>"> <font color="#FF0000" size="+3">&#8226;</font>  
         </td>
     </tr>
 <%
@@ -69,7 +69,7 @@ if(!directRegister)
       <td> <%= language.getString("last.name") %>: </td>
       <td>
       <div id='lastnames'>
-      <input name="lastname" type="text" value="<%= user == null ? "" : user.lastName %>" id="lastnameID"  onChange="sendRequest();"> 
+      <input autocomplete="fuckoffchrome" name="lastname" type="text" value="<%= user == null ? "" : user.lastName %>" id="lastnameID"  onChange="sendRequest();"> 
       	<font color="#FF0000" size="+3">&#8226;</font>  
 <%
 if(directRegister)
@@ -86,7 +86,7 @@ if(directRegister)
       </tr>
 <!--     <tr bgcolor='F6F4F0'>  -->
 <%--       <td><%= language.getString("first.name") %>: </td> --%>
-<%--       <td><input name="firstname" type="text" value="<%= user == null ? "" : user.firstName %>"> <font color="#FF0000" size="+3">&#8226;</font>   --%>
+<%--       <td><input autocomplete="fuckoffchrome" name="firstname" type="text" value="<%= user == null ? "" : user.firstName %>"> <font color="#FF0000" size="+3">&#8226;</font>   --%>
 <!--         </td> -->
 <!--     </tr> -->
     <tr> 
@@ -157,19 +157,19 @@ if(directRegister)
     </tr>
     <tr bgcolor='F6F4F0'> 
       <td><%= language.getString("city") %>: </td>
-      <td><input name="city" type="text" value="<%= user == null ? "" : user.city %>"></td>
+      <td><input autocomplete="fuckoffchrome" name="city" type="text" value="<%= user == null ? "" : user.city %>"></td>
     </tr>
     <tr> 
       <td><%= language.getString("address") %>: </td>
-      <td><input name="address" type="text" value="<%= user == null ? "" : user.address %>"></td>
+      <td><input autocomplete="fuckoffchrome" name="address" type="text" value="<%= user == null ? "" : user.address %>"></td>
     </tr>
     <tr bgcolor='F6F4F0'> 
       <td><%= language.getString("telephone") %>:</td>
-      <td> <input name="telephone" type="text" value="<%= user == null ? "" : user.telephone %>"></td>
+      <td> <input autocomplete="fuckoffchrome" name="telephone" type="text" value="<%= user == null ? "" : user.telephone %>"></td>
     </tr>
     <tr> 
       <td>&nbsp;</td>
-      <td><input type="submit" value="<%= language.getString("save") %>"></td>
+      <td><input autocomplete="fuckoffchrome" type="submit" value="<%= language.getString("save") %>"></td>
     </tr>
   </table>
   <p><font color="#FF0000" size="+3">&#8226;</font> <%= language.getString("mandatory.fields") %></p>
