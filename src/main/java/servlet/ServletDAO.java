@@ -1514,23 +1514,30 @@ public class ServletDAO
 		rs = queryStatement.executeQuery(sql);
 
 		final StringBuffer buff = new StringBuffer();
-
+		buff.append("<table border='1'>\n");
 		final ResultSetMetaData rsm = rs.getMetaData();
+		buff.append("  <tr>\n");
+		for (int i = 1; i <= rsm.getColumnCount(); i++)
+			buff.append("    <th>"
+					+ rsm.getColumnName(i)
+					+ "</th>\n");
+		buff.append("  </tr>\n");
+
+		boolean highlight = false;
 		while (rs.next())
 		{
-		  for (int i = 1; i <= rsm.getColumnCount(); i++)
-		  {
-			final String columnName = rsm.getColumnName(i);
-			final String columnValue = rs.getString(columnName);
-
-			buff.append(columnName + ": " + columnValue);
-			buff.append("\n<br>\n");
-		  }
-
-		  buff.append("<p>\n");
-		  buff.append("-------------------------------------------\n");
-		  buff.append("<p>\n");
+			if(highlight)
+				buff.append("  <tr bgcolor='eaeaea' >\n");
+			else
+				buff.append("  <tr>\n");
+			for (int i = 1; i <= rsm.getColumnCount(); i++)
+				buff.append("    <td>"
+						+ rs.getString(i)+
+						"</td>\n");
+			buff.append("  </tr>\n");
+			highlight = !highlight;
 		}
+		buff.append("</table>\n");
 
 		return buff;
 	  }
