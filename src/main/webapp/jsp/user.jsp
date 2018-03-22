@@ -54,12 +54,12 @@ if(!directRegister)
     </tr>
     <tr> 
       <td width="32%"><strong><%= language.getString("password") %>: </strong></td>
-      <td width="68%"><input autocomplete="fuckoffchrome" name="password" type="password" value="<%= user == null ? "" : user.password %>"> 
+      <td width="68%"><input autocomplete="fuckoffchrome" name="password" type="password" > 
         <font color="#FF0000" size="+3">&#8226;</font>  </td>
     </tr>
     <tr bgcolor='F6F4F0'> 
       <td><strong><%= language.getString("password.again") %>: </strong></td>
-      <td><input autocomplete="fuckoffchrome" name="password2" type="password" value="<%= user == null ? "" : user.password %>"> <font color="#FF0000" size="+3">&#8226;</font>  
+      <td><input autocomplete="fuckoffchrome" name="password2" type="password" > <font color="#FF0000" size="+3">&#8226;</font>  
         </td>
     </tr>
 <%
