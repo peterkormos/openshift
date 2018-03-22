@@ -815,7 +815,7 @@ public class RegistrationServlet extends HttpServlet
       final String httpParameterPostTag) throws Exception
   {
 	final String password = "-";
-	final String userName = ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag)
+	final String userName = ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag)
 //	    + ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag) 
 	    + User.LOCAL_USER
 	    + System.currentTimeMillis();
@@ -2324,7 +2324,7 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 	ServletUtil.getRequestAttribute(request, "language");
 
 //	ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag);
-	ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag);
+	ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag);
 	ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag);
 	ServletUtil.getOptionalRequestAttribute(request, "city" + httpParameterPostTag);
 	ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag);
@@ -2335,7 +2335,7 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 	return new User(servletDAO.getNextID("USERS", "USER_ID"), password,
 //	    ServletUtil.getRequestAttribute(request, "firstname" + httpParameterPostTag),
 			"-",
-	    ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag),
+	    ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag),
 	    ServletUtil.getRequestAttribute(request, "language"),
 	    ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag),
 	    ServletUtil.getOptionalRequestAttribute(request, "telephone" + httpParameterPostTag), email, true,

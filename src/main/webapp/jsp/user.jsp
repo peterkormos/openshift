@@ -68,8 +68,8 @@ if(!directRegister)
     <tr> 
       <td> <%= language.getString("last.name") %>: </td>
       <td>
-      <div id='lastnames'>
-      <input autocomplete="fuckoffchrome" name="lastname" type="text" value="<%= user == null ? "" : user.lastName %>" id="lastnameID"  onChange="sendRequest();"> 
+      <div id='fullnames'>
+      <input autocomplete="fuckoffchrome" name="fullname" type="text" value="<%= user == null ? "" : user.lastName %>" id="fullnameID"  onChange="sendRequest();"> 
       	<font color="#FF0000" size="+3">&#8226;</font>  
 <%
 if(directRegister)

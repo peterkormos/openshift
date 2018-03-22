@@ -1,6 +1,6 @@
 function sendRequest()
 {
-	var url = "../RegistrationServlet?command=getSimilarLastNames&lastname=" + document.getElementById('lastnameID').value;
+	var url = "../RegistrationServlet?command=getSimilarLastNames&lastname=" + document.getElementById('fullnameID').value;
 	var req = false;
 
 	if (window.XMLHttpRequest) 
