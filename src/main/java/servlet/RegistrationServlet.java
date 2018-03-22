@@ -851,6 +851,7 @@ public class RegistrationServlet extends HttpServlet
 	if (!password.equals(ServletUtil.getRequestAttribute(request, "password2")))
 	{
 	  writeErrorResponse(response, language.getString("passwords.not.same"));
+	  return;
 	}
 
 	final User user = createUser(request, email);
@@ -859,7 +860,6 @@ public class RegistrationServlet extends HttpServlet
 	sendEmailWithModels(user, true);
 
 	writeResponse(response, getEmailWasSentResponse(language));
-
   }
 
 private StringBuffer getEmailWasSentResponse(final ResourceBundle language) {
