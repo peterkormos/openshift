@@ -117,18 +117,18 @@ String modelproducer = model == null ? "" : model.producer;
 </td>
 
 <td>
-<%=language.getString("yes")%>
- <input name='gluedToBase' type='radio' value='on' <%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%> >
+<label><%=language.getString("yes")%>
+ <input name='gluedToBase' type='radio' value='on' <%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%> ></label>
 <br>
-<%=language.getString("no")%>
- <input name='gluedToBase' type='radio' value='off' <%=(model == null || !model.gluedToBase ? "checked='checked'" : "")%> >
+<label><%=language.getString("no")%>
+ <input name='gluedToBase' type='radio' value='off' <%=(model == null || !model.gluedToBase ? "checked='checked'" : "")%> ></label>
  <font color='#FF0000' size='+3'>&#8226;</font> </td>
 </tr>
 
 	<!--	category-->
 <tr>
 <td>
-<%= language.getString("category") %>:
+<%= language.getString("category") %> :
 </td>
 
 <td>
