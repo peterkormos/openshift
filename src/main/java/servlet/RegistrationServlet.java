@@ -1543,7 +1543,8 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 
   public void inputForDeleteModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	final List<Model> models = servletDAO.getModels(getUser(request).userID);
+	User user = getUser(request);
+	final List<Model> models = servletDAO.getModels(user.userID);
 
 	if (models.isEmpty())
 	{
@@ -1551,14 +1552,7 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 	  return;
 	}
 
-	final StringBuffer buff = new StringBuffer();
-
-	buff.append("<html><body>");
-
-	buff.append(inputForSelectModel(getUser(request), "deleteModel", "delete", models));
-	buff.append("</body></html>");
-
-	writeResponse(response, buff);
+	writeResponse(response, inputForSelectModel(user, "deleteModel", "delete", models));
   }
 
   public void inputForSelectModelForModify(final HttpServletRequest request, final HttpServletResponse response) throws Exception
@@ -1611,7 +1605,7 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 	writeResponse(response, buff);
   }
 
-  public StringBuffer inputForSelectModel(final User user, final String action, final String submitLabel,
+  private StringBuffer inputForSelectModel(final User user, final String action, final String submitLabel,
       final List<Model> models) throws Exception
   {
 	final StringBuffer buff = new StringBuffer();
@@ -1629,11 +1623,13 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 
 	for (final Model model : models)
 	{
+		buff.append("<label>\n");
 	  buff.append("<input type='radio' name='modelID' value='" + model.modelID + 
 			  "' "+
 			  (models.size() == 1 ? "checked" : "")+
-			   "/>");
+			   "/>\n");
 	  buff.append(model.scale + " - " + model.producer + " - " + model.name + "<br>");
+	  buff.append("</label>\n");
 	}
 
 	buff.append("<p><input name='");

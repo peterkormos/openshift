@@ -12,12 +12,14 @@
 	for (final Model model : servlet.getServletDAO().getModels(user.userID))
 	{
 %>
+<label>
 		<input type='radio' name='modelID' value='<%=model.modelID%>'/>
 		<%=model.scale%>
 		-
 		<%=model.producer%> 
 		-
 		<%=model.name%>
+</label>
 		<br>
 <%
 	}
