@@ -1442,7 +1442,12 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 	servletDAO.saveModel(model);
 
 	if ("-".equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration")))
+	{
+		final HttpSession session = request.getSession(false);
+		String notice = servletDAO.encodeString(model.name) + " - " + model.scale + " - " + servletDAO.getCategory(model.categoryID).categoryCode;
+		session.setAttribute("notice", notice);
 		response.sendRedirect("jsp/modelForm.jsp");
+    }
 	else
 	{
 		sendEmailWithModels(user, false /*insertUserDetails*/);
@@ -1603,7 +1608,10 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 
 	for (final Model model : models)
 	{
-	  buff.append("<input type='radio' name='modelID' value='" + model.modelID + "'/>");
+	  buff.append("<input type='radio' name='modelID' value='" + model.modelID + 
+			  "' "+
+			  (models.size() == 1 ? "checked" : "")+
+			   "/>");
 	  buff.append(model.scale + " - " + model.producer + " - " + model.name + "<br>");
 	}
 
