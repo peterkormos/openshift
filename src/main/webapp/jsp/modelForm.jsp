@@ -28,28 +28,6 @@
 
 <link rel="stylesheet" href="base.css" media="screen" />
 
-<style>
-div.flash {
-	border-width: 1px;
-padding: 8px;
-padding-left: 30px;
-}
-
-div.flash.notice {
-  background: url(../icons/true.png) 8px 8px no-repeat;
-  background-color: #dfffdf;
-  border-color: #9fcf9f;
-  color: #005f00;
-}
-
-.flash.error {
-  background: url(../icons/exclamation.png) 8px 50% no-repeat;
-  background-color: #ffe3e3;
-  border-color: #d88;
-  color: #880000;
-}
-</style>
-
 <body>
 
 <%
