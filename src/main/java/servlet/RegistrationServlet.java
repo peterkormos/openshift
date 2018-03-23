@@ -34,6 +34,7 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -57,6 +58,9 @@ import datatype.Detailing;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
+import exception.MissingRequestParameterException;
+import exception.MissingServletConfigException;
+import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
@@ -168,13 +172,13 @@ public class RegistrationServlet extends HttpServlet
 	return buffer;
   }
 
-  private String getServerConfigParamter(final String parameter) throws Exception
+  private String getServerConfigParamter(final String parameter) throws MissingServletConfigException 
   {
 	final String value = servletConfig.getProperty(parameter);
 
 	if (value == null)
 	{
-	  throw new Exception("parameter: " + parameter + " not found in servletConfig");
+	  throw new MissingServletConfigException(parameter);
 	}
 
 	if (logger != null)
@@ -280,7 +284,7 @@ public class RegistrationServlet extends HttpServlet
 
 	  addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
-	  writeErrorResponse(response, "Server error: <b>" + message + "</b>");
+	  writeErrorResponse(response, "Error: <b>" + message + "</b>");
 	}
   }
 
@@ -326,10 +330,17 @@ public class RegistrationServlet extends HttpServlet
   {
 	final StringBuffer buff = new StringBuffer();
 
-	buff.append("<html><body>");
+	buff.append("<html>\n");
 
+	buff.append("<head>\n");
+	buff.append("<link href='jsp/base.css' rel='stylesheet' type='text/css'>\n");
+	buff.append("</head>\n");
+
+	buff.append("<body>\n");
+	buff.append("<div class='flash error'>\n");
 	buff.append(message);
-	buff.append("</body></html>");
+	buff.append("</div>\n");
+	buff.append("</body></html>\n");
 
 	writeResponse(response, buff);
   }
@@ -942,7 +953,7 @@ private StringBuffer getEmailWasSentResponse(final ResourceBundle language) {
 
   }
 
-  private void sendEmailWithModels(final User user, final boolean insertUserDetails) throws Exception
+  private void sendEmailWithModels(final User user, final boolean insertUserDetails) throws SQLException, MessagingException, MissingServletConfigException 
   {
 	if (user.email.trim().length() == 0 || user.email.equals("-") || user.email.indexOf("@") == -1)
 	{
@@ -1039,7 +1050,7 @@ private StringBuffer getEmailWasSentResponse(final ResourceBundle language) {
 	sendEmail(user.email, language.getString("email.subject"), message);
   }
 
-private void sendEmail(final String to, final String subject, final StringBuffer message) throws Exception {
+private void sendEmail(final String to, final String subject, final StringBuffer message) throws MessagingException, MissingServletConfigException  {
 	ServletUtil.sendEmail(getServerConfigParamter("email.smtpServer"), getServerConfigParamter("email.from"), to,
 			subject, message.toString(), Boolean.parseBoolean(getServerConfigParamter("email.debugSMTP")),
 	    getServerConfigParamter("email.password"));
@@ -1425,7 +1436,7 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 
 	final Model model = createModel(modelID, servletDAO.getModel(modelID).userID, request);
 
-	servletDAO.deleteModel(request);
+	deleteModel(request);
 	servletDAO.saveModel(model);
 
 	session.removeAttribute("modelID");
@@ -1435,11 +1446,11 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 	response.sendRedirect("jsp/main.jsp");
   }
 
-public ResourceBundle getLanguageForCurrentUser(final HttpServletRequest request) throws Exception {
+public ResourceBundle getLanguageForCurrentUser(final HttpServletRequest request) throws UserNotLoggedInException {
 	return getLanguage(getUser(request).language);
 }
 
-  public void addModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
+  public void addModel(final HttpServletRequest request, final HttpServletResponse response) throws SQLException, IOException, MessagingException, MissingServletConfigException, UserNotLoggedInException, NumberFormatException, MissingRequestParameterException 
   {
 	final User user = getUser(request);
 
@@ -1465,13 +1476,13 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 	session.setAttribute("notice", notice);
 }
 
-  private Model createModel(final int modelID, final int userID, final HttpServletRequest request) throws Exception
+  private Model createModel(final int modelID, final int userID, final HttpServletRequest request) throws NumberFormatException, MissingRequestParameterException
   {
 	return createModel(modelID, userID, request, "");
   }
 
   private Model createModel(final int modelID, final int userID, final HttpServletRequest request,
-      final String httpParameterPostTag) throws Exception
+      final String httpParameterPostTag) throws NumberFormatException, MissingRequestParameterException 
   {
 	return new Model(modelID, userID,
 	    Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryID" + httpParameterPostTag)),
@@ -1484,7 +1495,7 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 	    isCheckedIn(request, "gluedToBase" + httpParameterPostTag), getDetailing(request));
   }
 
-  boolean isCheckedIn(final HttpServletRequest request, final String parameter) throws Exception
+  boolean isCheckedIn(final HttpServletRequest request, final String parameter) 
   {
 	try
 	{
@@ -1496,7 +1507,7 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 	}
   }
 
-  private Detailing[] getDetailing(final HttpServletRequest request) throws Exception
+  private Detailing[] getDetailing(final HttpServletRequest request) 
   {
 	final Detailing[] detailing = new Detailing[Detailing.DETAILING_GROUPS.length];
 
@@ -1518,13 +1529,13 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 	return detailing;
   }
 
-  public static final User getUser(final HttpServletRequest request) throws Exception
+  public static final User getUser(final HttpServletRequest request) throws UserNotLoggedInException
   {
 	final HttpSession session = request.getSession(false);
 
 	if (session == null)
 	{
-	  throw new Exception("User is not logged in! <a href='index.html'>Please go to login page...</a>");
+	  throw new UserNotLoggedInException("User is not logged in! <a href='index.html'>Please go to login page...</a>");
 	}
 
 	return (User) session.getAttribute("userID");
@@ -1738,9 +1749,15 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 
   }
 
+  private void deleteModel(final HttpServletRequest request) throws MissingRequestParameterException, NumberFormatException, SQLException
+  {
+	  servletDAO.deleteModel(Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID")));
+  }
+
+
   public void deleteModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	servletDAO.deleteModel(request);
+	deleteModel(request);
 
 	setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
 	
@@ -1750,10 +1767,9 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 
   public void deleteAwardedModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	servletDAO.deleteAwardedModel(request);
+	servletDAO.deleteAwardedModel(Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID")));
 
 	response.sendRedirect("jsp/main.jsp");
-
   }
 
   public void inputForDeleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception
@@ -1805,7 +1821,7 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 
   public void deleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	servletDAO.deleteCategoryGroup(request);
+	servletDAO.deleteCategoryGroup(Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID")));
 
 	response.sendRedirect("jsp/main.jsp");
 
@@ -1813,7 +1829,7 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 
   public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	servletDAO.deleteCategory(request);
+	servletDAO.deleteCategory(Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID")));
 
 	response.sendRedirect("jsp/main.jsp");
 
@@ -2222,7 +2238,7 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 	printAwardedModels(request, response, presentationBuffer);
   }
 
-  public void addAwardedModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception
+  public void addAwardedModels(final HttpServletRequest request, final HttpServletResponse response) throws MissingRequestParameterException, NumberFormatException, SQLException, IOException
   {
 	final int rows = Integer.parseInt(ServletUtil.getRequestAttribute(request, "rows"));
 

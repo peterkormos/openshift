@@ -195,7 +195,7 @@ public class ServletDAO
 
   }
 
-  public void registerNewUser(final User user) throws Exception
+  public void registerNewUser(final User user) throws SQLException
   {
 	registerNewUser(user, false);
   }
@@ -320,12 +320,12 @@ public class ServletDAO
 	}
   }
 
-  public List<Category> getCategoryList(final String show) throws Exception
+  public List<Category> getCategoryList(final String show) throws SQLException
   {
 	return getCategoryList(0, show);
   }
 
-  public List<AwardedModel> getAwardedModels() throws Exception
+  public List<AwardedModel> getAwardedModels() throws SQLException
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
@@ -364,7 +364,7 @@ public class ServletDAO
 	}
   }
 
-  public List<Category> getCategoryList(final int CATEGORY_group_ID, final String show) throws Exception
+  public List<Category> getCategoryList(final int CATEGORY_group_ID, final String show) throws SQLException
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
@@ -416,7 +416,7 @@ public class ServletDAO
   }
 
   public CategoryGroup getCategoryGroup(final int categoryGroupID, final List<CategoryGroup> groups)
-      throws SQLException, Exception
+      throws SQLException
   {
 	for (final CategoryGroup group : groups)
 	{
@@ -426,11 +426,11 @@ public class ServletDAO
 	  }
 	}
 
-	throw new Exception("Unknown categoryGroupID: " + categoryGroupID);
+	throw new IllegalArgumentException("Unknown categoryGroupID: " + categoryGroupID);
 
   }
 
-  public List<CategoryGroup> getCategoryGroups() throws SQLException, Exception
+  public List<CategoryGroup> getCategoryGroups() throws SQLException
   {
 	final List<CategoryGroup> returned = new LinkedList<CategoryGroup>();
 
@@ -551,7 +551,7 @@ public class ServletDAO
 	}
   }
 
-  public void saveAwardedModel(final AwardedModel model) throws SQLException, Exception, IOException
+  public void saveAwardedModel(final AwardedModel model) throws SQLException 
   {
 	PreparedStatement queryStatement = null;
 	final ResultSet rs = null;
@@ -589,7 +589,7 @@ public class ServletDAO
 	}
   }
 
-  public void saveModel(final Model model) throws SQLException, Exception, IOException
+  public void saveModel(final Model model) throws SQLException 
   {
 	PreparedStatement queryStatement = null;
 	final ResultSet rs = null;
@@ -697,7 +697,7 @@ public class ServletDAO
 	}
   }
 
-  public void saveModelClass(int userID, ModelClass modelClass) throws Exception
+  public void saveModelClass(int userID, ModelClass modelClass) throws SQLException
   {
 	final User user = getUser(userID);
 	user.getModelClass().add(modelClass);
@@ -761,7 +761,7 @@ public class ServletDAO
 	return user;
   }
 
-  public User getUser(String email) throws Exception
+  public User getUser(String email) throws SQLException
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
@@ -782,7 +782,7 @@ public class ServletDAO
 		return getUser(rs);
 	  }
 
-	  throw new Exception("email not found in DB. email: " + email);
+	  throw new IllegalArgumentException("email not found in DB. email: " + email);
 	}
 	finally
 	{
@@ -804,7 +804,7 @@ public class ServletDAO
 	}
   }
 
-  public User getUser(final int userID) throws Exception
+  public User getUser(final int userID) throws SQLException
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
@@ -822,7 +822,7 @@ public class ServletDAO
 		return getUser(rs);
 	  }
 
-	  throw new Exception("userID not found in DB. userID: " + userID);
+	  throw new IllegalArgumentException("userID not found in DB. userID: " + userID);
 	}
 	finally
 	{
@@ -903,7 +903,7 @@ public class ServletDAO
 	}
   }
 
-  public void setSystemParameter(final String parameterName, final String parameterValue) throws Exception
+  public void setSystemParameter(final String parameterName, final String parameterValue) throws SQLException
   {
 	PreparedStatement queryStatement = null;
 
@@ -972,7 +972,7 @@ public class ServletDAO
 	return where;
   }
 
-  public List<Model> selectModels(final HttpServletRequest request) throws Exception
+  public List<Model> selectModels(final HttpServletRequest request) throws SQLException
   {
 	String where = "";
 
@@ -986,17 +986,17 @@ public class ServletDAO
 	return getModels(where);
   }
 
-  public List<Model> getModels(final int userID) throws Exception
+  public List<Model> getModels(final int userID) throws SQLException
   {
 	return getModels(userID == INVALID_USERID ? "" : "USER_ID = " + userID);
   }
 
-  public List<Model> getModelsInCategory(final int categoryID) throws Exception
+  public List<Model> getModelsInCategory(final int categoryID) throws SQLException
   {
 	return getModels("CATEGORY_ID = " + categoryID);
   }
 
-  public List<Model> getModels(final String where) throws Exception
+  public List<Model> getModels(final String where) throws SQLException
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
@@ -1041,7 +1041,7 @@ public class ServletDAO
 	}
   }
 
-  public Model getModel(final int modelID) throws Exception
+  public Model getModel(final int modelID) throws SQLException
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
@@ -1062,7 +1062,7 @@ public class ServletDAO
 	  }
 	  else
 	  {
-		throw new Exception("No model found with modelID: " + modelID);
+		throw new IllegalArgumentException("No model found with modelID: " + modelID);
 	  }
 	}
 	finally
@@ -1108,7 +1108,7 @@ public class ServletDAO
 	return detailing;
   }
 
-  public Category getCategory(final int categoryID) throws Exception
+  public Category getCategory(final int categoryID) throws SQLException
   {
 	for (final Category category : getCategoryList(null))
 	{
@@ -1118,10 +1118,10 @@ public class ServletDAO
 	  }
 	}
 
-	throw new Exception("Unknown categoryID: " + categoryID);
+	throw new IllegalArgumentException("Unknown categoryID: " + categoryID);
   }
 
-  public Category getCategory(final String categoryCode) throws Exception
+  public Category getCategory(final String categoryCode) throws SQLException
   {
 	for (final Category category : getCategoryList(null))
 	{
@@ -1131,7 +1131,7 @@ public class ServletDAO
 	  }
 	}
 
-	throw new Exception("Unknown categoryCode: " + categoryCode);
+	throw new IllegalArgumentException("Unknown categoryCode: " + categoryCode);
   }
 
   public void deleteEntries(final String table) throws SQLException
@@ -1177,7 +1177,7 @@ public class ServletDAO
 	}
   }
 
-  public List<String[]> getStatistics(final String show) throws Exception
+  public List<String[]> getStatistics(final String show) throws SQLException
   {
 	final List<String[]> returned = new LinkedList<String[]>();
 
@@ -1305,33 +1305,18 @@ public class ServletDAO
 	return returned;
   }
 
-  public void deleteModel(final HttpServletRequest request) throws Exception
-  {
-	deleteModel(Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID")));
-  }
-
-  public void deleteModel(final int id) throws Exception
+  public void deleteModel(final int id) throws SQLException
   {
 	deleteEntry("MAK_MODEL", "model_id", id);
 	deleteEntry("MAK_PICTURES", "model_id", id);
   }
 
-  public void deleteAwardedModel(final HttpServletRequest request) throws Exception
-  {
-	deleteAwardedModel(Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID")));
-  }
-
-  public void deleteAwardedModel(final int id) throws Exception
+  public void deleteAwardedModel(final int id) throws SQLException
   {
 	deleteEntry("MAK_AWARDEDMODELS", "model_id", id);
   }
 
-  public void deleteCategory(final HttpServletRequest request) throws Exception
-  {
-	deleteCategory(Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID")));
-  }
-
-  public void deleteCategory(final int id) throws Exception
+  public void deleteCategory(final int id) throws SQLException
   {
 	for (final Model model : getModelsInCategory(id))
 	{
@@ -1341,12 +1326,7 @@ public class ServletDAO
 	deleteEntry("MAK_CATEGORY", "category_id", id);
   }
 
-  public void deleteCategoryGroup(final HttpServletRequest request) throws Exception
-  {
-	deleteCategoryGroup(Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID")));
-  }
-
-  public void deleteCategoryGroup(final int id) throws Exception
+  public void deleteCategoryGroup(final int id) throws SQLException
   {
 	for (final Category category : getCategoryList(id, null // show
 	))
@@ -1369,7 +1349,7 @@ public class ServletDAO
 	registerNewUser(newUser, true);
   }
 
-  public void newUserIDs() throws Exception
+  public void newUserIDs() throws SQLException
   {
 	final List<User> users = getUsers();
 
@@ -1382,7 +1362,7 @@ public class ServletDAO
 	}
   }
 
-  public void newUserIDsFromOne() throws Exception
+  public void newUserIDsFromOne() throws SQLException
   {
 	final List<User> users = getUsers();
 
@@ -1396,7 +1376,7 @@ public class ServletDAO
 	}
   }
 
-  public void changeUserIDForUser(final String email, final int oldUserID, final int newUserID) throws Exception
+  public void changeUserIDForUser(final String email, final int oldUserID, final int newUserID) throws SQLException
   {
 	logger.trace("ServletDAO.changeUserIDForUser(): email: " + email + " oldUserID: " + oldUserID + " newUserID: " + newUserID);
 
@@ -1430,7 +1410,7 @@ public class ServletDAO
 	}
   }
 
-  public void changeUserIDForModel(final int oldUserID, final int newUserID) throws Exception
+  public void changeUserIDForModel(final int oldUserID, final int newUserID) throws SQLException
   {
 	logger.trace("ServletDAO.changeUserIDForModel(): oldUserID: " + oldUserID + " newUserID: " + newUserID);
 
@@ -1461,7 +1441,7 @@ public class ServletDAO
 	}
   }
 
-  public void saveCategoryGroup(final CategoryGroup categoryGroup) throws Exception
+  public void saveCategoryGroup(final CategoryGroup categoryGroup) throws SQLException
   {
 	PreparedStatement queryStatement = null;
 	final ResultSet rs = null;
@@ -1569,7 +1549,7 @@ public class ServletDAO
 	}
   }
 
-  public List<User> getSimilarLastNames(final String lastname) throws Exception
+  public List<User> getSimilarLastNames(final String lastname) throws SQLException
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
@@ -1607,7 +1587,7 @@ public class ServletDAO
 	return returned;
   }
 
-  public void saveImage(int modelID, InputStream stream) throws Exception, IOException, SQLException
+  public void saveImage(int modelID, InputStream stream) throws SQLException, IOException, SQLException
   {
 	PreparedStatement ps = null;
 	try
@@ -1651,7 +1631,7 @@ public class ServletDAO
 	return image;
   }
 
-  public Map<Integer, byte[]> getPhotos() throws Exception
+  public Map<Integer, byte[]> getPhotos() throws SQLException
   {
 	final Map<Integer, byte[]> photos = new HashMap<Integer, byte[]>();
 
@@ -1671,7 +1651,7 @@ public class ServletDAO
 	return photos;
   }
 
-  public String simpleQuery(final String field, String table) throws Exception
+  public String simpleQuery(final String field, String table) throws SQLException
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
