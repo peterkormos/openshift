@@ -62,7 +62,7 @@ a:active {
 }
 
 .flash {
-	border: 1px solid DodgerBlue;
+	border: 1px solid;
 	padding: 8px;
 	padding-left: 30px;
 }
