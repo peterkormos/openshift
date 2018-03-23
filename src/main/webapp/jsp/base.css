@@ -61,13 +61,13 @@ a:active {
 	text-decoration: underline;
 }
 
-div.flash {
+.flash {
 	border: 1px solid DodgerBlue;
 	padding: 8px;
 	padding-left: 30px;
 }
 
-div.flash.notice {
+.flash.notice {
 	background: url(../icons/true.png) 8px 8px no-repeat;
 	background-color: #dfffdf;
 	border-color: #9fcf9f;

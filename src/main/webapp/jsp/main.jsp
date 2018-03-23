@@ -22,10 +22,10 @@
 %>
 <html>
 <head>
+<link href="base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 
-<link href="base.css" rel="stylesheet" type="text/css"/>
 <div class="header"></div>
 
 <p>
@@ -55,6 +55,17 @@ function checkSubmit()
 //-->
 </script>
 
+<%
+String notice = (String) session.getAttribute("notice");
+if (notice != null)
+{
+%>
+	<div class="flash notice"><%= notice %></div>
+<%
+}
+session.removeAttribute("notice");
+%>
+<p></p>
 
 <form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">
   <input type="hidden" id="command"  name="command" value="">

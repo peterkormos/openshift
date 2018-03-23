@@ -1089,7 +1089,7 @@ private void sendEmail(final String to, final String subject, final StringBuffer
   {
 	final StringBuffer buff = new StringBuffer();
 
-	getCategoryTable(buff, servletDAO.getCategoryList(getShowFromReqest(request)), getLanguage(getUser(request).language));
+	getCategoryTable(buff, servletDAO.getCategoryList(getShowFromReqest(request)), getLanguageForCurrentUser(request));
 
 	writeResponse(response, buff);
   }
@@ -1293,7 +1293,7 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 
   public void inputForAddCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	final ResourceBundle language = getLanguage(getUser(request).language);
+	final ResourceBundle language = getLanguageForCurrentUser(request);
 
 	final StringBuffer buff = new StringBuffer();
 
@@ -1430,8 +1430,14 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 
 	session.removeAttribute("modelID");
 	
+	setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
+	
 	response.sendRedirect("jsp/main.jsp");
   }
+
+public ResourceBundle getLanguageForCurrentUser(final HttpServletRequest request) throws Exception {
+	return getLanguage(getUser(request).language);
+}
 
   public void addModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
@@ -1445,7 +1451,7 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 	{
 		final HttpSession session = request.getSession(false);
 		String notice = servletDAO.encodeString(model.name) + " - " + model.scale + " - " + servletDAO.getCategory(model.categoryID).categoryCode;
-		session.setAttribute("notice", notice);
+		setNoticeInSession(session, notice);
 		response.sendRedirect("jsp/modelForm.jsp");
     }
 	else
@@ -1454,6 +1460,10 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 		response.sendRedirect("jsp/main.jsp");
 	}
   }
+
+private void setNoticeInSession(final HttpSession session, String notice) {
+	session.setAttribute("notice", notice);
+}
 
   private Model createModel(final int modelID, final int userID, final HttpServletRequest request) throws Exception
   {
@@ -1732,6 +1742,8 @@ private void sendEmail(final String to, final String subject, final StringBuffer
   {
 	servletDAO.deleteModel(request);
 
+	setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
+	
 	response.sendRedirect("jsp/main.jsp");
 
   }
@@ -1747,7 +1759,7 @@ private void sendEmail(final String to, final String subject, final StringBuffer
   public void inputForDeleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
 	final StringBuffer buff = new StringBuffer();
-	final ResourceBundle language = getLanguage(getUser(request).language);
+	final ResourceBundle language = getLanguageForCurrentUser(request);
 
 	buff.append("<html><body>");
 
@@ -1765,7 +1777,7 @@ private void sendEmail(final String to, final String subject, final StringBuffer
   public void inputForDeleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
 	final StringBuffer buff = new StringBuffer();
-	final ResourceBundle language = getLanguage(getUser(request).language);
+	final ResourceBundle language = getLanguageForCurrentUser(request);
 
 	buff.append("<html><body>");
 
@@ -1809,7 +1821,7 @@ private void sendEmail(final String to, final String subject, final StringBuffer
 
   public void printAllModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception
   {
-	final ResourceBundle language = getLanguage(getUser(request).language);
+	final ResourceBundle language = getLanguageForCurrentUser(request);
 
 	// boolean printPreRegisteredModels =
 	// Boolean.parseBoolean(getRequestAttribute(request,
