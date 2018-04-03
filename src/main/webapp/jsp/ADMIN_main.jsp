@@ -52,8 +52,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 	<input type="hidden" name="withDetailing" value="false"> <a
 		href="#"
 		onClick="document.getElementById('input').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa</a> - <a href="#"
-		onClick="document.getElementById('command').value='statistics';this.parentNode.submit();"><strong>Statisztika
+		benevezett makett list&aacute;z&aacute;sa</a> - <a href="../RegistrationServlet/statistics"><strong>Statisztika
 			k&eacute;sz&iacute;t&eacute;se</strong></a> - <a href="customQuery.jsp">Egyedi
 		lek&eacute;rdez&eacute;sek</a>
 </form>

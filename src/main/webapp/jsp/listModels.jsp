@@ -1,3 +1,6 @@
+<%@page import="datatype.Detailing.DetailingCriteria"%>
+<%@page import="datatype.Detailing.DetailingCriteria"%>
+<%@page import="datatype.Detailing.DetailingGroup"%>
 <%@page import="servlet.RegistrationServlet.Command"%>
 <%@page import="java.util.*"%>
 
@@ -241,10 +244,10 @@
 					<td>&nbsp;</td>
 
 					<%
-					  for (int i = 0; i < Detailing.DETAILING_GROUPS.length; i++)
+					for (DetailingGroup group : DetailingGroup.values())
 								{
 					%>
-					<td><%=language.getString("detailing." + Detailing.DETAILING_GROUPS[i])%>
+					<td><%=language.getString("detailing." + group.name())%>
 					</td>
 					<%
 					  }
@@ -252,20 +255,22 @@
 				</tr>
 
 				<%
-				  for (int i = 0; i < Detailing.DETAILING_CRITERIAS.length; i++)
+				for (DetailingCriteria criteria : DetailingCriteria.values())
 							{
+						if(!criteria.isVisible())
+							continue;
 				%>
 				<tr>
-					<td><%=language.getString("detailing." + Detailing.DETAILING_CRITERIAS[i])%>
+					<td><%=language.getString("detailing." + criteria.name())%>
 					</td>
 
 					<%
-					  for (int j = 0; j < Detailing.DETAILING_GROUPS.length; j++)
+					for (DetailingGroup group : DetailingGroup.values())
 								  {
 					%>
 
 					<td><input type='checkbox'
-						<%=(model.detailing[j].criterias.get(i) ? "checked" : "")%>></td>
+						<%=(model.getDetailingGroup(group).getCriteria(criteria) ? "checked" : "")%>></td>
 					<%
 					  }
 					%>

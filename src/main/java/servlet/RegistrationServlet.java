@@ -55,6 +55,8 @@ import datatype.AwardedModel;
 import datatype.Category;
 import datatype.CategoryGroup;
 import datatype.Detailing;
+import datatype.Detailing.DetailingCriteria;
+import datatype.Detailing.DetailingGroup;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
@@ -65,7 +67,7 @@ import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
-  public String VERSION = "2018.03.22.";
+  public String VERSION = "2018.04.02.";
   public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
   Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key: HU, EN, ...
@@ -1507,23 +1509,18 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 	}
   }
 
-  private Detailing[] getDetailing(final HttpServletRequest request) 
+  private Map<DetailingGroup, Detailing> getDetailing(final HttpServletRequest request) 
   {
-	final Detailing[] detailing = new Detailing[Detailing.DETAILING_GROUPS.length];
+		final Map<DetailingGroup, Detailing> detailing = new HashMap<DetailingGroup, Detailing>();
 
-	for (int i = 0; i < detailing.length; i++)
-	{
-	  final String group = Detailing.DETAILING_GROUPS[i];
+		for (DetailingGroup group : DetailingGroup.values())
+		{
+		  final Map<DetailingCriteria, Boolean> criterias = new HashMap<DetailingCriteria, Boolean>();
 
-	  final List<Boolean> criterias = new LinkedList<Boolean>();
-	  criterias.add(isCheckedIn(request, "detailing." + group + ".externalSurface"));
-	  criterias.add(isCheckedIn(request, "detailing." + group + ".cockpit"));
-	  criterias.add(isCheckedIn(request, "detailing." + group + ".engine"));
-	  criterias.add(isCheckedIn(request, "detailing." + group + ".undercarriage"));
-	  criterias.add(isCheckedIn(request, "detailing." + group + ".gearBay"));
-	  criterias.add(isCheckedIn(request, "detailing." + group + ".armament"));
-	  criterias.add(isCheckedIn(request, "detailing." + group + ".conversion"));
-	  detailing[i] = new Detailing(group, criterias);
+		  for (DetailingCriteria criteria : DetailingCriteria.values()) {
+		  criterias.put(criteria, isCheckedIn(request, "detailing." + group.name() + "."+criteria.name()));
+	  }
+	  detailing.put(group, new Detailing(group, criterias));
 	}
 
 	return detailing;
@@ -2023,17 +2020,12 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 
 		  );
 
-		  final String[] detailingGroups = new String[] { "SCRATCH", "PE", "RESIN", "DOC" };
-
-		  final String detailingCriterias[] = new String[] { "externalSurface", "cockpit", "engine", "undercarriage", "gearBay",
-		      "armament", "conversion" };
-
-		  for (int i = 0; i < detailingGroups.length; i++)
+		  for (DetailingGroup group : DetailingGroup.values())
 		  {
-			for (int j = 0; j < detailingCriterias.length; j++)
+			for (DetailingCriteria criteria : DetailingCriteria.values())
 			{
-			  print = print.replaceAll("__" + detailingGroups[i] + "_" + detailingCriterias[j] + "__",
-			      model.detailing[i].criterias.get(j) ? "X"
+			  print = print.replaceAll("__" + group.getTemplateID() + "_" + criteria.getTemplateID() + "__",
+			      model.getDetailingGroup(group).getCriteria(criteria) ? "X"
 
 			          : "&nbsp");
 			}
@@ -2142,7 +2134,7 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 
 	final StringBuffer buff = new StringBuffer();
 
-	buff.append("<table border=1>");
+	buff.append("<table style='border-collapse: collapse' border='1'>");
 
 	String show = ServletUtil.getOptionalRequestAttribute(request, "show");
 	if ("-".equals(show))
@@ -2154,10 +2146,18 @@ private void setNoticeInSession(final HttpSession session, String notice) {
 		show = servletDAO.getShows().get(0);
 	  }
 	}
+	boolean highlight = false;
+
 
 	for (final String[] stat : servletDAO.getStatistics(show))
 	{
-	  buff.append("<tr><td>");
+		if(highlight)
+			buff.append("  <tr bgcolor='eaeaea' >\n");
+		else
+			buff.append("  <tr>\n");
+		highlight=!highlight;
+		
+	  buff.append("<td>");
 	  buff.append(stat[0]);
 	  buff.append("</td><td align='center'>");
 	  buff.append(stat[1]);

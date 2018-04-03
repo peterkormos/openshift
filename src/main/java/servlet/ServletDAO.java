@@ -27,6 +27,8 @@ import datatype.AwardedModel;
 import datatype.Category;
 import datatype.CategoryGroup;
 import datatype.Detailing;
+import datatype.Detailing.DetailingCriteria;
+import datatype.Detailing.DetailingGroup;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
@@ -622,11 +624,11 @@ public class ServletDAO
 	  queryStatement.setInt(10, model.gluedToBase ? 1 : 0);
 
 	  int statementCounter = 11;
-	  for (int i = 0; i < Detailing.DETAILING_GROUPS.length; i++)
+	  for (DetailingGroup group : DetailingGroup.values())
 	  {
-		for (int j = 0; j < model.detailing[i].criterias.size(); j++)
+		  for (DetailingCriteria criteria : DetailingCriteria.values())
 		{
-		  queryStatement.setInt(statementCounter++, model.detailing[i].criterias.get(j) ? 1 : 0);
+		  queryStatement.setInt(statementCounter++, model.getDetailingGroup(group).getCriteria(criteria) ? 1 : 0);
 		}
 	  }
 
@@ -1085,24 +1087,23 @@ public class ServletDAO
 	}
   }
 
-  private Detailing[] getDetailing(final ResultSet rs) throws SQLException
+  private Map<DetailingGroup, Detailing> getDetailing(final ResultSet rs) throws SQLException
   {
-	final Detailing[] detailing = new Detailing[Detailing.DETAILING_GROUPS.length];
+	final Map<DetailingGroup, Detailing> detailing = new HashMap<DetailingGroup, Detailing>();
 
-	for (int i = 0; i < detailing.length; i++)
+	for (DetailingGroup group : DetailingGroup.values())
 	{
-	  final String group = Detailing.DETAILING_GROUPS[i];
+	  final Map<DetailingCriteria, Boolean> criterias = new HashMap<DetailingCriteria, Boolean>();
 
-	  final List<Boolean> criterias = new LinkedList<Boolean>();
-	  criterias.add(rs.getInt(group + "_externalSurface") == 1);
-
-	  criterias.add(rs.getInt(group + "_cockpit") == 1);
-	  criterias.add(rs.getInt(group + "_engine") == 1);
-	  criterias.add(rs.getInt(group + "_undercarriage") == 1);
-	  criterias.add(rs.getInt(group + "_gearBay") == 1);
-	  criterias.add(rs.getInt(group + "_armament") == 1);
-	  criterias.add(rs.getInt(group + "_conversion") == 1);
-	  detailing[i] = new Detailing(group, criterias);
+	  criterias.put(DetailingCriteria.externalSurface, rs.getInt(group + "_externalSurface") == 1);
+	  criterias.put(DetailingCriteria.cockpit,rs.getInt(group + "_cockpit") == 1);
+	  criterias.put(DetailingCriteria.engine,rs.getInt(group + "_engine") == 1);
+	  criterias.put(DetailingCriteria.undercarriage,rs.getInt(group + "_undercarriage") == 1);
+	  criterias.put(DetailingCriteria.gearBay,rs.getInt(group + "_gearBay") == 1);
+	  criterias.put(DetailingCriteria.armament,rs.getInt(group + "_armament") == 1);
+	  criterias.put(DetailingCriteria.conversion,rs.getInt(group + "_conversion") == 1);
+	  
+	  detailing.put(group, new Detailing(group, criterias));
 	}
 
 	return detailing;
@@ -1192,14 +1193,14 @@ public class ServletDAO
 	  returned.add(new String[] { "<b>Verseny</b>", show });
 	  returned.add(new String[] { "Kateg&oacute;ri&aacute;k sz&aacute;ma: ", String.valueOf(categories.size()) });
 
-	  returned.add(new String[] { "|", "" });
+	  returned.add(new String[] { "&nbsp", "" });
 	  final List<User> users = getUsers();
 	  final Map<String, HashSet<Integer>> activeModelers = new HashMap<String, HashSet<Integer>>();
 
 	  int allModels = 0;
 
 	  returned.add(new String[] { "Makettek sz&aacute;ma kateg&oacute;ri&aacute;ban: ", "" });
-	  returned.add(new String[] { "|", "" });
+	  returned.add(new String[] { "&nbsp", "" });
 
 	  for (final Category category : categories)
 	  {
@@ -1236,13 +1237,13 @@ public class ServletDAO
 		}
 	  }
 
-	  returned.add(new String[] { "|", "" });
+	  returned.add(new String[] { "&nbsp", "" });
 
 	  // benevezett makettek szama
 	  returned.add(new String[] { "Benevezett makettek sz&aacute;ma: ", String.valueOf(allModels) });
 	  returned.add(new String[] { "Felt&ouml;lt&ouml;tt k&eacute;pek sz&aacute;ma: ", simpleQuery("count(*)", "MAK_PICTURES") });
 
-	  returned.add(new String[] { "|", "" });
+	  returned.add(new String[] { "&nbsp", "" });
 
 	  // ossz regisztralt felhasznalo
 	  int modelers = 0;

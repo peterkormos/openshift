@@ -1,3 +1,5 @@
+<%@page import="datatype.Detailing.DetailingCriteria"%>
+<%@page import="datatype.Detailing.DetailingGroup"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 
@@ -222,30 +224,32 @@ String modelidentification = model == null ? "" : model.identification;
 <tr>
 <td>&nbsp;</td>
 <%
-	for (int i = 0; i < Detailing.DETAILING_GROUPS.length; i++)
+for (DetailingGroup group : DetailingGroup.values())
 	{
 %>
 <td>
-	  <%=language.getString("detailing." + Detailing.DETAILING_GROUPS[i])%>
+	  <%=language.getString("detailing." + group.name())%>
 </td>
 <%
 	}
 %>
 </tr>
 <%
-	for (int i = 0; i < Detailing.DETAILING_CRITERIAS.length; i++)
+for (DetailingCriteria criteria : DetailingCriteria.values())
 	{
+		if(!criteria.isVisible())
+			continue;
 %>
 <tr>
 <td>
-	  <%=language.getString("detailing." + Detailing.DETAILING_CRITERIAS[i])%>
+	  <%=language.getString("detailing." + criteria.name())%>
 </td>
 <%
-	  for (int j = 0; j < Detailing.DETAILING_GROUPS.length; j++)
+for (DetailingGroup group : DetailingGroup.values())
 	  {
 %>
-	<td><input name='<%= "detailing." + Detailing.DETAILING_GROUPS[j] + "." + Detailing.DETAILING_CRITERIAS[i] %>' 
-	type='checkbox' value='on' <%= (model == null || !model.detailing[j].criterias.get(i) ? "" : "checked='checked'")%> ></td>
+	<td><input name='<%= "detailing." + group.name() + "." + criteria.name() %>' 
+	type='checkbox' value='on' <%= (model == null || !model.getDetailingGroup(group).getCriteria(criteria) ? "" : "checked='checked'")%> ></td>
 <%	
 	  }
 %>

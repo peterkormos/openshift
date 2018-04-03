@@ -1,6 +1,10 @@
 package datatype;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import datatype.Detailing.DetailingGroup;
 
 public class Model implements Serializable
 {
@@ -18,7 +22,7 @@ public class Model implements Serializable
   public String markings;
   public boolean gluedToBase;
 
-  public Detailing[] detailing;
+  public Map<DetailingGroup, Detailing> detailing;
 
   public String award;
 
@@ -127,18 +131,18 @@ public class Model implements Serializable
 	this.gluedToBase = gluedToBase;
   }
 
-  public Detailing[] getDetailing()
+  public Map<DetailingGroup, Detailing> getDetailings()
   {
 	return detailing;
   }
 
-  public void setDetailing(Detailing[] detailing)
+  public void setDetailing(Map<DetailingGroup, Detailing> detailing)
   {
 	this.detailing = detailing;
   }
 
   public Model(int modelID, int userID, int categoryID, String scale, String name, String producer, String comment,
-	  String identification, String markings, boolean gluedToBase, Detailing[] detailing)
+	  String identification, String markings, boolean gluedToBase, Map<DetailingGroup, Detailing> detailing)
   {
 	this.modelID = modelID;
 	this.userID = userID;
@@ -163,13 +167,12 @@ public class Model implements Serializable
 
 	    " identification: " + identification + " markings: " + markings + " gluedToBase: " + gluedToBase +
 
-	    " detailing: ";
-
-	for (int i = 0; i < detailing.length; i++)
-	{
-	  returned += "[" + detailing[i] + "] ";
-	}
+	    " detailing: " + detailing;
 
 	return returned;
   }
+
+public Detailing getDetailingGroup(DetailingGroup group) {
+	return detailing.get(group);
+}
 }
