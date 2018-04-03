@@ -1,4 +1,4 @@
-<input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'>
+<input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'  maxlength="100" placeholder="Max. 100 char.">
 
 <datalist id="modelproducer">
     <option></option>
