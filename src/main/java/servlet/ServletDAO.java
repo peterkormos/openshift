@@ -155,7 +155,7 @@ public class ServletDAO
 	value = value.replaceAll("\"", "'");
 
 	//	value = new String(value.getBytes("ISO-8859-1"), "UTF-8");
-	final StringBuffer buff = new StringBuffer();
+	final StringBuilder buff = new StringBuilder();
 
 	char ch;
 	for (int i = 0; i < value.length(); i++)
@@ -1481,7 +1481,7 @@ public class ServletDAO
 	}
   }
 
-  public StringBuffer execute(final String sql) throws SQLException
+  public StringBuilder execute(final String sql) throws SQLException
   {
 	Statement queryStatement = null;
 	ResultSet rs = null;
@@ -1494,7 +1494,7 @@ public class ServletDAO
 		queryStatement = getDBConnection().createStatement();
 		rs = queryStatement.executeQuery(sql);
 
-		final StringBuffer buff = new StringBuffer();
+		final StringBuilder buff = new StringBuilder();
 		buff.append("<table border='1'>\n");
 		final ResultSetMetaData rsm = rs.getMetaData();
 		buff.append("  <tr>\n");
