@@ -16,6 +16,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -55,6 +56,7 @@ import datatype.AwardedModel;
 import datatype.Category;
 import datatype.CategoryGroup;
 import datatype.Detailing;
+import datatype.EmailParameter;
 import datatype.Detailing.DetailingCriteria;
 import datatype.Detailing.DetailingGroup;
 import datatype.Model;
@@ -67,7 +69,7 @@ import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet
 {
-  public String VERSION = "2018.04.02.";
+  public String VERSION = "2018.04.22.";
   public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
   Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key: HU, EN, ...
@@ -965,94 +967,79 @@ private StringBuffer getEmailWasSentResponse(final ResourceBundle language) {
 	final StringBuffer message = new StringBuffer();
 	final ResourceBundle language = getLanguage(user.language);
 
-	message.append("<html><body>");
-
-	String paramNames[] = new String[] { language.getString("last.name"), 
-//			language.getString("first.name"),
-	    language.getString("year.of.birth"), language.getString("city"), language.getString("country") };
-
-	String paramValues[] = new String[] { user.lastName, 
-//			user.firstName, 
-			String.valueOf(user.yearOfBirth), user.city, user.country
-
-	};
-
-	for (int i = 0; i < paramValues.length; i++)
-	{
-	  message.append("<p>");
-	  message.append("<b>");
-	  message.append(paramNames[i]);
-	  message.append(":</b> ");
-	  message.append(paramValues[i]);
-	  message.append("<p>");
-	}
-
-	if (insertUserDetails)
-	{
-	  paramNames = new String[] { language.getString("email"),
-
-	      language.getString("language"), language.getString("address"), language.getString("telephone") };
-
-	  paramValues = new String[] { user.email, user.language, user.address, user.telephone
-
-	  };
-
-	  for (int i = 0; i < paramValues.length; i++)
-	  {
-		message.append("<p>");
-		message.append("<b>");
-		message.append(paramNames[i]);
-		message.append(":</b> ");
-		message.append(paramValues[i]);
-		message.append("<p>");
-	  }
-
-	}
+	message.append("<html><body>\n\r");
 
 	final List<Model> models = servletDAO.getModels(user.userID);
 
 	if (!models.isEmpty())
 	{
-	  message.append("<hr>");
-	  message.append("<p>");
 	  message.append(language.getString("email.body1"));
-	  message.append("<p>");
+	  message.append("\n\r<p>");
 	  message.append(language.getString("email.body2"));
-	  message.append("<p>");
+	  message.append("\n\r<p>");
 	  message.append(language.getString("email.body3"));
-	  message.append("<p>");
-	  message.append("<hr>");
-
-	  for (final Model model : models)
-	  {
-		message.append("<p>");
-		paramNames = new String[] { language.getString("modelID"), language.getString("models.name"), language.getString("scale"),
-		    language.getString("models.identification"), language.getString("models.markings"),
-		    language.getString("models.producer"), language.getString("show"), language.getString("category.code"),
-		    language.getString("category.description") };
-
-		final Category category = servletDAO.getCategory(model.categoryID);
-
-		paramValues = new String[] { String.valueOf(model.modelID), model.name, model.scale, model.identification, model.markings,
-		    model.producer, category.group.show, category.categoryCode, category.categoryDescription };
-
-		for (int i = 0; i < paramValues.length; i++)
-		{
-		  message.append("<b>");
-		  message.append(paramNames[i]);
-		  message.append(":</b> ");
-		  message.append(paramValues[i]);
-		  message.append("<br>");
-		}
-	  }
+	  message.append("\n\r<p>");
+	  message.append("\n\r<hr>");
+	}
+	
+	List<EmailParameter> modelerParameters = Arrays.asList(//
+			EmailParameter.create(language.getString("userID"), String.valueOf(user.getUserID())), //
+			EmailParameter.create(language.getString("last.name"), user.lastName), //
+			EmailParameter.create(language.getString("year.of.birth"), String.valueOf(user.yearOfBirth)),//
+			EmailParameter.create(language.getString("city"), user.city),//
+			EmailParameter.create(language.getString("country"),user.country)//
+			);
+	if (insertUserDetails)
+	{
+		modelerParameters.add(EmailParameter.create(language.getString("email"), user.email));
+		modelerParameters.add(EmailParameter.create(language.getString("language"), user.language));
+		modelerParameters.add(EmailParameter.create(language.getString("address"), user.address));
+		modelerParameters.add(EmailParameter.create(language.getString("telephone"),user.telephone));
 	}
 
-	message.append("</body></html>");
+	addEmailParameters(message, modelerParameters);
+
+	message.append("<p>\n\r");
+
+	for (final Model model : models)
+	  {
+		
+		message.append("\n\r<hr>");
+		final Category category = servletDAO.getCategory(model.categoryID);
+		List<EmailParameter> modelParameters = Arrays.asList(//
+				EmailParameter.create(language.getString("show"), category.group.show), //
+				EmailParameter.create(language.getString("modelID"), String.valueOf(model.modelID)), //
+				EmailParameter.create(language.getString("models.name"), model.name), //
+				EmailParameter.create(language.getString("scale"),model.scale), //
+				EmailParameter.create(language.getString("models.producer"), model.producer), //
+				EmailParameter.create(language.getString("category.code"),category.categoryCode), //
+				EmailParameter.create(language.getString("category.description"),category.categoryDescription), //
+				EmailParameter.create(language.getString("models.identification"), model.identification), //
+				EmailParameter.create(language.getString("models.markings"),model.markings) //
+				);
+
+		addEmailParameters(message, modelParameters);
+	  }
+
+	message.append("\n\r</body></html>");
 
 	sendEmail(user.email, language.getString("email.subject"), message);
   }
 
+public void addEmailParameters(final StringBuffer message, List<EmailParameter> modelerParameters) {
+	for (EmailParameter parameter : modelerParameters)
+	{
+	  message.append("<b>");
+	  message.append(parameter.getName());
+	  message.append(":</b> ");
+	  message.append(parameter.getValue());
+	  message.append("\n\r<br>\n\r");
+//	  message.append("<p>\n\r");
+	}
+}
+
 private void sendEmail(final String to, final String subject, final StringBuffer message) throws MessagingException, MissingServletConfigException  {
+	logger.debug(message);
 	ServletUtil.sendEmail(getServerConfigParamter("email.smtpServer"), getServerConfigParamter("email.from"), to,
 			subject, message.toString(), Boolean.parseBoolean(getServerConfigParamter("email.debugSMTP")),
 	    getServerConfigParamter("email.password"));
