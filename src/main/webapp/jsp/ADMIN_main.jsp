@@ -282,5 +282,8 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 	<p>update MAK_USERS set EMAIL='admin' where USER_NAME='admin'
 	<p>alter table MAK_USERS drop column USER_NAME
 </form>
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet/sendEmails" method="post">
+	sendEmails: <input name="message" type="text">
+</form>
 </body>
 </html>
