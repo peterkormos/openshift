@@ -68,7 +68,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2018.04.22.";
+	public String VERSION = "2018.04.19.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:

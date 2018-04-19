@@ -963,7 +963,7 @@ public class ServletDAO
 		}
 		else
 		{
-		  where += sQLfield + " = '" + ServletUtil.getRequestAttribute(request, httpParameter) + "'";
+		  where += sQLfield + " = " + ServletUtil.getRequestAttribute(request, httpParameter);
 		}
 	  }
 	}
