@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -927,10 +928,10 @@ public class RegistrationServlet extends HttpServlet {
 		if (to.trim().length() == 0 || to.equals("-") || to.indexOf("@") == -1) {
 			return;
 		}
-
-		ServletUtil.sendEmail(getServerConfigParamter("email.smtpServer"), getServerConfigParamter("email.from"), to,
-				subject, message.toString(), Boolean.parseBoolean(getServerConfigParamter("email.debugSMTP")),
-				getServerConfigParamter("email.password"));
+		if (!isOnSiteUse())
+			ServletUtil.sendEmail(getServerConfigParamter("email.smtpServer"), getServerConfigParamter("email.from"),
+					to, subject, message.toString(), Boolean.parseBoolean(getServerConfigParamter("email.debugSMTP")),
+					getServerConfigParamter("email.password"));
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1280,7 +1281,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		if (preRegistrationAllowed || onSiteUse) {
+		if (preRegistrationAllowed || isOnSiteUse()) {
 			getModelForm(request, response, "addModel", "save.and.add.new.model", null);
 		} else {
 			response.sendRedirect("jsp/main.jsp");
@@ -1412,7 +1413,7 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 
-		if (preRegistrationAllowed || onSiteUse) {
+		if (preRegistrationAllowed || isOnSiteUse()) {
 			writeResponse(response, inputForSelectModel(user, "inputForModifyModel", "modify", models));
 		} else {
 			response.sendRedirect("jsp/main.jsp");
@@ -1904,7 +1905,7 @@ public class RegistrationServlet extends HttpServlet {
 			session.invalidate();
 		}
 
-		if (onSiteUse) {
+		if (isOnSiteUse()) {
 			response.sendRedirect("helyi.html");
 		} else {
 			response.sendRedirect("index.html");
@@ -2331,35 +2332,35 @@ public class RegistrationServlet extends HttpServlet {
 
 		String message = ServletUtil.getRequestAttribute(request, "message");
 		int emailsSent = 0;
-		// for (User user : servletDAO.getUsers())
-		User user = servletDAO.getUser(71);
-		if (!servletDAO.getModels(user.getUserID()).isEmpty())
-			try {
+		for (User user : servletDAO.getUsers())
+			if (!servletDAO.getModels(user.getUserID()).isEmpty())
+				try {
+					final StringBuilder messageBody = new StringBuilder();
+					final ResourceBundle language = getLanguage(user.language);
 
-				final StringBuilder messageBody = new StringBuilder();
-				final ResourceBundle language = getLanguage(user.language);
+					messageBody.append("<html><body>\n\r");
 
-				messageBody.append("<html><body>\n\r");
+					messageBody.append(message);
+					messageBody.append("\n\r<p>");
+					messageBody.append("\n\r<hr>");
 
-				messageBody.append(message);
-				messageBody.append("\n\r<p>");
-				messageBody.append("\n\r<hr>");
+					List<EmailParameter> modelerParameters = Arrays.asList(//
+							EmailParameter.create(language.getString("userID"), String.valueOf(user.getUserID())), //
+							EmailParameter.create(language.getString("last.name"), user.lastName) //
+					);
 
-				List<EmailParameter> modelerParameters = Arrays.asList(//
-						EmailParameter.create(language.getString("userID"), String.valueOf(user.getUserID())), //
-						EmailParameter.create(language.getString("last.name"), user.lastName) //
-				);
+					addEmailParameters(messageBody, modelerParameters);
 
-				addEmailParameters(messageBody, modelerParameters);
+					messageBody.append("<p>\n\r");
+					messageBody.append("\n\r</body></html>");
+					System.out.println(user.userID + " " + user.email);
 
-				messageBody.append("<p>\n\r");
-				messageBody.append("\n\r</body></html>");
-
-				sendEmail(user.email, language.getString("email.subject"), messageBody);
-				emailsSent++;
-			} catch (Exception e) {
-				logger.debug("", e);
-			}
+					sendEmail(user.email, language.getString("email.subject"), messageBody);
+					Thread.sleep(TimeUnit.SECONDS.toMillis(30));
+					emailsSent++;
+				} catch (Exception e) {
+					logger.debug("", e);
+				}
 
 		writeResponse(response, new StringBuilder("emailsSent: " + emailsSent));
 	}
