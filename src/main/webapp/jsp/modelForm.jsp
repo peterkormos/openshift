@@ -90,6 +90,7 @@ String modelname = model == null ? "" : model.name;
 	  <jsp:param name="name" value="modelname"/>
 	  <jsp:param name="value" value="<%=modelname%>"/>
 	  <jsp:param name="mandatory" value="true"/>
+	  <jsp:param name="maxlength" value="60"/>
 	</jsp:include>
 </td>
 </tr>

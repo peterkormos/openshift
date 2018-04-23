@@ -1,4 +1,4 @@
-<input list="modelscale" name="modelscale" value='<%= request.getParameter("selectValue") %>'>
+<input list="modelscale" name="modelscale" value='<%= request.getParameter("selectValue") %>' placeholder="Type or select from list...">
 
 <datalist id="modelscale">
       <option></option>

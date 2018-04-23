@@ -1,4 +1,10 @@
-<input type='text' maxlength="60" name='<%= request.getParameter("name") %>'
+<%
+	String maxlength = "60";
+	if(request.getParameter("maxlength") != null) 
+		maxlength = request.getParameter("maxlength");
+%>
+
+<input type='text' maxlength='<%= request.getParameter("maxlength") == null ? 60 : request.getParameter("maxlength") %>' name='<%= request.getParameter("name") %>' placeholder="Max. <%= maxlength %> char."
 <%
 	String value = request.getParameter("value");
 
