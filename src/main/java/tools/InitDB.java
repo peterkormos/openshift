@@ -36,7 +36,7 @@ public class InitDB
 	    "create table MAK_CATEGORY_GROUP (CATEGORY_group_ID numeric(6) primary key, MODEL_SHOW varchar(100) not null, CATEGORY_GROUP varchar(100) not null)");
 
 	s.execute(
-	    "create table MAK_USERS (USER_ID numeric(6) primary key, USER_PASSWORD varchar(100) not null, FIRST_NAME varchar(100) not null, LAST_NAME varchar(100) not null, USER_language varchar(100) not null, COUNTRY varchar(100), ADDRESS varchar(200), TELEPHONE varchar(200), EMAIL varchar(50) not null, USER_ENABLED numeric(1) not null, YEAR_OF_BIRTH numeric(4) not null,city varchar(100),MODEL_CLASS varchar(100))");
+	    "create table MAK_USERS (USER_ID numeric(6) primary key, USER_PASSWORD varchar(100) not null, FIRST_NAME varchar(100) not null, LAST_NAME varchar(100) not null, USER_language varchar(100) not null, COUNTRY varchar(100), ADDRESS varchar(200), TELEPHONE varchar(200), EMAIL varchar(200) not null, USER_ENABLED numeric(1) not null, YEAR_OF_BIRTH numeric(4) not null,city varchar(100),MODEL_CLASS varchar(100))");
 
 	s.execute(
 	    "INSERT INTO MAK_USERS ( USER_ID, USER_PASSWORD, FIRST_NAME, LAST_NAME, USER_language, COUNTRY, ADDRESS, TELEPHONE, EMAIL, USER_ENABLED, YEAR_OF_BIRTH, city ) VALUES (1,'Xr4ilOzQ4PCOq3aQ0qbuaQ==','Peter','Kormos','ADMIN','Hungary','-','-','admin',1,1977,'-')");
