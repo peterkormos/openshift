@@ -69,7 +69,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2018.10.23.";
+	public String VERSION = "2019.03.04.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -870,13 +870,13 @@ public class RegistrationServlet extends HttpServlet {
 			message.append("\n\r<hr>");
 		}
 
-		List<EmailParameter> modelerParameters = Arrays.asList(//
+		List<EmailParameter> modelerParameters = new LinkedList<EmailParameter>( Arrays.asList(//
 				EmailParameter.create(language.getString("userID"), String.valueOf(user.getUserID())), //
 				EmailParameter.create(language.getString("last.name"), user.lastName), //
 				EmailParameter.create(language.getString("year.of.birth"), String.valueOf(user.yearOfBirth)), //
 				EmailParameter.create(language.getString("city"), user.city), //
 				EmailParameter.create(language.getString("country"), user.country)//
-		);
+		));
 		if (insertUserDetails) {
 			modelerParameters.add(EmailParameter.create(language.getString("email"), user.email));
 			modelerParameters.add(EmailParameter.create(language.getString("language"), user.language));
