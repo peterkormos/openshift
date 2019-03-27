@@ -69,7 +69,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.03.04.";
+	public String VERSION = "2019.03.27.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -639,10 +639,13 @@ public class RegistrationServlet extends HttpServlet {
 
 		final StringBuilder buff = new StringBuilder();
 
-		buff.append("Storing users");
-		servletDAO.deleteEntries("MAK_USERS");
 
 		final List<User> users = data.get(0);
+		if(!users.isEmpty())
+		{
+		    buff.append("Storing users");
+		    servletDAO.deleteEntries("MAK_USERS");
+		}
 		for (final User user : users) {
 			buff.append(".");
 			servletDAO.registerNewUser(user);
@@ -651,12 +654,12 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 
-		buff.append("<p>Storing CategoryGroups");
-		servletDAO.deleteEntries("MAK_CATEGORY_GROUP");
 
 		final List<CategoryGroup> categoryGroups = data.get(1);
 
 		if (!categoryGroups.isEmpty()) {
+		    buff.append("<p>Storing CategoryGroups");
+		    servletDAO.deleteEntries("MAK_CATEGORY_GROUP");
 			for (final CategoryGroup categoryGroup : categoryGroups) {
 				buff.append(".");
 				servletDAO.saveCategoryGroup(categoryGroup);
@@ -674,19 +677,21 @@ public class RegistrationServlet extends HttpServlet {
 				servletDAO.saveCategory(category);
 			}
 
-			buff.append("<p>Storing Models");
-			servletDAO.deleteEntries("MAK_MODEL");
 
 			final List<Model> models = data.get(3);
+			if(!models.isEmpty()) {
+			    buff.append("<p>Storing Models");
+			    servletDAO.deleteEntries("MAK_MODEL");			    
+			}
 			for (final Model model : models) {
 				buff.append(".");
 				servletDAO.saveModel(model);
 			}
 		}
 
-		servletDAO.deleteEntries("MAK_PICTURES");
 		if (data.size() >= 5) {
 			buff.append("<p>Storing Photos");
+			servletDAO.deleteEntries("MAK_PICTURES");
 			final Map<Integer, byte[]> photos = (Map<Integer, byte[]>) data.get(4);
 			for (final Entry<Integer, byte[]> photoEntries : photos.entrySet()) {
 				final ByteArrayInputStream photoStream = new ByteArrayInputStream(photoEntries.getValue());
