@@ -10,6 +10,7 @@
       <option>1:225</option>
       <option>1:200</option>
       <option>1:144</option>
+      <option>1:100</option>
       <option>1:87</option>
       <option>1:77</option>
       <option>1:76</option>
@@ -27,6 +28,7 @@
       <option>1:6</option>
       <option>54 mm</option>
       <option>70 mm</option>
+      <option>75 mm</option>
       <option>90 mm</option>
 </datalist>
 
