@@ -21,11 +21,13 @@
       <option>1:32</option>
       <option>1:25</option>
       <option>1:24</option>
+      <option>1:16</option>
       <option>1:12</option>
       <option>1:10</option>
       <option>1:9</option>
       <option>1:8</option>
       <option>1:6</option>
+      <option>28 mm</option>
       <option>54 mm</option>
       <option>70 mm</option>
       <option>75 mm</option>
