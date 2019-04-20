@@ -1334,8 +1334,14 @@ public class RegistrationServlet extends HttpServlet {
 			response.sendRedirect("jsp/modelForm.jsp");
 		} else {
 			sendEmailWithModels(user, false /* insertUserDetails */);
+			setEmailSentNoticeInSession(request, user);
 			response.sendRedirect("jsp/main.jsp");
 		}
+	}
+
+	private void setEmailSentNoticeInSession(final HttpServletRequest request, final User user)
+			throws UserNotLoggedInException {
+		setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("email") + ": <h1>" + user.email + "</ch1>");
 	}
 
 	private void setNoticeInSession(final HttpSession session, String notice) {
@@ -1892,6 +1898,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = getUser(request);
 
 		sendEmailWithModels(user, false);
+		setEmailSentNoticeInSession(request, user);
 
 		response.sendRedirect("jsp/main.jsp");
 	}
