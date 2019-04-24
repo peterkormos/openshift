@@ -55,16 +55,8 @@ function checkSubmit()
 //-->
 </script>
 
-<%
-String notice = (String) session.getAttribute("notice");
-if (notice != null)
-{
-%>
-	<div class="flash notice"><%= notice %></div>
-<%
-}
-session.removeAttribute("notice");
-%>
+<jsp:include page="notices.jsp" />
+
 <p></p>
 
 <form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">

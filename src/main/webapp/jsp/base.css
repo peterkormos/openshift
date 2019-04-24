@@ -67,16 +67,23 @@ a:active {
 	padding-left: 30px;
 }
 
-.flash.notice {
+.flash.OK {
 	background: url(../icons/true.png) 8px 8px no-repeat;
 	background-color: #dfffdf;
 	border-color: #9fcf9f;
 	color: #005f00;
 }
 
-.flash.error {
+.flash.Error {
 	background: url(../icons/exclamation.png) 8px 50% no-repeat;
 	background-color: #ffe3e3;
 	border-color: #d88;
 	color: #880000;
+}
+
+.flash.Warning {
+	background: url(../icons/warning.png) 8px 8px no-repeat;
+	background-color: #ffD1A4;
+	border-color: #ff8000;
+#	color: #005f00;
 }

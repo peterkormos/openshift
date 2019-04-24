@@ -31,17 +31,7 @@
 
 <body>
 
-<%
-String notice = (String) session.getAttribute("notice");
-if (notice != null)
-{
-%>
-	<div class="flash notice"><%= notice %></div>
-<%
-}
-session.removeAttribute("notice");
-%>
-
+<jsp:include page="notices.jsp" />
 
 <form name='input' action='../RegistrationServlet' method='POST' accept-charset="UTF-8" onkeypress="return event.keyCode != 13;">
 <input type='hidden' name='command' value='<%= action %>'>

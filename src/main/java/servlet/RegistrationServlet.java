@@ -58,6 +58,7 @@ import datatype.Category;
 import datatype.CategoryGroup;
 import datatype.Detailing;
 import datatype.EmailParameter;
+import datatype.MainPageNotice;
 import datatype.Detailing.DetailingCriteria;
 import datatype.Detailing.DetailingGroup;
 import datatype.Model;
@@ -69,13 +70,10 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.04.08.";
+	public String VERSION = "2019.04.24.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
-																					// HU,
-																					// EN,
-																					// ...
 
 	public static ServletDAO servletDAO;
 	StringBuilder printBuffer;
@@ -95,8 +93,11 @@ public class RegistrationServlet extends HttpServlet {
 
 	private Properties servletConfig = new Properties();
 
+	public static enum SessionAttributes {
+		Notices
+	};
 	public static enum Command {
-		LOADIMAGE
+	    LOADIMAGE
 	};
 
 	public RegistrationServlet() throws Exception {
@@ -1341,11 +1342,23 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void setEmailSentNoticeInSession(final HttpServletRequest request, final User user)
 			throws UserNotLoggedInException {
-		setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("email") + ": <h1>" + user.email + "</ch1>");
+		ResourceBundle language = getLanguageForCurrentUser(request);
+                setNoticeInSession(request.getSession(false), language.getString("email") + ": <h2>" + user.email + "</h2>");
+		setNoticeInSession(request.getSession(false), new MainPageNotice(MainPageNotice.NoticeType.Warning, language.getString("email.warning")));
 	}
 
-	private void setNoticeInSession(final HttpSession session, String notice) {
-		session.setAttribute("notice", notice);
+        private void setNoticeInSession(final HttpSession session, MainPageNotice notice) {
+            List<MainPageNotice> notices = (List<MainPageNotice>) session.getAttribute(SessionAttributes.Notices.name());
+            if(notices == null)
+                notices = new LinkedList<MainPageNotice>();
+            
+            notices.add(notice);
+            
+            session.setAttribute(SessionAttributes.Notices.name(), notices);
+        }
+
+            private void setNoticeInSession(final HttpSession session, String noticeText) {
+                setNoticeInSession(session, new MainPageNotice(MainPageNotice.NoticeType.OK, noticeText));
 	}
 
 	private Model createModel(final int modelID, final int userID, final HttpServletRequest request)
