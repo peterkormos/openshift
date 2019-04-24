@@ -773,7 +773,7 @@ public class ServletDAO
 	  // for SQL inject
 	  email = email.replace(';', ' ').replace('(', ' ').replace(')', ' ').replace('\'', ' ').replace(';', ' ');
 
-	  queryStatement = getDBConnection().prepareStatement("SELECT * FROM MAK_USERS where EMAIL = ?");
+	  queryStatement = getDBConnection().prepareStatement("SELECT * FROM MAK_USERS where upper(EMAIL) = upper(?)");
 
 	  encodeStringForDB(queryStatement, 1, email);
 
