@@ -754,7 +754,7 @@ public class RegistrationServlet extends HttpServlet {
 		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
 		final ResourceBundle language = getLanguage(languageCode);
 
-		if (email.trim().length() == 0 || email.equals("-") || email.indexOf("@") == -1) {
+		if (email.trim().length() == 0 || email.equals("-") || email.indexOf("@") == -1 || email.indexOf(".") == -1) {
 			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
 					+ ": [" + email + "]");
 			return;
