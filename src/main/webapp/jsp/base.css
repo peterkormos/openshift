@@ -1,3 +1,7 @@
+* {
+    font-family: sans-serif;
+  }
+  
 input, select {
 	/*
 	border-radius: 5px; padding-left: 10px;
