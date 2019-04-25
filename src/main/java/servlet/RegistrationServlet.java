@@ -1287,7 +1287,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		if (isPreRegistrationAllowed() || isOnSiteUse()) {
+		if (isRegistrationAllowed()) {
 			getModelForm(request, response, "addModel", "save.and.add.new.model", null);
 		} else {
 			response.sendRedirect("jsp/main.jsp");
@@ -1442,12 +1442,16 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 
-		if (isPreRegistrationAllowed() || isOnSiteUse()) {
+		if (isRegistrationAllowed()) {
 			writeResponse(response, inputForSelectModel(user, "inputForModifyModel", "modify", models));
 		} else {
 			response.sendRedirect("jsp/main.jsp");
 		}
 	}
+
+    private boolean isRegistrationAllowed() {
+        return isPreRegistrationAllowed() || isOnSiteUse();
+    }
 
 	public void inputForPhotoUpload(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {

@@ -101,7 +101,7 @@ function onIFrameLoad(iframe)
   <input type="hidden" id="command"  name="command" value="">
 
 <%
-  if (servlet.isPreRegistrationAllowed())
+  if (servlet.isRegistrationAllowed())
   {
 %>
   <a href="#" onClick="document.getElementById('command').value='inputForAddModel';this.parentNode.submit();">
@@ -118,7 +118,7 @@ function onIFrameLoad(iframe)
 <p></p>
    -->
 <%
-  if (servlet.isPreRegistrationAllowed())
+  if (servlet.isRegistrationAllowed())
   {
 %>
   <a href="#" onClick="showModal('../RegistrationServlet?command=inputForSelectModelForModify');">
