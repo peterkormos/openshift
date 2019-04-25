@@ -1480,7 +1480,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		buff.append("<link rel='stylesheet' href='jsp/base.css' media='screen' />");
-		buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put'>");
+		buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put' target='_top'>");
 		buff.append("<input type='hidden' name='command' value='");
 		buff.append(action);
 		buff.append("'>");
