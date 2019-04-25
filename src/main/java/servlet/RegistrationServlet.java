@@ -70,7 +70,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.04.24.";
+	public String VERSION = "2019.04.25.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -646,13 +646,13 @@ public class RegistrationServlet extends HttpServlet {
 		{
 		    buff.append("Storing users");
 		    servletDAO.deleteEntries("MAK_USERS");
-		}
-		for (final User user : users) {
-			buff.append(".");
-			servletDAO.registerNewUser(user);
-			for (final ModelClass modelClass : user.getModelClass()) {
-				servletDAO.saveModelClass(user.userID, modelClass);
-			}
+        		for (final User user : users) {
+        			buff.append(".");
+        			servletDAO.registerNewUser(user);
+        			for (final ModelClass modelClass : user.getModelClass()) {
+        				servletDAO.saveModelClass(user.userID, modelClass);
+        			}
+        		}
 		}
 
 
@@ -1410,7 +1410,12 @@ public class RegistrationServlet extends HttpServlet {
 					"User is not logged in! <a href='index.html'>Please go to login page...</a>");
 		}
 
-		return (User) session.getAttribute("userID");
+		User userInSession = (User) session.getAttribute("userID");
+		if(userInSession == null)
+		    throw new UserNotLoggedInException(
+		            "User is not logged in! <a href='index.html'>Please go to login page...</a>");
+		
+            return userInSession;
 	}
 
 	public void inputForDeleteModel(final HttpServletRequest request, final HttpServletResponse response)
