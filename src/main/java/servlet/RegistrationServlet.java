@@ -1287,7 +1287,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		if (preRegistrationAllowed || isOnSiteUse()) {
+		if (isPreRegistrationAllowed() || isOnSiteUse()) {
 			getModelForm(request, response, "addModel", "save.and.add.new.model", null);
 		} else {
 			response.sendRedirect("jsp/main.jsp");
@@ -1442,7 +1442,7 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 
-		if (preRegistrationAllowed || isOnSiteUse()) {
+		if (isPreRegistrationAllowed() || isOnSiteUse()) {
 			writeResponse(response, inputForSelectModel(user, "inputForModifyModel", "modify", models));
 		} else {
 			response.sendRedirect("jsp/main.jsp");

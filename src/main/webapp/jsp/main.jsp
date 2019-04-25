@@ -100,17 +100,27 @@ function onIFrameLoad(iframe)
 <form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">
   <input type="hidden" id="command"  name="command" value="">
 
+<%
+  if (servlet.isPreRegistrationAllowed())
+  {
+%>
   <a href="#" onClick="document.getElementById('command').value='inputForAddModel';this.parentNode.submit();">
   <img src="../icons/add.png" height="30" align="center"> <%=language.getString("add")%></a>
-
 <p></p>
-    <!--
+<%
+  }
+%>
+								    <!--
   <a href="#" onClick="document.getElementById('command').value='inputForPhotoUpload';this.parentNode.submit();">
   <img src="../icons/photo.png" height="30" align="center"> <%=language.getString("photo")%>
   </a>
  
 <p></p>
    -->
+<%
+  if (servlet.isPreRegistrationAllowed())
+  {
+%>
   <a href="#" onClick="showModal('../RegistrationServlet?command=inputForSelectModelForModify');">
   <img src="../icons/modify.png" height="30" align="center"> <%=language.getString("modify.model")%></a>
 
@@ -120,6 +130,9 @@ function onIFrameLoad(iframe)
   <img src="../icons/delete2.png" height="30" align="center"> <%=language.getString("delete")%></a>
 
 <p></p>
+<%
+}
+%>
 
 <%-- 
   <a href="#" onClick="document.getElementById('command').value='listMyModels';this.parentNode.submit();">
