@@ -199,20 +199,10 @@ public class ServletDAO
 
   public void registerNewUser(final User user) throws SQLException
   {
-	registerNewUser(user, false);
-  }
-
-  public void registerNewUser(final User user, final boolean deleteUserFromDB) throws SQLException
-  {
 	PreparedStatement queryStatement = null;
 
 	try
 	{
-
-	  if (deleteUserFromDB)
-	  {
-		deleteEntry("MAK_USERS", "user_id", user.userID);
-	  }
 
 	  queryStatement = getDBConnection().prepareStatement("insert into MAK_USERS "
 	      + "(USER_ID, USER_PASSWORD, FIRST_NAME, LAST_NAME, USER_LANGUAGE, COUNTRY, ADDRESS, TELEPHONE, EMAIL, YEAR_OF_BIRTH, CITY, USER_ENABLED) values "
@@ -254,7 +244,7 @@ public class ServletDAO
 	try
 	{
 	  final PreparedStatement queryStatement = getDBConnection()
-	      .prepareStatement("select count(*) from MAK_USERS where EMAIL = ?");
+	      .prepareStatement("select count(*) from MAK_USERS where upper(EMAIL) = upper(?)");
 	  encodeStringForDB(queryStatement, 1, email);
 	  rs = queryStatement.executeQuery();
 	  rs.next();
@@ -1347,7 +1337,8 @@ public class ServletDAO
 
   public void modifyUser(final User newUser, final User oldUser) throws SQLException
   {
-	registerNewUser(newUser, true);
+      deleteEntry("MAK_USERS", "user_id", newUser.userID);
+	registerNewUser(newUser);
   }
 
   public void newUserIDs() throws SQLException
@@ -1385,7 +1376,7 @@ public class ServletDAO
 
 	try
 	{
-	  queryStatement = getDBConnection().prepareStatement("update MAK_USERS set USER_ID=? where EMAIL=? AND USER_ID=?");
+	  queryStatement = getDBConnection().prepareStatement("update MAK_USERS set USER_ID=? where upper(EMAIL) = upper(?) AND USER_ID=?");
 
 	  queryStatement.setInt(1, newUserID);
 	  queryStatement.setString(2, email);
