@@ -74,6 +74,15 @@ function showModal(location)
 	  }
 	}
 }
+
+function onIFrameLoad(iframe)
+{
+	if(iframe.contentWindow.location.href.includes("main.jsp"))
+	{
+		window.location.replace(iframe.contentWindow.location.href);
+		return;
+	}
+}
 //-->
 </script>
 
@@ -84,7 +93,7 @@ function showModal(location)
 <div id="modalDiv" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
-	<iframe id="iframeID" style="border:none;width: 100%;"></iframe>
+	<iframe id="iframeID" style="border:none;width: 100%;" onload="onIFrameLoad(this)"></iframe>
   </div>
 </div>
 
