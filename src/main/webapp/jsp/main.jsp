@@ -166,16 +166,15 @@ function onIFrameLoad(iframe)
 if(servlet.isOnSiteUse())
 {
 %>
-	<hr>
-	<a href='../helyi.html'> helyi.html</a>
+	<a href='../helyi.html'> helyi.html bet&ouml;lt&eacute;se...</a>
 	<p>
-	<hr>
 	<form name='input' action='../RegistrationServlet' method='put' accept-charset="UTF-8">
 	<input type='hidden' name='command' value='printMyModels'>
+	&Ouml;sszes makett nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa: 
 	<input name='printMyModels' type='submit' value='<%=language.getString("print.models")%>'>
 	</form>
 	<p><hr>
-	
+	Egy makett nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa: 
 	<jsp:include page="modelSelect.jsp">
 	  <jsp:param name="action" value="printMyModels"/>
 	  <jsp:param name="submitLabel" value='<%=language.getString("print.models")%>'/>

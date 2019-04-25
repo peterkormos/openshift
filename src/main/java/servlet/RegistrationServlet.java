@@ -1449,7 +1449,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-    private boolean isRegistrationAllowed() {
+    public boolean isRegistrationAllowed() {
         return isPreRegistrationAllowed() || isOnSiteUse();
     }
 
