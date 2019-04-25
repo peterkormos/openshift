@@ -52,8 +52,11 @@ function checkSubmit()
 	}
 }
 
-function showModal(modal)
+function showModal(location)
 {
+	document.getElementById('iframeID').src = location;
+
+	var modal = document.getElementById('modalDiv');
 	modal.style.display = "block";
 
 	// Get the <span> element that closes the modal
@@ -78,6 +81,13 @@ function showModal(modal)
 
 <p></p>
 
+<div id="modalDiv" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+	<iframe id="iframeID" style="border:none;width: 100%;"></iframe>
+  </div>
+</div>
+
 <form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">
   <input type="hidden" id="command"  name="command" value="">
 
@@ -92,27 +102,13 @@ function showModal(modal)
  
 <p></p>
    -->
-  <a href="#" onClick="showModal(document.getElementById('modifyModal'));">
+  <a href="#" onClick="showModal('../RegistrationServlet?command=inputForSelectModelForModify');">
   <img src="../icons/modify.png" height="30" align="center"> <%=language.getString("modify.model")%></a>
-
-<div id="modifyModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-	<iframe src="../RegistrationServlet?command=inputForSelectModelForModify" style="border:none;width: 100%;"></iframe>
-  </div>
-</div>
 
 <p></p>
    
-  <a href="#" onClick="showModal(document.getElementById('deleteModal'));">
+  <a href="#" onClick="showModal('../RegistrationServlet?command=inputForDeleteModel');">
   <img src="../icons/delete2.png" height="30" align="center"> <%=language.getString("delete")%></a>
-
-<div id="deleteModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-	<iframe src="../RegistrationServlet?command=inputForDeleteModel" style="border:none;width: 100%;"></iframe>
-  </div>
-</div>
 
 <p></p>
 
