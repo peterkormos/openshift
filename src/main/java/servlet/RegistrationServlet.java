@@ -1895,7 +1895,7 @@ public class RegistrationServlet extends HttpServlet {
 
     private String getGluedToBaseHTMLCode(final ResourceBundle language, final Model model) {
         
-        String borderColor = model.gluedToBase ? "green" : "red";
+        String borderColor = model.gluedToBase ? "lightgreen" : "red";
         String imageFileName = model.gluedToBase ? "glued.jpg" : "notglued.jpg";
         String gluedToBaseText = model.gluedToBase ? 
                 language.getString("yes") + "<br><em>yes</em>"
