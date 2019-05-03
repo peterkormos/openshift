@@ -6,6 +6,9 @@
   <option value="SK">Slovensk&aacute;</option>
   <option value="CZ">Cesk&aacute;</option>
   <option value="DE">Deutsch</option>
+  <option value="RU">Deutsch</option>
+  <option value="PL">Deutsch</option>
+  <option value="IT">Deutsch</option>
   <!--
           <option value="AT">Austria</option>
           <option value="PL">Poland</option>
