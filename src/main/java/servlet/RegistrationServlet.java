@@ -70,7 +70,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.04.25.";
+	public String VERSION = "2019.05.03.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -1861,10 +1861,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_IDENTIFICATION__", model.identification)
 							.replaceAll("__MODEL_PRODUCER__", model.producer)
 							.replaceAll("__MODEL_COMMENT__", model.comment)
-							.replaceAll("__GLUED_TO_BASE__", model.gluedToBase ?
-
-									language.getString("yes") + "<br><em>yes</em>"
-									: language.getString("no") + "<br><em>no</em>"
+							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model)
 
 					// "<font color='#006600'>Alapra ragasztva</font>"
 					// :
@@ -1895,6 +1892,21 @@ public class RegistrationServlet extends HttpServlet {
 
 		return buff;
 	}
+
+    private String getGluedToBaseHTMLCode(final ResourceBundle language, final Model model) {
+        
+        String borderColor = model.gluedToBase ? "green" : "red";
+        String imageFileName = model.gluedToBase ? "glued.jpg" : "notglued.jpg";
+        String gluedToBaseText = model.gluedToBase ? 
+                language.getString("yes") + "<br><em>yes</em>"
+                : language.getString("no") + "<br><em>no</em>";
+        
+        return 
+                "<div style='border: 3px solid " + borderColor + "; padding: 2px'>" +
+                "<img src='icons/" + imageFileName + "' style='float: right; vertical-align: middle; padding-left: 3px;'  height='25px'>" + 
+                "<font style='font-family: Calibri, Optima, Arial, sans-serif;font-size: 3mm'>" + gluedToBaseText + "</font>" +
+                "</div>";
+    }
 
 	public void inputForModifyUser(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
