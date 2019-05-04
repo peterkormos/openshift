@@ -49,11 +49,8 @@
 		  }
 		%>
 
-		<th align='center' style='white-space: nowrap'><%=language.getString("last.name")%>
+		<th align='center' style='white-space: nowrap'><%=language.getString("name")%>
 		</th>
-
-<%-- 		<th align='center' style='white-space: nowrap'><%=language.getString("first.name")%> --%>
-<!-- 		</th> -->
 
 		<th align='center' style='white-space: nowrap'><%=language.getString("city")%>
 		</th>

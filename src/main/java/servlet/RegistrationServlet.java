@@ -70,7 +70,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.03.";
+	public String VERSION = "2019.05.04.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -878,7 +878,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		List<EmailParameter> modelerParameters = new LinkedList<EmailParameter>( Arrays.asList(//
 				EmailParameter.create(language.getString("userID"), String.valueOf(user.getUserID())), //
-				EmailParameter.create(language.getString("last.name"), user.lastName), //
+				EmailParameter.create(language.getString("name"), user.lastName), //
 				EmailParameter.create(language.getString("year.of.birth"), String.valueOf(user.yearOfBirth)), //
 				EmailParameter.create(language.getString("city"), user.city), //
 				EmailParameter.create(language.getString("country"), user.country)//
@@ -1081,12 +1081,8 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</th>");
 
 		buff.append("<th style='white-space: nowrap'>");
-		buff.append(language.getString("last.name"));
+		buff.append(language.getString("name"));
 		buff.append("</th>");
-
-		// buff.append("<th style='white-space: nowrap'>");
-		// buff.append(language.getString("first.name"));
-		// buff.append("</th>");
 
 		buff.append("<th style='white-space: nowrap'>");
 		buff.append(language.getString("year.of.birth"));
@@ -2171,9 +2167,7 @@ public class RegistrationServlet extends HttpServlet {
 
 				// .replaceAll("__COUNTRIES_LIST__", countryBuff.toString())
 
-				.replaceAll("__LASTNAMELABEL__", language.getString("last.name"))
-				// .replaceAll("__FIRSTNAMELABEL__",
-				// language.getString("first.name"))
+				.replaceAll("__LASTNAMELABEL__", language.getString("name"))
 				.replaceAll("__YEAROFBIRTHLABEL__", language.getString("year.of.birth"))
 				.replaceAll("__MODEL_SCALE__", language.getString("scale"))
 				.replaceAll("__MODEL_NAME__", language.getString("models.name"))
@@ -2392,7 +2386,7 @@ public class RegistrationServlet extends HttpServlet {
 
 					List<EmailParameter> modelerParameters = Arrays.asList(//
 							EmailParameter.create(language.getString("userID"), String.valueOf(user.getUserID())), //
-							EmailParameter.create(language.getString("last.name"), user.lastName) //
+							EmailParameter.create(language.getString("name"), user.lastName) //
 					);
 
 					addEmailParameters(messageBody, modelerParameters);
