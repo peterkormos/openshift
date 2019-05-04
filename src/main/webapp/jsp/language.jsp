@@ -6,12 +6,10 @@
   <option value="SK">Slovensk&aacute;</option>
   <option value="CZ">Cesk&aacute;</option>
   <option value="DE">Deutsch</option>
-  <option value="RU">Deutsch</option>
+  <option value="RU">&#1056;&#1091;&#1089;&#1089;&#1082;&#1072;&#1103;</option>
+<!-- 
   <option value="PL">Deutsch</option>
   <option value="IT">Deutsch</option>
-  <!--
-          <option value="AT">Austria</option>
-          <option value="PL">Poland</option>
-		  //-->
-  <option value="" >-------</option>
+ -->
+   <option value="" >-------</option>
 </select>
