@@ -14,12 +14,30 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<script> 
+	    function checkShow(form) { 
+	        if (form.email.value != 'admin' && form.show.value == '')
+	        {  
+				document.getElementById('noticeDiv').innerHTML = 'K&eacute;rem v&aacute;lasszon egy makettes rendezv&eacute;nyt!';
+				document.getElementById('noticeDiv').className ="flash ERROR";
+				return false; 
+	        } 
+	        else
+	        {  
+				document.getElementById('noticeDiv').innerHTML = '';
+				document.getElementById('noticeDiv').className ="";
+				return true; 
+	        } 
+	    } 
+	</script> 
 </head>
 
 <link rel="stylesheet" href="base.css" media="screen" />
 
 <body>
 	<form  name="input" 
+	onSubmit = "return checkShow(this)"
 		action="../RegistrationServlet" method="post" accept-charset="UTF-8">
 
 		<input type="hidden" name="command" value="login">
@@ -43,9 +61,9 @@
 								  final List<String> shows = servletDAO.getShows();
 								  for (final String show : shows)
 								  {
-								%> <input type='radio' name='show' value='<%=StringEncoder.toBase64(show.getBytes())%>'
+								%> <label><input type='radio' name='show' value='<%=StringEncoder.toBase64(show.getBytes())%>'
 								<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <FONT
-								COLOR='#ff0000'><b> <%=show%></b></FONT><br> <%
+								COLOR='#ff0000'><b> <%=show%></b></FONT></label><br> <%
    }
  %>
 							</td>
@@ -63,6 +81,8 @@
 						<tr>
 							<td colspan="2" align="center"><input name="submit"
 								type="submit" value="<%=language.getString("login")%>">
+      <p>
+      <div id="noticeDiv"></div>
 							</td>
 						</tr>
 						<tr>

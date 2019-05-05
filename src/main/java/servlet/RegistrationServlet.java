@@ -70,7 +70,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.04.";
+	public String VERSION = "2019.05.05.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -414,7 +414,13 @@ public class RegistrationServlet extends HttpServlet {
 		try {
 			show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
 		} catch (final Exception e) {
-			show = null;
+			if(user.isAdminUser())
+				show = null;
+			else
+			{
+				writeErrorResponse(response, "K&eacute;rem v&aacute;lasszon egy makettes rendezv&eacute;nyt!");
+				return;
+			}
 		}
 
 		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
@@ -1204,8 +1210,8 @@ public class RegistrationServlet extends HttpServlet {
 				continue;
 			}
 
-			buff.append("<input type='radio' name='categoryGroupID' value='" + group.categoryGroupID + "'/>");
-			buff.append(group.show + " - " + group.name + "<br>");
+			buff.append("<label><input type='radio' name='categoryGroupID' value='" + group.categoryGroupID + "'/>");
+			buff.append(group.show + " - " + group.name + "</label><br>");
 		}
 
 		buff.append("<font color='#FF0000' size='+3'>&#8226;</font> </td>");
@@ -1983,16 +1989,24 @@ public class RegistrationServlet extends HttpServlet {
 
 		final StringBuilder buff = new StringBuilder();
 
-		buff.append("<table style='border-collapse: collapse' border='1'>");
-
 		String show = ServletUtil.getOptionalRequestAttribute(request, "show");
 		if ("-".equals(show)) {
 			show = getShowFromReqest(request);
-
+			
 			if (show == null) {
-				show = servletDAO.getShows().get(0);
+				for(String currentShow : servletDAO.getShows())
+					statistics(buff, currentShow);
 			}
+			else
+				statistics(buff, show);
 		}
+
+		writeResponse(response, buff);
+	}
+
+	private void statistics(final StringBuilder buff, String show) throws SQLException {
+		buff.append("<table style='border-collapse: collapse' border='1'>");
+
 		boolean highlight = false;
 
 		for (final String[] stat : servletDAO.getStatistics(show)) {
@@ -2010,8 +2024,6 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		buff.append("</table>");
-
-		writeResponse(response, buff);
 	}
 
 	public void exceptionHistory(final HttpServletRequest request, final HttpServletResponse response)
