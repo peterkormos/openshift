@@ -9,12 +9,12 @@
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	final ResourceBundle language = servlet.getLanguage(user.language);
 
-	String maxlength = "60";
+	int maxlength = 60;
 	if(request.getParameter("maxlength") != null) 
-		maxlength = request.getParameter("maxlength");
+		maxlength = Integer.parseInt(request.getParameter("maxlength"));
 %>
 
-<input type='text' maxlength='<%= request.getParameter("maxlength") == null ? 60 : request.getParameter("maxlength") %>' name='<%= request.getParameter("name") %>' placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
+<input type='text' maxlength='<%= maxlength %>' name='<%= request.getParameter("name") %>' placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
 <%
 	String value = request.getParameter("value");
 

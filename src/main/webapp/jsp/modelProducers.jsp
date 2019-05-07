@@ -1,4 +1,20 @@
-<input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'  maxlength="100" placeholder="Max. 100 char.">
+<%@page import="datatype.*"%>
+<%@page import="servlet.*"%>
+
+<%@page import="java.util.*"%>
+
+<%
+	User user = RegistrationServlet.getUser(request);
+	
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	final ResourceBundle language = servlet.getLanguage(user.language);
+
+	int maxlength = 100;
+	if(request.getParameter("maxlength") != null) 
+		maxlength = Integer.parseInt(request.getParameter("maxlength"));
+%>
+
+<input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>" placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>">
 
 <datalist id="modelproducer">
     <option></option>
