@@ -1,4 +1,17 @@
-<input list="modelscale" name="modelscale" value='<%= request.getParameter("selectValue") %>' placeholder="Type or select from list...">
+<%@page import="datatype.*"%>
+<%@page import="servlet.*"%>
+
+<%@page import="java.util.*"%>
+
+<%
+	User user = RegistrationServlet.getUser(request);
+	
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	final ResourceBundle language = servlet.getLanguage(user.language);
+%>
+
+
+<input list="modelscale" name="modelscale" value='<%= request.getParameter("selectValue") %>' placeholder="<%=language.getString("model.scales.select")%>">
 
 <datalist id="modelscale">
       <option></option>
