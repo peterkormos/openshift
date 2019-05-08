@@ -19,7 +19,7 @@
 	    function checkShow(form) { 
 	        if (form.email.value != 'admin' && form.show.value == '')
 	        {  
-				document.getElementById('noticeDiv').innerHTML = 'K&eacute;rem v&aacute;lasszon egy makettes rendezv&eacute;nyt!';
+				document.getElementById('noticeDiv').innerHTML = '<%=language.getString("select.show")%>';
 				document.getElementById('noticeDiv').className ="flash ERROR";
 				return false; 
 	        } 

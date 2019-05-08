@@ -43,7 +43,7 @@
 
 function checkSubmit()
 {
-	confirmed = confirm('Are you sure you want to delete?'); 
+	confirmed = confirm('<%=language.getString("delete.confirm")%>'); 
 	
 	if(confirmed)
 	{
