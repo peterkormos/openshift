@@ -41,7 +41,7 @@
 <script type="text/javascript">
 // <!--
 
-function checkSubmit()
+function checkDeleteUserRequest()
 {
 	confirmed = confirm('<%=language.getString("delete.confirm")%>'); 
 	
@@ -157,7 +157,7 @@ function onIFrameLoad(iframe)
 <p></p>
 
 <hr>
-	<a href="#" onClick="checkSubmit();" style="{color: rgb(255,0,0);font-weight:bold}">
+	<a href="#" onClick="checkDeleteUserRequest();" style="{color: rgb(255,0,0);font-weight:bold}">
   <img src="../icons/delete.png" height="30" align="center"> <%=language.getString("delete.user")%></a>
 
 </form>
