@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -1168,7 +1169,7 @@ public class ServletDAO
 	}
   }
 
-  public List<String[]> getStatistics(final String show) throws SQLException
+  public List<String[]> getStatistics(final String show, ResourceBundle language) throws SQLException
   {
 	final List<String[]> returned = new LinkedList<String[]>();
 
@@ -1180,8 +1181,8 @@ public class ServletDAO
 	  // aktiv kategoriak
 	  final List<Category> categories = getCategoryList(show);
 
-	  returned.add(new String[] { "<b>Verseny</b>", show });
-	  returned.add(new String[] { "Kateg&oacute;ri&aacute;k sz&aacute;ma: ", String.valueOf(categories.size()) });
+	  returned.add(new String[] { "<b>"+language.getString("show")+"</b>", show });
+//	  returned.add(new String[] { "Kateg&oacute;ri&aacute;k sz&aacute;ma: ", String.valueOf(categories.size()) });
 
 	  returned.add(new String[] { "&nbsp", "" });
 	  final List<User> users = getUsers();
@@ -1189,7 +1190,7 @@ public class ServletDAO
 
 	  int allModels = 0;
 
-	  returned.add(new String[] { "Makettek sz&aacute;ma kateg&oacute;ri&aacute;ban: ", "" });
+	  returned.add(new String[] { language.getString("models.number.per.category")+": ", "" });
 	  returned.add(new String[] { "&nbsp", "" });
 
 	  for (final Category category : categories)
@@ -1230,8 +1231,8 @@ public class ServletDAO
 	  returned.add(new String[] { "&nbsp", "" });
 
 	  // benevezett makettek szama
-	  returned.add(new String[] { "Benevezett makettek sz&aacute;ma: ", String.valueOf(allModels) });
-	  returned.add(new String[] { "Felt&ouml;lt&ouml;tt k&eacute;pek sz&aacute;ma: ", simpleQuery("count(*)", "MAK_PICTURES") });
+	  returned.add(new String[] { language.getString("models.number")+": ", String.valueOf(allModels) });
+//	  returned.add(new String[] { "Felt&ouml;lt&ouml;tt k&eacute;pek sz&aacute;ma: ", simpleQuery("count(*)", "MAK_PICTURES") });
 
 	  returned.add(new String[] { "&nbsp", "" });
 
@@ -1242,12 +1243,12 @@ public class ServletDAO
 		modelers += activeModelers.get(country).size();
 	  }
 
-	  returned.add(new String[] { "Jelenleg nevez&otilde;k sz&aacute;ma : ", String.valueOf(modelers) });
+	  returned.add(new String[] { language.getString("competitors.number")+": ", String.valueOf(modelers) });
 
 	  // jelenleg nevezok
 	  for (final String country : activeModelers.keySet())
 	  {
-		returned.add(new String[] { "Jelenleg nevez&otilde;k ebb&otilde;l az orsz&aacute;gb&oacute;l: <b>" + country + "</b>",
+		returned.add(new String[] { language.getString("competitors.number.per.country")+": <b>" + country + "</b>",
 		    String.valueOf(activeModelers.get(country).size()) });
 	  }
 

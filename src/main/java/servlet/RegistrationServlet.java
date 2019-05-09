@@ -70,7 +70,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.08.";
+	public String VERSION = "2019.05.09.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -1989,27 +1989,31 @@ public class RegistrationServlet extends HttpServlet {
 
 		final StringBuilder buff = new StringBuilder();
 
+		ResourceBundle language = getLanguage(ServletUtil.getOptionalRequestAttribute(request, "language"));
 		String show = ServletUtil.getOptionalRequestAttribute(request, "show");
 		if ("-".equals(show)) {
 			show = getShowFromReqest(request);
 			
 			if (show == null) {
 				for(String currentShow : servletDAO.getShows())
-					statistics(buff, currentShow);
+				{
+					statistics(buff, currentShow,language);
+					buff.append("<p>");
+				}
 			}
 			else
-				statistics(buff, show);
+				statistics(buff, show,language);
 		}
 
 		writeResponse(response, buff);
 	}
 
-	private void statistics(final StringBuilder buff, String show) throws SQLException {
+	private void statistics(final StringBuilder buff, String show, ResourceBundle language) throws SQLException {
 		buff.append("<table style='border-collapse: collapse' border='1'>");
 
 		boolean highlight = false;
 
-		for (final String[] stat : servletDAO.getStatistics(show)) {
+		for (final String[] stat : servletDAO.getStatistics(show,language)) {
 			if (highlight)
 				buff.append("  <tr bgcolor='eaeaea' >\n");
 			else
