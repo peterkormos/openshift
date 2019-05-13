@@ -1990,20 +1990,23 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 
 		ResourceBundle language = getLanguage(ServletUtil.getOptionalRequestAttribute(request, "language"));
-		String show = ServletUtil.getOptionalRequestAttribute(request, "show");
-		if ("-".equals(show)) {
-			show = getShowFromReqest(request);
-			
-			if (show == null) {
-				for(String currentShow : servletDAO.getShows())
-				{
-					statistics(buff, currentShow,language);
-					buff.append("<p>");
-				}
-			}
-			else
-				statistics(buff, show,language);
+		String show = getShowFromReqest(request);
+		if (show == null) {
+		    List<String> shows = servletDAO.getShows();
+		    String showId = ServletUtil.getOptionalRequestAttribute(request, "showId");
+		    if (!"-".equals(showId)) {
+                        shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showId)-1)));
+		    }
+		    
+                    for(String currentShow : shows)
+		    {
+		        statistics(buff, currentShow,language);
+		        buff.append("<p>");
+		    }
 		}
+		else
+		    statistics(buff, show,language);
+		
 
 		writeResponse(response, buff);
 	}
