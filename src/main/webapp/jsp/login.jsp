@@ -11,6 +11,10 @@
   ResourceBundle language = servlet.getLanguage(languageCode);
 %>
 
+<%
+	String showIdHttpParameter = request.getParameter("showId");
+ %>
+
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -59,6 +63,10 @@
 							<td>
 								<%
 								  final List<String> shows = servletDAO.getShows();
+								  
+								  if(showIdHttpParameter != null)
+								  	shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showIdHttpParameter)-1)));
+								  
 								  for (final String show : shows)
 								  {
 								%> <label><input type='radio' name='show' value='<%=StringEncoder.toBase64(show.getBytes())%>'
