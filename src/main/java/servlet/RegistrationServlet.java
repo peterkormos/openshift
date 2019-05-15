@@ -64,13 +64,14 @@ import datatype.Detailing.DetailingGroup;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
+import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.13.";
+	public String VERSION = "2019.05.15.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -254,7 +255,25 @@ public class RegistrationServlet extends HttpServlet {
 				throwable = ((InvocationTargetException) e).getCause();
 			}
 
-			final String message = throwable.getMessage();
+			String message = throwable.getMessage();
+			
+			if(EmailNotFoundException.class.isInstance(throwable))
+			{
+			    EmailNotFoundException emailNotFoundException = EmailNotFoundException.class.cast(throwable);
+                            message = emailNotFoundException.getMessage();
+                            
+                            try {
+                                String languageCode = ServletUtil.getRequestAttribute(request, "language");
+                                final ResourceBundle language = getLanguage(languageCode);
+                                
+                                message = String.format(language.getString("email.not.found"), emailNotFoundException.getEmail());
+                                
+                                writeErrorResponse(response, message);
+                                return;
+                                
+                            } catch (MissingRequestParameterException e1) {
+                            }
+			}
 
 			addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
@@ -382,7 +401,6 @@ public class RegistrationServlet extends HttpServlet {
 		final String email = ServletUtil.getRequestAttribute(request, "email");
 		final ResourceBundle language = getLanguage(ServletUtil.getRequestAttribute(request, "language"));
 
-		try {
 			final User user = servletDAO.getUser(email);
 
 			final String passwordInRequest = servletDAO
@@ -398,13 +416,6 @@ public class RegistrationServlet extends HttpServlet {
 				writeErrorResponse(response, language.getString("authentication.failed") + " "
 						+ language.getString("email") + ": [" + email + "]");
 			}
-		} catch (final Exception ex) {
-			logger.info("login(): Authentication failed. email: " + email, ex);
-
-			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
-					+ ": [" + email + "]");
-		}
-
 	}
 
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user)

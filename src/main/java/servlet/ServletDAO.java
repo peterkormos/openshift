@@ -33,6 +33,7 @@ import datatype.Detailing.DetailingGroup;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
+import exception.EmailNotFoundException;
 
 public class ServletDAO
 {
@@ -754,7 +755,7 @@ public class ServletDAO
 	return user;
   }
 
-  public User getUser(String email) throws SQLException
+  public User getUser(String email) throws SQLException, EmailNotFoundException
   {
 	PreparedStatement queryStatement = null;
 	ResultSet rs = null;
@@ -775,7 +776,7 @@ public class ServletDAO
 		return getUser(rs);
 	  }
 
-	  throw new IllegalArgumentException("email not found in DB. email: " + email);
+	  throw new EmailNotFoundException(email);
 	}
 	finally
 	{
