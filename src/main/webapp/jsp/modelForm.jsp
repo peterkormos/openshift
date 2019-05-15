@@ -27,13 +27,49 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" href="base.css" media="screen">
+
+<script type="text/javascript">
+// <!--
+function checkMandatory(form)
+{
+	var returned = true;
+	
+	returned = checkMandatoryElement(form.modelscale) && returned;
+	returned = checkMandatoryElement(form.modelname) && returned;
+	returned = checkMandatoryElement(form.modelproducer) && returned;
+/*
+	returned = checkMandatoryElement(form.gluedToBase[0]) && returned;
+	returned = checkMandatoryElement(form.gluedToBase[1]) && returned;
+*/
+	returned = checkMandatoryElement(form.categoryID) && returned;
+
+	return returned; 
+}
+
+function checkMandatoryElement(element)
+{
+	if (element.value == '' || (element.type == 'radio' && !element.checked))
+	{  
+		element.className = "flash ERROR";
+		return false; 
+	} 
+
+	element.className = '';		
+	return true; 
+}
+
+//-->
+</script>
+
 </head>
 
 <body>
 
 <jsp:include page="notices.jsp" />
 
-<form name='input' action='../RegistrationServlet' method='POST' accept-charset="UTF-8" onkeypress="return event.keyCode != 13;">
+<form name='input' action='../RegistrationServlet' method='POST' accept-charset="UTF-8" onkeypress="return event.keyCode != 13;"
+onsubmit="return checkMandatory(this);"
+>
 <input type='hidden' name='command' value='<%= action %>'>
 
 	<!-- modelID for modify...-->
