@@ -121,12 +121,12 @@ function onIFrameLoad(iframe)
   if (servlet.isRegistrationAllowed())
   {
 %>
-  <a href="#" onClick="showModal('../RegistrationServlet?command=inputForSelectModelForModify');">
+  <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttributes.Action.name() %>=inputForModifyModel&<%= RegistrationServlet.SessionAttributes.SubmitLabel.name() %>=modify');">
   <img src="../icons/modify.png" height="30" align="center"> <%=language.getString("modify.model")%></a>
 
 <p></p>
    
-  <a href="#" onClick="showModal('../RegistrationServlet?command=inputForDeleteModel');">
+  <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttributes.Action.name() %>=deleteModel&<%= RegistrationServlet.SessionAttributes.SubmitLabel.name() %>=delete');">
   <img src="../icons/delete2.png" height="30" align="center"> <%=language.getString("delete")%></a>
 
 <p></p>

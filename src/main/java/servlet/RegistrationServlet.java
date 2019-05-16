@@ -1431,37 +1431,6 @@ public class RegistrationServlet extends HttpServlet {
             return userInSession;
 	}
 
-	public void inputForDeleteModel(final HttpServletRequest request, final HttpServletResponse response)
-			throws Exception {
-		User user = getUser(request);
-		final List<Model> models = servletDAO.getModels(user.userID);
-
-		if (models.isEmpty()) {
-			response.sendRedirect("jsp/main.jsp");
-			return;
-		}
-
-		writeResponse(response, inputForSelectModel(user, "deleteModel", "delete", models));
-	}
-
-	public void inputForSelectModelForModify(final HttpServletRequest request, final HttpServletResponse response)
-			throws Exception {
-		final User user = getUser(request);
-
-		final List<Model> models = servletDAO.getModels(user.userID);
-
-		if (models.isEmpty()) {
-			response.sendRedirect("jsp/main.jsp");
-			return;
-		}
-
-		if (isRegistrationAllowed()) {
-			writeResponse(response, inputForSelectModel(user, "inputForModifyModel", "modify", models));
-		} else {
-			response.sendRedirect("jsp/main.jsp");
-		}
-	}
-
     public boolean isRegistrationAllowed() {
         return isPreRegistrationAllowed() || isOnSiteUse();
     }

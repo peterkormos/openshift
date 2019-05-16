@@ -185,7 +185,7 @@
 		%>
 		<td align='center' style='white-space: nowrap'><img
 			alt='<%=category.categoryCode%> - <%=model.modelID%>.jpg'
-			src='<%=servlet.getServletURL(request)%>/<%=Command.LOADIMAGE.name()%>/<%=model.modelID%>'>
+			src='<%=servlet.getServletURL(request)%>/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=model.modelID%>'>
 		</td>
 		<%
 		  }
