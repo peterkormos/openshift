@@ -95,7 +95,7 @@ public class RegistrationServlet extends HttpServlet {
 	private Properties servletConfig = new Properties();
 
 	public static enum SessionAttributes {
-		Notices
+		Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models
 	};
 	public static enum Command {
 	    LOADIMAGE
@@ -438,9 +438,9 @@ public class RegistrationServlet extends HttpServlet {
 				+ show);
 
 		final HttpSession session = request.getSession(true);
-		session.setAttribute("userID", user);
+		session.setAttribute(SessionAttributes.UserID.name(), user);
 		if (show != null) {
-			session.setAttribute("show", StringEncoder.fromBase64(show));
+			session.setAttribute(SessionAttributes.Show.name(), StringEncoder.fromBase64(show));
 		}
 
 		response.sendRedirect("jsp/main.jsp");
@@ -555,7 +555,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = directRegisterUser(request, language, "");
 
 		final HttpSession session = request.getSession(true);
-		session.setAttribute("userID", user);
+		session.setAttribute(SessionAttributes.UserID.name(), user);
 
 		response.sendRedirect("../jsp/main.jsp");
 	}
@@ -583,7 +583,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static String getShowFromSession(final HttpSession session) {
-		return (String) session.getAttribute("show");
+		return (String) session.getAttribute(SessionAttributes.Show.name());
 	}
 
 	public void exportCategoryData(final HttpServletRequest request, final HttpServletResponse response)
@@ -823,7 +823,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.modifyUser(newUser, oldUser);
 
-		request.getSession(false).setAttribute("userID", servletDAO.getUser(oldUser.userID));
+		request.getSession(false).setAttribute(SessionAttributes.UserID.name(), servletDAO.getUser(oldUser.userID));
 
 		response.sendRedirect("../jsp/main.jsp");
 	}
@@ -1320,7 +1320,7 @@ public class RegistrationServlet extends HttpServlet {
 		deleteModel(request);
 		servletDAO.saveModel(model);
 
-		session.removeAttribute("modelID");
+		session.removeAttribute(SessionAttributes.ModelID.name());
 
 		setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
 
@@ -1423,7 +1423,7 @@ public class RegistrationServlet extends HttpServlet {
 					"User is not logged in! <a href='index.html'>Please go to login page...</a>");
 		}
 
-		User userInSession = (User) session.getAttribute("userID");
+		User userInSession = (User) session.getAttribute(SessionAttributes.UserID.name());
 		if(userInSession == null)
 		    throw new UserNotLoggedInException(
 		            "User is not logged in! <a href='index.html'>Please go to login page...</a>");
@@ -1506,6 +1506,11 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<input type='hidden' name='command' value='");
 		buff.append(action);
 		buff.append("'>");
+		buff.append("<input name='");
+		buff.append(action);
+		final ResourceBundle language = getLanguage(user.language);
+		buff.append("' type='submit' value='" + language.getString(submitLabel) + "'>");
+		buff.append("<p>");
 
 		for (final Model model : models) {
 			buff.append("<label>\n");
@@ -1515,10 +1520,6 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("</label>\n");
 		}
 
-		buff.append("<p><input name='");
-		buff.append(action);
-		final ResourceBundle language = getLanguage(user.language);
-		buff.append("' type='submit' value='" + language.getString(submitLabel) + "'>");
 		buff.append("</form>");
 
 		return buff;
@@ -1925,8 +1926,8 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		final HttpSession session = request.getSession(true);
 
-		session.setAttribute("directRegister", false);
-		session.setAttribute("action", "modifyUser");
+		session.setAttribute(SessionAttributes.DirectRegister.name(), false);
+		session.setAttribute(SessionAttributes.Action.name(), "modifyUser");
 
 		response.sendRedirect("jsp/user.jsp");
 	}
@@ -2322,10 +2323,10 @@ public class RegistrationServlet extends HttpServlet {
 			final String submitLabel, final Integer modelID) throws Exception {
 		final HttpSession session = request.getSession(true);
 
-		session.setAttribute("action", action);
-		session.setAttribute("submitLabel", submitLabel);
+		session.setAttribute(SessionAttributes.Action.name(), action);
+		session.setAttribute(SessionAttributes.SubmitLabel.name(), submitLabel);
 		if (modelID != null) {
-			session.setAttribute("modelID", modelID);
+			session.setAttribute(SessionAttributes.ModelID.name(), modelID);
 		}
 
 		response.sendRedirect("jsp/modelForm.jsp");

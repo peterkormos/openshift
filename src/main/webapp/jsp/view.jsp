@@ -6,7 +6,7 @@
 <html>
 <body>
 	<%
-	  String show = (String) session.getAttribute("show");
+	  String show = (String) session.getAttribute(RegistrationServlet.SessionAttributes.Show.name());
 	  if (show == null)
 	  {
 			RegistrationServlet servlet = RegistrationServlet.getInstance(config);
@@ -21,7 +21,7 @@
 
 	  User user = new User("HU");
 	  session = request.getSession(true);
-	  session.setAttribute("userID", user);
+	  session.setAttribute(RegistrationServlet.SessionAttributes.UserID.name(), user);
 	%>
 	Verseny:
 	<FONT COLOR='#ff0000'><b><%=show%></b></FONT>

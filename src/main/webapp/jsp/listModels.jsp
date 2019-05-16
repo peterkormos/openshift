@@ -1,7 +1,7 @@
 <%@page import="datatype.Detailing.DetailingCriteria"%>
 <%@page import="datatype.Detailing.DetailingCriteria"%>
 <%@page import="datatype.Detailing.DetailingGroup"%>
-<%@page import="servlet.RegistrationServlet.Command"%>
+<%@page import="servlet.*"%>
 <%@page import="java.util.*"%>
 
 <%@page import="datatype.*"%>
@@ -22,7 +22,7 @@
   boolean withDetailing = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "withDetailing", false));
   boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
 
-  List<Model> models = (List<Model>) session.getAttribute("models");
+  List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttributes.Models.name());
 %>
 
 <table border=0>

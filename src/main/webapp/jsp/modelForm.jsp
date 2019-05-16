@@ -7,9 +7,9 @@
 
 <%
 	//input parameters	
-	String submitLabel = (String)session.getAttribute("submitLabel");
-	String action = (String)session.getAttribute("action");
-	Integer modelID = (Integer)session.getAttribute("modelID");
+	String submitLabel = (String)session.getAttribute(RegistrationServlet.SessionAttributes.SubmitLabel.name());
+	String action = (String)session.getAttribute(RegistrationServlet.SessionAttributes.Action.name()); 
+	Integer modelID = (Integer)session.getAttribute(RegistrationServlet.SessionAttributes.ModelID.name());
  		
 	User user = RegistrationServlet.getUser(request);
 	

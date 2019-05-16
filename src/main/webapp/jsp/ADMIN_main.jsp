@@ -21,7 +21,7 @@
 
 <body>
 <%
-String show = (String)session.getAttribute("show");
+String show = (String)session.getAttribute(RegistrationServlet.SessionAttributes.Show.name());
 if (show == null)
 {
   show = "-";

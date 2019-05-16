@@ -93,7 +93,7 @@ function onIFrameLoad(iframe)
 <div id="modalDiv" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
-	<iframe id="iframeID" style="border:none;width: 100%;" onload="onIFrameLoad(this)"></iframe>
+	<iframe id="iframeID" style="border:none;width: 100%;height: 100%;" onload="onIFrameLoad(this)"></iframe>
   </div>
 </div>
 
