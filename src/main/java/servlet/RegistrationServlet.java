@@ -71,7 +71,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.16.";
+	public String VERSION = "2019.05.17.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -84,7 +84,7 @@ public class RegistrationServlet extends HttpServlet {
 	StringBuilder presentationBuffer;
 	StringBuilder printCardBuffer;
 
-	public static boolean preRegistrationAllowed;
+	public static Map<String, Boolean> preRegistrationAllowed = new HashMap<String, Boolean>();
 	private boolean onSiteUse;
 	private String systemMessage = "";
 
@@ -134,6 +134,9 @@ public class RegistrationServlet extends HttpServlet {
 			presentationBuffer = loadFile(
 					config.getServletContext().getResourceAsStream("/WEB-INF/conf/presentation.html"));
 
+		            for(String show : servletDAO.getShows())
+		                preRegistrationAllowed.put(show, servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
+		            
 			updateSystemSettings();
 
 			System.out.println("OK.....");
@@ -578,7 +581,7 @@ public class RegistrationServlet extends HttpServlet {
 		e.close();
 	}
 
-	public static String getShowFromReqest(final HttpServletRequest request) {
+	public static String getShowFromSession(final HttpServletRequest request) {
 		return getShowFromSession(request.getSession());
 	}
 
@@ -588,7 +591,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void exportCategoryData(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		final String show = getShowFromReqest(request);
+		final String show = getShowFromSession(request);
 
 		final List data = new ArrayList(4);
 		data.add(new LinkedList<User>());
@@ -725,7 +728,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteDataForShow(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		final String show = getShowFromReqest(request);
+		final String show = getShowFromSession(request);
 
 		for (final AwardedModel awardedModel : servletDAO.getAwardedModels()) {
 			if (servletDAO.getCategory(awardedModel.model.categoryID).group.show.equals(show)) {
@@ -1001,7 +1004,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void listCategories(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final StringBuilder buff = new StringBuilder();
 
-		getCategoryTable(buff, servletDAO.getCategoryList(getShowFromReqest(request)),
+		getCategoryTable(buff, servletDAO.getCategoryList(getShowFromSession(request)),
 				getLanguageForCurrentUser(request));
 
 		writeResponse(response, buff);
@@ -1215,7 +1218,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append("<td>");
 
-		final String show = getShowFromReqest(request);
+		final String show = getShowFromSession(request);
 		for (final CategoryGroup group : servletDAO.getCategoryGroups()) {
 			if (!group.show.equals(show)) {
 				continue;
@@ -1300,7 +1303,8 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		if (isRegistrationAllowed()) {
+	    
+		if (isRegistrationAllowed(getShowFromSession(request))) {
 			getModelForm(request, response, "addModel", "save.and.add.new.model", null);
 		} else {
 			response.sendRedirect("jsp/main.jsp");
@@ -1431,8 +1435,8 @@ public class RegistrationServlet extends HttpServlet {
             return userInSession;
 	}
 
-    public boolean isRegistrationAllowed() {
-        return isPreRegistrationAllowed() || isOnSiteUse();
+    public boolean isRegistrationAllowed(String show) {
+        return isPreRegistrationAllowed(show) || isOnSiteUse();
     }
 
 	public void inputForPhotoUpload(final HttpServletRequest request, final HttpServletResponse response)
@@ -1516,7 +1520,7 @@ public class RegistrationServlet extends HttpServlet {
 			final String submitLabel, final String language) throws Exception, IOException {
 		final StringBuilder buff = new StringBuilder();
 
-		final String show = getShowFromReqest(request);
+		final String show = getShowFromSession(request);
 
 		buff.append("<html>" + "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /></head>"
 				+ "<body>");
@@ -1584,8 +1588,9 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.setSystemParameter(ServletUtil.getRequestAttribute(request, "paramName"),
 				servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "paramValue")));
 		updateSystemSettings();
+	        preRegistrationAllowed.put(getShowFromSession(request), servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
+	            
 		response.sendRedirect("jsp/main.jsp");
-
 	}
 
 	private void deleteModel(final HttpServletRequest request)
@@ -1637,7 +1642,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<form name='input' action='RegistrationServlet' method='put'>");
 		buff.append("<input type='hidden' name='command' value='deleteCategoryGroup'>");
 
-		final String show = getShowFromReqest(request);
+		final String show = getShowFromSession(request);
 
 		for (final CategoryGroup group : servletDAO.getCategoryGroups()) {
 			if (!group.show.equals(show)) {
@@ -1707,7 +1712,7 @@ public class RegistrationServlet extends HttpServlet {
 		final int rows = 4;
 
 		final List<Model> allModels = new LinkedList<Model>();
-		final List<Category> categories = servletDAO.getCategoryList(getShowFromReqest(request));
+		final List<Category> categories = servletDAO.getCategoryList(getShowFromSession(request));
 		for (final Category category : categories) {
 			final List<Model> models = servletDAO.getModelsInCategory(category.categoryID);
 			for (final Model model : models) {
@@ -1766,7 +1771,7 @@ public class RegistrationServlet extends HttpServlet {
 		final List<Model> models = servletDAO.getModels(userID);
 
 		// remove models that are not for the current show
-		final String show = getShowFromReqest(request);
+		final String show = getShowFromSession(request);
 		final Iterator<Model> it = models.iterator();
 		while (it.hasNext()) {
 			final Model model = it.next();
@@ -1941,8 +1946,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	private void updateSystemSettings() {
-		preRegistrationAllowed = servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION);
+	private void updateSystemSettings() throws SQLException {
 		onSiteUse = servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.ONSITEUSE);
 		systemMessage = servletDAO.getSystemParameter(ServletDAO.SYSTEMPARAMETER.SYSTEMMESSAGE);
 	}
@@ -1971,7 +1975,7 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 
 		ResourceBundle language = getLanguage(ServletUtil.getOptionalRequestAttribute(request, "language"));
-		String show = getShowFromReqest(request);
+		String show = getShowFromSession(request);
 		if (show == null) {
 		    List<String> shows = servletDAO.getShows();
 		    String showId = ServletUtil.getOptionalRequestAttribute(request, "showId");
@@ -2304,7 +2308,7 @@ public class RegistrationServlet extends HttpServlet {
 	private void getHTMLCodeForCategorySelect(final StringBuilder buff, final String selectedLabel,
 			final String selectedValue, final boolean mandatory, final ResourceBundle language,
 			final HttpServletRequest request) throws Exception {
-		final String show = getShowFromReqest(request);
+		final String show = getShowFromSession(request);
 
 		buff.append("<div id='categories'>");
 		buff.append("<select name='categoryID'>");
@@ -2344,8 +2348,8 @@ public class RegistrationServlet extends HttpServlet {
 		return VERSION;
 	}
 
-	public static boolean isPreRegistrationAllowed() {
-		return preRegistrationAllowed;
+	public static boolean isPreRegistrationAllowed(String show) {
+		return preRegistrationAllowed.get(show);
 	}
 
 	public void loadImage(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

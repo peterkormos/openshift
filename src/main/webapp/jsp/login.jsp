@@ -13,6 +13,16 @@
 
 <%
 	String showIdHttpParameter = request.getParameter("showId");
+	final List<String> shows = servletDAO.getShows();
+	
+	if(showIdHttpParameter != null)
+	try
+	{
+		shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showIdHttpParameter)-1)));
+	}
+	catch(Exception ex)
+	{
+	}
  %>
 
 <html>
@@ -61,12 +71,7 @@
 						<tr bgcolor='F6F4F0'>
 							<td><%=language.getString("show")%>:</td>
 							<td>
-								<%
-								  final List<String> shows = servletDAO.getShows();
-								  
-								  if(showIdHttpParameter != null)
-								  	shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showIdHttpParameter)-1)));
-								  
+								<%								  
 								  for (final String show : shows)
 								  {
 								%> <label><input type='radio' name='show' value='<%=StringEncoder.toBase64(show.getBytes())%>'
@@ -91,22 +96,6 @@
 								type="submit" value="<%=language.getString("login")%>">
       <p>
       <div id="noticeDiv"></div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								<%
-								  if (!servlet.isPreRegistrationAllowed())
-								  {
-								%> <strong><font color='#FF0000'>Model
-										pre-registration has been closed. You won't be able to add or
-										modify your models! <br> - <br> A makett
-										el&otilde;nevez&eacute;s lez&aacute;rult. A makettek
-										felv&eacute;tele &eacute;s m&oacute;dos&iacute;t&aacute;sa
-										ezut&aacute;n m&aacute;r nem lehets&eacute;ges!
-								</font></strong> <%
-   }
- %>
 							</td>
 						</tr>
 					</table>

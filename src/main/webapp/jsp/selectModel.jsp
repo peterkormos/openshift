@@ -7,9 +7,15 @@
     
 <%
 		RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-		ServletDAO servletDAO = servlet.getServletDAO();
+		ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 		
-		if (servlet.isRegistrationAllowed()) 
+		String show = RegistrationServlet.getShowFromSession(session);
+		if (show == null)
+		{
+		  show = "-";
+		}
+		
+		if (servlet.isRegistrationAllowed(show)) 
 		{
 			final User user = RegistrationServlet.getUser(request);
 			final ResourceBundle language = servlet.getLanguage(user.language);
@@ -72,8 +78,9 @@ function checkMandatory(form)
 			<br>
 			</label>
 <%
+			}
 		}
-		} else {
+		else {
 			response.sendRedirect("jsp/main.jsp");
 		}
  %>

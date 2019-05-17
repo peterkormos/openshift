@@ -34,6 +34,13 @@
 <p>
 <%=servlet.getSystemMessage()%>
 </b></FONT>
+<p>
+<%
+if (!servlet.isPreRegistrationAllowed(show))
+{
+%> <strong><font color='#FF0000'><%= language.getString("pre-registration.closed") %></font></strong> <%
+}
+%>
 
 <p></p>
 <p></p>
@@ -101,7 +108,7 @@ function onIFrameLoad(iframe)
   <input type="hidden" id="command"  name="command" value="">
 
 <%
-  if (servlet.isRegistrationAllowed())
+  if (servlet.isRegistrationAllowed(show))
   {
 %>
   <a href="#" onClick="document.getElementById('command').value='inputForAddModel';this.parentNode.submit();">
@@ -118,7 +125,7 @@ function onIFrameLoad(iframe)
 <p></p>
    -->
 <%
-  if (servlet.isRegistrationAllowed())
+  if (servlet.isRegistrationAllowed(show))
   {
 %>
   <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttributes.Action.name() %>=inputForModifyModel&<%= RegistrationServlet.SessionAttributes.SubmitLabel.name() %>=modify');">

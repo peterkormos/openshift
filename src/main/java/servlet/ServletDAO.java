@@ -465,7 +465,7 @@ public class ServletDAO
 	}
   }
 
-  public List<String> getShows() throws SQLException, Exception
+  public List<String> getShows() throws SQLException
   {
 	final List<String> returned = new LinkedList<String>();
 
