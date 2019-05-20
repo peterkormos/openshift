@@ -71,7 +71,7 @@ import exception.UserNotLoggedInException;
 import tools.InitDB;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.17.";
+	public String VERSION = "2019.05.20.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
@@ -961,7 +961,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final Category category = new Category(servletDAO.getNextID("CATEGORY", "CATEGORY_ID"),
+            final Category category = new Category(servletDAO.getNextID("CATEGORY", "CATEGORY_ID"),
 				ServletUtil.getRequestAttribute(request, "categorycode"),
 				ServletUtil.getRequestAttribute(request, "categorydescription"),
 				servletDAO.getCategoryGroup(
@@ -975,6 +975,12 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.saveCategory(category);
 
+		try {
+		    Category modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
+		    servletDAO.deleteCategory(modifyingCategory.getCategoryID());
+		} catch (Exception e) {
+		}
+		
 		response.sendRedirect("jsp/main.jsp");
 	}
 
@@ -1196,6 +1202,16 @@ public class RegistrationServlet extends HttpServlet {
 	public void inputForAddCategory(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final ResourceBundle language = getLanguageForCurrentUser(request);
+		
+		Category category = null;
+		try {
+                    category = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
+                } catch (Exception e) {
+                    category = new Category();
+                    category.setCategoryCode("");
+                    category.setCategoryDescription("");
+                    category.setGroup(new CategoryGroup());
+                }
 
 		final StringBuilder buff = new StringBuilder();
 
@@ -1205,9 +1221,10 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</head>");
 		buff.append("<body>");
 
-		buff.append(
-				"<form " + "accept-charset=\"UTF-8\" " + "name='input' action='RegistrationServlet' method='POST'>");
+		buff.append("<form accept-charset=\"UTF-8\" name='input' action='RegistrationServlet' method='POST'>");
 		buff.append("<input type='hidden' name='command' value='addCategory'>");
+		if(category.getCategoryID() != 0)
+		    buff.append("<input type='hidden' name='categoryID' value='" + category.getCategoryID() +"'>");
 		buff.append("<table border='0'>");
 
 		buff.append("<tr>");
@@ -1224,7 +1241,9 @@ public class RegistrationServlet extends HttpServlet {
 				continue;
 			}
 
-			buff.append("<label><input type='radio' name='categoryGroupID' value='" + group.categoryGroupID + "'/>");
+			buff.append("<label><input type='radio' name='categoryGroupID' value='" + group.categoryGroupID + "' "
+			        + (group.getCategoryGroupID() == category.getGroup().getCategoryGroupID() ? "checked='checked'" :  "")
+			        + "/>");
 			buff.append(group.show + " - " + group.name + "</label><br>");
 		}
 
@@ -1237,7 +1256,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(language.getString("category.code"));
 		buff.append(": ");
 		buff.append("</td>");
-		buff.append("<td><input type='text' name='categorycode'> <font color='#FF0000' size='+3'>&#8226;</font> </td>");
+		buff.append("<td><input type='text' name='categorycode' value='"+category.getCategoryCode()+"'> <font color='#FF0000' size='+3'>&#8226;</font> </td>");
 		buff.append("</tr>");
 
 		buff.append("<tr>");
@@ -1246,14 +1265,14 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(": ");
 		buff.append("</td>");
 		buff.append(
-				"<td><input type='text' name='categorydescription'> <font color='#FF0000' size='+3'>&#8226;</font> </td>");
+				"<td><input type='text' name='categorydescription' value='"+category.getCategoryDescription()+"'> <font color='#FF0000' size='+3'>&#8226;</font> </td>");
 		buff.append("</tr>");
 
 		buff.append("<tr>");
 		buff.append("<td>");
 		buff.append("Mester: ");
 		buff.append("</td>");
-		buff.append("<td><input name='master' type='checkbox' value='on'></td>");
+		buff.append("<td><input name='master' type='checkbox' value='on' "+(category.isMaster() ? "checked" : "") +"></td>");
 		buff.append("</tr>");
 
 		buff.append("<tr>");
@@ -1261,6 +1280,8 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("Szak&aacute;g: ");
 		buff.append("</td>");
 		buff.append("<td><select name='modelClass'>");
+		if(category.getModelClass() != null)
+		    buff.append("<option value='" + category.getModelClass().name() + "'>" + category.getModelClass().name() + "</option>");
 		for (final ModelClass mc : ModelClass.values()) {
 			buff.append("<option value='" + mc.name() + "'>" + mc.name() + "</option>");
 		}
@@ -1273,7 +1294,11 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("Korcsoport: ");
 		buff.append("</td>");
 		buff.append("<td><select name='ageGroup'>");
-		buff.append("<option value='" + AgeGroup.ALL.name() + "' selected>" + AgeGroup.ALL.name() + "</option>");
+                if(category.getAgeGroup() != null)
+                    buff.append("<option value='" + category.getAgeGroup().name() + "'>" + category.getAgeGroup().name() + "</option>");
+                else
+                    buff.append("<option value='" + AgeGroup.ALL.name() + "' selected>" + AgeGroup.ALL.name() + "</option>");
+                
 		for (final AgeGroup mc : AgeGroup.values()) {
 			buff.append("<option value='" + mc.name() + "'>" + mc.name() + "</option>");
 		}
@@ -1615,6 +1640,18 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void inputForDeleteCategory(final HttpServletRequest request, final HttpServletResponse response)
+	        throws Exception {
+	    final ResourceBundle language = getLanguageForCurrentUser(request);
+	    inputForModifyCategory(request, response,"deleteCategory",language.getString("delete"));
+	}
+	
+	public void inputForModifyCategory(final HttpServletRequest request, final HttpServletResponse response)
+	        throws Exception {
+	    final ResourceBundle language = getLanguageForCurrentUser(request);
+	    inputForModifyCategory(request, response,"inputForAddCategory",language.getString("modify"));
+	}
+	
+	private void inputForModifyCategory(final HttpServletRequest request, final HttpServletResponse response, String command, String commandLabel)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
 		final ResourceBundle language = getLanguageForCurrentUser(request);
@@ -1622,11 +1659,11 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<html><body>");
 
 		buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put'>");
-		buff.append("<input type='hidden' name='command' value='deleteCategory'>");
+		buff.append("<input type='hidden' name='command' value='"+command+"'>");
 
 		getHTMLCodeForCategorySelect(buff, language.getString("select"), "", false, language, request);
 
-		buff.append("<p><input name='deleteCategory' type='submit' value='" + language.getString("delete") + "'>");
+		buff.append("<p><input name='"+command+"' type='submit' value='" + commandLabel + "'>");
 		buff.append("</form></body></html>");
 
 		writeResponse(response, buff);

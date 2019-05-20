@@ -61,10 +61,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 	<input type="hidden" id="command1" name="command" value=""> <input
 		type="hidden" name="withDetailing" value="true"> <a href="#"
 		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - <a
-		href="#"
-		onClick="document.getElementById('command1').value='listCategories';this.parentNode.submit();"><strong>&Ouml;sszes
-			kateg&oacute;ria list&aacute;z&aacute;sa</strong></a> - <a href="#"
+		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - <a href="#"
 		onClick="document.getElementById('command1').value='listUsers';this.parentNode.submit();">&Ouml;sszes
 		felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a>
 </form>
@@ -113,7 +110,17 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 	<p></p>
 	<a href="#"
 		onClick="document.getElementById('command3').value='inputForAddCategory';this.parentNode.submit();">&Uacute;j
-		kateg&oacute;ria hozz&aacute;ad&aacute;sa</a> - <a href="#"
+		kateg&oacute;ria hozz&aacute;ad&aacute;sa</a> 
+		- <a
+		href="#"
+		onClick="document.getElementById('command3').value='listCategories';this.parentNode.submit();"><strong>&Ouml;sszes
+			kateg&oacute;ria list&aacute;z&aacute;sa</strong></a> 
+			
+			- <a href="#"
+		onClick="document.getElementById('command3').value='inputForModifyCategory';this.parentNode.submit();">Kateg&oacute;ria
+		m&oacute;dos&iacute;t&aacute;sa</a>
+		
+			- <a href="#"
 		onClick="document.getElementById('command3').value='inputForDeleteCategory';this.parentNode.submit();">Kateg&oacute;ria
 		t&ouml;rl&eacute;se</a>
 
