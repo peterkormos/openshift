@@ -59,13 +59,17 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 
 <form accept-charset="UTF-8" name="input"  id="input1" action="../RegistrationServlet" method="post">
 	<input type="hidden" id="command1" name="command" value=""> <input
-		type="hidden" name="withDetailing" value="true"> <a href="#"
+		type="hidden" name="withDetailing" value="true"> 
+<!-- 		
+		<a href="#"
 		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - <a href="#"
+		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - 
+ -->		
+		<a href="#"
 		onClick="document.getElementById('command1').value='listUsers';this.parentNode.submit();">&Ouml;sszes
 		felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a>
 </form>
-
+<!--  
 <form accept-charset="UTF-8" name="input"  id="input1a" action="../RegistrationServlet" method="post">
 	<input
 		type="hidden" name="onlyPhotos" value="true"> 
@@ -73,7 +77,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		onClick="document.getElementById('input1a').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
 		benevezett makett list&aacute;z&aacute;sa (csak k&eacute;pekkel)</a> 
 </form>
-
+-->
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<p>
 		<em><strong>Nyomtat&aacute;s...</strong></em>
