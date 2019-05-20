@@ -5,7 +5,18 @@
 
 <%
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	User user = RegistrationServlet.getUser(request);
+	
+	User user = null;
+	
+	try
+	{
+		user = RegistrationServlet.getUser(request);
+	}
+	catch(Exception ex)
+	{
+		out.print(ex.getMessage());
+		return;
+	}
 
 	if (user.language.length() != 2)
 	{

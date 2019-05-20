@@ -108,20 +108,16 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		onClick="document.getElementById('command3').value='inputForDeleteCategoryGroup';this.parentNode.submit()">Kateg&oacute;riacsoportok
 		lek&eacute;rdez&eacute;se, t&ouml;rl&eacute;se</a>
 	<p></p>
-	<a href="#"
-		onClick="document.getElementById('command3').value='inputForAddCategory';this.parentNode.submit();">&Uacute;j
-		kateg&oacute;ria hozz&aacute;ad&aacute;sa</a> 
-		- <a
-		href="#"
-		onClick="document.getElementById('command3').value='listCategories';this.parentNode.submit();"><strong>&Ouml;sszes
+		<a href="../RegistrationServlet/listCategories"><strong>&Ouml;sszes
 			kateg&oacute;ria list&aacute;z&aacute;sa</strong></a> 
-			
-			- <a href="#"
-		onClick="document.getElementById('command3').value='inputForModifyCategory';this.parentNode.submit();">Kateg&oacute;ria
+		- 
+		<a href="../RegistrationServlet/inputForAddCategory">&Uacute;j
+		kateg&oacute;ria hozz&aacute;ad&aacute;sa</a> 
+		- 
+		<a href="../RegistrationServlet/inputForModifyCategory">Kateg&oacute;ria
 		m&oacute;dos&iacute;t&aacute;sa</a>
 		
-			- <a href="#"
-		onClick="document.getElementById('command3').value='inputForDeleteCategory';this.parentNode.submit();">Kateg&oacute;ria
+			- <a href="../RegistrationServlet/inputForDeleteCategory">Kateg&oacute;ria
 		t&ouml;rl&eacute;se</a>
 
 	<p></p>
