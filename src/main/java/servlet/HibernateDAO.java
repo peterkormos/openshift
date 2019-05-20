@@ -2,6 +2,9 @@ package servlet;
 
 import java.net.URL;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
@@ -85,7 +88,7 @@ public class HibernateDAO
 	}
   }
 
-  public Record get(int id, Class<? extends Record> recordClass) throws Exception
+  public <T> T get(int id, Class<T> recordClass) throws Exception
   {
 	Session session = null;
 
@@ -95,17 +98,15 @@ public class HibernateDAO
 
 	  session.beginTransaction();
 
-	  Record returned = (Record) session.createQuery("From " + recordClass.getSimpleName() + " as u where u.id = ?")
+	  T returned = (T) session.createQuery("From " + recordClass.getSimpleName() + " as u where u.id = ?")
 		  .setInteger(0, id).uniqueResult();
 
 	  if (returned == null)
 	  {
 		throw new Exception("No record is found with id: " + id);
 	  }
-	  else
-	  {
-		return returned;
-	  }
+	  
+	  return returned;
 	}
 	finally
 	{
@@ -114,7 +115,7 @@ public class HibernateDAO
   }
 
   @SuppressWarnings("unchecked")
-  public Set<Record> getAll(Class<? extends Record> recordClass) throws Exception
+  public <T> List<T> getAll(Class<T> recordClass) throws Exception
   {
 	Session session = null;
 
@@ -124,7 +125,7 @@ public class HibernateDAO
 
 	  session.beginTransaction();
 
-	  return new HashSet<Record>(session.createQuery("From " + recordClass.getSimpleName() + " order by id asc").list());
+	  return new LinkedList<T>(session.createQuery("From " + recordClass.getSimpleName() + " order by id asc").list());
 	}
 	finally
 	{

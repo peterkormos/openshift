@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.ServletConfig;
@@ -21,6 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
+
 import datatype.JudgingCriteria;
 import datatype.JudgingResult;
 import datatype.JudgingScore;
@@ -28,7 +33,10 @@ import datatype.Record;
 
 public final class JudgingServlet extends HttpServlet
 {
+  private static final String VERSION = "2019.05.20.";
   private static final String JUDGING_FILENAME = "judging";
+
+  public static Logger logger = Logger.getLogger(JudgingServlet.class);
 
   public enum RequestType
   {
@@ -57,6 +65,11 @@ public final class JudgingServlet extends HttpServlet
   {
 	try
 	{
+            DOMConfigurator.configure(config.getServletContext().getResource("/WEB-INF/conf/log4j.xml"));
+
+            logger.fatal("************************ Logging restarted ************************");
+	    System.out.println("VERSION: " + VERSION);
+	    logger.fatal("VERSION: " + VERSION);
 	  dao = new HibernateDAO(config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
 	}
 	catch (final MalformedURLException e)
@@ -84,11 +97,11 @@ public final class JudgingServlet extends HttpServlet
 		switch (RequestType.valueOf(pathInfo))
 		{
 		case GetJudgingRules:
-		  showJudgingRules(request, response);
+		  getJudgingRules(request, response);
 		  break;
 
 		case GetJudgingForuma:
-		  showJudgingForm(request, response);
+		  getJudgingForuma(request, response);
 		  break;
 
 		case SaveJudging:
@@ -124,16 +137,13 @@ public final class JudgingServlet extends HttpServlet
 
 	final Map<String, JudgingResult> scoresByCategory = new LinkedHashMap<String, JudgingResult>();
 
-	final List<Record> allScores = new LinkedList<Record>(dao.getAll(JudgingScore.class));
+	final List<JudgingScore> allScores = dao.getAll(JudgingScore.class);
 
-	Collections.sort(allScores, new Comparator<Record>()
+	Collections.sort(allScores, new Comparator<JudgingScore>()
 	{
 	  @Override
-	  public int compare(Record o1, Record o2)
+	  public int compare(JudgingScore result1, JudgingScore result2)
 	  {
-		final JudgingScore result1 = (JudgingScore) o1;
-		final JudgingScore result2 = (JudgingScore) o2;
-
 		int compareToResult = result1.getCategory().compareTo(result2.getCategory());
 		if (compareToResult == 0)
 		{
@@ -196,7 +206,7 @@ public final class JudgingServlet extends HttpServlet
 
   private void deleteJudgings(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
-	for (final Record score : dao.getAll(JudgingScore.class))
+	for (final JudgingScore score : dao.getAll(JudgingScore.class))
 	{
 	  dao.delete(score.id, JudgingScore.class);
 	}
@@ -206,15 +216,13 @@ public final class JudgingServlet extends HttpServlet
 
   private void listJudgings(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
-	final List<Record> allScores = new LinkedList<Record>(dao.getAll(JudgingScore.class));
+	final List<JudgingScore> allScores = dao.getAll(JudgingScore.class);
 
-	Collections.sort(allScores, new Comparator<Record>()
+	Collections.sort(allScores, new Comparator<JudgingScore>()
 	{
 	  @Override
-	  public int compare(Record o1, Record o2)
+	  public int compare(JudgingScore result1, JudgingScore result2)
 	  {
-		final JudgingScore result1 = (JudgingScore) o1;
-		final JudgingScore result2 = (JudgingScore) o2;
 
 		int compareTo = result1.getCategory().compareTo(result2.getCategory());
 		if (compareTo == 0)
@@ -262,7 +270,7 @@ public final class JudgingServlet extends HttpServlet
 	redirectRequest(request, response, "/" + getClass().getSimpleName());
   }
 
-  private void showJudgingForm(HttpServletRequest request, HttpServletResponse response) throws Exception
+  private void getJudgingForuma(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
 
 	final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
@@ -270,7 +278,7 @@ public final class JudgingServlet extends HttpServlet
 	setSessionAttribute(request, SessionAttribute.JudgingRulesForCategory.name(), getCriteriaList(category));
 	setSessionAttribute(request, SessionAttribute.Category.name(), category);
 
-	redirectRequest(request, response, "/jsp/showJudgingForm.jsp");
+	redirectRequest(request, response, "/jsp/getJudgingForm.jsp");
   }
 
   private List<JudgingCriteria> getCriteriaList(String category) throws IOException
@@ -294,12 +302,12 @@ public final class JudgingServlet extends HttpServlet
 	return criteriaList;
   }
 
-  private void showJudgingRules(HttpServletRequest request, HttpServletResponse response) throws IOException
+  private void getJudgingRules(HttpServletRequest request, HttpServletResponse response) throws IOException
   {
 	final Map<String, String> judging = loadFile(JUDGING_FILENAME);
 
 	setSessionAttribute(request, RequestType.GetJudgingRules.name(), judging);
-	redirectRequest(request, response, "/jsp/showJudgingRules.jsp");
+	redirectRequest(request, response, "/jsp/getJudgingRules.jsp");
   }
 
   private void redirectRequest(HttpServletRequest request, HttpServletResponse response, String path) throws IOException
@@ -324,6 +332,8 @@ public final class JudgingServlet extends HttpServlet
 	do
 	{
 	  file = new File(basePath + fileName + extension).getAbsoluteFile();
+	  logger.trace("getFile(): " + file.getAbsolutePath());
+	  
 	  basePath += ".." + File.separator;
 	}
 	while (!file.exists());
@@ -333,7 +343,12 @@ public final class JudgingServlet extends HttpServlet
 
   private Map<String, String> loadFile(String fileName) throws IOException
   {
-	return loadFile(getFile(fileName));
+      Properties properties = new Properties();
+      FileReader reader = new FileReader(getFile(fileName));
+    properties.load(reader);
+    reader.close();
+    
+    return new HashMap<String, String>((Map)properties);  
   }
 
   private Map<String, String> loadFile(File file) throws IOException
