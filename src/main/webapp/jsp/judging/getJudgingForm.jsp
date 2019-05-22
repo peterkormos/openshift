@@ -13,6 +13,10 @@
   List<JudgingCriteria> criteriaList = (List<JudgingCriteria>) session
 		  .getAttribute(JudgingServlet.SessionAttribute.JudgingCriteriasForCategory.name());
 
+	if(criteriaList == null)
+	{
+		criteriaList = Arrays.asList(JudgingCriteria.getDefault());
+	}
   String category = (String) session.getAttribute(JudgingServlet.SessionAttribute.Category.name());
   
 	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
@@ -24,16 +28,33 @@
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.SaveJudging.name()%>"
 	method="post">
 
-	<input type="hidden"
-		name="<%=JudgingServlet.RequestParameter.JudgingCriterias.name()%>"
-		value="<%=criteriaList.size()%>">
-
+ 	<input type="hidden"
+	name="<%=JudgingServlet.RequestParameter.JudgingCriterias.name()%>"
+	value="<%=criteriaList.size()%>">			 
 
 	<table style="border: 1px solid black;">
 		<tr>
-			<td colspan="3"><%= language.getString("category.code") %>: <input required="required"
+			<td colspan="3"><%= language.getString("category.code") %>:
+			<%
+				if(category == null)
+				{
+				%>
+				<input type="text" size="4"
 				name="<%=JudgingServlet.RequestParameter.Category.name()%>"
-				value="<%=category%>" size="4"> Judge: <input
+				> 
+				<%
+				}
+				else
+				{
+				%>
+				<input type="hidden"
+				name="<%=JudgingServlet.RequestParameter.Category.name()%>"
+				value="<%=category%>"> 
+				<b><%=category%></b> 
+				<%
+				}
+			 %> 
+				Judge: <input
 				required="required"
 				name="<%=JudgingServlet.RequestParameter.Judge.name()%>">
 			</td>
@@ -57,27 +78,27 @@
 			<th>Description</th>
 			<th>Score</th>
 		</tr>
-		<%
-		  for (JudgingCriteria criteria : criteriaList)
-		  {
-		%>
-		<tr bgcolor="<%=highlight()%>">
-			<td><%=criteria.getId()%></td>
-			<td><%=criteria.getDescription()%></td>
-			<td>
+			<%
+				  for (JudgingCriteria criteria : criteriaList)
+				  {
+				%>
+				<tr bgcolor="<%=highlight()%>">
+					<td><%=criteria.getId()%></td>
+					<td><%=criteria.getDescription()%></td>
+					<td>
+						<%
+						  for (int i = 0; i < criteria.getMaxScore() + 1; i++)
+								{
+						%> <input type="radio"
+						name="<%=JudgingServlet.RequestParameter.Score.name()%><%=criteria.getId()%>"
+						value="<%=i%>"><%=i%> <%
+		   }
+		 %>
+					</td>
+				</tr>
 				<%
-				  for (int i = 0; i < criteria.getMaxScore() + 1; i++)
-						{
-				%> <input type="radio"
-				name="<%=JudgingServlet.RequestParameter.Score.name()%><%=criteria.getId()%>"
-				value="<%=i%>"><%=i%> <%
-   }
- %>
-			</td>
-		</tr>
-		<%
-		  }
-		%>
+				  }
+			 %> 		
 
 		<tr>
 			<td colspan="3" valign="top"><%= language.getString("comment") %>: <textarea

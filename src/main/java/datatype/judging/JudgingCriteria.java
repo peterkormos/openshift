@@ -5,6 +5,11 @@ public class JudgingCriteria
   private int id;
   private String description;
   private int maxScore;
+  
+  public static final JudgingCriteria getDefault()
+  {
+      return new JudgingCriteria(1, "", 10);
+  }
 
   public JudgingCriteria(int id, String description, int maxScore)
   {

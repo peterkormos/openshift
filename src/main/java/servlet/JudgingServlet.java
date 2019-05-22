@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
-import datatype.Record;
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
@@ -101,7 +101,7 @@ public final class JudgingServlet extends HttpServlet
 		  break;
 
 		case GetJudgingForm:
-		  getJudgingFormula(request, response);
+		  getJudgingForm(request, response);
 		  break;
 
 		case SaveJudging:
@@ -153,49 +153,31 @@ public final class JudgingServlet extends HttpServlet
 	  }
 	});
 
-	for (final Record record : allScores)
+	for (final JudgingScore score : allScores)
 	{
-	  final JudgingScore score = (JudgingScore) record;
 
-	  JudgingResult judgingResult = scoresByCategory.get(score.getJudge() + score.getModelID());
-	  final int maxScore = getMaxScore(score.getCategory(), score.getCriteriaID());
+	  String key = score.getJudge() + score.getCategory() + score.getModellerID() + score.getModelID();
+	  
+	  JudgingResult judgingResult = scoresByCategory.get(key);
 	  if (judgingResult == null)
 	  {
-		judgingResult = new JudgingResult(score, maxScore);
-		scoresByCategory.put(score.getJudge() + score.getModelID(), judgingResult);
+		judgingResult = new JudgingResult(score);
+		scoresByCategory.put(key, judgingResult);
 	  }
 
-	  AtomicInteger count = judgingResult.getScores().get(score.getScore());
-	  if (count == null)
-	  {
-		count = new AtomicInteger(0);
-		judgingResult.getScores().put(score.getScore(), count);
-	  }
+            try 
+            {
+                AtomicInteger count = judgingResult.getScoreForCriteria(score.getCriteriaID());
+                count.incrementAndGet();
+            } catch (Exception e) {
+                judgingResult.getScores().put(getCriteria(score.getCategory(), score.getCriteriaID()), new AtomicInteger(1));
+            }
 
-	  if (judgingResult.getMaxScore() < maxScore)
-	  {
-		judgingResult.setMaxScore(maxScore);
-	  }
-
-	  count.incrementAndGet();
 	}
 
 	setSessionAttribute(request, SessionAttribute.Judgings.name(), scoresByCategory.values());
 
 	redirectRequest(request, response, "/jsp/judging/listJudgingSummary.jsp");
-  }
-
-  private int getMaxScore(String category, int criteriaID) throws IOException
-  {
-	for (final JudgingCriteria criteria : getCriteriaList(category))
-	{
-	  if (criteria.getId() == criteriaID)
-	  {
-		return criteria.getMaxScore();
-	  }
-	}
-
-	throw new IllegalArgumentException(String.format("criteriaID: %1$d not found in category: %2$d", criteriaID, category));
   }
 
   private void setSessionAttribute(HttpServletRequest request, String name, Object value)
@@ -267,10 +249,14 @@ public final class JudgingServlet extends HttpServlet
 	  dao.save(new JudgingScore(dao.getNextID(JudgingScore.class), category, judge, modelID, modellerID, i, score, comment));
 	}
 
+        final HttpSession session = request.getSession(false);
+        session.removeAttribute(SessionAttribute.JudgingCriteriasForCategory.name());
+        session.removeAttribute(SessionAttribute.Category.name());
+
 	redirectRequest(request, response, "/" + getClass().getSimpleName());
   }
 
-  private void getJudgingFormula(HttpServletRequest request, HttpServletResponse response) throws Exception
+  private void getJudgingForm(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
 	final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
 
@@ -280,14 +266,26 @@ public final class JudgingServlet extends HttpServlet
 	redirectRequest(request, response, "/jsp/judging/getJudgingForm.jsp");
   }
 
+  private JudgingCriteria getCriteria(String category, int criteriaId) throws IOException
+  {
+      for(JudgingCriteria criteria : getCriteriaList(category))
+          if(criteria.getId() == criteriaId)
+              return criteria;
+      throw new IllegalArgumentException(String.format("No criteria is found for category [%s] with id: [%d]", category, criteriaId));
+  }
+  
   private List<JudgingCriteria> getCriteriaList(String category) throws IOException
   {
 	final Map<String, String> judgingRules = loadFile(JUDGING_FILENAME);
 
-	final Map<String, String> judgingRulesForCategory = loadFile(judgingRules.get(category));
+	String fileName = judgingRules.get(category);
+	if(fileName == null)
+	    return Arrays.asList(JudgingCriteria.getDefault()); 
+	                
+        final Map<String, String> judgingCriteriaFilesForCategory = loadFile(fileName);
 	final List<JudgingCriteria> criteriaList = new LinkedList<JudgingCriteria>();
 
-	for (final Entry<String, String> entry : judgingRulesForCategory.entrySet())
+	for (final Entry<String, String> entry : judgingCriteriaFilesForCategory.entrySet())
 	{
 	  final String values = entry.getValue();
 	  final String[] splitValues = values.split(";");
@@ -324,6 +322,9 @@ public final class JudgingServlet extends HttpServlet
 
   private File getFile(String fileName)
   {
+      if(fileName == null)
+          throw new IllegalArgumentException("fileName is not set!");
+      
 	String basePath = "." + File.separator;
 	final String extension = ".txt";
 
@@ -340,13 +341,20 @@ public final class JudgingServlet extends HttpServlet
 	return file;
   }
 
-  private Map<String, String> loadFile(String fileName) throws IOException
-  {
-    Properties properties = new Properties();
-    FileReader reader = new FileReader(getFile(fileName));
-    properties.load(reader);
-    reader.close();
-    
-    return new HashMap<String, String>((Map)properties);  
-  }
+  private final Map<String, Properties> fileCache = new HashMap<String, Properties>();
+  
+    private Map<String, String> loadFile(String fileName) throws IOException {
+        Properties properties = fileCache.get(fileName);
+
+        if (properties == null) 
+        {
+            properties = new Properties();
+            FileReader reader = new FileReader(getFile(fileName));
+            properties.load(reader);
+            reader.close();
+            fileCache.put(fileName, properties);
+        }
+        
+        return new HashMap<String, String>((Map) properties);
+    }
 }

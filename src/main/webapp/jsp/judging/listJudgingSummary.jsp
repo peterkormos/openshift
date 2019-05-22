@@ -88,20 +88,11 @@
 		  for (int i = 0; i <= maxScore; i++)
 				{
 
-				  AtomicInteger count = judgingResult.getScores().get(i);
-				  if (count != null)
-				  {
-				  	total += count.get(); 
-		%>
-		<td><%=count.get()%></td>
-		<%
-		  }
-				  else
-				  {
-		%>
-		<td>0</td>
-		<%
-		  }
+				  int count = judgingResult.getCountForScore(i);
+				  	total += count; 
+					%>
+					<td><%= count %></td>
+					<%
 				}
 		%>
 		<td><%= total %></td>
