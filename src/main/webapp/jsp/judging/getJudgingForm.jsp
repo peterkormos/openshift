@@ -109,9 +109,13 @@
 						<%
 						  for (int i = 0; i < criteria.getMaxScore() + 1; i++)
 								{
-						%> <input type="radio"
+						%> 
+						<label>
+						<input type="radio" 
 						name="<%=JudgingServlet.RequestParameter.Score.name()%><%=criteria.getId()%>"
-						value="<%=i%>"><%=i%> <%
+						value="<%=i%>"><%=i%> 
+						</label>
+		<%
 		   }
 		 %>
 					</td>

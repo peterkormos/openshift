@@ -179,6 +179,7 @@ public final class JudgingServlet extends HttpServlet
 
 	}
 
+	System.out.println(scoresByCategory);
 	setSessionAttribute(request, SessionAttribute.Judgings.name(), scoresByCategory.values());
 
 	redirectRequest(request, response, "/jsp/judging/listJudgingSummary.jsp");
