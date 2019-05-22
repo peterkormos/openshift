@@ -10,7 +10,7 @@
 <%
   highlightStart = 0xEAEAEA;
 
-	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
+	ResourceBundle language = JudgingServlet.getLanguage(session, response);
 %>
 
 

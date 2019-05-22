@@ -15,6 +15,8 @@
 
 <a href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>">Judge</a>
 <p>
+<a href="getJudgingForm.jsp">Simple judging by looking at models...</a>
+<p>
 <a href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgings.name()%>">List judgings</a>
 <p>
 <a href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgingSummary.name()%>">List judging summary</a>

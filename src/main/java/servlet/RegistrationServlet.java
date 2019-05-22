@@ -771,7 +771,7 @@ public class RegistrationServlet extends HttpServlet {
 		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
-		if (email.trim().length() == 0 || email.equals("-") || email.indexOf("@") == -1 || email.indexOf(".") == -1) {
+		if (email.trim().length() == 0 || ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(email) || email.indexOf("@") == -1 || email.indexOf(".") == -1) {
 			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
 					+ ": [" + email + "]");
 			return;
@@ -815,7 +815,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User newUser = createUser(request, ServletUtil.getRequestAttribute(request, "email"));
 		newUser.userID = oldUser.userID;
 		if (!newUser.isAdminUser() && !newUser.isLocalUser() && (newUser.email.trim().length() == 0
-				|| newUser.email.equals("-") || newUser.email.indexOf("@") == -1)) {
+				|| ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(newUser.email) || newUser.email.indexOf("@") == -1)) {
 			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
 					+ ": [" + newUser.email + "]");
 			return;
@@ -1366,7 +1366,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.saveModel(model);
 
-		if ("-".equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
+		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
 			final HttpSession session = request.getSession(false);
 			String notice = servletDAO.encodeString(model.name) + " - " + model.scale + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode;
@@ -1771,7 +1771,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID");
 
-		if ("-".equals(modelID)) {
+		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
 			printModelsForUser(request, response, languageUtil.getLanguage(user.language), user.userID,
 					false /* allModelsPrinted */);
 		} else {
@@ -2013,7 +2013,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (show == null) {
 		    List<String> shows = servletDAO.getShows();
 		    String showId = ServletUtil.getOptionalRequestAttribute(request, "showId");
-		    if (!"-".equals(showId)) {
+		    if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)) {
                         shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showId)-1)));
 		    }
 		    
@@ -2098,7 +2098,7 @@ public class RegistrationServlet extends HttpServlet {
 			final String httpParameterPostTag = String.valueOf(i);
 
 			final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID" + httpParameterPostTag);
-			if ("-".equals(modelID)) {
+			if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
 				continue;
 			}
 
@@ -2127,7 +2127,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID" + httpParameterPostTag)
 					.trim();
-			if (modelID.length() == 0 || "-".endsWith(modelID)) {
+			if (modelID.length() == 0 || ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.endsWith(modelID)) {
 				continue;
 			}
 

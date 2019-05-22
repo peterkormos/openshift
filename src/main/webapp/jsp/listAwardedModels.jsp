@@ -18,7 +18,7 @@
 		final String httpParameterPostTag = String.valueOf(i);
 
 		final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID" + httpParameterPostTag).trim();
-		if (modelID.length() == 0 || "-".endsWith(modelID))
+		if (modelID.length() == 0 || ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID))
 		{
 		  continue;
 		}

@@ -10,18 +10,21 @@
 <%
     highlightStart = 0xEAEAEA;
 
-  List<JudgingCriteria> criteriaList = (List<JudgingCriteria>) session
-		  .getAttribute(JudgingServlet.SessionAttribute.JudgingCriteriasForCategory.name());
+    String judge = (String) session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
+    if (judge == null)
+        judge = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Judge.name());
 
-	if(criteriaList == null)
-	{
-		criteriaList = Arrays.asList(JudgingCriteria.getDefault());
-	}
-  String category = (String) session.getAttribute(JudgingServlet.SessionAttribute.Category.name());
-  
-	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
-	
-	int maxlength = 1000;
+    List<JudgingCriteria> criteriaList = (List<JudgingCriteria>) session
+            .getAttribute(JudgingServlet.SessionAttribute.JudgingCriteriasForCategory.name());
+
+    if (criteriaList == null) {
+        criteriaList = Arrays.asList(JudgingCriteria.getDefault());
+    }
+    String category = (String) session.getAttribute(JudgingServlet.SessionAttribute.Category.name());
+
+    ResourceBundle language = JudgingServlet.getLanguage(session, response);
+
+    int maxlength = 1000;
 %>
 <p>
 <form
@@ -39,24 +42,41 @@
 				if(category == null)
 				{
 				%>
-				<input type="text" size="4"
-				name="<%=JudgingServlet.RequestParameter.Category.name()%>"
-				> 
+					<input type="text" size="4"
+					name="<%=JudgingServlet.RequestParameter.Category.name()%>"
+					> 
 				<%
 				}
 				else
 				{
 				%>
-				<input type="hidden"
-				name="<%=JudgingServlet.RequestParameter.Category.name()%>"
-				value="<%=category%>"> 
-				<b><%=category%></b> 
+					<input type="hidden"
+					name="<%=JudgingServlet.RequestParameter.Category.name()%>"
+					value="<%=category%>"> 
+					<b><%=category%></b> 
 				<%
 				}
 			 %> 
-				Judge: <input
-				required="required"
-				name="<%=JudgingServlet.RequestParameter.Judge.name()%>">
+				Judge: 
+			<%
+				if(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judge))
+				{
+				%>
+					<input type="text" required="required"
+					name="<%=JudgingServlet.RequestParameter.Judge.name()%>"
+					> 
+				<%
+				}
+				else
+				{
+				%>
+					<input type="hidden"
+					name="<%=JudgingServlet.RequestParameter.Judge.name()%>"
+					value="<%=judge%>"> 
+					<b><%=judge%></b> 
+				<%
+				}
+			 %> 
 			</td>
 		</tr>
 

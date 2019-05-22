@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,17 +25,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.api.client.http.HttpResponse;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
+import util.SessionAttributes;
 
 public final class JudgingServlet extends HttpServlet
 {
   private static final String VERSION = "2019.05.22.";
-  private static final String JUDGING_FILENAME = "judging";
+  private static final String JUDGING_FILENAME = "judging.txt";
 
   public static Logger logger = Logger.getLogger(JudgingServlet.class);
 
@@ -45,7 +49,7 @@ public final class JudgingServlet extends HttpServlet
 
   public enum SessionAttribute
   {
-	JudgingCriteriasForCategory, Category, Judgings
+	JudgingCriteriasForCategory, Category, Judgings, Judge
   }
 
   public enum RequestParameter
@@ -292,7 +296,7 @@ public final class JudgingServlet extends HttpServlet
 	  final String values = entry.getValue();
 	  final String[] splitValues = values.split(";");
 	  if(splitValues.length != 2)
-	      throw new IllegalArgumentException(String.format("value [%s] token count is not 2 for category: [%s]!", values, category));
+	      throw new IllegalArgumentException(String.format("value [%s] token count is not 2 for criteriaId: [%s] in file: [%s]!", values, criteriaId, fileName));
 	  final String description = splitValues[0];
 	  final int maxScore = Integer.parseInt(splitValues[1]);
 
@@ -330,10 +334,9 @@ public final class JudgingServlet extends HttpServlet
             throw new IllegalArgumentException("fileName is not set!");
 
         String basePath = "." + File.separator;
-        final String extension = ".txt";
 
         File file = null;
-        file = new File(basePath + fileName + extension).getAbsoluteFile();
+        file = new File(basePath + fileName).getAbsoluteFile();
         logger.trace("getFile(): " + file.getAbsolutePath());
 
         if (!file.exists())
@@ -357,5 +360,14 @@ public final class JudgingServlet extends HttpServlet
         }
         
         return new HashMap<String, String>((Map) properties);
+    }
+
+    public static ResourceBundle getLanguage(HttpSession session, HttpServletResponse response) throws IOException
+    {
+        ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
+        if(language == null)
+                response.sendRedirect("judging.jsp");
+        
+        return language;
     }
 }

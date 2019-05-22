@@ -20,14 +20,16 @@ import exception.MissingRequestParameterException;
 
 public class ServletUtil {
 
+    public static final String ATTRIBUTE_NOT_FOUND_VALUE = "-";
+
     public static String getOptionalRequestAttribute(final HttpServletRequest request, final String name) {
         try {
             final String value = ServletUtil.getRequestAttribute(request, name, false);
 
-            return "".equals(value) ? "-" : value;
+            return "".equals(value) ? ATTRIBUTE_NOT_FOUND_VALUE : value;
         } catch (final MissingRequestParameterException e) {
             e.printStackTrace();
-            return "-";
+            return ATTRIBUTE_NOT_FOUND_VALUE;
         }
     }
 
@@ -43,7 +45,7 @@ public class ServletUtil {
             if (throwException) {
                 throw new MissingRequestParameterException(name);
             } else {
-                return "-";
+                return ATTRIBUTE_NOT_FOUND_VALUE;
             }
         }
 
