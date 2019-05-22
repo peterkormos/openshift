@@ -2,19 +2,20 @@
 <%@page import="datatype.Detailing.DetailingGroup"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
 
 <%
 	//input parameters	
-	String submitLabel = (String)session.getAttribute(RegistrationServlet.SessionAttributes.SubmitLabel.name());
-	String action = (String)session.getAttribute(RegistrationServlet.SessionAttributes.Action.name()); 
-	Integer modelID = (Integer)session.getAttribute(RegistrationServlet.SessionAttributes.ModelID.name());
+	String submitLabel = (String)session.getAttribute(SessionAttributes.SubmitLabel.name());
+	String action = (String)session.getAttribute(SessionAttributes.Action.name()); 
+	Integer modelID = (Integer)session.getAttribute(SessionAttributes.ModelID.name());
  		
 	User user = RegistrationServlet.getUser(request);
 	
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	final ResourceBundle language = servlet.getLanguage(user.language);
+	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
 	ServletDAO servletDAO = servlet.getServletDAO();
 
 	Model model = null;

@@ -2,8 +2,12 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
+
+<jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
 
 <%
+
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	
 	User user = null;
@@ -23,8 +27,10 @@
 	  response.sendRedirect(user.language + "_main.jsp");
 	  return;
 	}
+	
+	ResourceBundle language = languageUtil.getLanguage(user.language);
+	session.setAttribute(SessionAttributes.Language.name(), language); 
 
-	final ResourceBundle language = servlet.getLanguage(user.language);
 	String show = RegistrationServlet.getShowFromSession(session);
 	if (show == null)
 	{
@@ -139,12 +145,12 @@ function onIFrameLoad(iframe)
   if (servlet.isRegistrationAllowed(show))
   {
 %>
-  <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttributes.Action.name() %>=inputForModifyModel&<%= RegistrationServlet.SessionAttributes.SubmitLabel.name() %>=modify');">
+  <a href="#" onClick="showModal('selectModel.jsp?<%= SessionAttributes.Action.name() %>=inputForModifyModel&<%= SessionAttributes.SubmitLabel.name() %>=modify');">
   <img src="../icons/modify.png" height="30" align="center"> <%=language.getString("modify.model")%></a>
 
 <p></p>
    
-  <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttributes.Action.name() %>=deleteModel&<%= RegistrationServlet.SessionAttributes.SubmitLabel.name() %>=delete');">
+  <a href="#" onClick="showModal('selectModel.jsp?<%= SessionAttributes.Action.name() %>=deleteModel&<%= SessionAttributes.SubmitLabel.name() %>=delete');">
   <img src="../icons/delete2.png" height="30" align="center"> <%=language.getString("delete")%></a>
 
 <p></p>

@@ -2,6 +2,7 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%
   RegistrationServlet servlet = RegistrationServlet.getInstance(config);
@@ -21,7 +22,7 @@
 
 <body>
 <%
-String show = (String)session.getAttribute(RegistrationServlet.SessionAttributes.Show.name());
+String show = (String)session.getAttribute(SessionAttributes.Show.name());
 if (show == null)
 {
   show = "-";

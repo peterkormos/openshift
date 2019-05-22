@@ -3,6 +3,7 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
 
@@ -11,8 +12,8 @@
   ServletDAO servletDAO = servlet.getServletDAO();
 
   final String languageCode = "ADMIN";
-
-  final ResourceBundle language = servlet.getLanguage(languageCode);
+	
+  final ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
 
   final User user = new User(languageCode);
   user.setUserID(servletDAO.getNextID("USERS", "USER_ID"));

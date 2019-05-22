@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.util.ResourceBundle;
 
 import servlet.RegistrationServlet;
+import util.LanguageUtil;
 import datatype.User;
 
 public class DumpToFile
@@ -15,7 +16,7 @@ public class DumpToFile
 	//    servlet.init(baseDir, DB_Driver, DB_URL, DB_Username, DB_Password, null,
 	//        false, null);
 
-	ResourceBundle language = servlet.getLanguage("HU");
+	ResourceBundle language = new LanguageUtil().getLanguage("HU");
 
 	System.out.println("Writing users...");
 	FileWriter fw = new FileWriter("users.html");

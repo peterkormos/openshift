@@ -3,9 +3,11 @@
 
 <%@page import="java.util.*"%>
 
+<jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
+
 <%
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	ResourceBundle language = servlet.getLanguage(request.getParameter("language"));
+	ResourceBundle language = languageUtil.getLanguage(request.getParameter("language"));
 %>
 
 <html>

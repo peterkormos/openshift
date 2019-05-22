@@ -2,6 +2,7 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%
   RegistrationServlet servlet = RegistrationServlet.getInstance(config);
@@ -27,11 +28,11 @@
 		models.add(model);
   }
 
-  session.setAttribute(RegistrationServlet.SessionAttributes.Models.name(), models);
+  session.setAttribute(SessionAttributes.Models.name(), models);
 %>
 
 <jsp:include page="listModels.jsp"></jsp:include>
 
 <%
-  session.removeAttribute(RegistrationServlet.SessionAttributes.Models.name());
+  session.removeAttribute(SessionAttributes.Models.name());
 %>

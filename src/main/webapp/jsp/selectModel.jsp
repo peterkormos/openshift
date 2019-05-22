@@ -4,6 +4,7 @@
 <%@page import="java.util.*" %>    
 <%@page import="datatype.*" %>    
 <%@page import="servlet.*" %>
+<%@page import="util.*" %>
     
 <%
 		RegistrationServlet servlet = RegistrationServlet.getInstance(config);
@@ -18,7 +19,7 @@
 		if (servlet.isRegistrationAllowed(show)) 
 		{
 			final User user = RegistrationServlet.getUser(request);
-			final ResourceBundle language = servlet.getLanguage(user.language);
+			  final ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
 	
 			final List<Model> models = servletDAO.getModels(user.userID);
 	
@@ -27,8 +28,8 @@
 				return;
 			}
 	
-			String action = ServletUtil.getRequestAttribute(request, RegistrationServlet.SessionAttributes.Action.name()); 
-			String submitLabel = ServletUtil.getRequestAttribute(request, RegistrationServlet.SessionAttributes.SubmitLabel.name());
+			String action = ServletUtil.getRequestAttribute(request, SessionAttributes.Action.name()); 
+			String submitLabel = ServletUtil.getRequestAttribute(request, SessionAttributes.SubmitLabel.name());
 %>
 
 <!DOCTYPE html>
@@ -43,6 +44,9 @@ function checkMandatory(form)
 {
 	var returned = true;
 	
+	if(form.modelID.checked == true)
+		return true;
+
 	for(i = 0; i < form.modelID.length; i++)
 	{
 		if(form.modelID[i].checked == true)
@@ -73,7 +77,7 @@ function checkMandatory(form)
 			{
  %>
  			<label>
-			<input type='radio' name='modelID' value='<%= model.modelID %>' <%= (models.size() == 1 ? "checked" : "")  %>/>
+			<input type='radio' name='modelID' value='<%= model.modelID %>' <%= (models.size() == 1 ? " checked='checked' " : "")  %>/>
 			<%=model.scale + " - " + model.producer + " - " + model.name %>
 			<br>
 			</label>

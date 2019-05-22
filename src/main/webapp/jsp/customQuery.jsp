@@ -1,12 +1,10 @@
 <%@page import="datatype.*"%>
-<%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
 
 <%
-  User user = RegistrationServlet.getUser(request);
-  RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-  final ResourceBundle language = servlet.getLanguage(user.language);
+  final ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
 %>
 
 <html>

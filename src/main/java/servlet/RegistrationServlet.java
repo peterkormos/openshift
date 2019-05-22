@@ -25,14 +25,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
-import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -57,10 +55,10 @@ import datatype.AwardedModel;
 import datatype.Category;
 import datatype.CategoryGroup;
 import datatype.Detailing;
-import datatype.EmailParameter;
-import datatype.MainPageNotice;
 import datatype.Detailing.DetailingCriteria;
 import datatype.Detailing.DetailingGroup;
+import datatype.EmailParameter;
+import datatype.MainPageNotice;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
@@ -69,12 +67,12 @@ import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
 import tools.InitDB;
+import util.LanguageUtil;
+import util.SessionAttributes;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.20.";
+	public String VERSION = "2019.05.22.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
-
-	Map<String, ResourceBundle> languages = new HashMap<String, ResourceBundle>(); // key:
 
 	public static ServletDAO servletDAO;
 	StringBuilder printBuffer;
@@ -94,9 +92,6 @@ public class RegistrationServlet extends HttpServlet {
 
 	private Properties servletConfig = new Properties();
 
-	public static enum SessionAttributes {
-		Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models
-	};
 	public static enum Command {
 	    LOADIMAGE
 	};
@@ -267,7 +262,7 @@ public class RegistrationServlet extends HttpServlet {
                             
                             try {
                                 String languageCode = ServletUtil.getRequestAttribute(request, "language");
-                                final ResourceBundle language = getLanguage(languageCode);
+                                final ResourceBundle language = languageUtil.getLanguage(languageCode);
                                 
                                 message = String.format(language.getString("email.not.found"), emailNotFoundException.getEmail());
                                 
@@ -284,7 +279,9 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	private String processRestful(HttpServletRequest request, HttpServletResponse response, String pathInfo)
+	private LanguageUtil languageUtil = new LanguageUtil();
+
+    private String processRestful(HttpServletRequest request, HttpServletResponse response, String pathInfo)
 			throws Exception {
 		if (pathInfo.indexOf('/') > -1) {
 			final String[] splitText = pathInfo.split("/");
@@ -360,7 +357,7 @@ public class RegistrationServlet extends HttpServlet {
 			if (param.startsWith("userID")) {
 				final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, param));
 
-				printModelsForUser(request, response, getLanguage(ServletUtil.getRequestAttribute(request, "language")),
+				printModelsForUser(request, response, languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, "language")),
 						userID, true/* allModelsPrinted */);
 				showPrintDialog(response);
 				return;
@@ -402,7 +399,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String email = ServletUtil.getRequestAttribute(request, "email");
-		final ResourceBundle language = getLanguage(ServletUtil.getRequestAttribute(request, "language"));
+		final ResourceBundle language = languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, "language"));
 
 			final User user = servletDAO.getUser(email);
 
@@ -456,7 +453,7 @@ public class RegistrationServlet extends HttpServlet {
 			response.sendRedirect("jsp/main.jsp");
 		} else {
 			final User user = getUser(request);
-			final ResourceBundle language = getLanguage(user.language);
+			final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 			writeResponse(response, buff);
 		}
@@ -470,7 +467,7 @@ public class RegistrationServlet extends HttpServlet {
 		user.setPassword(StringEncoder.encode(newPassword));
 		servletDAO.modifyUser(user, user);
 
-		final ResourceBundle language = getLanguage(user.language);
+		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 		final StringBuilder buff = new StringBuilder();
 		buff.append("<html><body>");
@@ -486,7 +483,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
-		final ResourceBundle language = getLanguage(languageCode);
+		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		final int rows = Integer.parseInt(ServletUtil.getRequestAttribute(request, "rows"));
 
@@ -553,7 +550,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void directRegister(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		// set language library
 		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
-		final ResourceBundle language = getLanguage(languageCode);
+		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		final User user = directRegisterUser(request, language, "");
 
@@ -772,7 +769,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void register(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String email = ServletUtil.getRequestAttribute(request, "email");
 		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
-		final ResourceBundle language = getLanguage(languageCode);
+		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		if (email.trim().length() == 0 || email.equals("-") || email.indexOf("@") == -1 || email.indexOf(".") == -1) {
 			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
@@ -813,7 +810,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void modifyUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User oldUser = getUser(request);
-		final ResourceBundle language = getLanguage(oldUser.language);
+		final ResourceBundle language = languageUtil.getLanguage(oldUser.language);
 
 		final User newUser = createUser(request, ServletUtil.getRequestAttribute(request, "email"));
 		newUser.userID = oldUser.userID;
@@ -833,7 +830,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void newUserIDs(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
-		final ResourceBundle language = getLanguage(user.language);
+		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 		servletDAO.newUserIDs();
 
@@ -849,7 +846,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void newUserIDsFromOne(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final User user = getUser(request);
-		final ResourceBundle language = getLanguage(user.language);
+		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 		servletDAO.newUserIDsFromOne();
 
@@ -864,7 +861,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
-		final ResourceBundle language = getLanguage(user.language);
+		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 		servletDAO.deleteUser(user.userID);
 
@@ -880,7 +877,7 @@ public class RegistrationServlet extends HttpServlet {
 	private void sendEmailWithModels(final User user, final boolean insertUserDetails)
 			throws SQLException, MessagingException, MissingServletConfigException {
 		final StringBuilder message = new StringBuilder();
-		final ResourceBundle language = getLanguage(user.language);
+		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 		message.append("<html><body>\n\r");
 
@@ -1085,7 +1082,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public StringBuilder getUserTable(final String languageCode) throws Exception {
-		final ResourceBundle language = getLanguage(languageCode);
+		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		final StringBuilder buff = new StringBuilder();
 
@@ -1357,7 +1354,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public ResourceBundle getLanguageForCurrentUser(final HttpServletRequest request) throws UserNotLoggedInException {
-		return getLanguage(getUser(request).language);
+		return languageUtil.getLanguage(getUser(request).language);
 	}
 
 	public void addModel(final HttpServletRequest request, final HttpServletResponse response)
@@ -1468,7 +1465,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
 		final User user = getUser(request);
-		final ResourceBundle language = getLanguage(user.language);
+		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 		final List<Model> models = servletDAO.getModels(user.userID);
 
@@ -1506,7 +1503,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("'>");
 		buff.append("<input name='");
 		buff.append(action);
-		final ResourceBundle language = getLanguage(user.language);
+		final ResourceBundle language = languageUtil.getLanguage(user.language);
 		buff.append("' type='submit' value='" + language.getString(submitLabel) + "'>");
 		buff.append("<p>");
 
@@ -1527,18 +1524,18 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		final String language = getUser(request).language;
 
-		selectUser(request, response, "deleteUsers", getLanguage(language).getString("delete"), language);
+		selectUser(request, response, "deleteUsers", languageUtil.getLanguage(language).getString("delete"), language);
 	}
 
 	public void inputForLoginUser(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final String language = ServletUtil.getRequestAttribute(request, "language");
-		selectUser(request, response, "directLogin", getLanguage(language).getString("login"), language);
+		selectUser(request, response, "directLogin", languageUtil.getLanguage(language).getString("login"), language);
 	}
 
 	public void inputForPrint(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String language = ServletUtil.getRequestAttribute(request, "language");
-		selectUser(request, response, "directPrintModels", getLanguage(language).getString("print.models"), language);
+		selectUser(request, response, "directPrintModels", languageUtil.getLanguage(language).getString("print.models"), language);
 	}
 
 	private void selectUser(final HttpServletRequest request, final HttpServletResponse response, final String command,
@@ -1743,7 +1740,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void printCardsForAllModels(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final User user = getUser(request);
-		final ResourceBundle language = getLanguage(user.language);
+		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 		final int cols = 2;
 		final int rows = 4;
@@ -1775,7 +1772,7 @@ public class RegistrationServlet extends HttpServlet {
 		final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID");
 
 		if ("-".equals(modelID)) {
-			printModelsForUser(request, response, getLanguage(user.language), user.userID,
+			printModelsForUser(request, response, languageUtil.getLanguage(user.language), user.userID,
 					false /* allModelsPrinted */);
 		} else {
 			final StringBuilder buff = new StringBuilder();
@@ -1786,7 +1783,7 @@ public class RegistrationServlet extends HttpServlet {
 					final List<Model> subList = new LinkedList<Model>();
 					subList.add(model);
 
-					buff.append(printModels(getLanguage(user.language), servletDAO.getUser(user.userID), subList,
+					buff.append(printModels(languageUtil.getLanguage(user.language), servletDAO.getUser(user.userID), subList,
 							printBuffer, 1, 3, false));
 					break;
 				}
@@ -2011,7 +2008,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final StringBuilder buff = new StringBuilder();
 
-		ResourceBundle language = getLanguage(ServletUtil.getOptionalRequestAttribute(request, "language"));
+		ResourceBundle language = languageUtil.getLanguage(ServletUtil.getOptionalRequestAttribute(request, "language"));
 		String show = getShowFromSession(request);
 		if (show == null) {
 		    List<String> shows = servletDAO.getShows();
@@ -2066,35 +2063,11 @@ public class RegistrationServlet extends HttpServlet {
 		writeResponse(response, buff);
 	}
 
-	public ResourceBundle getLanguage(final String language) {
-		try {
-			if (!languages.containsKey(language)) {
-				languages.put(language,
-						ResourceBundle.getBundle("language", new Locale(language), new ResourceBundle.Control() {
-							@Override
-							public Locale getFallbackLocale(String baseName, Locale locale) {
-								return Locale.ROOT;
-							}
-
-						}));
-			}
-		} catch (final MissingResourceException e) {
-			logger.error("getLanguage(): country: " + language, e);
-
-			// cache default language
-			languages.put(language, ResourceBundle.getBundle("language", Locale.ROOT));
-		}
-
-		logger.trace("getLanguage(): " + language);
-
-		return languages.get(language);
-	}
-
 	public void getawardedModelsPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
 		final String languageCode = getUser(request).language;
-		final ResourceBundle language = getLanguage(languageCode);
+		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		buff.append(awardedModelsBuffer.toString().replaceAll("__ADDNEWROW__", language.getString("add.new.row"))
 				.replaceAll("__SELECT__", language.getString("list.models"))
@@ -2144,7 +2117,7 @@ public class RegistrationServlet extends HttpServlet {
 	private void printAwardedModels(final HttpServletRequest request, final HttpServletResponse response,
 			final StringBuilder buffer) throws Exception, IOException {
 		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
-		final ResourceBundle language = getLanguage(languageCode);
+		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		final int rows = Integer.parseInt(ServletUtil.getRequestAttribute(request, "rows"));
 
@@ -2181,7 +2154,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
 		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
-		final ResourceBundle language = getLanguage(languageCode);
+		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		final StringBuilder categoriesBuff = new StringBuilder();
 		// getHTMLCodeForCategorySelect(categoriesBuff,
@@ -2417,7 +2390,7 @@ public class RegistrationServlet extends HttpServlet {
 			if (!servletDAO.getModels(user.getUserID()).isEmpty())
 				try {
 					final StringBuilder messageBody = new StringBuilder();
-					final ResourceBundle language = getLanguage(user.language);
+					final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 					messageBody.append("<html><body>\n\r");
 

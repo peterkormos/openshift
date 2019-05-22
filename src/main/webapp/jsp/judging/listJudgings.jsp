@@ -1,21 +1,24 @@
 <%@page import="java.util.*"%>
 
-<%@page import="datatype.*"%>
+<%@page import="datatype.judging.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
-<%@include file="util.jsp"%>
+<%@include file="../util.jsp"%>
 
 <%
   highlightStart = 0xEAEAEA;
+
+	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
 %>
 
 <table style="border: 1px solid black;">
 
 	<tr bgcolor="#ddddff">
-		<th>Kateg&oacute;ria</th>
+		<th><%= language.getString("category") %></th>
 		<th>Zs&utilde;ri</th>
-		<th>SZEM&Eacute;LY SORSZ&Aacute;MA</th>
-		<th>MAKETT SORSZ&Aacute;MA</th>
+		<th><%= language.getString("userID") %></th>
+		<th><%= language.getString("modelID") %></th>
 		<th>Krit&eacute;ria</th>
 		<th>Pont</th>
 		<th>Megjegyz&eacute;s</th>
@@ -23,10 +26,9 @@
 
 
 	<%
-	List<Record> judgings = (List<Record>)session.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
-	for(Record record : judgings)
+	List<JudgingScore> judgings = (List<JudgingScore>)session.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+	for(JudgingScore judgingScore : judgings)
 	{
-	  JudgingScore judgingScore = (JudgingScore)record; 
 %>
 	<tr bgcolor="<%=highlight()%>">
 		<td><%= judgingScore.getCategory()%></td>

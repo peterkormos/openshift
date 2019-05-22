@@ -2,21 +2,26 @@
 <%@ page import="java.io.*"%>
 
 <%@page import="servlet.*"%>
-<%@page import="datatype.*"%>
+<%@page import="datatype.judging.*"%>
+<%@page import="util.*"%>
 
-<%@include file="util.jsp"%>
+<%@include file="../util.jsp"%>
 
 <%
-  highlightStart = 0xEAEAEA;
+    highlightStart = 0xEAEAEA;
 
   List<JudgingCriteria> criteriaList = (List<JudgingCriteria>) session
-		  .getAttribute(JudgingServlet.SessionAttribute.JudgingRulesForCategory.name());
+		  .getAttribute(JudgingServlet.SessionAttribute.JudgingCriteriasForCategory.name());
 
   String category = (String) session.getAttribute(JudgingServlet.SessionAttribute.Category.name());
+  
+	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
+	
+	int maxlength = 1000;
 %>
 <p>
 <form
-	action="../JudgingServlet/<%=JudgingServlet.RequestType.SaveJudging.name()%>"
+	action="../../JudgingServlet/<%=JudgingServlet.RequestType.SaveJudging.name()%>"
 	method="post">
 
 	<input type="hidden"
@@ -26,7 +31,7 @@
 
 	<table style="border: 1px solid black;">
 		<tr>
-			<td colspan="3">Category: <input required="required"
+			<td colspan="3"><%= language.getString("category.code") %>: <input required="required"
 				name="<%=JudgingServlet.RequestParameter.Category.name()%>"
 				value="<%=category%>" size="4"> Judge: <input
 				required="required"
@@ -35,10 +40,10 @@
 		</tr>
 
 		<tr>
-			<td colspan="3">Person ID: <input type="number" min="1"
+			<td colspan="3"><%= language.getString("userID") %>: <input type="number" min="1"
 				required="required"
 				name="<%=JudgingServlet.RequestParameter.ModellerID.name()%>"
-				size="3"> Model ID: <input type="number" min="1"
+				size="3"> <%= language.getString("modelID") %>: <input type="number" min="1"
 				required="required"
 				name="<%=JudgingServlet.RequestParameter.ModelID.name()%>" size="3">
 			</td>
@@ -48,7 +53,7 @@
 		</tr>
 
 		<tr bgcolor="#ddddff">
-			<th>Category</th>
+			<th>Criteria</th>
 			<th>Description</th>
 			<th>Score</th>
 		</tr>
@@ -75,13 +80,14 @@
 		%>
 
 		<tr>
-			<td colspan="3" valign="top">Comment: <textarea
+			<td colspan="3" valign="top"><%= language.getString("comment") %>: <textarea
 					name='<%=JudgingServlet.RequestParameter.Comment.name()%>'
-					cols='50' rows='3' placeholder="Max. 1000 char.">
+					maxlength='<%= maxlength %>'
+					cols='50' rows='3' placeholder="Max. <%= maxlength %> char.">
 				</textarea></td>
 		</tr>
 		<tr>
-			<td colspan="3" align="center"><input type="submit"></td>
+			<td colspan="3" align="center"><input type="submit" value='<%= language.getString("save") %>'></td>
 		</tr>
 	</table>
 </form>

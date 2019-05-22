@@ -1,13 +1,16 @@
 <%@page import="java.util.concurrent.atomic.AtomicInteger"%>
 <%@page import="java.util.*"%>
 
-<%@page import="datatype.*"%>
+<%@page import="datatype.judging.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
-<%@include file="util.jsp"%>
+<%@include file="../util.jsp"%>
 
 <%
   highlightStart = 0xEAEAEA;
+
+	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
 %>
 
 
@@ -37,7 +40,7 @@
 
 <table style="border: 1px solid black;">
 	<tr bgcolor="#ddddff">
-		<th>Kateg&oacute;ria</th>
+		<th><%= language.getString("category") %></th>
 		<th>Zs&utilde;rizett makettek sz&aacute;ma</th>
 	</tr>
 	<%
@@ -55,10 +58,10 @@
 <p>
 <table style="border: 1px solid black;">
 	<tr bgcolor="#ddddff">
-		<th>Kateg&oacute;ria</th>
+		<th><%= language.getString("category") %></th>
 		<th>Zs&utilde;ri</th>
-		<th>SZEM&Eacute;LY SORSZ&Aacute;MA</th>
-		<th>MAKETT SORSZ&Aacute;MA</th>
+		<th><%= language.getString("userID") %></th>
+		<th><%= language.getString("modelID") %></th>
 		<%
 		  for (int i = 0; i <= maxScore; i++)
 		  {

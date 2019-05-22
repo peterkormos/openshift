@@ -1,8 +1,10 @@
-package datatype;
+package datatype.judging;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import datatype.Record;
 
 @Entity
 @Table(name = "mak_judgingscore")

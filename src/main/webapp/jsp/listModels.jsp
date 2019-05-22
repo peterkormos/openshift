@@ -5,7 +5,7 @@
 <%@page import="java.util.*"%>
 
 <%@page import="datatype.*"%>
-<%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%@include file="util.jsp"%>
 
@@ -16,13 +16,13 @@
   ServletDAO servletDAO = servlet.getServletDAO();
   User user = servlet.getUser(request);
 
-  final ResourceBundle language = servlet.getLanguage(user.language);
+  final ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
 
   boolean insertAwards = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "insertAwards", false));
   boolean withDetailing = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "withDetailing", false));
   boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
 
-  List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttributes.Models.name());
+  List<Model> models = (List<Model>) session.getAttribute(SessionAttributes.Models.name());
 %>
 
 <table border=0>

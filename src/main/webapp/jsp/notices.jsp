@@ -2,9 +2,10 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%
-List<MainPageNotice> notices = (List<MainPageNotice>) session.getAttribute(RegistrationServlet.SessionAttributes.Notices.name());
+List<MainPageNotice> notices = (List<MainPageNotice>) session.getAttribute(SessionAttributes.Notices.name());
 
 if (notices != null)
 {
@@ -16,5 +17,5 @@ if (notices != null)
 <%
 	}
 }
-session.removeAttribute(RegistrationServlet.SessionAttributes.Notices.name());
+session.removeAttribute(SessionAttributes.Notices.name());
 %>

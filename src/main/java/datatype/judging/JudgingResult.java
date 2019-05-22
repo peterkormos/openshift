@@ -1,4 +1,4 @@
-package datatype;
+package datatype.judging;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

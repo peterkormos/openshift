@@ -1,6 +1,5 @@
 package servlet;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.ServletConfig;
@@ -26,26 +26,26 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
-import datatype.JudgingCriteria;
-import datatype.JudgingResult;
-import datatype.JudgingScore;
 import datatype.Record;
+import datatype.judging.JudgingCriteria;
+import datatype.judging.JudgingResult;
+import datatype.judging.JudgingScore;
 
 public final class JudgingServlet extends HttpServlet
 {
-  private static final String VERSION = "2019.05.20.";
+  private static final String VERSION = "2019.05.22.";
   private static final String JUDGING_FILENAME = "judging";
 
   public static Logger logger = Logger.getLogger(JudgingServlet.class);
 
   public enum RequestType
   {
-	GetJudgingRules, GetJudgingForuma, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary
+	GetCategories, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary
   };
 
   public enum SessionAttribute
   {
-	JudgingRulesForCategory, Category, Judgings
+	JudgingCriteriasForCategory, Category, Judgings
   }
 
   public enum RequestParameter
@@ -96,12 +96,12 @@ public final class JudgingServlet extends HttpServlet
 
 		switch (RequestType.valueOf(pathInfo))
 		{
-		case GetJudgingRules:
-		  getJudgingRules(request, response);
+		case GetCategories:
+		  getCategories(request, response);
 		  break;
 
-		case GetJudgingForuma:
-		  getJudgingForuma(request, response);
+		case GetJudgingForm:
+		  getJudgingFormula(request, response);
 		  break;
 
 		case SaveJudging:
@@ -118,12 +118,12 @@ public final class JudgingServlet extends HttpServlet
 		  break;
 
 		default:
-		  throw new IllegalArgumentException("Unhandled pathInfo: " + pathInfo);
+		  throw new IllegalArgumentException("Unknown pathInfo: " + pathInfo);
 		}
 	  }
 	  else
 	  {
-		redirectRequest(request, response, "/jsp/judging.jsp");
+		redirectRequest(request, response, "/jsp/judging/judging.jsp");
 	  }
 	}
 	catch (final Exception ex)
@@ -182,7 +182,7 @@ public final class JudgingServlet extends HttpServlet
 
 	setSessionAttribute(request, SessionAttribute.Judgings.name(), scoresByCategory.values());
 
-	redirectRequest(request, response, "/jsp/listJudgingSummary.jsp");
+	redirectRequest(request, response, "/jsp/judging/listJudgingSummary.jsp");
   }
 
   private int getMaxScore(String category, int criteriaID) throws IOException
@@ -240,7 +240,7 @@ public final class JudgingServlet extends HttpServlet
 
 	setSessionAttribute(request, SessionAttribute.Judgings.name(), allScores);
 
-	redirectRequest(request, response, "/jsp/listJudgings.jsp");
+	redirectRequest(request, response, "/jsp/judging/listJudgings.jsp");
   }
 
   private void saveJudging(HttpServletRequest request, HttpServletResponse response) throws Exception
@@ -270,15 +270,14 @@ public final class JudgingServlet extends HttpServlet
 	redirectRequest(request, response, "/" + getClass().getSimpleName());
   }
 
-  private void getJudgingForuma(HttpServletRequest request, HttpServletResponse response) throws Exception
+  private void getJudgingFormula(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
-
 	final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
 
-	setSessionAttribute(request, SessionAttribute.JudgingRulesForCategory.name(), getCriteriaList(category));
+	setSessionAttribute(request, SessionAttribute.JudgingCriteriasForCategory.name(), getCriteriaList(category));
 	setSessionAttribute(request, SessionAttribute.Category.name(), category);
 
-	redirectRequest(request, response, "/jsp/getJudgingForm.jsp");
+	redirectRequest(request, response, "/jsp/judging/getJudgingForm.jsp");
   }
 
   private List<JudgingCriteria> getCriteriaList(String category) throws IOException
@@ -302,12 +301,12 @@ public final class JudgingServlet extends HttpServlet
 	return criteriaList;
   }
 
-  private void getJudgingRules(HttpServletRequest request, HttpServletResponse response) throws IOException
+  private void getCategories(HttpServletRequest request, HttpServletResponse response) throws IOException
   {
-	final Map<String, String> judging = loadFile(JUDGING_FILENAME);
+	final Set<String> categories = loadFile(JUDGING_FILENAME).keySet();
 
-	setSessionAttribute(request, RequestType.GetJudgingRules.name(), judging);
-	redirectRequest(request, response, "/jsp/getJudgingRules.jsp");
+	setSessionAttribute(request, RequestType.GetCategories.name(), categories);
+	redirectRequest(request, response, "/jsp/judging/getCategories.jsp");
   }
 
   private void redirectRequest(HttpServletRequest request, HttpServletResponse response, String path) throws IOException
@@ -343,28 +342,11 @@ public final class JudgingServlet extends HttpServlet
 
   private Map<String, String> loadFile(String fileName) throws IOException
   {
-      Properties properties = new Properties();
-      FileReader reader = new FileReader(getFile(fileName));
+    Properties properties = new Properties();
+    FileReader reader = new FileReader(getFile(fileName));
     properties.load(reader);
     reader.close();
     
     return new HashMap<String, String>((Map)properties);  
-  }
-
-  private Map<String, String> loadFile(File file) throws IOException
-  {
-	final Map<String, String> props = new LinkedHashMap<String, String>();
-	final BufferedReader reader = new BufferedReader(new FileReader(file));
-
-	String line = null;
-	while ((line = reader.readLine()) != null)
-	{
-	  final String[] kv = line.split("=");
-	  props.put(kv[0], kv[1]);
-	}
-
-	reader.close();
-
-	return props;
   }
 }

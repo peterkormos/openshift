@@ -48,7 +48,7 @@
 
         <property name="hbm2ddl.auto">update</property>
 
-        <mapping class="datatype.JudgingScore" />
+        <mapping class="datatype.judging.JudgingScore" />
 
     </session-factory>
 </hibernate-configuration>

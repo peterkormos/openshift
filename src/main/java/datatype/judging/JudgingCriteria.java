@@ -1,4 +1,4 @@
-package datatype;
+package datatype.judging;
 
 public class JudgingCriteria
 {

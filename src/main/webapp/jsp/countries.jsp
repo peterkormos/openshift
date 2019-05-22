@@ -1,23 +1,13 @@
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
 
 <%
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
-	ResourceBundle language;	 		
-	User user = null;
-	try
-	{
-		user = RegistrationServlet.getUser(request);
-		language = servlet.getLanguage(user.language);
-	}
-	catch(Exception e)
-	{
-//		language = servlet.getLanguage(request.getParameter("language"));
-		language = servlet.getLanguage("HU");
-	}	
+	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());	
 %>
 
 <select  name='<%= request.getParameter("selectName") %>' id="country">
