@@ -276,23 +276,27 @@ public final class JudgingServlet extends HttpServlet
   
   private List<JudgingCriteria> getCriteriaList(String category) throws IOException
   {
-	final Map<String, String> judgingRules = loadFile(JUDGING_FILENAME);
+	final Map<String, String> judgingCriteriaFilesForCategory = loadFile(JUDGING_FILENAME);
 
-	String fileName = judgingRules.get(category);
+	String fileName = judgingCriteriaFilesForCategory.get(category);
 	if(fileName == null)
 	    return Arrays.asList(JudgingCriteria.getDefault()); 
 	                
-        final Map<String, String> judgingCriteriaFilesForCategory = loadFile(fileName);
+        final Map<String, String> judgingCriteriasForCategory = loadFile(fileName);
 	final List<JudgingCriteria> criteriaList = new LinkedList<JudgingCriteria>();
 
-	for (final Entry<String, String> entry : judgingCriteriaFilesForCategory.entrySet())
+	for (final Entry<String, String> entry : judgingCriteriasForCategory.entrySet())
 	{
+	  int criteriaId = Integer.parseInt(entry.getKey());
+	    
 	  final String values = entry.getValue();
 	  final String[] splitValues = values.split(";");
+	  if(splitValues.length != 2)
+	      throw new IllegalArgumentException(String.format("value [%s] token count is not 2 for category: [%s]!", values, category));
 	  final String description = splitValues[0];
 	  final int maxScore = Integer.parseInt(splitValues[1]);
 
-	  final JudgingCriteria criteria = new JudgingCriteria(Integer.parseInt(entry.getKey()), description, maxScore);
+	  final JudgingCriteria criteria = new JudgingCriteria(criteriaId, description, maxScore);
 	  criteriaList.add(criteria);
 	}
 
@@ -322,23 +326,20 @@ public final class JudgingServlet extends HttpServlet
 
   private File getFile(String fileName)
   {
-      if(fileName == null)
-          throw new IllegalArgumentException("fileName is not set!");
-      
-	String basePath = "." + File.separator;
-	final String extension = ".txt";
+        if (fileName == null)
+            throw new IllegalArgumentException("fileName is not set!");
 
-	File file = null;
-	do
-	{
-	  file = new File(basePath + fileName + extension).getAbsoluteFile();
-	  logger.trace("getFile(): " + file.getAbsolutePath());
-	  
-	  basePath += ".." + File.separator;
-	}
-	while (!file.exists());
+        String basePath = "." + File.separator;
+        final String extension = ".txt";
 
-	return file;
+        File file = null;
+        file = new File(basePath + fileName + extension).getAbsoluteFile();
+        logger.trace("getFile(): " + file.getAbsolutePath());
+
+        if (!file.exists())
+            throw new IllegalArgumentException(String.format("fileName not found at path [%s]!", file.getAbsolutePath()));
+
+        return file;
   }
 
   private final Map<String, Properties> fileCache = new HashMap<String, Properties>();
