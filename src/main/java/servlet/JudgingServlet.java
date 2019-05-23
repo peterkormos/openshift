@@ -171,10 +171,9 @@ public final class JudgingServlet extends HttpServlet
 
             try 
             {
-                AtomicInteger count = judgingResult.getScoreForCriteria(score.getCriteriaID());
-                count.incrementAndGet();
+                judgingResult.getScores().get(score.getScore()).incrementAndGet();
             } catch (Exception e) {
-                judgingResult.getScores().put(getCriteria(score.getCategory(), score.getCriteriaID()), new AtomicInteger(1));
+                judgingResult.getScores().put(score.getScore(), new AtomicInteger(1));
             }
 
 	}

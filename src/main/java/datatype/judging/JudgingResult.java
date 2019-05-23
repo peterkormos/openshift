@@ -12,7 +12,7 @@ public class JudgingResult {
     private int modellerID;
 
     // value:count
-    private final Map<JudgingCriteria, AtomicInteger> scores = new LinkedHashMap<JudgingCriteria, AtomicInteger>();
+    private final Map<Integer, AtomicInteger> scores = new LinkedHashMap<Integer, AtomicInteger>();
 
     public JudgingResult(JudgingScore result) {
         this.category = result.getCategory();
@@ -59,36 +59,29 @@ public class JudgingResult {
         this.modellerID = modellerID;
     }
 
-    public Map<JudgingCriteria, AtomicInteger> getScores() {
+    public Map<Integer, AtomicInteger> getScores() {
         return scores;
     }
 
     public int getMaxScore() {
         int maxScore = 0;
 
-        for (JudgingCriteria criteria : scores.keySet())
-            if (criteria.getMaxScore() > maxScore)
-                maxScore = criteria.getMaxScore();
+        for (Integer score : scores.keySet())
+            if (score.intValue() > maxScore)
+                maxScore = score.intValue();
 
         return maxScore;
     }
 
-    public AtomicInteger getScoreForCriteria(int criteriaID) {
-        for (Entry<JudgingCriteria, AtomicInteger> entry : scores.entrySet())
-            if (entry.getKey().getId() == criteriaID)
-                return entry.getValue();
-
-        throw new IllegalArgumentException(String.format("No criteria is found for category [%s] with id: [%d]. scores: ", category, criteriaID, scores));
-    }
-
     public int getCountForScore(int score) {
-        
-        int sum = 0;
-        for (AtomicInteger currentScore : scores.values())
-            if (currentScore.get() == score)
-                sum++;
-        
-        return sum;
+        try 
+        {
+            return scores.get(score).get();
+        } 
+        catch (Exception e) 
+        {
+            return 0;
+        }
     }
     
 }
