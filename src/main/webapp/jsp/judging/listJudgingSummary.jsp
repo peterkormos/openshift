@@ -11,14 +11,12 @@
   highlightStart = 0xEAEAEA;
 
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
-%>
 
-
-<%
   Map<String, AtomicInteger> scoredModelsByCategory = new LinkedHashMap<String, AtomicInteger>();
 
   Collection<JudgingResult> scoresByCategory = (Collection<JudgingResult>) session
 		  .getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+		  
 
   int maxScore = 0;
   for (JudgingResult judgingResult : scoresByCategory)
@@ -36,6 +34,25 @@
 
 		scoredModels.incrementAndGet();
   }
+
+%>
+
+<head>
+<link href="../base.css" rel="stylesheet" type="text/css">
+</head>
+
+<%
+	List<JudgingError> judgingErrors = JudgingServlet.checkJudgingResults(scoresByCategory);
+	
+	for(JudgingError judgingError : judgingErrors)
+	{
+	%>
+		<%= language.getString("category") %>: <%= judgingError.getCategory() %> 
+		<%= language.getString("modelID") %>: <%= judgingError.getModelID() %> 
+		Error: <%= judgingError.getErrorMessage() %>
+		<p>
+	<%
+	} 
 %>
 
 <table style="border: 1px solid black;">
@@ -78,8 +95,8 @@
 	  {
 	%>
 
-	<tr bgcolor="<%=highlight()%>">
-		<td><%=judgingResult.getCategory()%></td>
+	<tr bgcolor="<%=highlight()%>" <%= judgingErrors.contains(new JudgingError(judgingResult.getCategory(), judgingResult.getModelID())) ? "class='flash ERROR'" : "" %>>
+		<td align="center"><%=judgingResult.getCategory()%></td>
 		<td><%=judgingResult.getJudge()%></td>
 		<td><%=judgingResult.getModellerID()%></td>
 		<td><%=judgingResult.getModelID()%></td>

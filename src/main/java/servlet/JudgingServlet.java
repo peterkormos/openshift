@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -25,12 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.google.api.client.http.HttpResponse;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import datatype.judging.JudgingCriteria;
+import datatype.judging.JudgingError;
 import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
 import util.SessionAttributes;
@@ -178,7 +179,7 @@ public final class JudgingServlet extends HttpServlet
 
 	}
 
-	System.out.println(scoresByCategory);
+//	System.out.println(scoresByCategory);
 	setSessionAttribute(request, SessionAttribute.Judgings.name(), scoresByCategory.values());
 
 	redirectRequest(request, response, "/jsp/judging/listJudgingSummary.jsp");
@@ -369,5 +370,24 @@ public final class JudgingServlet extends HttpServlet
                 response.sendRedirect("judging.jsp");
         
         return language;
+    }
+    
+    public static List<JudgingError> checkJudgingResults(Collection<JudgingResult> collection) {
+        List<String> errors = new LinkedList<>();
+
+        Map<JudgingError, List<JudgingResult>> judgingResultsByModelId = collection.stream()
+                .collect(Collectors.groupingBy(judgingResult -> new JudgingError(judgingResult.getCategory() , judgingResult.getModelID())));
+
+        for (Entry<JudgingError, List<JudgingResult>> judgingResults : judgingResultsByModelId.entrySet()) 
+        {
+            List<Integer> totalNumberOfDifferentScores = judgingResults.getValue().stream()
+                    .mapToInt(judgingResult -> judgingResult.getScores().values().stream().mapToInt(AtomicInteger::get).sum()).distinct()
+                    .boxed().collect(Collectors.toList());
+
+            if (totalNumberOfDifferentScores.size() != 1)
+                judgingResults.getKey().setErrorMessage(String.format("total evaluated criterias on different model forms: %s", totalNumberOfDifferentScores));
+        }
+
+        return judgingResultsByModelId.keySet().stream().filter(judgingError -> judgingError.getErrorMessage() != null).collect(Collectors.toList());
     }
 }
