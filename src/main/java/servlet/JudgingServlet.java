@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
+import datatype.judging.JudgedModel;
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingError;
 import datatype.judging.JudgingResult;
@@ -55,7 +56,7 @@ public final class JudgingServlet extends HttpServlet
 
   public enum RequestParameter
   {
-	Category, ModelID, ModellerID, Judge, Score, JudgingCriterias, Comment
+	Category, ModelID, ModellerID, Judge, Score, JudgingCriterias, Comment, ModelsName
   }
 
   private HibernateDAO dao;
@@ -152,7 +153,7 @@ public final class JudgingServlet extends HttpServlet
 		int compareToResult = result1.getCategory().compareTo(result2.getCategory());
 		if (compareToResult == 0)
 		{
-		  compareToResult = result1.getJudge().compareTo(result2.getJudge());
+		  compareToResult = Integer.compare(result1.getModelID(), result2.getModelID());
 		}
 		return compareToResult;
 	  }
@@ -193,7 +194,7 @@ public final class JudgingServlet extends HttpServlet
 
   private void deleteJudgings(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
-	for (final JudgingScore score : dao.getAll(JudgingScore.class))
+	for (final JudgedModel score : dao.getAll(JudgingScore.class))
 	{
 	  dao.delete(score.id, JudgingScore.class);
 	}
@@ -234,6 +235,7 @@ public final class JudgingServlet extends HttpServlet
   {
 	final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
 	final String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
+	final String modelsName = ServletUtil.getRequestAttribute(request, RequestParameter.ModelsName.name());
 	final int modelID = Integer.parseInt(ServletUtil.getRequestAttribute(request, RequestParameter.ModelID.name()));
 	final int modellerID = Integer.parseInt(ServletUtil.getRequestAttribute(request, RequestParameter.ModellerID.name()));
 
@@ -251,7 +253,7 @@ public final class JudgingServlet extends HttpServlet
 
 	  final int score = Integer.parseInt(optionalRequestAttribute);
 
-	  dao.save(new JudgingScore(dao.getNextID(JudgingScore.class), category, judge, modelID, modellerID, i, score, comment));
+	  dao.save(new JudgingScore(dao.getNextID(JudgingScore.class), category, judge, modelID, modellerID, i, score, comment, modelsName));
 	}
 
         final HttpSession session = request.getSession(false);

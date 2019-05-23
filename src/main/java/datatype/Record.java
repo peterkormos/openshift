@@ -29,7 +29,6 @@ public class Record implements Comparable<Record>
   @Override
   public String toString()
   {
-
 	return "id: " + id;
   }
 

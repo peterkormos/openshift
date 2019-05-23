@@ -79,6 +79,7 @@
 		<th>Zs&utilde;ri</th>
 		<th><%= language.getString("userID") %></th>
 		<th><%= language.getString("modelID") %></th>
+		<th><%= language.getString("models.name") %></th>
 		<%
 		  for (int i = 0; i <= maxScore; i++)
 		  {
@@ -100,6 +101,7 @@
 		<td><%=judgingResult.getJudge()%></td>
 		<td><%=judgingResult.getModellerID()%></td>
 		<td><%=judgingResult.getModelID()%></td>
+		<td><%=judgingResult.getModelsName()%></td>
 		<%
 			int total = 0;
 		  for (int i = 0; i <= maxScore; i++)

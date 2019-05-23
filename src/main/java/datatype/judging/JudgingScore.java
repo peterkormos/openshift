@@ -4,56 +4,36 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import datatype.Record;
-
 @Entity
 @Table(name = "mak_judgingscore")
-public class JudgingScore extends Record
+public class JudgingScore extends JudgedModel
 {
   @Column
   private String category;
   @Column
   private String judge;
   @Column
-  private int modelID;
-  @Column
-  private int modellerID;
-  @Column
   private int criteriaID;
   @Column
   private int score;
   @Column(length = 1000, nullable = true)
   private String comment;
-
+  
   public JudgingScore()
   {
-
+      
   }
-
+  
   public JudgingScore(int id, String category, String judge, int modelID, int modellerID, int criteriaID, int score,
-	  String comment)
+	  String comment,String modelsName)
   {
-	super(id);
+	super(id, modelID, modellerID, modelsName);
 
 	this.category = category;
 	this.judge = judge;
-	this.modelID = modelID;
-	this.modellerID = modellerID;
 	this.criteriaID = criteriaID;
 	this.score = score;
 	this.comment = comment;
-  }
-
-  @Override
-  public int getId()
-  {
-	return id;
-  }
-
-  @Override
-  public void setId(int id)
-  {
-	this.id = id;
   }
 
   public String getCategory()
@@ -74,26 +54,6 @@ public class JudgingScore extends Record
   public void setJudge(String judge)
   {
 	this.judge = judge;
-  }
-
-  public int getModelID()
-  {
-	return modelID;
-  }
-
-  public void setModelID(int modelID)
-  {
-	this.modelID = modelID;
-  }
-
-  public int getModellerID()
-  {
-	return modellerID;
-  }
-
-  public void setModellerID(int modellerID)
-  {
-	this.modellerID = modellerID;
   }
 
   public int getCriteriaID()
@@ -126,11 +86,11 @@ public class JudgingScore extends Record
 	this.comment = comment;
   }
 
-  @Override
-  public String toString()
-  {
-	return "JudgingScore [id=" + id + ", category=" + category + ", judge=" + judge + ", modelID=" + modelID + ", modellerID="
-	    + modellerID + ", criteriaID=" + criteriaID + ", score=" + score + ", comment=" + comment + "]";
-  }
+@Override
+public String toString() {
+    return "JudgingScore [category=" + category + ", judge=" + judge + ", criteriaID=" + criteriaID + ", score=" + score + ", comment="
+            + comment + ", toString()=" + super.toString() + "]";
+}
 
+ 
 }

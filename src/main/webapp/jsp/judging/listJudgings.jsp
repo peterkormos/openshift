@@ -19,6 +19,7 @@
 		<th>Zs&utilde;ri</th>
 		<th><%= language.getString("userID") %></th>
 		<th><%= language.getString("modelID") %></th>
+		<th><%= language.getString("models.name") %></th>
 		<th>Krit&eacute;ria</th>
 		<th>Pont</th>
 		<th>Megjegyz&eacute;s</th>
@@ -35,6 +36,7 @@
 		<td><%= judgingScore.getJudge()%></td>
 		<td><%= judgingScore.getModellerID()%></td>
 		<td><%= judgingScore.getModelID()%></td>
+		<td><%= judgingScore.getModelsName()%></td>
 		<td><%= judgingScore.getCriteriaID()%></td>
 		<td><%= judgingScore.getScore()%></td>
 		<td><%= judgingScore.getComment()%></td>

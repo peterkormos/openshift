@@ -89,6 +89,16 @@
 				name="<%=JudgingServlet.RequestParameter.ModelID.name()%>" size="3">
 			</td>
 		</tr>
+		<tr>
+			<td colspan="3"><%= language.getString("models.name") %>: 
+			<input type="text" min="1"
+				required="required"
+				name="<%=JudgingServlet.RequestParameter.ModelsName.name()%>"
+				size="3"> 
+			</td>
+		</tr>
+		
+		
 
 		<tr height="20px">
 		</tr>
