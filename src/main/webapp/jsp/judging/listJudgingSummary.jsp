@@ -47,9 +47,11 @@
 	for(JudgingError judgingError : judgingErrors)
 	{
 	%>
-		<%= language.getString("category") %>: <%= judgingError.getCategory() %> 
-		<%= language.getString("modelID") %>: <%= judgingError.getModelID() %> 
-		Error: <%= judgingError.getErrorMessage() %>
+		<div style="background-color: <%= judgingError.getErrorType().getBackgrouondColor() %>;">
+			<%= language.getString("category") %>: <%= judgingError.getCategory() %> 
+			<%= language.getString("modelID") %>: <%= judgingError.getModelID() %> 
+			Error: <%= judgingError.getErrorMessage() %>
+		</div>
 		<p>
 	<%
 	} 
@@ -96,7 +98,18 @@
 	  {
 	%>
 
-	<tr bgcolor="<%=highlight()%>" <%= judgingErrors.contains(new JudgingError(judgingResult.getCategory(), judgingResult.getModelID())) ? "class='flash ERROR'" : "" %>>
+	<tr bgcolor="<%=highlight()%>" 
+	
+	<% 
+		 if(judgingErrors.contains(new JudgingError(judgingResult.getCategory(), judgingResult.getModelID())))
+		 {
+		 %>
+		 	class="flash ERROR"	
+		 <%
+		 }
+	%>
+	
+	>
 		<td align="center"><%=judgingResult.getCategory()%></td>
 		<td><%=judgingResult.getJudge()%></td>
 		<td><%=judgingResult.getModellerID()%></td>
