@@ -10,7 +10,7 @@ public class JudgedModel extends Record {
 
     @Override
     public String toString() {
-        return "JudgedModel [modelID=" + modelID + ", modellerID=" + modellerID + ", modelsName=" + modelsName + ", toString()="
+        return "JudgedModel [modelID=" + modelID + ", modellerID=" + modellerID + ", modelsName=" + modelsName + ", "
                 + super.toString() + "]";
     }
 

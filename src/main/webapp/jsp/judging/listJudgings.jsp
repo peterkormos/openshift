@@ -23,6 +23,7 @@
 		<th>Krit&eacute;ria</th>
 		<th>Pont</th>
 		<th>Megjegyz&eacute;s</th>
+		<th>DB ID</th>
 	</tr>
 
 
@@ -40,6 +41,7 @@
 		<td><%= judgingScore.getCriteriaID()%></td>
 		<td><%= judgingScore.getScore()%></td>
 		<td><%= judgingScore.getComment()%></td>
+		<td><%= judgingScore.getId()%></td>
 	</tr>
 
 	<%	  

@@ -11,6 +11,7 @@
     highlightStart = 0xEAEAEA;
 
     String judge = (String) session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
+
     if (judge == null)
         judge = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Judge.name());
 
@@ -26,6 +27,20 @@
 
     int maxlength = 1000;
 %>
+
+<%
+    Map<Integer, List<JudgingScore>> scores = (Map<Integer, List<JudgingScore>>) session.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+    session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+    
+    JudgedModel judgedModel = null;
+    if(scores != null)
+    {
+    	Optional<List<JudgingScore>> optional = scores.values().stream().findFirst();
+    	if(optional.isPresent())
+      		judgedModel = optional.get().get(0);
+    } 
+ %>
+
 <p>
 <form
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.SaveJudging.name()%>"
@@ -37,64 +52,46 @@
 
 	<table style="border: 1px solid black;">
 		<tr>
-			<td colspan="3"><%= language.getString("category.code") %>:
-			<%
-				if(category == null)
-				{
-				%>
-					<input type="text" size="4"
-					name="<%=JudgingServlet.RequestParameter.Category.name()%>"
-					> 
-				<%
-				}
-				else
-				{
-				%>
-					<input type="hidden"
-					name="<%=JudgingServlet.RequestParameter.Category.name()%>"
-					value="<%=category%>"> 
-					<b><%=category%></b> 
-				<%
-				}
-			 %> 
-				Judge: 
-			<%
-				if(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judge))
-				{
-				%>
-					<input type="text" required="required"
-					name="<%=JudgingServlet.RequestParameter.Judge.name()%>"
-					> 
-				<%
-				}
-				else
-				{
-				%>
-					<input type="hidden"
-					name="<%=JudgingServlet.RequestParameter.Judge.name()%>"
-					value="<%=judge%>"> 
-					<b><%=judge%></b> 
-				<%
-				}
-			 %> 
+			<td colspan="3">
+			<jsp:include page="fillableFormField.jsp">
+			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.Category.name() %>"/>
+			  <jsp:param name="value" value='<%= category %>'/>
+			  <jsp:param name="caption" value='<%= language.getString("category.code") %>'/>
+			</jsp:include>
+			
+			<jsp:include page="fillableFormField.jsp">
+			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.Judge.name() %>"/>
+			  <jsp:param name="value" value='<%= judge %>'/>
+			  <jsp:param name="caption" value='Judge'/>
+			</jsp:include>
 			</td>
 		</tr>
 
 		<tr>
-			<td colspan="3"><%= language.getString("userID") %>: <input type="number" min="1"
-				required="required"
-				name="<%=JudgingServlet.RequestParameter.ModellerID.name()%>"
-				size="3"> <%= language.getString("modelID") %>: <input type="number" min="1"
-				required="required"
-				name="<%=JudgingServlet.RequestParameter.ModelID.name()%>" size="3">
+			<td colspan="3">
+			<jsp:include page="fillableFormField.jsp">
+			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModellerID.name() %>"/>
+			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModellerID() %>'/>
+			  <jsp:param name="size" value='3'/>
+			  <jsp:param name="caption" value='<%= language.getString("userID") %>'/>
+			</jsp:include>
+
+			<jsp:include page="fillableFormField.jsp">
+			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModelID.name() %>"/>
+			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModelID() %>'/>
+			  <jsp:param name="size" value='3'/>
+			  <jsp:param name="caption" value='<%= language.getString("modelID") %>'/>
+			</jsp:include>
+
 			</td>
 		</tr>
 		<tr>
-			<td colspan="3"><%= language.getString("models.name") %>: 
-			<input type="text" min="1"
-				required="required"
-				name="<%=JudgingServlet.RequestParameter.ModelsName.name()%>"
-				size="3"> 
+			<td colspan="3">
+			<jsp:include page="fillableFormField.jsp">
+			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModelsName.name() %>"/>
+			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModelsName() %>'/>
+			  <jsp:param name="caption" value='<%= language.getString("models.name") %>'/>
+			</jsp:include>
 			</td>
 		</tr>
 		
@@ -119,11 +116,17 @@
 						<%
 						  for (int i = 0; i < criteria.getMaxScore() + 1; i++)
 								{
+								
+// 								judgingScores.get(i)
 						%> 
 						<label>
 						<input type="radio" 
-						name="<%=JudgingServlet.RequestParameter.Score.name()%><%=criteria.getId()%>"
-						value="<%=i%>"><%=i%> 
+						name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%= criteria.getId() %>"
+						value="<%=i%>"
+						<%= judgedModel != null && scores.get(criteria.getId()) != null &&
+						scores.get(criteria.getId()).get(0).getScore() == i
+						? "checked='checked'" : "" %>
+						><%=i%> 
 						</label>
 		<%
 		   }
@@ -135,19 +138,25 @@
 			 %> 		
 
 		<tr>
-			<td colspan="3" valign="top"><%= language.getString("comment") %>: <textarea
+			<td colspan="3" valign="top">
+			<%= language.getString("comment") %>: 
+			<textarea
 					name='<%=JudgingServlet.RequestParameter.Comment.name()%>'
 					maxlength='<%= maxlength %>'
-					cols='50' rows='3' placeholder="Max. <%= maxlength %> char.">
-				</textarea></td>
+					cols='50' rows='3' placeholder="Max. <%= maxlength %> char."
+					><%= judgedModel != null ? scores.values().iterator().next().get(0).getComment() : "" %></textarea></td>
 		</tr>
 		<tr>
-			<td colspan="3" align="center"><input type="submit" value='<%= language.getString("save") %>'></td>
+			<td colspan="3" align="center">
+				<input type="submit" value='<%= language.getString("save") %>'>
+				<input name='finishRegistration' type='submit' value='<%= language.getString("finish.model.registration") %>'>
+			</td>
 		</tr>
 	</table>
 </form>
 
-<%!Map<String, String> loadFile(File file) throws IOException
+<%!
+Map<String, String> loadFile(File file) throws IOException
   {
 	Map<String, String> props = new LinkedHashMap<String, String>();
 	BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -162,4 +171,5 @@
 	reader.close();
 
 	return props;
-  }%>
+  }
+  %>

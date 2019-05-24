@@ -13,7 +13,7 @@
 	<%= language.getString("category.code") %>:
 	<p>
 	<%
-	    Set<String> categories = (Set<String>) session.getAttribute(JudgingServlet.RequestType.GetCategories.name());
+	    Set<String> categories = (Set<String>) session.getAttribute(JudgingServlet.SessionAttribute.Categories.name());
 
 		  for (String category : categories)
 		  {

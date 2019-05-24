@@ -22,7 +22,7 @@ public class JudgingResult extends JudgedModel{
 
     @Override
     public String toString() {
-        return "JudgingResult [category=" + category + ", judge=" + judge + ", scores=" + scores + ", toString()=" + super.toString() + "]";
+        return "JudgingResult [category=" + category + ", judge=" + judge + ", scores=" + scores + ", " + super.toString() + "]";
     }
 
 

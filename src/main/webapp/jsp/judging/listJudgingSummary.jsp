@@ -74,7 +74,9 @@
 	  }
 	%>
 </table>
+
 <p>
+
 <table style="border: 1px solid black;">
 	<tr bgcolor="#ddddff">
 		<th><%= language.getString("category") %></th>
@@ -91,6 +93,7 @@
 		  }
 		%>
 		<th>Total</th>
+		<th>Action</th>
 	</tr>
 
 	<%
@@ -128,6 +131,13 @@
 				}
 		%>
 		<td><%= total %></td>
+		<td>
+		<a href="../../JudgingServlet/GetJudgingForm?ModelID=<%=judgingResult.getModelID()%>&ModellerID=<%=judgingResult.getModellerID()%>&Category=<%=judgingResult.getCategory()%>&Judge=<%=judgingResult.getJudge()%>">
+		<%= language.getString("modify") %></a>
+		
+		<a href="../../JudgingServlet/DeleteJudgingForm?ModelID=<%=judgingResult.getModelID()%>&ModellerID=<%=judgingResult.getModellerID()%>&Category=<%=judgingResult.getCategory()%>&Judge=<%=judgingResult.getJudge()%>">
+		<%= language.getString("delete") %></a>
+</td>
 	</tr>
 	<%
 	  }

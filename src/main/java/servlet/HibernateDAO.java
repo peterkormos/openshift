@@ -1,12 +1,12 @@
 package servlet;
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
+import javax.persistence.Column;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -14,6 +14,7 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 
 import datatype.Record;
+import datatype.judging.JudgingScore;
 
 public class HibernateDAO
 {

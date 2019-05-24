@@ -89,7 +89,7 @@ public class JudgingScore extends JudgedModel
 @Override
 public String toString() {
     return "JudgingScore [category=" + category + ", judge=" + judge + ", criteriaID=" + criteriaID + ", score=" + score + ", comment="
-            + comment + ", toString()=" + super.toString() + "]";
+            + comment + ", " + super.toString() + "]";
 }
 
  
