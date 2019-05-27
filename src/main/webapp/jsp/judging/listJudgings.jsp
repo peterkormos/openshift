@@ -29,6 +29,8 @@
 
 	<%
 	List<JudgingScore> judgings = (List<JudgingScore>)session.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+	session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+	
 	for(JudgingScore judgingScore : judgings)
 	{
 %>

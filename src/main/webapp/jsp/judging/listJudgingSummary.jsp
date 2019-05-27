@@ -16,7 +16,7 @@
 
   Collection<JudgingResult> scoresByCategory = (Collection<JudgingResult>) session
 		  .getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
-		  
+  session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
 
   int maxScore = 0;
   for (JudgingResult judgingResult : scoresByCategory)
