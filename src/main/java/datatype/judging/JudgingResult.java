@@ -11,6 +11,18 @@ public class JudgingResult extends JudgedModel{
 
     // value:count
     private final Map<Integer, AtomicInteger> scores = new LinkedHashMap<Integer, AtomicInteger>();
+    private int maxScore;
+    
+    public int getMaxScore() 
+    {
+        return maxScore;
+    }
+
+    public void setMaxScore(int maxScore) 
+    {
+        this.maxScore = maxScore;
+    }
+
 
     public JudgingResult(JudgingScore result) {
         super(result);
@@ -44,16 +56,6 @@ public class JudgingResult extends JudgedModel{
 
     public Map<Integer, AtomicInteger> getScores() {
         return scores;
-    }
-
-    public int getMaxScore() {
-        int maxScore = 0;
-
-        for (Integer score : scores.keySet())
-            if (score.intValue() > maxScore)
-                maxScore = score.intValue();
-
-        return maxScore;
     }
 
     public int getCountForScore(int score) {

@@ -186,6 +186,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
 	  if (judgingResult == null)
 	  {
 		judgingResult = new JudgingResult(score);
+		judgingResult.setMaxScore(getCriteriaList(score.getCategory()).stream().mapToInt(JudgingCriteria::getMaxScore).max().getAsInt());
 		scoresByCategory.put(key, judgingResult);
 	  }
 
