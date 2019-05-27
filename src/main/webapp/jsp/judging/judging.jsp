@@ -39,6 +39,7 @@ style="background: LightGrey; padding: 5px;"
 	<jsp:include page="fillableFormField.jsp">
 	  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.Judge.name() %>"/>
 	  <jsp:param name="caption" value='<%= language.getString("judge") %>'/>
+	  <jsp:param name="value" value='<%= Optional.ofNullable(judge).orElse("") %>'/>
 	</jsp:include>
 	
 	<%= language.getString("language") %>: 
@@ -46,16 +47,11 @@ style="background: LightGrey; padding: 5px;"
   <jsp:param name="parameterName" value="<%= JudgingServlet.RequestParameter.Language.name() %>"/>
   <jsp:param name="selectLabel" value=""/>
   <jsp:param name="selectValue" value=""/>
+  <jsp:param name="required" value="required"/>
 </jsp:include>
 	
 <input type="submit" value='<%= language.getString("login") %>'>
 </form>
-<%	
-	}
-//	else
-	{
-%>
-	<%= language.getString("judge") %>: <%= Optional.ofNullable(judge).orElse("") %> 
 <%	
 	}
  %>	

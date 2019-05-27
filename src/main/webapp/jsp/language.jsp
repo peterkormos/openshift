@@ -4,7 +4,9 @@
 	if(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameterName))
 		parameterName = "language";
  %>
-<select name="<%= parameterName %>" >
+<select name="<%= parameterName %>" 
+<%= ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "required")) ? "" : "required='"+ServletUtil.getOptionalRequestAttribute(request, "required")+"'" %>
+>
   <option value="<%= request.getParameter("selectValue") %>" selected><%= request.getParameter("selectLabel") %></option>
   <option value="" >-------</option>
   <option value="HU">Magyar</option>
