@@ -53,7 +53,7 @@
 	%>
 		<div style="background-color: <%= judgingError.getErrorType().getBackgrouondColor() %>;">
 			<%= language.getString("category") %>: <%= judgingError.getCategory() %> 
-			<%= language.getString("modelID") %>: <%= judgingError.getModelID() %> 
+			<%= language.getString("modelID") %>: <%= judgingError.getModelID() == 0 ? "-" : judgingError.getModelID() %> 
 			Error: <%= judgingError.getErrorMessage() %>
 		</div>
 		<p>

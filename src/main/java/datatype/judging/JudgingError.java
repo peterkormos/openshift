@@ -2,7 +2,7 @@ package datatype.judging;
 
 public class JudgingError {
     public enum JudgingErrorType {
-        ModelIdAndModellerID_Mismatch("lightgreen"), TotalEvaluatedCriterias_Mismatch("#ffe3e3");
+        ModelIdAndModellerID_Mismatch("lightgreen"), TotalEvaluatedCriterias_Mismatch("#ffe3e3"), TotalEvaluatedModels_Mismatch("orange");
 
         private final String backgrouondColor;
         

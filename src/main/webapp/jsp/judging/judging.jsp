@@ -10,7 +10,7 @@
 	 
 	if(language == null)
 	{
-		final String languageCode = ServletUtil.getOptionalRequestAttribute(request, "language");
+		final String languageCode = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Language.name());
 		language = languageUtil.getLanguage(languageCode);
 		
 		session.setAttribute(SessionAttributes.Language.name(), language); 
@@ -26,7 +26,7 @@
 	
 <%
 	boolean isNormalUser = !"admin".equals(judge);
-	if(!isNormalUser || judge == null)
+//	if(!isNormalUser || judge == null)
 	{
 %>
 <!-- 	<a href="login.jsp">Login</a> -->
@@ -52,7 +52,7 @@ style="background: LightGrey; padding: 5px;"
 </form>
 <%	
 	}
-	else
+//	else
 	{
 %>
 	<%= language.getString("judge") %>: <%= Optional.ofNullable(judge).orElse("") %> 

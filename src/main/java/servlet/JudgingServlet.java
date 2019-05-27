@@ -151,8 +151,6 @@ public final class JudgingServlet extends HttpServlet
   private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException {
         String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
         setSessionAttribute(request, SessionAttribute.Judge, judge);
-        setSessionAttribute(request, SessionAttribute.Language, 
-                languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
         redirectRequest(request, response, "/jsp/judging/judging.jsp");
     }
 
@@ -459,12 +457,63 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
         List<JudgingError> errors = new LinkedList<>();
 
         errors.addAll(checkJudgedCriteriasPerModel(collection));
-        errors.addAll(checkJudgedIfModelandModelerCorelate(collection));
+        errors.addAll(checkIfModelandModelerCorelate(collection));
+        errors.addAll(checkJudgedModelsPerCategory(collection));
         
         return errors;
     }
     
-    private static Collection<? extends JudgingError> checkJudgedIfModelandModelerCorelate(Collection<JudgingResult> collection) {
+    private static List<JudgingError> checkJudgedModelsPerCategory(Collection<JudgingResult> collection) {
+        Map<String, List<JudgingResult>> judgingResultsByCategory = collection.stream()
+                .collect(Collectors.groupingBy(JudgingResult::getCategory));
+        
+        List<JudgingError> returned = new LinkedList<>();
+        
+        for (Entry<String, List<JudgingResult>> judgingResults : judgingResultsByCategory.entrySet()) 
+        {
+            String category = judgingResults.getKey();
+            
+            Map<String, List<JudgingResult>> judgedModelsPerJudge = judgingResults.getValue().stream()
+                    .collect(Collectors.groupingBy(JudgingResult::getJudge));
+
+            int currentlyJudgedModels = 0; 
+            String currentJudge = "";
+            for (Entry<String, List<JudgingResult>> judgedModelPerJudge : judgedModelsPerJudge.entrySet()) 
+            {
+                String judge = judgedModelPerJudge.getKey();
+                
+                if(currentlyJudgedModels == 0)
+                {
+                    currentlyJudgedModels = judgedModelPerJudge.getValue().size();
+                    currentJudge = judge;
+                }
+                
+                if(currentlyJudgedModels != judgedModelPerJudge.getValue().size()) {
+                    JudgingError judgingError = new JudgingError(category, judgedModelPerJudge.getValue().get(0).getModelID());
+                    judgingError.setErrorType(JudgingError.JudgingErrorType.TotalEvaluatedModels_Mismatch);
+                    judgingError.setErrorMessage(String.format("judged models are different: [%s: %d] - [%s: %d]", currentJudge, currentlyJudgedModels, judge, judgedModelPerJudge.getValue().size()));
+                    returned.add(judgingError);
+                }
+            }
+//                    .mapToInt(judgingResult -> judgingResult.getScores().values().stream().mapToInt(AtomicInteger::get).sum()).distinct()
+//                    .boxed().collect(Collectors.toList());
+//
+//            List<Integer> modellerIds = judgingResults.getValue().stream()
+//                    .mapToInt(judgingResult -> judgingResult.getModellerID()).distinct()
+//                    .boxed().collect(Collectors.toList());
+//            
+//            if (modellerIds.size() != 1)
+//            {
+//                JudgingError judgingError = judgingResults.getKey();
+//                judgingError.setErrorMessage(String.format("modellerIds different on model forms: %s", modellerIds));
+//                judgingError.setErrorType(JudgingError.JudgingErrorType.ModelIdAndModellerID_Mismatch);
+//            }
+        }
+        
+        return returned;
+    }
+
+    private static Collection<? extends JudgingError> checkIfModelandModelerCorelate(Collection<JudgingResult> collection) {
         Map<JudgingError, List<JudgingResult>> judgingResultsByModelId = collection.stream()
                 .collect(Collectors.groupingBy(judgingResult -> new JudgingError(judgingResult.getCategory() , judgingResult.getModelID())));
         
