@@ -151,6 +151,8 @@ public final class JudgingServlet extends HttpServlet
   private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException {
         String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
         setSessionAttribute(request, SessionAttribute.Judge, judge);
+        setSessionAttribute(request, SessionAttribute.Language, 
+                languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
         redirectRequest(request, response, "/jsp/judging/judging.jsp");
     }
 
