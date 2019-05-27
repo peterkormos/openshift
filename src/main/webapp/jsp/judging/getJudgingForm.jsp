@@ -26,6 +26,8 @@
     ResourceBundle language = JudgingServlet.getLanguage(session, response);
 
     int maxlength = 1000;
+    
+    String unjudgedCriteriaStyle = "background-color: grey;";
 %>
 
 <%
@@ -112,11 +114,22 @@
 			<%
 				  for (JudgingCriteria criteria : criteriaList)
 				  {
+				  	boolean hasScore = judgedModel != null && scores.get(criteria.getId()) != null;
 				%>
-				<tr bgcolor="<%=highlight()%>">
+				<tr bgcolor="<%=highlight()%>"
+				<%= hasScore ? "" : "style = '"+unjudgedCriteriaStyle+"'"%>
+				>
 					<td><%=criteria.getId()%></td>
 					<td><%=criteria.getDescription()%></td>
 					<td>
+						<label>
+						<input type="radio" 
+						name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%= criteria.getId() %>"
+						value="<%= ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE %>"
+						onchange="parentNode.parentNode.parentNode.style = '<%= unjudgedCriteriaStyle %>';"
+						><%= ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE %> 
+						</label>
+
 						<%
 						  for (int i = 0; i < criteria.getMaxScore() + 1; i++)
 								{
@@ -127,9 +140,8 @@
 						<input type="radio" 
 						name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%= criteria.getId() %>"
 						value="<%=i%>"
-						<%= judgedModel != null && scores.get(criteria.getId()) != null &&
-						scores.get(criteria.getId()).get(0).getScore() == i
-						? "checked='checked'" : "" %>
+						<%= hasScore && scores.get(criteria.getId()).get(0).getScore() == i ? "checked='checked'" : "" %>
+						onchange="parentNode.parentNode.parentNode.style = '';"
 						><%=i%> 
 						</label>
 		<%
@@ -147,7 +159,7 @@
 			<textarea
 					name='<%=JudgingServlet.RequestParameter.Comment.name()%>'
 					maxlength='<%= maxlength %>'
-					cols='50' rows='3' placeholder="Max. <%= maxlength %> char."
+					cols='50' rows='3' placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength) %>"
 					><%= judgedModel != null ? scores.values().iterator().next().get(0).getComment() : "" %></textarea></td>
 		</tr>
 		<tr>
