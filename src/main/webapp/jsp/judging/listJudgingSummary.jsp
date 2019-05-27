@@ -1,3 +1,4 @@
+<%@page import="java.util.stream.Collectors"%>
 <%@page import="java.util.concurrent.atomic.AtomicInteger"%>
 <%@page import="java.util.*"%>
 
@@ -11,13 +12,16 @@
   highlightStart = 0xEAEAEA;
 
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
+	
+	String judge = (String)session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
+	boolean isNormalUser = !"admin".equals(judge);
 
   Map<String, AtomicInteger> scoredModelsByCategory = new LinkedHashMap<String, AtomicInteger>();
 
   Collection<JudgingResult> scoresByCategory = (Collection<JudgingResult>) session
 		  .getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
   session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
-
+  
   int maxScore = 0;
   for (JudgingResult judgingResult : scoresByCategory)
   {
@@ -99,6 +103,11 @@
 	<%
 	  for (JudgingResult judgingResult : scoresByCategory)
 	  {
+		if(judge != null && 
+			isNormalUser && 
+			!judge.equals(judgingResult.getJudge())
+			)
+			continue;
 	%>
 
 	<tr bgcolor="<%=highlight()%>" 
