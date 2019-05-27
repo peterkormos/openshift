@@ -66,7 +66,7 @@
 			<jsp:include page="fillableFormField.jsp">
 			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.Judge.name() %>"/>
 			  <jsp:param name="value" value='<%= judge %>'/>
-			  <jsp:param name="caption" value='Judge'/>
+			  <jsp:param name="caption" value='<%= language.getString("judge") %>'/>
 			</jsp:include>
 			</td>
 		</tr>
@@ -105,9 +105,9 @@
 		</tr>
 
 		<tr bgcolor="#ddddff">
-			<th>Criteria</th>
-			<th>Description</th>
-			<th>Score</th>
+			<th><%= language.getString("judging.criteria") %></th>
+			<th><%= language.getString("judging.criteria.description") %></th>
+			<th><%= language.getString("judging.criteria.score") %></th>
 		</tr>
 			<%
 				  for (JudgingCriteria criteria : criteriaList)
@@ -142,7 +142,7 @@
 			 %> 		
 
 		<tr>
-			<td colspan="3" valign="top">
+			<td colspan="3" style="vertical-align:top">
 			<%= language.getString("comment") %>: 
 			<textarea
 					name='<%=JudgingServlet.RequestParameter.Comment.name()%>'

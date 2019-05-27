@@ -80,7 +80,7 @@
 <table style="border: 1px solid black;">
 	<tr bgcolor="#ddddff">
 		<th><%= language.getString("category") %></th>
-		<th>Zs&utilde;ri</th>
+		<th><%= language.getString("judge") %></th>
 		<th><%= language.getString("userID") %></th>
 		<th><%= language.getString("modelID") %></th>
 		<th><%= language.getString("models.name") %></th>

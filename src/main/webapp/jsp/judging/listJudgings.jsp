@@ -16,13 +16,13 @@
 
 	<tr bgcolor="#ddddff">
 		<th><%= language.getString("category") %></th>
-		<th>Zs&utilde;ri</th>
+		<th><%= language.getString("judge") %></th>
 		<th><%= language.getString("userID") %></th>
 		<th><%= language.getString("modelID") %></th>
 		<th><%= language.getString("models.name") %></th>
-		<th>Krit&eacute;ria</th>
-		<th>Pont</th>
-		<th>Megjegyz&eacute;s</th>
+		<th><%= language.getString("judging.criteria") %></th>
+		<th><%= language.getString("judging.criteria.score") %></th>
+		<th><%= language.getString("comment") %></th>
 		<th>DB ID</th>
 	</tr>
 

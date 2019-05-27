@@ -356,34 +356,40 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
       throw new IllegalArgumentException(String.format("No criteria is found for category [%s] with id: [%d]", category, criteriaId));
   }
   
-  private List<JudgingCriteria> getCriteriaList(String category) throws IOException
-  {
-	final Map<String, String> judgingCriteriaFilesForCategory = loadFile(JUDGING_FILENAME);
+    private List<JudgingCriteria> getCriteriaList(String category) throws IOException 
+    {
+        final Map<String, String> judgingCriteriaFilesForCategory = loadFile(JUDGING_FILENAME);
 
-	String fileName = judgingCriteriaFilesForCategory.get(category);
-	if(fileName == null)
-	    return Arrays.asList(JudgingCriteria.getDefault()); 
-	                
-        final Map<String, String> judgingCriteriasForCategory = loadFile(fileName);
-	final List<JudgingCriteria> criteriaList = new LinkedList<JudgingCriteria>();
+        String fileName = judgingCriteriaFilesForCategory.get(category);
+        if (fileName == null)
+            return Arrays.asList(JudgingCriteria.getDefault());
+        try 
+        {
+            final Map<String, String> judgingCriteriasForCategory = loadFile(fileName);
+            final List<JudgingCriteria> criteriaList = new LinkedList<JudgingCriteria>();
 
-	for (final Entry<String, String> entry : judgingCriteriasForCategory.entrySet())
-	{
-	  int criteriaId = Integer.parseInt(entry.getKey());
-	    
-	  final String values = entry.getValue();
-	  final String[] splitValues = values.split(";");
-	  if(splitValues.length != 2)
-	      throw new IllegalArgumentException(String.format("value [%s] token count is not 2 for criteriaId: [%s] in file: [%s]!", values, criteriaId, fileName));
-	  final String description = splitValues[0];
-	  final int maxScore = Integer.parseInt(splitValues[1]);
+            for (final Entry<String, String> entry : judgingCriteriasForCategory.entrySet()) 
+            {
+                int criteriaId = Integer.parseInt(entry.getKey());
 
-	  final JudgingCriteria criteria = new JudgingCriteria(criteriaId, description, maxScore);
-	  criteriaList.add(criteria);
-	}
+                final String values = entry.getValue();
+                final String[] splitValues = values.split(";");
+                if (splitValues.length != 2)
+                    throw new IllegalArgumentException(String.format("value [%s] token count is not 2 for criteriaId: [%s] in file: [%s]!",
+                            values, criteriaId, fileName));
+                final String description = splitValues[0];
+                final int maxScore = Integer.parseInt(splitValues[1]);
 
-	return criteriaList;
-  }
+                final JudgingCriteria criteria = new JudgingCriteria(criteriaId, description, maxScore);
+                criteriaList.add(criteria);
+            }
+            return criteriaList;
+        } catch (Exception e) 
+        {
+            fileCache.remove(fileName);
+            throw e;
+        }
+    }
 
   private void getCategories(HttpServletRequest request, HttpServletResponse response) throws IOException
   {
