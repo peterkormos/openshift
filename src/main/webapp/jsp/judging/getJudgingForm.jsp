@@ -142,7 +142,7 @@
 			 %> 		
 
 		<tr>
-			<td colspan="3" style="vertical-align:top">
+			<td colspan="3" style="vertical-align: top;">
 			<%= language.getString("comment") %>: 
 			<textarea
 					name='<%=JudgingServlet.RequestParameter.Comment.name()%>'
