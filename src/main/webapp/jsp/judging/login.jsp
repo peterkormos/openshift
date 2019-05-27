@@ -13,7 +13,7 @@
 
 <jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
 <%
-	String languageCode = ServletUtil.getOptionalRequestAttribute(request, "language");
+	String languageCode = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Language.name());
 
 	ResourceBundle language = languageUtil.getLanguage(languageCode);
  %>
@@ -25,7 +25,7 @@ method='POST' accept-charset="UTF-8"
 >
 	<jsp:include page="fillableFormField.jsp">
 	  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.Judge.name() %>"/>
-	  <jsp:param name="caption" value='Judge'/>
+	  <jsp:param name="caption" value='<%= language.getString("judge") %>'/>
 	</jsp:include>
 	<p>
 	<%= language.getString("language") %>: 
