@@ -8,6 +8,7 @@ import javax.persistence.Table;
 @Table(name = "mak_judgingscore")
 public class JudgingScore extends JudgedModel
 {
+    public final static int MAX_COMMENT_LENGTH = 1000;
   @Column
   private String category;
   @Column
@@ -16,7 +17,7 @@ public class JudgingScore extends JudgedModel
   private int criteriaID;
   @Column
   private int score;
-  @Column(length = 1000, nullable = true)
+  @Column(length = MAX_COMMENT_LENGTH, nullable = true)
   private String comment;
   
   public JudgingScore()

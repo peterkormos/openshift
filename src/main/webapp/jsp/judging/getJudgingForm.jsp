@@ -25,7 +25,7 @@
 
     ResourceBundle language = JudgingServlet.getLanguage(session, response);
 
-    int maxlength = 1000;
+    int maxlength = JudgingScore.MAX_COMMENT_LENGTH;
     
     String unjudgedCriteriaStyle = "background-color: grey;";
 %>
