@@ -51,7 +51,7 @@ label {
 	border-color: transparent;
 	border-width: 3px;
 	padding-left: 5px;
-	display: block;
+	display: inline-block;
 	height: 30px;
 }
 

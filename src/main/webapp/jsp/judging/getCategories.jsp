@@ -7,6 +7,10 @@
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
 %>
 
+<head>
+<link href="../base.css" rel="stylesheet" type="text/css">
+</head>
+
 <form
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingForm.name()%>"
 	method="post">

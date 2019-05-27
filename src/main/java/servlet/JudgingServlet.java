@@ -37,6 +37,7 @@ import datatype.judging.JudgingError;
 import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
 import exception.MissingRequestParameterException;
+import util.LanguageUtil;
 import util.SessionAttributes;
 
 public final class JudgingServlet extends HttpServlet
@@ -48,17 +49,17 @@ public final class JudgingServlet extends HttpServlet
 
   public enum RequestType
   {
-	GetCategories, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm
+	GetCategories, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login
   };
 
   public enum SessionAttribute
   {
-	JudgingCriteriasForCategory, Category, Judgings, Judge,Categories
+	JudgingCriteriasForCategory, Category, Judgings, Judge,Categories, Language
   }
 
   public enum RequestParameter
   {
-	Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName
+	Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language
   }
 
   private JudgingServletDAO dao;
@@ -126,6 +127,9 @@ public final class JudgingServlet extends HttpServlet
 		case ListJudgingSummary:
 		  listJudgingSummary(request, response);
 		  break;
+		case Login:
+		    login(request, response);
+		    break;
 
 		default:
 		  throw new IllegalArgumentException("Unknown pathInfo: " + pathInfo);
@@ -142,7 +146,17 @@ public final class JudgingServlet extends HttpServlet
 	}
   }
 
-  private void listJudgingSummary(HttpServletRequest request, HttpServletResponse response) throws Exception
+  private LanguageUtil languageUtil = new LanguageUtil();
+  
+  private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException {
+        String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
+        setSessionAttribute(request, SessionAttribute.Judge, judge);
+        setSessionAttribute(request, SessionAttribute.Language, 
+                languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
+        redirectRequest(request, response, "/jsp/judging/judging.jsp");
+    }
+
+private void listJudgingSummary(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
 
 	final Map<String, JudgingResult> scoresByCategory = new LinkedHashMap<String, JudgingResult>();
@@ -301,7 +315,10 @@ public final class JudgingServlet extends HttpServlet
 
 	setSessionAttribute(request, SessionAttribute.JudgingCriteriasForCategory, getCriteriaList(category));
 	setSessionAttribute(request, SessionAttribute.Category, category);
-	setSessionAttribute(request, SessionAttribute.Judge, ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Judge.name()));
+	
+	String judgeInRequestAttribute = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Judge.name());
+        if(!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute))
+            setSessionAttribute(request, SessionAttribute.Judge, judgeInRequestAttribute);
 
 	initForJudgingModification(request, category);
 	    

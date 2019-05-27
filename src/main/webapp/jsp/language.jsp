@@ -1,4 +1,10 @@
-<select name="language" >
+<%@page import="servlet.ServletUtil"%>
+<%
+	String parameterName = ServletUtil.getOptionalRequestAttribute(request, "parameterName");
+	if(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameterName))
+		parameterName = "language";
+ %>
+<select name="<%= parameterName %>" >
   <option value="<%= request.getParameter("selectValue") %>" selected><%= request.getParameter("selectLabel") %></option>
   <option value="" >-------</option>
   <option value="HU">Magyar</option>

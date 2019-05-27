@@ -11,7 +11,7 @@
     highlightStart = 0xEAEAEA;
 
     String judge = (String) session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
-
+    
     if (judge == null)
         judge = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Judge.name());
 
@@ -41,6 +41,10 @@
     } 
  %>
 
+<head>
+<link href="../base.css" rel="stylesheet" type="text/css">
+</head>
+
 <p>
 <form
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.SaveJudging.name()%>"
@@ -55,7 +59,7 @@
 			<td colspan="3">
 			<jsp:include page="fillableFormField.jsp">
 			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.Category.name() %>"/>
-			  <jsp:param name="value" value='<%= category %>'/>
+			  <jsp:param name="value" value='<%= category == null ? "" : category %>'/>
 			  <jsp:param name="caption" value='<%= language.getString("category.code") %>'/>
 			</jsp:include>
 			

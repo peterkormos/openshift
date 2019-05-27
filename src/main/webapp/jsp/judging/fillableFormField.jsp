@@ -18,10 +18,18 @@
 	else
 	{
 	%>
-		<input type="hidden"
+		<input type="text" 
+		required="required"
 		name="<%= request.getParameter("name") %>"
-		value="<%= fieldValue %>"> 
-		<b><%= fieldValue %></b> 
+		value="<%= fieldValue %>"
+		min="1"
+		size="<%= ServletUtil.getOptionalRequestAttribute(request, "size").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "20") %>"
+		> 
+
+<!-- 		<input type="hidden" -->
+<%-- 		name="<%= request.getParameter("name") %>" --%>
+<%-- 		value="<%= fieldValue %>">  --%>
+<%-- 		<b><%= fieldValue %></b>  --%>
 	<%
 	}				
  %>
