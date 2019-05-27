@@ -34,7 +34,7 @@
 accept-charset="UTF-8" 
 action="../../JudgingServlet/<%=JudgingServlet.RequestType.Login.name()%>"
 method='POST' accept-charset="UTF-8" 
-style="flash"
+style="background: LightGrey; padding: 5px;"
 >
 	<jsp:include page="fillableFormField.jsp">
 	  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.Judge.name() %>"/>
