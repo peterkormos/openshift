@@ -23,28 +23,57 @@
 <link href="../base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<%= language.getString("judge") %>: <%= Optional.ofNullable(judge).orElse("") %> 
 	
 <%
 	boolean isNormalUser = !"admin".equals(judge);
 	if(!isNormalUser || judge == null)
 	{
 %>
-	<p>
-	<a href="login.jsp">Login</a>
+<!-- 	<a href="login.jsp">Login</a> -->
+<form name='input' 
+accept-charset="UTF-8" 
+action="../../JudgingServlet/<%=JudgingServlet.RequestType.Login.name()%>"
+method='POST' accept-charset="UTF-8" 
+style="flash"
+>
+	<jsp:include page="fillableFormField.jsp">
+	  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.Judge.name() %>"/>
+	  <jsp:param name="caption" value='<%= language.getString("judge") %>'/>
+	</jsp:include>
+	
+	<%= language.getString("language") %>: 
+ <jsp:include page="../language.jsp">
+  <jsp:param name="parameterName" value="<%= JudgingServlet.RequestParameter.Language.name() %>"/>
+  <jsp:param name="selectLabel" value=""/>
+  <jsp:param name="selectValue" value=""/>
+</jsp:include>
+	
+<input type="submit" value='<%= language.getString("login") %>'>
+</form>
+<%	
+	}
+	else
+	{
+%>
+	<%= language.getString("judge") %>: <%= Optional.ofNullable(judge).orElse("") %> 
 <%	
 	}
  %>	
 	<p>
-	<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>">Judge</a>
+	<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>">
+	<img src="../../icons/add.png" height="30" align="center"> <%= language.getString("judging.type.form") %></a>
 	<p>
-	<a href="getJudgingForm.jsp">Simple judging by looking at models...</a>
+	<a href="getJudgingForm.jsp">
+	<img src="../../icons/add.png" height="30" align="center">
+	<%= language.getString("judging.type.looking") %></a>
 <%
 	if(judge != null)
 	{
 %>
 	<p>
-	<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgingSummary.name()%>">List judging summary</a>
+	<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgingSummary.name()%>">
+	<img src="../../icons/list.png" height="30" align="center">
+	<%= language.getString("list.models") %></a>
 <%
 	}
  %>
