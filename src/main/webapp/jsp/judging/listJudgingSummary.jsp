@@ -22,6 +22,9 @@
 		  .getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
   session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
   
+  if(scoredModelsByCategory == null)
+  	response.sendRedirect(JudgingServlet.DEFAULT_PAGE);
+  	
   int maxScore = 0;
   for (JudgingResult judgingResult : scoresByCategory)
   {

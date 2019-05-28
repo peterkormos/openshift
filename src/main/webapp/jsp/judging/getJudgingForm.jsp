@@ -165,7 +165,7 @@
 		<tr>
 			<td colspan="3" align="center">
 				<input type="submit" value='<%= language.getString("save") %>'>
-				<input name='finishRegistration' type='submit' value='<%= language.getString("finish.model.registration") %>'>
+				<input name='finishRegistration' type='submit' value='<%= language.getString("judging.finish") %>'>
 			</td>
 		</tr>
 	</table>

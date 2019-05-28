@@ -46,6 +46,9 @@ public final class JudgingServlet extends HttpServlet
   private static final String JUDGING_FILENAME = "judging.txt";
 
   public static Logger logger = Logger.getLogger(JudgingServlet.class);
+  
+  public final static String DEFAULT_PAGE = "judging.jsp"; 
+  private final static String JSP_BASE_DIR = "/jsp/judging/"; 
 
   public enum RequestType
   {
@@ -137,7 +140,7 @@ public final class JudgingServlet extends HttpServlet
 	  }
 	  else
 	  {
-		redirectRequest(request, response, "/jsp/judging/judging.jsp");
+		redirectRequest(request, response, JSP_BASE_DIR + DEFAULT_PAGE);
 	  }
 	}
 	catch (final Exception ex)
@@ -153,7 +156,7 @@ public final class JudgingServlet extends HttpServlet
         setSessionAttribute(request, SessionAttribute.Judge, judge);
         setSessionAttribute(request, SessionAttribute.Language, 
                 languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
-        redirectRequest(request, response, "/jsp/judging/judging.jsp");
+        redirectRequest(request, response, JSP_BASE_DIR + DEFAULT_PAGE);
     }
 
 private void listJudgingSummary(HttpServletRequest request, HttpServletResponse response) throws Exception
@@ -202,7 +205,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
 //	System.out.println(scoresByCategory);
 	setSessionAttribute(request, SessionAttribute.Judgings, scoresByCategory.values());
 
-	redirectRequest(request, response, "/jsp/judging/listJudgingSummary.jsp");
+	redirectRequest(request, response, JSP_BASE_DIR + "listJudgingSummary.jsp");
   }
 
   private void setSessionAttribute(HttpServletRequest request, SessionAttribute name, Object value)
@@ -247,7 +250,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
 
 	setSessionAttribute(request, SessionAttribute.Judgings, allScores);
 
-	redirectRequest(request, response, "/jsp/judging/listJudgings.jsp");
+	redirectRequest(request, response, JSP_BASE_DIR + "listJudgings.jsp");
   }
 
   private void saveJudging(HttpServletRequest request, HttpServletResponse response) throws Exception
@@ -307,7 +310,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
           dao.deleteJudgingScores(judge, category, Integer.parseInt(modelId), Integer.parseInt(modellerId));
       }
       
-      redirectRequest(request, response, "/jsp/judging/judging.jsp");
+      redirectRequest(request, response, JSP_BASE_DIR + DEFAULT_PAGE);
   }
   
   private void getJudgingForm(HttpServletRequest request, HttpServletResponse response) throws Exception
@@ -323,7 +326,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
 
 	initForJudgingModification(request, category);
 	    
-	redirectRequest(request, response, "/jsp/judging/getJudgingForm.jsp");
+	redirectRequest(request, response, JSP_BASE_DIR + "getJudgingForm.jsp");
   }
 
     private void initForJudgingModification(HttpServletRequest request, final String category)
@@ -397,7 +400,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
 	final Set<String> categories = loadFile(JUDGING_FILENAME).keySet();
 
 	setSessionAttribute(request, SessionAttribute.Categories, categories);
-	redirectRequest(request, response, "/jsp/judging/getCategories.jsp");
+	redirectRequest(request, response, JSP_BASE_DIR + "getCategories.jsp");
   }
 
   private void redirectRequest(HttpServletRequest request, HttpServletResponse response, String path) throws IOException
@@ -451,7 +454,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
     {
         ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
         if(language == null)
-                response.sendRedirect("judging.jsp");
+                response.sendRedirect(DEFAULT_PAGE);
         
         return language;
     }
