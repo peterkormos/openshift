@@ -28,6 +28,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" href="base.css" media="screen">
+<script type="text/javascript" src="util.js"></script>
 
 <script type="text/javascript">
 // <!--
@@ -148,10 +149,14 @@ String modelproducer = model == null ? "" : model.producer;
 
 <td>
 <label><%=language.getString("yes")%>
- <input name='gluedToBase' type='radio' value='on' <%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%> ></label>
+ <input name='gluedToBase' type='radio' value='on' <%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%> 
+onchange="updateMandatoryFieldMark(this.parentNode);"
+ ></label>
 <br>
 <label><%=language.getString("no")%>
- <input name='gluedToBase' type='radio' value='off' <%=(model == null || !model.gluedToBase ? "checked='checked'" : "")%> ></label>
+ <input name='gluedToBase' type='radio' value='off' <%=(model == null || !model.gluedToBase ? "checked='checked'" : "")%> 
+onchange="updateMandatoryFieldMark(this.parentNode);"
+ ></label>
  <font color='#FF0000' size='+3'>&#8226;</font> </td>
 </tr>
 

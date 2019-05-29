@@ -17,6 +17,7 @@
 	boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));		
 %>
 
+<div>
 <input type='text' maxlength='<%= maxlength %>' name='<%= request.getParameter("name") %>' placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
 <%
 	String value = request.getParameter("value");
@@ -29,6 +30,7 @@
 	}
 %>
 <%= mandatory ?  "required='required'" : "" %>
+onchange="updateMandatoryFieldMark(this);"
 > 
 
 <%
@@ -39,3 +41,4 @@
 <% 
 	}
 %>
+</div>

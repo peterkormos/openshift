@@ -14,9 +14,10 @@
 	if(request.getParameter("maxlength") != null) 
 		maxlength = Integer.parseInt(request.getParameter("maxlength"));
 %>
-
+<div>
 <input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>" placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
 required="required"
+onchange="updateMandatoryFieldMark(this);"
 >
 
 <datalist id="modelproducer">
@@ -63,3 +64,4 @@ required="required"
     <option>Zvezda</option>
 </datalist>
 <font color="#FF0000" size="+3">&#8226;</font> 
+</div>

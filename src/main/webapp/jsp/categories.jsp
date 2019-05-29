@@ -19,6 +19,7 @@
 <div id='categories'>
 	<select name='categoryID'
 	required="required"
+onchange="updateMandatoryFieldMark(this);"
 	>
 
 		<option value='<%=selectedValue%>'><%=selectedLabel%></option>

@@ -11,9 +11,10 @@
   final ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
 %>
 
-
+<div>
 <input list="modelscale" name="modelscale" value='<%= request.getParameter("selectValue") %>' placeholder="<%=language.getString("model.scales.select")%>"
 required="required"
+onchange="updateMandatoryFieldMark(this);"
 >
 
 <datalist id="modelscale">
@@ -51,3 +52,4 @@ required="required"
 </datalist>
 
 <font color="#FF0000" size="+3">&#8226;</font> 
+</div>
