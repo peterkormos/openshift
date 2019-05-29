@@ -12,7 +12,9 @@
 %>
 
 
-<input list="modelscale" name="modelscale" value='<%= request.getParameter("selectValue") %>' placeholder="<%=language.getString("model.scales.select")%>">
+<input list="modelscale" name="modelscale" value='<%= request.getParameter("selectValue") %>' placeholder="<%=language.getString("model.scales.select")%>"
+required="required"
+>
 
 <datalist id="modelscale">
       <option></option>

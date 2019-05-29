@@ -15,7 +15,9 @@
 		maxlength = Integer.parseInt(request.getParameter("maxlength"));
 %>
 
-<input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>" placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>">
+<input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>" placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
+required="required"
+>
 
 <datalist id="modelproducer">
     <option></option>

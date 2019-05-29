@@ -71,7 +71,7 @@ import util.LanguageUtil;
 import util.SessionAttributes;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.22.";
+	public String VERSION = "2019.05.29.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;

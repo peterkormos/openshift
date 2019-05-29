@@ -17,7 +17,9 @@
 %>
 
 <div id='categories'>
-	<select name='categoryID'>
+	<select name='categoryID'
+	required="required"
+	>
 
 		<option value='<%=selectedValue%>'><%=selectedLabel%></option>
 

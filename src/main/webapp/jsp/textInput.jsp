@@ -13,6 +13,8 @@
 	int maxlength = 60;
 	if(request.getParameter("maxlength") != null) 
 		maxlength = Integer.parseInt(request.getParameter("maxlength"));
+		
+	boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));		
 %>
 
 <input type='text' maxlength='<%= maxlength %>' name='<%= request.getParameter("name") %>' placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
@@ -26,11 +28,11 @@
 <%
 	}
 %>
-
+<%= mandatory ?  "required='required'" : "" %>
 > 
 
 <%
-	if (Boolean.parseBoolean(request.getParameter("mandatory")))
+	if (mandatory)
 	{
 %>
 	  <font color='#FF0000' size='+3'>&#8226;</font>
