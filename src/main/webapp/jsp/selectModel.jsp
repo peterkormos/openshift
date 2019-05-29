@@ -21,15 +21,22 @@
 			final User user = RegistrationServlet.getUser(request);
 			  final ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
 	
+			String action = ServletUtil.getRequestAttribute(request, SessionAttributes.Action.name()); 
+			String submitLabel = ServletUtil.getRequestAttribute(request, SessionAttributes.SubmitLabel.name());
+			
 			final List<Model> models = servletDAO.getModels(user.userID);
 	
 			if (models.isEmpty()) {
 				response.sendRedirect("jsp/main.jsp");
 				return;
 			}
+/*
+			else if(models.size() == 1)
+			{
+				response.sendRedirect("../RegistrationServlet/" + action + "?" + "modelID" + "=" + models.get(0).getModelID());			
+			}
+*/
 	
-			String action = ServletUtil.getRequestAttribute(request, SessionAttributes.Action.name()); 
-			String submitLabel = ServletUtil.getRequestAttribute(request, SessionAttributes.SubmitLabel.name());
 %>
 
 <!DOCTYPE html>
@@ -79,8 +86,8 @@ function checkMandatory(form)
  			<label>
 			<input type='radio' name='modelID' value='<%= model.modelID %>' <%= (models.size() == 1 ? " checked='checked' " : "")  %>/>
 			<%=model.scale + " - " + model.producer + " - " + model.name %>
-			<br>
 			</label>
+			<br>
 <%
 			}
 		}
@@ -89,6 +96,14 @@ function checkMandatory(form)
 		}
  %>
 </div>
+
+<script type="text/javascript">
+var form = document.getElementsByName('input')[0];
+if(form.modelID.checked == true)
+	form.submit();
+	
+</script>
+
 		</form>
 
 </body>
