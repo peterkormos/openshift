@@ -56,7 +56,7 @@ public final class JudgingServlet extends HttpServlet
 
   public enum SessionAttribute 
   {
-	JudgingCriteriasForCategory, Category, Judgings, Judge,Categories, Language
+	JudgingCriteriasForCategory, Category, Judgings, Judge,Categories
   }
 
   public enum RequestParameter
@@ -153,7 +153,7 @@ public final class JudgingServlet extends HttpServlet
   private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException {
         String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
         setSessionAttribute(request, SessionAttribute.Judge, judge);
-        setSessionAttribute(request, SessionAttribute.Language, 
+        setSessionAttribute(request, CommonSessionAttribute.Language, 
                 languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
         redirectRequest(request, response, JSP_BASE_DIR + DEFAULT_PAGE);
     }
@@ -207,7 +207,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
 	redirectRequest(request, response, JSP_BASE_DIR + "listJudgingSummary.jsp");
   }
 
-  private void setSessionAttribute(HttpServletRequest request, SessionAttribute name, Object value)
+  private void setSessionAttribute(HttpServletRequest request, Enum name, Object value)
   {
 	final HttpSession session = request.getSession(true);
 	session.setAttribute(name.name(), value);
@@ -453,7 +453,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
 
     public static ResourceBundle getLanguage(HttpSession session, HttpServletResponse response) throws IOException
     {
-        ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttribute.Language.name());
+        ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
         if(language == null)
                 response.sendRedirect(DEFAULT_PAGE);
         
