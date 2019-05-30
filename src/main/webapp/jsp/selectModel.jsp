@@ -13,7 +13,7 @@
 		String show = RegistrationServlet.getShowFromSession(session);
 		if (show == null)
 		{
-		  show = "-";
+		  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 		}
 		
 		if (servlet.isRegistrationAllowed(show)) 

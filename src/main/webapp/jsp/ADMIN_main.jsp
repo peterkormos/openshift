@@ -25,7 +25,7 @@
 String show = (String)session.getAttribute(SessionAttributes.Show.name());
 if (show == null)
 {
-  show = "-";
+  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 }
 %>
 Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>

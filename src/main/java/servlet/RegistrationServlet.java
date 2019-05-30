@@ -425,13 +425,7 @@ public class RegistrationServlet extends HttpServlet {
 		try {
 			show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
 		} catch (final Exception e) {
-			if(user.isAdminUser())
-				show = null;
-			else
-			{
-				writeErrorResponse(response, "K&eacute;rem v&aacute;lasszon egy makettes rendezv&eacute;nyt!");
-				return;
-			}
+		    show = null;
 		}
 
 		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
@@ -2358,9 +2352,12 @@ public class RegistrationServlet extends HttpServlet {
 		return VERSION;
 	}
 
-	public static boolean isPreRegistrationAllowed(String show) {
-		return preRegistrationAllowed.get(show);
-	}
+    public static boolean isPreRegistrationAllowed(String show) {
+        if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(show))
+            return true;
+        Boolean allowed = preRegistrationAllowed.get(show);
+        return allowed == null ? false : allowed;
+    }
 
 	public void loadImage(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		response.setContentType("image/jpeg");

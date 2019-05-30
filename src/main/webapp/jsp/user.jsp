@@ -1,3 +1,4 @@
+<%@page import="util.SessionAttributes"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 
@@ -25,6 +26,7 @@
 	}	
 
 	ResourceBundle language = languageUtil.getLanguage(languageCode);
+	session.setAttribute(SessionAttributes.Language.name(), language);
 %>
 
 <html>
