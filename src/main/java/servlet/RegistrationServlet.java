@@ -425,7 +425,13 @@ public class RegistrationServlet extends HttpServlet {
 		try {
 			show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
 		} catch (final Exception e) {
-		    show = null;
+			if(user.isAdminUser() || isOnSiteUse())
+				show = null;
+			else
+			{
+				writeErrorResponse(response, languageUtil.getLanguage(user.language).getString("select.show"));
+				return;
+			}
 		}
 
 		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
