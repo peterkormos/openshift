@@ -22,15 +22,15 @@
 		return;
 	}
 
+	ResourceBundle language = languageUtil.getLanguage(user.language);
+	session.setAttribute(SessionAttributes.Language.name(), language); 
+
 	if (user.language.length() != 2)
 	{
 	  response.sendRedirect(user.language + "_main.jsp");
 	  return;
 	}
 	
-	ResourceBundle language = languageUtil.getLanguage(user.language);
-	session.setAttribute(SessionAttributes.Language.name(), language); 
-
 	String show = RegistrationServlet.getShowFromSession(session);
 	if (show == null)
 	{
