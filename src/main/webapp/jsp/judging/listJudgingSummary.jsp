@@ -144,10 +144,10 @@
 		%>
 		<td><%= total %></td>
 		<td>
-		<a href="../../JudgingServlet/GetJudgingForm?ModelID=<%=judgingResult.getModelID()%>&ModellerID=<%=judgingResult.getModellerID()%>&Category=<%=judgingResult.getCategory()%>&Judge=<%=judgingResult.getJudge()%>">
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingForm.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=judgingResult.getJudge()%>">
 		<%= language.getString("modify") %></a>
 		
-		<a href="../../JudgingServlet/DeleteJudgingForm?ModelID=<%=judgingResult.getModelID()%>&ModellerID=<%=judgingResult.getModellerID()%>&Category=<%=judgingResult.getCategory()%>&Judge=<%=judgingResult.getJudge()%>">
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.DeleteJudgingForm.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=judgingResult.getJudge()%>">
 		<%= language.getString("delete") %></a>
 </td>
 	</tr>
