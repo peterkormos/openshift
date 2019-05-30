@@ -41,21 +41,70 @@
     	Optional<List<JudgingScore>> optional = scores.values().stream().findFirst();
     	if(optional.isPresent())
       		judgedModel = optional.get().get(0);
-    } 
+    }
+    else
+    	scores = new HashMap<Integer, List<JudgingScore>>();  
     
-    if(judgedModel == null)
+	Model model = (Model)session.getAttribute(CommonSessionAttribute.Model.name());
+    if(judgedModel == null && model != null)
     {
-    	Model model = (Model)session.getAttribute(CommonSessionAttribute.Model.name());
-    	if(model != null)
     		judgedModel = new JudgedModel(model);
     }
 %>
 
 <head>
 <link href="../base.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+// <!--
+function setModelInSession(value)
+{
+	var url = "../../RegistrationServlet?command=setModelInSession&modelID=" + value;
+	var req = false;
+
+	if (window.XMLHttpRequest) 
+	{ // Mozilla, Safari,...
+   		req = new XMLHttpRequest();
+
+	if (req.overrideMimeType)
+    	req.overrideMimeType('text/xml');
+  	} 
+	else if (window.ActiveXObject) 
+	{ // IE
+   		try 
+		{
+		    req = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) 
+		{
+      		try 
+			{
+       			req = new ActiveXObject("Microsoft.XMLHTTP");
+      		} catch (e) 
+			{}
+     	}
+   }
+   
+	req.open("GET", url, true);
+	req.onreadystatechange= function()
+	{   
+	 
+		if (req.readyState == 4 && 'ok' == req.responseText)
+		{
+			location.reload(true);
+		}
+	}
+
+	req.send(null);
+}
+
+//-->
+</script>
+
 </head>
 
 <p>
+<p id="resp" />
+
 <form
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.SaveJudging.name()%>"
 	method="post">
@@ -65,6 +114,35 @@
 	value="<%=criteriaList.size()%>">			 
 
 	<table style="border: 1px solid black;">
+		<tr>
+			<td colspan="3">
+			<jsp:include page="fillableFormField.jsp">
+			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModellerID.name() %>"/>
+			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModellerID() %>'/>
+			  <jsp:param name="size" value='3'/>
+			  <jsp:param name="caption" value='<%= language.getString("userID") %>'/>
+			</jsp:include>
+
+			<jsp:include page="fillableFormField.jsp">
+			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModelID.name() %>"/>
+			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModelID() %>'/>
+			  <jsp:param name="size" value='3'/>
+			  <jsp:param name="onChange" value='setModelInSession(this.value);'/>
+			  <jsp:param name="caption" value='<%= language.getString("modelID") %>'/>
+			</jsp:include>
+
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">
+			<jsp:include page="fillableFormField.jsp">
+			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModelsName.name() %>"/>
+			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModelsName() %>'/>
+			  <jsp:param name="caption" value='<%= language.getString("models.name") %>'/>
+			</jsp:include>
+			</td>
+		</tr>
+
 		<tr>
 			<td colspan="3">
 			<jsp:include page="fillableFormField.jsp">
@@ -80,36 +158,6 @@
 			</jsp:include>
 			</td>
 		</tr>
-
-		<tr>
-			<td colspan="3">
-			<jsp:include page="fillableFormField.jsp">
-			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModellerID.name() %>"/>
-			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModellerID() %>'/>
-			  <jsp:param name="size" value='3'/>
-			  <jsp:param name="caption" value='<%= language.getString("userID") %>'/>
-			</jsp:include>
-
-			<jsp:include page="fillableFormField.jsp">
-			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModelID.name() %>"/>
-			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModelID() %>'/>
-			  <jsp:param name="size" value='3'/>
-			  <jsp:param name="caption" value='<%= language.getString("modelID") %>'/>
-			</jsp:include>
-
-			</td>
-		</tr>
-		<tr>
-			<td colspan="3">
-			<jsp:include page="fillableFormField.jsp">
-			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModelsName.name() %>"/>
-			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModelsName() %>'/>
-			  <jsp:param name="caption" value='<%= language.getString("models.name") %>'/>
-			</jsp:include>
-			</td>
-		</tr>
-		
-		
 
 		<tr height="20px">
 		</tr>
@@ -168,7 +216,7 @@
 					name='<%=JudgingServlet.RequestParameter.Comment.name()%>'
 					maxlength='<%= maxlength %>'
 					cols='50' rows='3' placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength) %>"
-					><%= judgedModel != null ? scores.values().iterator().next().get(0).getComment() : "" %></textarea></td>
+					><%= judgedModel != null ? getComment(judgedModel, scores) : "" %></textarea></td>
 		</tr>
 		<tr>
 			<td colspan="3" align="center">
@@ -180,6 +228,19 @@
 </form>
 
 <%!
+
+String getComment(JudgedModel judgedModel, Map<Integer, List<JudgingScore>> scores)
+{
+	try
+	{
+		return scores.values().iterator().next().get(0).getComment();
+	}
+	catch(Exception ex)
+	{
+		return "";
+	}
+}
+
 Map<String, String> loadFile(File file) throws IOException
   {
 	Map<String, String> props = new LinkedHashMap<String, String>();

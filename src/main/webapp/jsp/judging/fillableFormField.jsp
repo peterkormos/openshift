@@ -12,6 +12,7 @@
 		name="<%= request.getParameter("name") %>"
 		min="1"
 		size="<%= ServletUtil.getOptionalRequestAttribute(request, "size").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "20") %>"
+		onChange="<%= ServletUtil.getOptionalRequestAttribute(request, "onChange").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "") %>"
 		> 
 	<%
 	}
@@ -24,6 +25,7 @@
 		value="<%= fieldValue %>"
 		min="1"
 		size="<%= ServletUtil.getOptionalRequestAttribute(request, "size").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "20") %>"
+		onChange="<%= ServletUtil.getOptionalRequestAttribute(request, "onChange").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "") %>"
 		> 
 
 <!-- 		<input type="hidden" -->

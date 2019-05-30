@@ -116,13 +116,13 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		<a href="../RegistrationServlet/listCategories"><strong>&Ouml;sszes
 			kateg&oacute;ria list&aacute;z&aacute;sa</strong></a> 
 		- 
-		<a href="../RegistrationServlet/inputForAddCategory">&Uacute;j
+		<a href="../RegistrationServlet?command=inputForAddCategory">&Uacute;j
 		kateg&oacute;ria hozz&aacute;ad&aacute;sa</a> 
 		- 
-		<a href="../RegistrationServlet/inputForModifyCategory">Kateg&oacute;ria
+		<a href="../RegistrationServlet?command=inputForModifyCategory">Kateg&oacute;ria
 		m&oacute;dos&iacute;t&aacute;sa</a>
 		
-			- <a href="../RegistrationServlet/inputForDeleteCategory">Kateg&oacute;ria
+			- <a href="../RegistrationServlet?command=inputForDeleteCategory">Kateg&oacute;ria
 		t&ouml;rl&eacute;se</a>
 
 	<p></p>

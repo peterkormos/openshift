@@ -67,6 +67,7 @@ import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
 import tools.InitDB;
+import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
@@ -368,6 +369,18 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
+	public void setModelInSession(final HttpServletRequest request, final HttpServletResponse response) throws Exception 
+	{
+	    final String modelID = ServletUtil.getRequestAttribute(request, "modelID");
+	    
+	    final Model model = servletDAO.getModel(Integer.parseInt(modelID));
+
+	    final HttpSession session = request.getSession();
+	    session.setAttribute(CommonSessionAttribute.Model.name(), model);
+	    
+	    writeResponse(response, new StringBuilder("ok"));
+	}
+	
 	public void getModelInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String modelID = ServletUtil.getRequestAttribute(request, "modelID");
 

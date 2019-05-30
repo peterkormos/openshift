@@ -18,7 +18,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletConfig;
@@ -37,6 +36,7 @@ import datatype.judging.JudgingError;
 import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
 import exception.MissingRequestParameterException;
+import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet
@@ -112,7 +112,7 @@ public final class JudgingServlet extends HttpServlet
 		  break;
 
 		case GetJudgingForm:
-		  getJudgingForm(request, response);
+		  getJudgingForm(request, response, true /*isForModification*/);
 		  break;
 		case DeleteJudgingForm:
 		    deleteJudgingForm(request, response);
@@ -282,11 +282,12 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
         final HttpSession session = request.getSession(false);
         session.removeAttribute(SessionAttribute.JudgingCriteriasForCategory.name());
         session.removeAttribute(SessionAttribute.Category.name());
-
+        session.removeAttribute(CommonSessionAttribute.Model.name());
+        
         if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) 
         {
             setSessionAttribute(request, SessionAttribute.Judge, judge);
-            getJudgingForm(request, response);
+            getJudgingForm(request, response, false /*isForModification*/);
         }
         else
             redirectRequest(request, response, "/" + getClass().getSimpleName());
@@ -312,7 +313,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
       redirectRequest(request, response, JSP_BASE_DIR + DEFAULT_PAGE);
   }
   
-  private void getJudgingForm(HttpServletRequest request, HttpServletResponse response) throws Exception
+  private void getJudgingForm(HttpServletRequest request, HttpServletResponse response, boolean isForModification) throws Exception
   {
 	final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
 
@@ -323,7 +324,8 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
         if(!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute))
             setSessionAttribute(request, SessionAttribute.Judge, judgeInRequestAttribute);
 
-	initForJudgingModification(request, category);
+        if(isForModification)
+            initForJudgingModification(request, category);
 	    
 	redirectRequest(request, response, JSP_BASE_DIR + "getJudgingForm.jsp");
   }
