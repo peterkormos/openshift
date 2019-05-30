@@ -5,7 +5,7 @@
 <%@page import="util.*"%>
 
 <%
-  RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
 
   User user = servlet.getUser(request);
@@ -28,11 +28,11 @@
 		models.add(model);
   }
 
-  session.setAttribute(SessionAttributes.Models.name(), models);
+  session.setAttribute(RegistrationServlet.SessionAttribute.Models.name(), models);
 %>
 
 <jsp:include page="listModels.jsp"></jsp:include>
 
 <%
-  session.removeAttribute(SessionAttributes.Models.name());
+    session.removeAttribute(RegistrationServlet.SessionAttribute.Models.name());
 %>

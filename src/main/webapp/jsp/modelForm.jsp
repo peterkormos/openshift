@@ -7,21 +7,20 @@
 <%@page import="java.util.*"%>
 
 <%
-	//input parameters	
-	String submitLabel = (String)session.getAttribute(SessionAttributes.SubmitLabel.name());
-	String action = (String)session.getAttribute(SessionAttributes.Action.name()); 
-	Integer modelID = (Integer)session.getAttribute(SessionAttributes.ModelID.name());
+    //input parameters	
+	String submitLabel = (String)session.getAttribute(RegistrationServlet.SessionAttribute.SubmitLabel.name());
+	String action = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name()); 
+	Integer modelID = (Integer)session.getAttribute(RegistrationServlet.SessionAttribute.ModelID.name());
  		
 	User user = RegistrationServlet.getUser(request);
 	
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
+	ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 	ServletDAO servletDAO = servlet.getServletDAO();
 
 	Model model = null;
 	if(modelID != null)
 		model = servletDAO.getModel(modelID);
-		
 %>
 
 <html>

@@ -7,37 +7,36 @@
 <%@page import="util.*" %>
     
 <%
-		RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-		ServletDAO servletDAO = RegistrationServlet.getServletDAO();
-		
-		String show = RegistrationServlet.getShowFromSession(session);
-		if (show == null)
-		{
-		  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
-		}
-		
-		if (servlet.isRegistrationAllowed(show)) 
-		{
-			final User user = RegistrationServlet.getUser(request);
-			  final ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
-	
-			String action = ServletUtil.getRequestAttribute(request, SessionAttributes.Action.name()); 
-			String submitLabel = ServletUtil.getRequestAttribute(request, SessionAttributes.SubmitLabel.name());
-			
-			final List<Model> models = servletDAO.getModels(user.userID);
-	
-			if (models.isEmpty()) {
-				response.sendRedirect("jsp/main.jsp");
-				return;
-			}
-/*
-			else if(models.size() == 1)
-			{
-				response.sendRedirect("../RegistrationServlet/" + action + "?" + "modelID" + "=" + models.get(0).getModelID());			
-			}
-*/
-	
-%>
+        RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+        		ServletDAO servletDAO = RegistrationServlet.getServletDAO();
+        		
+        		String show = RegistrationServlet.getShowFromSession(session);
+        		if (show == null)
+        		{
+        		  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+        		}
+        		
+        		if (servlet.isRegistrationAllowed(show)) 
+        		{
+        			final User user = RegistrationServlet.getUser(request);
+        			  final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
+        	
+        			String action = ServletUtil.getRequestAttribute(request, RegistrationServlet.SessionAttribute.Action.name()); 
+        			String submitLabel = ServletUtil.getRequestAttribute(request, RegistrationServlet.SessionAttribute.SubmitLabel.name());
+        			
+        			final List<Model> models = servletDAO.getModels(user.userID);
+        	
+        			if (models.isEmpty()) {
+        				response.sendRedirect("jsp/main.jsp");
+        				return;
+        			}
+        /*
+        			else if(models.size() == 1)
+        			{
+        				response.sendRedirect("../RegistrationServlet/" + action + "?" + "modelID" + "=" + models.get(0).getModelID());			
+        			}
+        */
+    %>
 
 <!DOCTYPE html>
 <html>

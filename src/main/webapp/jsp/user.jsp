@@ -1,4 +1,4 @@
-<%@page import="util.SessionAttributes"%>
+<%@page import="util.CommonSessionAttribute"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 
@@ -7,7 +7,7 @@
 <jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
 
 <%
-	//input parameters	
+    //input parameters	
  	boolean directRegister = Boolean.parseBoolean(request.getParameter("directRegister"));
  	String action = request.getParameter("action");
  		
@@ -26,7 +26,7 @@
 	}	
 
 	ResourceBundle language = languageUtil.getLanguage(languageCode);
-	session.setAttribute(SessionAttributes.Language.name(), language);
+	session.setAttribute(CommonSessionAttribute.Language.name(), language);
 %>
 
 <html>

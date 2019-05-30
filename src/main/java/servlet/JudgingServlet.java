@@ -38,11 +38,10 @@ import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
 import exception.MissingRequestParameterException;
 import util.LanguageUtil;
-import util.SessionAttributes;
 
 public final class JudgingServlet extends HttpServlet
 {
-  private static final String VERSION = "2019.05.22.";
+  private static final String VERSION = "2019.05.30.";
   private static final String JUDGING_FILENAME = "judging.txt";
 
   public static Logger logger = Logger.getLogger(JudgingServlet.class);
@@ -55,7 +54,7 @@ public final class JudgingServlet extends HttpServlet
 	GetCategories, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login
   };
 
-  public enum SessionAttribute
+  public enum SessionAttribute 
   {
 	JudgingCriteriasForCategory, Category, Judgings, Judge,Categories, Language
   }
@@ -452,7 +451,7 @@ private void listJudgingSummary(HttpServletRequest request, HttpServletResponse 
 
     public static ResourceBundle getLanguage(HttpSession session, HttpServletResponse response) throws IOException
     {
-        ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
+        ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttribute.Language.name());
         if(language == null)
                 response.sendRedirect(DEFAULT_PAGE);
         

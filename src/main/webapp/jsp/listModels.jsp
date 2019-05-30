@@ -10,19 +10,19 @@
 <%@include file="util.jsp"%>
 
 <%
-  highlightStart = 0xEAEAEA;
+    highlightStart = 0xEAEAEA;
 
   RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
   User user = servlet.getUser(request);
 
-  final ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
+  final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 
   boolean insertAwards = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "insertAwards", false));
   boolean withDetailing = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "withDetailing", false));
   boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
 
-  List<Model> models = (List<Model>) session.getAttribute(SessionAttributes.Models.name());
+  List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 %>
 
 <table border=0>

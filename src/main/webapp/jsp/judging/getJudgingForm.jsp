@@ -1,3 +1,4 @@
+<%@page import="datatype.Model"%>
 <%@page import="java.util.*"%>
 <%@ page import="java.io.*"%>
 
@@ -41,7 +42,14 @@
     	if(optional.isPresent())
       		judgedModel = optional.get().get(0);
     } 
- %>
+    
+    if(judgedModel == null)
+    {
+    	Model model = (Model)session.getAttribute(CommonSessionAttribute.Model.name());
+    	if(model != null)
+    		judgedModel = new JudgedModel(model);
+    }
+%>
 
 <head>
 <link href="../base.css" rel="stylesheet" type="text/css">

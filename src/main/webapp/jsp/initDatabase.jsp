@@ -8,12 +8,12 @@
 <%@page import="java.util.*"%>
 
 <%
-  RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
 
   final String languageCode = "ADMIN";
 	
-  final ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
+  final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 
   final User user = new User(languageCode);
   user.setUserID(servletDAO.getNextID("USERS", "USER_ID"));

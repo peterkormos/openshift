@@ -68,10 +68,9 @@ import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
 import tools.InitDB;
 import util.LanguageUtil;
-import util.SessionAttributes;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.29.";
+	public String VERSION = "2019.05.30.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -91,6 +90,10 @@ public class RegistrationServlet extends HttpServlet {
 	private static RegistrationServlet instance;
 
 	private Properties servletConfig = new Properties();
+
+	public static enum SessionAttribute {
+	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models
+	}
 
 	public static enum Command {
 	    LOADIMAGE
@@ -438,9 +441,9 @@ public class RegistrationServlet extends HttpServlet {
 				+ show);
 
 		final HttpSession session = request.getSession(true);
-		session.setAttribute(SessionAttributes.UserID.name(), user);
+		session.setAttribute(SessionAttribute.UserID.name(), user);
 		if (show != null) {
-			session.setAttribute(SessionAttributes.Show.name(), StringEncoder.fromBase64(show));
+			session.setAttribute(SessionAttribute.Show.name(), StringEncoder.fromBase64(show));
 		}
 
 		response.sendRedirect("jsp/main.jsp");
@@ -555,7 +558,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = directRegisterUser(request, language, "");
 
 		final HttpSession session = request.getSession(true);
-		session.setAttribute(SessionAttributes.UserID.name(), user);
+		session.setAttribute(SessionAttribute.UserID.name(), user);
 
 		response.sendRedirect("../jsp/main.jsp");
 	}
@@ -583,7 +586,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static String getShowFromSession(final HttpSession session) {
-		return (String) session.getAttribute(SessionAttributes.Show.name());
+		return (String) session.getAttribute(SessionAttribute.Show.name());
 	}
 
 	public void exportCategoryData(final HttpServletRequest request, final HttpServletResponse response)
@@ -823,7 +826,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.modifyUser(newUser, oldUser);
 
-		request.getSession(false).setAttribute(SessionAttributes.UserID.name(), servletDAO.getUser(oldUser.userID));
+		request.getSession(false).setAttribute(SessionAttribute.UserID.name(), servletDAO.getUser(oldUser.userID));
 
 		response.sendRedirect("../jsp/main.jsp");
 	}
@@ -1346,7 +1349,7 @@ public class RegistrationServlet extends HttpServlet {
 		deleteModel(request);
 		servletDAO.saveModel(model);
 
-		session.removeAttribute(SessionAttributes.ModelID.name());
+		session.removeAttribute(SessionAttribute.ModelID.name());
 
 		setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
 
@@ -1387,13 +1390,13 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
         private void setNoticeInSession(final HttpSession session, MainPageNotice notice) {
-            List<MainPageNotice> notices = (List<MainPageNotice>) session.getAttribute(SessionAttributes.Notices.name());
+            List<MainPageNotice> notices = (List<MainPageNotice>) session.getAttribute(SessionAttribute.Notices.name());
             if(notices == null)
                 notices = new LinkedList<MainPageNotice>();
             
             notices.add(notice);
             
-            session.setAttribute(SessionAttributes.Notices.name(), notices);
+            session.setAttribute(SessionAttribute.Notices.name(), notices);
         }
 
             private void setNoticeInSession(final HttpSession session, String noticeText) {
@@ -1449,7 +1452,7 @@ public class RegistrationServlet extends HttpServlet {
 					"User is not logged in! <a href='index.html'>Please go to login page...</a>");
 		}
 
-		User userInSession = (User) session.getAttribute(SessionAttributes.UserID.name());
+		User userInSession = (User) session.getAttribute(SessionAttribute.UserID.name());
 		if(userInSession == null)
 		    throw new UserNotLoggedInException(
 		            "User is not logged in! <a href='index.html'>Please go to login page...</a>");
@@ -1934,8 +1937,8 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		final HttpSession session = request.getSession(true);
 
-		session.setAttribute(SessionAttributes.DirectRegister.name(), false);
-		session.setAttribute(SessionAttributes.Action.name(), "modifyUser");
+		session.setAttribute(SessionAttribute.DirectRegister.name(), false);
+		session.setAttribute(SessionAttribute.Action.name(), "modifyUser");
 
 		response.sendRedirect("jsp/user.jsp");
 	}
@@ -2306,10 +2309,10 @@ public class RegistrationServlet extends HttpServlet {
 			final String submitLabel, final Integer modelID) throws Exception {
 		final HttpSession session = request.getSession(true);
 
-		session.setAttribute(SessionAttributes.Action.name(), action);
-		session.setAttribute(SessionAttributes.SubmitLabel.name(), submitLabel);
+		session.setAttribute(SessionAttribute.Action.name(), action);
+		session.setAttribute(SessionAttribute.SubmitLabel.name(), submitLabel);
 		if (modelID != null) {
-			session.setAttribute(SessionAttributes.ModelID.name(), modelID);
+			session.setAttribute(SessionAttribute.ModelID.name(), modelID);
 		}
 
 		response.sendRedirect("jsp/modelForm.jsp");

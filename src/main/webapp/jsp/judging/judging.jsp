@@ -5,19 +5,18 @@
 <jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
 
 <%
-
-	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());
+    ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 	 
 	if(language == null)
 	{
 		final String languageCode = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Language.name());
 		language = languageUtil.getLanguage(languageCode);
 		
-		session.setAttribute(SessionAttributes.Language.name(), language); 
+		session.setAttribute(CommonSessionAttribute.Language.name(), language); 
 	}
 
 	String judge = (String)session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
- %>
+%>
 
 <head>
 <link href="../base.css" rel="stylesheet" type="text/css">

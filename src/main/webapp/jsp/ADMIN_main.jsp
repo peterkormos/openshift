@@ -22,7 +22,7 @@
 
 <body>
 <%
-String show = (String)session.getAttribute(SessionAttributes.Show.name());
+    String show = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
 if (show == null)
 {
   show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;

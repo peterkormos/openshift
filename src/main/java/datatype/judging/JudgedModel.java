@@ -3,6 +3,7 @@ package datatype.judging;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
+import datatype.Model;
 import datatype.Record;
 
 @MappedSuperclass
@@ -28,6 +29,11 @@ public class JudgedModel extends Record {
     public JudgedModel(JudgedModel model)
     {
         this(model.getId(), model.getModelID(), model.getModellerID(), model.getModelsName());
+    }
+    
+    public JudgedModel(Model model)
+    {
+        this(0, model.getModelID(), model.getUserID(), model.getName());
     }
     
     public JudgedModel(int id, int modelID, int modellerID, String modelsName) {

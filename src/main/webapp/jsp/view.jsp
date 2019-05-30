@@ -7,22 +7,22 @@
 <html>
 <body>
 	<%
-	  String show = (String) session.getAttribute(SessionAttributes.Show.name());
-	  if (show == null)
-	  {
-			RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-			ServletDAO servletDAO = servlet.getServletDAO();
+	    String show = (String) session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
+			  if (show == null)
+			  {
+					RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+					ServletDAO servletDAO = servlet.getServletDAO();
 
-			List<String> shows = servletDAO.getShows();
-			if (shows.isEmpty())
-			  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
-			else
-			  show = shows.get(0);
-	  }
+					List<String> shows = servletDAO.getShows();
+					if (shows.isEmpty())
+					  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+					else
+					  show = shows.get(0);
+			  }
 
-	  User user = new User("HU");
-	  session = request.getSession(true);
-	  session.setAttribute(SessionAttributes.UserID.name(), user);
+			  User user = new User("HU");
+			  session = request.getSession(true);
+			  session.setAttribute(RegistrationServlet.SessionAttribute.UserID.name(), user);
 	%>
 	Verseny:
 	<FONT COLOR='#ff0000'><b><%=show%></b></FONT>

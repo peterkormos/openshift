@@ -7,8 +7,7 @@
 <jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
 
 <%
-
-	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	
 	User user = null;
 	
@@ -23,7 +22,7 @@
 	}
 
 	ResourceBundle language = languageUtil.getLanguage(user.language);
-	session.setAttribute(SessionAttributes.Language.name(), language); 
+	session.setAttribute(CommonSessionAttribute.Language.name(), language); 
 
 	if (user.language.length() != 2)
 	{
@@ -53,11 +52,11 @@
 </b></FONT>
 <p>
 <%
-if (!servlet.isPreRegistrationAllowed(show))
+    if (!servlet.isPreRegistrationAllowed(show))
 {
-%> <strong><font color='#FF0000'><%= language.getString("pre-registration.closed") %></font></strong> <%
-}
-%>
+%> <strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong> <%
+     }
+ %>
 
 <p></p>
 <p></p>
@@ -125,32 +124,32 @@ function onIFrameLoad(iframe)
   <input type="hidden" id="command"  name="command" value="">
 
 <%
-  if (servlet.isRegistrationAllowed(show))
+    if (servlet.isRegistrationAllowed(show))
   {
 %>
   <a href="#" onClick="document.getElementById('command').value='inputForAddModel';this.parentNode.submit();">
   <img src="../icons/add.png" height="30" align="center"> <%=language.getString("add")%></a>
 <p></p>
 <%
-  }
+    }
 %>
 								    <!--
   <a href="#" onClick="document.getElementById('command').value='inputForPhotoUpload';this.parentNode.submit();">
-  <img src="../icons/photo.png" height="30" align="center"> <%=language.getString("photo")%>
+  <img src="../icons/photo.png" height="30" align="center">language.getString("photo")to")%>
   </a>
  
 <p></p>
    -->
 <%
-  if (servlet.isRegistrationAllowed(show))
+    if (servlet.isRegistrationAllowed(show))
   {
 %>
-  <a href="#" onClick="showModal('selectModel.jsp?<%= SessionAttributes.Action.name() %>=inputForModifyModel&<%= SessionAttributes.SubmitLabel.name() %>=modify');">
+  <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttribute.Action.name()%>=inputForModifyModel&<%=RegistrationServlet.SessionAttribute.SubmitLabel.name()%>=modify');">
   <img src="../icons/modify.png" height="30" align="center"> <%=language.getString("modify.model")%></a>
 
 <p></p>
    
-  <a href="#" onClick="showModal('selectModel.jsp?<%= SessionAttributes.Action.name() %>=deleteModel&<%= SessionAttributes.SubmitLabel.name() %>=delete');">
+  <a href="#" onClick="showModal('selectModel.jsp?<%=RegistrationServlet.SessionAttribute.Action.name()%>=deleteModel&<%=RegistrationServlet.SessionAttribute.SubmitLabel.name()%>=delete');">
   <img src="../icons/delete2.png" height="30" align="center"> <%=language.getString("delete")%></a>
 
 <p></p>

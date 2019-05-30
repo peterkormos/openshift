@@ -5,9 +5,9 @@
 <%@page import="java.util.*"%>
 
 <%
-	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
-	ResourceBundle language = (ResourceBundle)session.getAttribute(SessionAttributes.Language.name());	
+	ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 %>
 
 <select  name='<%= request.getParameter("selectName") %>' id="country">
