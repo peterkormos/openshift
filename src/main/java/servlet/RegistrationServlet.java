@@ -71,7 +71,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.05.30.";
+	public String VERSION = "2019.09.02.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1234,7 +1234,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</head>");
 		buff.append("<body>");
 
-		buff.append("<form accept-charset=\"UTF-8\" name='input' action='RegistrationServlet' method='POST'>");
+		buff.append("<form accept-charset=\"UTF-8\" name='input' action='./RegistrationServlet' method='POST'>");
 		buff.append("<input type='hidden' name='command' value='addCategory'>");
 		if(category.getCategoryID() != 0)
 		    buff.append("<input type='hidden' name='categoryID' value='" + category.getCategoryID() +"'>");
@@ -1671,7 +1671,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append("<html><body>");
 
-		buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put'>");
+		buff.append("<form accept-charset='UTF-8' name='input' action='./RegistrationServlet' method='put'>");
 		buff.append("<input type='hidden' name='command' value='"+command+"'>");
 
 		getHTMLCodeForCategorySelect(buff, language.getString("select"), "", false, language, request);
