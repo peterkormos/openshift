@@ -71,7 +71,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.09.02.";
+	public String VERSION = "2019.09.06.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -974,25 +974,25 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-            final Category category = new Category(servletDAO.getNextID("CATEGORY", "CATEGORY_ID"),
-				ServletUtil.getRequestAttribute(request, "categorycode"),
-				ServletUtil.getRequestAttribute(request, "categorydescription"),
-				servletDAO.getCategoryGroup(
-						Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
-						servletDAO.getCategoryGroups()),
-				isCheckedIn(request, "master"),
-				ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")),
-				AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup"))
-
-		);
-
-		servletDAO.saveCategory(category);
-
+	    final Category newCategory = new Category(servletDAO.getNextID("CATEGORY", "CATEGORY_ID"),
+	            ServletUtil.getRequestAttribute(request, "categorycode"),
+	            ServletUtil.getRequestAttribute(request, "categorydescription"),
+	            servletDAO.getCategoryGroup(
+	                    Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
+	                    servletDAO.getCategoryGroups()),
+	            isCheckedIn(request, "master"),
+	            ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")),
+	            AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup"))
+	            );
+	    
 		try {
 		    Category modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
 		    servletDAO.deleteCategory(modifyingCategory.getCategoryID());
+		    newCategory.setCategoryID(modifyingCategory.getCategoryID());
 		} catch (Exception e) {
 		}
+		
+		servletDAO.saveCategory(newCategory);
 		
 		response.sendRedirect("jsp/main.jsp");
 	}
@@ -1711,15 +1711,23 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		servletDAO.deleteCategoryGroup(Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID")));
+		Integer categoryGroupID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID"));
+        servletDAO.deleteCategoryGroup(categoryGroupID);
+        
+	        for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /*show*/))
+	                {
+	            servletDAO.deleteCategory(category.categoryID);
+	            servletDAO.deleteModels(category.categoryID);
+	                }
 
 		response.sendRedirect("jsp/main.jsp");
 
 	}
 
 	public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		servletDAO.deleteCategory(Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID")));
-
+		Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
+                servletDAO.deleteCategory(categoryID);
+                servletDAO.deleteModels(categoryID);
 		response.sendRedirect("jsp/main.jsp");
 
 	}

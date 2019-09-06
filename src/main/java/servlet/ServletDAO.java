@@ -1311,22 +1311,18 @@ public class ServletDAO
 
   public void deleteCategory(final int id) throws SQLException
   {
-	for (final Model model : getModelsInCategory(id))
-	{
-	  deleteModel(model.modelID);
-	}
-
 	deleteEntry("MAK_CATEGORY", "category_id", id);
   }
 
+void deleteModels(final int categoryId) throws SQLException {
+    for (final Model model : getModelsInCategory(categoryId))
+	{
+	  deleteModel(model.modelID);
+	}
+}
+
   public void deleteCategoryGroup(final int id) throws SQLException
   {
-	for (final Category category : getCategoryList(id, null // show
-	))
-	{
-	  deleteCategory(category.categoryID);
-	}
-
 	deleteEntry("MAK_CATEGORY_GROUP", "CATEGORY_GROUP_ID", id);
   }
 
