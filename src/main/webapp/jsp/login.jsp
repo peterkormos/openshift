@@ -34,7 +34,7 @@
 
 	<script> 
 	    function checkShow(form) { 
-	        if (form.email.value != 'admin' && form.show.value == '')
+	        if (form.email.value != 'admin' && (form.show == null || form.show.value == ''))
 	        {  
 				document.getElementById('noticeDiv').innerHTML = '<%=language.getString("select.show")%>';
 				document.getElementById('noticeDiv').className ="flash ERROR";
