@@ -96,13 +96,13 @@ function checkMandatory(form)
  %>
 </div>
 
+<!-- 
 <script type="text/javascript">
 var form = document.getElementsByName('input')[0];
 if(form.modelID.checked == true)
 	form.submit();
-	
 </script>
-
+ -->
 		</form>
 
 </body>

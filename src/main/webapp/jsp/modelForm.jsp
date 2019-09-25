@@ -153,7 +153,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
  ></label>
 <br>
 <label><%=language.getString("no")%>
- <input name='gluedToBase' type='radio' value='off' <%=(model == null || !model.gluedToBase ? "checked='checked'" : "")%> 
+ <input name='gluedToBase' type='radio' value='off' <%=(model == null || model.gluedToBase ? "": "checked='checked'")%> 
 onchange="updateMandatoryFieldMark(this.parentNode);"
  ></label>
  <font color='#FF0000' size='+3'>&#8226;</font> </td>
