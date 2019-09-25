@@ -20,6 +20,10 @@
 <script type="text/javascript" src="findUser.js"></script>
 </head>
 
+<!-- 
+<link rel="stylesheet" href="base.css" media="screen" />
+ -->
+ 
 <body>
 <%
     String show = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
@@ -29,7 +33,6 @@ if (show == null)
 }
 %>
 Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
-<p>
 <form accept-charset="UTF-8" name="input" id="input" action="../RegistrationServlet"
 	method="post">
 	<p></p>
@@ -47,42 +50,47 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		bel&eacute;p&eacute;s</a> - <a href="#"
 		onClick="document.getElementById('command').value='inputForPrint';this.parentNode.submit();">
 		nevez&eacute;si lapjainak nyomtat&aacute;sa </a>
-	<p>
-		<em><strong>Lek&eacute;rdez&eacute;sek...</strong></em>
-	</p>
-	<input type="hidden" name="withDetailing" value="false"> <a
+	-
+	<a href="#"
+		onClick="document.getElementById('command').value='inputForModifyModel';this.parentNode.submit();">Makett
+		&aacute;tsorol&aacute;sa. Sorsz&aacute;m:</a>  
+		<input type="text" name="modelID" onchange="document.getElementById('command').value='inputForModifyModel'">
+</form>
+	
+
+<p></p>
+	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
+
+
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+	<input type="hidden" id="command4" name="command" value=""> <input
+		type="hidden" id="paramName" name="paramName" value=""> <input
+		type="hidden" id="paramValue" name="paramValue" value=""> <a
 		href="#"
-		onClick="document.getElementById('input').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa</a> - <a href="../RegistrationServlet/statistics"><strong>Statisztika
-			k&eacute;sz&iacute;t&eacute;se</strong></a> - <a href="customQuery.jsp">Egyedi
-		lek&eacute;rdez&eacute;sek</a>
+		onClick="document.getElementById('paramName').value='ONSITEUSE';document.getElementById('paramValue').value='0';document.getElementById('command4').value='setSystemParameter';this.parentNode.submit();">Internetes
+		m&oacute;d</a> - <a href="#"
+		onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';this.parentNode.submit();">El&ouml;nevez&eacute;s
+		kez&eacute;se</a> - <a href="#"
+		onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='0';document.getElementById('command4').value='setSystemParameter';this.parentNode.submit();">El&ouml;nevez&eacute;s
+		v&eacute;ge</a> - <a href="#"
+		onClick="document.getElementById('paramName').value='ONSITEUSE';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';this.parentNode.submit();">Helysz&iacute;ni
+		m&oacute;d</a>
 </form>
 
-<form accept-charset="UTF-8" name="input"  id="input1" action="../RegistrationServlet" method="post">
-	<input type="hidden" id="command1" name="command" value=""> <input
-		type="hidden" name="withDetailing" value="true"> 
-<!-- 		
-		<a href="#"
-		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - 
- -->		
-		<a href="#"
-		onClick="document.getElementById('command1').value='listUsers';this.parentNode.submit();">&Ouml;sszes
-		felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a>
-</form>
-<!--  
-<form accept-charset="UTF-8" name="input"  id="input1a" action="../RegistrationServlet" method="post">
-	<input
-		type="hidden" name="onlyPhotos" value="true"> 
-		<a href="#"
-		onClick="document.getElementById('input1a').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa (csak k&eacute;pekkel)</a> 
-</form>
--->
+Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
+<p>
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
-	<p>
-		<em><strong>Nyomtat&aacute;s...</strong></em>
-	</p>
+	<input type="hidden" name="command" value="setSystemParameter">
+	<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
+	<textarea name="paramValue" cols="100" rows="5"></textarea>
+	<input name="setSystemParameter" type="submit"
+		value="Rendszer&uuml;zenet">
+</form>
+
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+<p>
+	<em><strong>Nyomtat&aacute;s...</strong></em>
+</p>
 	<input type="hidden" id="command2" name="command" value=""> <input
 		type="hidden" name="printPreRegisteredModels" value="true"> <a
 		href="#"
@@ -104,6 +112,7 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		makettek mell&eacute; kisk&aacute;rty&aacute;k nyomtat&aacute;sa</a>
 
 	<p>
+
 		<em><strong>Kateg&oacute;ri&aacute;k...</strong></em>
 	</p>
 	<p></p>
@@ -151,60 +160,65 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 	<em><strong>Adatkezel&eacute;s..</strong>.</em>
 </p>
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
-	<input type="hidden" name="command" value="exportCategoryData">
-	<input name="exportData" type="submit"
-		value="Csak a kateg&oacute;ri&aacute;k export&aacute;l&aacute;sa">
-</form>
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="exportData"> <input
 		type="hidden" name="photos" value="yes"> <input
 		name="exportData" type="submit"
 		value="&Ouml;sszes adat export&aacute;l&aacute;sa">
 </form>
+<form accept-charset="UTF-8" action="../RegistrationServlet" method="post" enctype="multipart/form-data" name="input">
+	<input type="hidden" name="command" value="importData"> 
+	<input type="file" name="zipFile"> 
+	<input type="submit" value="Adatok import&aacute;l&aacute;sa">
+</form>
+<!-- 
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="exportData"> <input
 		type="hidden" name="photos" value="no"> <input
 		name="exportData" type="submit"
 		value="&Ouml;sszes adat export&aacute;l&aacute;sa k&eacute;pek n&eacute;lk&uuml;l">
 </form>
-<form accept-charset="UTF-8" action="../RegistrationServlet" method="post"
-	enctype="multipart/form-data" name="input">
-	<input type="hidden" name="command" value="importData"> <input
-		type="file" name="zipFile"> <input type="submit"
-		value="Adatok import&aacute;l&aacute;sa">
-</form>
-<p>
-	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
-</p>
-
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
-	<input type="hidden" id="command4" name="command" value=""> <input
-		type="hidden" id="paramName" name="paramName" value=""> <input
-		type="hidden" id="paramValue" name="paramValue" value=""> <a
-		href="#"
-		onClick="document.getElementById('paramName').value='ONSITEUSE';document.getElementById('paramValue').value='0';document.getElementById('command4').value='setSystemParameter';this.parentNode.submit();">Internetes
-		m&oacute;d</a> - <a href="#"
-		onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';this.parentNode.submit();">El&ouml;nevez&eacute;s
-		kez&eacute;se</a> - <a href="#"
-		onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='0';document.getElementById('command4').value='setSystemParameter';this.parentNode.submit();">El&ouml;nevez&eacute;s
-		v&eacute;ge</a> - <a href="#"
-		onClick="document.getElementById('paramName').value='ONSITEUSE';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';this.parentNode.submit();">Helysz&iacute;ni
-		m&oacute;d</a>
+ -->
+ <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+	<input type="hidden" name="command" value="exportCategoryData">
+	<input name="exportData" type="submit"
+		value="Csak a kateg&oacute;ri&aacute;k export&aacute;l&aacute;sa">
 </form>
 
-Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
-<p>
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
-	<input type="hidden" name="command" value="setSystemParameter">
-	<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
-	<textarea name="paramValue" cols="100" rows="5"></textarea>
-	<input name="setSystemParameter" type="submit"
-		value="Rendszer&uuml;zenet">
-</form>
+	<p> 
+		<em><strong>Lek&eacute;rdez&eacute;sek...</strong></em>
+	</p>
+<form accept-charset="UTF-8" name="input"  id="input1" action="../RegistrationServlet" method="post">
+	<input type="hidden" id="command1" name="command" value=""> <input
+		type="hidden" name="withDetailing" value="true">
+	<input type="hidden" name="withDetailing" value="false"> 
+	<a href="#"
+		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
+		benevezett makett list&aacute;z&aacute;sa</a> - <a href="../RegistrationServlet/statistics"><strong>Statisztika
+			k&eacute;sz&iacute;t&eacute;se</strong></a> - <a href="customQuery.jsp">Egyedi
+		lek&eacute;rdez&eacute;sek</a>
+	<p></p>
+<!-- 		
+		<a href="#"
+		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
+		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - 
+ -->		
+		<a href="#"
+		onClick="document.getElementById('command1').value='listUsers';this.parentNode.submit();">&Ouml;sszes
+		felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a>
 
+</form>
+<!--  
+<form accept-charset="UTF-8" name="input"  id="input1a" action="../RegistrationServlet" method="post">
+	<input
+		type="hidden" name="onlyPhotos" value="true"> 
+		<a href="#"
+		onClick="document.getElementById('input1a').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
+		benevezett makett list&aacute;z&aacute;sa (csak k&eacute;pekkel)</a> 
+</form>
+-->
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" id="command5"
-		value="deletedirectUsers">
+		value="">
 	<p>
 		<em><strong>Verseny eredm&eacute;nyek... </strong></em>
 	</p>
@@ -215,18 +229,13 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 		k&eacute;sz&iacute;t&eacute;s</a>
 	<p></p>
 
-	<a href="#"
-		onClick="document.getElementById('command5').value='inputForModifyModel';this.parentNode.submit();">Makett
-		&aacute;tsorol&aacute;sa. Sorsz&aacute;m: </a> <input type="text"
-		name="modelID">
-
-	<p>
 		<a href="awardedModels.jsp">Eredm&eacute;nyek
 			lek&eacute;rdez&eacute;se </a>- <a href="deleteAwardedModel.jsp">D&iacute;jazott
 			makett t&ouml;rl&eacute;se</a>
-	</p>
 
 </form>
+
+<hr>
 
 <p>
 	<em><strong>Hibakezel&eacute;s..</strong>.</em>
@@ -237,7 +246,6 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 </form>
 <p>
 <p></p>
-<hr>
 <p>&nbsp;</p>
 <p>
 	<em><strong><font color="#FF0000">VIGY&Aacute;ZAT!!!!</font></strong></em>
@@ -261,6 +269,9 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 	<input name="deletedirectUsers" type="submit"
 		value="&Ouml;sszes helysz&iacute;nen regisztr&aacute;lt felhaszn&aacute;l&oacute; t&ouml;rl&eacute;se"
 		style="color: rgb(255, 0, 0); font-weight: bold">
+</form>
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet/sendEmails" method="post">
+	Mindenkinek email küldése. Szöveg: <input name="message" type="text">
 </form>
 <p>------------------------------------------------------</p>
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
@@ -289,9 +300,6 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 	<p>alter table MAK_USERS modify EMAIL varchar(100)
 	<p>update MAK_USERS set EMAIL='admin' where USER_NAME='admin'
 	<p>alter table MAK_USERS drop column USER_NAME
-</form>
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet/sendEmails" method="post">
-	sendEmails: <input name="message" type="text">
 </form>
 </body>
 </html>
