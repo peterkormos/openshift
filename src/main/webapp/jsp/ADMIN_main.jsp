@@ -32,9 +32,9 @@ if (show == null)
   show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 }
 %>
-Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 <form accept-charset="UTF-8" name="input" id="input" action="../RegistrationServlet"
 	method="post">
+Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 	-
 	<input type="hidden" id="command" name="command" value=""> <input
 		type="hidden" name="language" value="HU"> <a href="#"
@@ -273,20 +273,21 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet/sendEmails" method="post">
 	Mindenkinek email küldése. Szöveg: <input name="message" type="text">
 </form>
+<!-- 
 <p>------------------------------------------------------</p>
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="newUserIDs"> <input
 		name="newUserIDs" type="submit"
 		value="&Uacute;j regisztr&aacute;ci&oacute;s sz&aacute;mok kioszt&aacute;sa">
 </form>
-<p>
+<p></p>
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="newUserIDsFromOne">
 	<input name="newUserIDsFromOne" type="submit"
 		value="&Uacute;j regisztr&aacute;ci&oacute;s sz&aacute;mok kioszt&aacute;sa 1-tol">
 </form>
-</p>
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+ -->
+ <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<p>SQL update:</p>
 	<p>
 		<input type="hidden" name="command" value="sql"> <input

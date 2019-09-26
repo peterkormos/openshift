@@ -71,7 +71,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.09.06.";
+	public String VERSION = "2019.09.26.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1578,12 +1578,12 @@ public class RegistrationServlet extends HttpServlet {
 		for (int i = 0; i < users.size(); i++) {
 			final User user = users.get(i);
 
-			buff.append("<input type='checkbox' name='userID" + i + "' value='" + user.userID
+			buff.append("<label><input type='checkbox' name='userID" + i + "' value='" + user.userID
 					+ "' onClick='document.input.submit()'/>");
 			buff.append(user.lastName
 					// + " " + user.firstName
 					+ " (" + user.userID + " - " + user.email + " - " + user.yearOfBirth + " - " + user.country + " - "
-					+ user.city + " - " + user.address + " - " + user.telephone + ")<br>");
+					+ user.city + " - " + user.address + " - " + user.telephone + ")</label><br>");
 		}
 
 		// buff.append("<p><input name='deleteUsers' type='submit' value='"
