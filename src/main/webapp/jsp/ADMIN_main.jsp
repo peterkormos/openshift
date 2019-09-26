@@ -35,7 +35,7 @@ if (show == null)
 Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 <form accept-charset="UTF-8" name="input" id="input" action="../RegistrationServlet"
 	method="post">
-	<p></p>
+	-
 	<input type="hidden" id="command" name="command" value=""> <input
 		type="hidden" name="language" value="HU"> <a href="#"
 		onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';this.parentNode.submit();">Felhaszn&aacute;l&oacute;i
@@ -135,8 +135,8 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 		t&ouml;rl&eacute;se</a>
 
 	<p></p>
-	Makettez&ocirc; csal&aacute;dneve:  
-	<input name="lastname" type="text" value="<%= user == null ? "" : user.lastName %>" id="lastnameID"  onChange="sendRequest();">
+	Mesteroklevelesek rögzítése. Makettez&ocirc; neve:  
+	<input name="lastname" type="text" id="fullnameID"  onChange="sendRequest();">
     - 
     <select id="selectID" name="userID">
     </select>
