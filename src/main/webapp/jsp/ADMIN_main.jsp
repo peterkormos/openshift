@@ -188,8 +188,7 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 		<em><strong>Lek&eacute;rdez&eacute;sek...</strong></em>
 	</p>
 <form accept-charset="UTF-8" name="input"  id="input1" action="../RegistrationServlet" method="post">
-	<input type="hidden" id="command1" name="command" value=""> <input
-		type="hidden" name="withDetailing" value="true">
+	<input type="hidden" id="command1" name="command" value=""> 
 	<input type="hidden" name="withDetailing" value="false"> 
 	<a href="#"
 		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
@@ -198,6 +197,7 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 		lek&eacute;rdez&eacute;sek</a>
 	<p></p>
 <!-- 		
+	<input type="hidden" name="withDetailing" value="true">
 		<a href="#"
 		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
 		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - 
