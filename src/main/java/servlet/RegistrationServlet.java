@@ -71,7 +71,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.09.26.";
+	public String VERSION = "2019.09.27.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1907,7 +1907,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_IDENTIFICATION__", model.identification)
 							.replaceAll("__MODEL_PRODUCER__", model.producer)
 							.replaceAll("__MODEL_COMMENT__", model.comment)
-							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model)
+							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, ".")
 
 					// "<font color='#006600'>Alapra ragasztva</font>"
 					// :
@@ -1939,7 +1939,7 @@ public class RegistrationServlet extends HttpServlet {
 		return buff;
 	}
 
-    private String getGluedToBaseHTMLCode(final ResourceBundle language, final Model model) {
+    public static String getGluedToBaseHTMLCode(final ResourceBundle language, final Model model, String imageBaseDir) {
         
         String borderColor = model.gluedToBase ? "lightgreen" : "red";
         String imageFileName = model.gluedToBase ? "glued.jpg" : "notglued.jpg";
@@ -1949,7 +1949,7 @@ public class RegistrationServlet extends HttpServlet {
         
         return 
                 "<div style='border: 3px solid " + borderColor + "; padding: 2px'>" +
-                "<img src='icons/" + imageFileName + "' style='float: right; vertical-align: middle; padding-left: 3px;'  height='25px'>" + 
+                "<img src='"+imageBaseDir+"/icons/" + imageFileName + "' style='float: right; vertical-align: middle; padding-left: 3px;'  height='25px'>" + 
                 "<font style='font-family: Calibri, Optima, Arial, sans-serif;font-size: 3mm'>" + gluedToBaseText + "</font>" +
                 "</div>";
     }

@@ -39,7 +39,8 @@
 		<th align='center' style='white-space: nowrap'><%=language.getString("show")%>
 		</th>
 
-		<%
+<!-- 
+ 		<%
 		  if (withDetailing)
 		  {
 		%>
@@ -47,6 +48,11 @@
 		</th>
 		<%
 		  }
+		%>
+ -->
+		<%
+		  if (!withDetailing)
+		  {
 		%>
 
 		<th align='center' style='white-space: nowrap'><%=language.getString("name")%>
@@ -57,6 +63,9 @@
 
 		<th align='center' style='white-space: nowrap'><%=language.getString("country")%>
 		</th>
+		<%
+		  }
+		%>
 
 		<%
 		  if (!insertAwards)
@@ -107,7 +116,7 @@
 		</th>
 
 		<%
-		  if (!insertAwards)
+		  if (!insertAwards && withDetailing)
 		  {
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("glued.to.base")%>
@@ -160,7 +169,7 @@
 		%>
 		<td align='center' style='white-space: nowrap'><%=category.group.show%>
 		</td>
-
+<!-- 
 		<%
 		  if (withDetailing)
 		  {
@@ -169,6 +178,11 @@
 		<%
 		  }
 		%>
+ -->
+		<%
+		  if (!withDetailing)
+		  {
+		%>
 		<td align='center'><%=modelsUser.lastName%></td>
 
 <%-- 		<td align='center'><%=modelsUser.firstName%></td> --%>
@@ -176,6 +190,9 @@
 		<td align='center'><%=modelsUser.city%></td>
 
 		<td align='center'><%=modelsUser.country%></td>
+		<%
+		  }
+		%>
 
 		<%
 		  if (!insertAwards)
@@ -224,11 +241,10 @@
 		</td>
 
 		<%
-		  if (!insertAwards)
+		  if (!insertAwards && withDetailing)
 				{
 		%>
-		<td align='center'><input type='checkbox'
-			"  <%=(model.gluedToBase ? "checked" : "")%>></td>
+		<td align='center'><%=RegistrationServlet.getGluedToBaseHTMLCode(language, model, "..")%></td>
 
 		<td align='center'><%=model.comment%></td>
 
