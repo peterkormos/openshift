@@ -25,7 +25,7 @@
   List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 %>
 
-<table border=0>
+<table style='border-collapse: collapse' border='1'>
 	<tr>
 		<%
 		  if (insertAwards)
@@ -252,7 +252,7 @@
 		  if (withDetailing)
 				  {
 		%>
-		<td><table cellpadding='5' border='1'>
+		<td><table cellpadding='5' style='border-collapse: collapse' border='1'>
 				<tr>
 					<td>&nbsp;</td>
 

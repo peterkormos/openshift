@@ -46,6 +46,10 @@ table {
 	padding-left: 5px;
 }
 
+td, th {
+	padding: 5px;
+}
+
 a,
 label {
 	border-style: solid;

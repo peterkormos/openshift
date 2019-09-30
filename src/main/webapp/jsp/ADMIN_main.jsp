@@ -6,6 +6,7 @@
 
 <%
   RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+  ServletDAO servletDAO = servlet.getServletDAO();
   User user = servlet.getUser(request);
 
   if (user == null || !"ADMIN".equals(user.language))
@@ -29,7 +30,14 @@
     String show = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
 if (show == null)
 {
-  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+    final List<String> shows = servletDAO.getShows();
+	if (shows.isEmpty())
+	  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+	else
+	{
+	  show = shows.get(0);
+	    session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
+	}
 }
 %>
 <form accept-charset="UTF-8" name="input" id="input" action="../RegistrationServlet"
@@ -118,7 +126,7 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 	<p></p>
 	<a href="../static/HU_addCategoryGroup.html">&Uacute;j
 		kateg&oacute;riacsoport hozz&aacute;ad&aacute;sa</a> (Pl. Feln&otilde;tt,
-	mester, gyerek, ifi,...) - <a href="#"
+	mester, gyerek, ifi,... !!! Új veseny felvitelekor a kategóriacsoportok felvitele után újra be kell lépni adminként!!!) - <a href="#"
 		onClick="document.getElementById('command3').value='inputForDeleteCategoryGroup';this.parentNode.submit()">Kateg&oacute;riacsoportok
 		lek&eacute;rdez&eacute;se, t&ouml;rl&eacute;se</a>
 	<p></p>

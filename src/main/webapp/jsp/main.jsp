@@ -8,6 +8,7 @@
 
 <%
     RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 	
 	User user = null;
 	
@@ -38,6 +39,11 @@
 %>
 <html>
 <head>
+
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 <link href="base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -141,7 +147,9 @@ function onIFrameLoad(iframe)
 <p></p>
    -->
 <%
-    if (servlet.isRegistrationAllowed(show))
+	final List<Model> models = servletDAO.getModels(user.userID);
+
+  if (servlet.isRegistrationAllowed(show) && !models.isEmpty())
   {
 %>
   <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttribute.Action.name()%>=inputForModifyModel&<%=RegistrationServlet.SessionAttribute.SubmitLabel.name()%>=modify');">
