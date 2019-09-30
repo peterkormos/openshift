@@ -71,7 +71,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.09.27.";
+	public String VERSION = "2019.09.30.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -133,6 +133,10 @@ public class RegistrationServlet extends HttpServlet {
 			presentationBuffer = loadFile(
 					config.getServletContext().getResourceAsStream("/WEB-INF/conf/presentation.html"));
 
+			try {
+                new InitDB();
+            } catch (Exception e) {
+            }
 		            for(String show : servletDAO.getShows())
 		                preRegistrationAllowed.put(show, servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
 		            
