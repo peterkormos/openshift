@@ -252,7 +252,7 @@ String modelidentification = model == null ? "" : model.identification;
 : 
 </td>
 
-<td><table cellpadding='5' border='1'>
+<td><table cellpadding='5' style='border-collapse: collapse' border='1'>
 <tr>
 <td>&nbsp;</td>
 <%
