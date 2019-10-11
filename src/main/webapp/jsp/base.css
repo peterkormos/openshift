@@ -1,5 +1,5 @@
 * {
-    font-family: sans-serif;
+    font-family:  Futura, sans-serif;
   }
   
 input, select {
@@ -26,10 +26,13 @@ input[type="submit"] {
 */
 }
 
+input[type="submit"].main {
+	background: green;
+	border: 3px solid green;
+}
+
 input[type="submit"]:hover,
 input[type="submit"]:focus {
-	background: DodgerBlue;
-	border: 3px solid DodgerBlue;
 	color: white;
 }
 

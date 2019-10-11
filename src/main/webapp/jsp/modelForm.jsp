@@ -68,7 +68,11 @@ function checkMandatoryElement(element)
 
 <jsp:include page="notices.jsp" />
 
-<form name='input' action='../RegistrationServlet' method='POST' accept-charset="UTF-8" onkeypress="return event.keyCode != 13;"
+<form action="main.jsp">
+	<input class="main" type='submit' value='<%= language.getString("proceed.to.main") %>'>
+</form>
+
+<form name='input' id='input' action='../RegistrationServlet' method='POST' accept-charset="UTF-8" onkeypress="return event.keyCode != 13;"
 onsubmit="return checkMandatory(this);"
 >
 <input type='hidden' name='command' value='<%= action %>'>
@@ -204,7 +208,6 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 <%
 	}
 %>
-
 </td>
 </tr>
 
