@@ -26,6 +26,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="base.css" media="screen">
 <script type="text/javascript" src="util.js"></script>
 
@@ -122,6 +123,7 @@ String modelname = model == null ? "" : model.name;
 	  <jsp:param name="value" value="<%=modelname%>"/>
 	  <jsp:param name="mandatory" value="true"/>
 	  <jsp:param name="maxlength" value="60"/>
+	  <jsp:param name="size" value="40"/>
 	</jsp:include>
 </td>
 </tr>
@@ -152,12 +154,12 @@ String modelproducer = model == null ? "" : model.producer;
 
 <td>
 <label><%=language.getString("yes")%>
- <input name='gluedToBase' type='radio' value='on' <%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%> 
+ <input style="zoom: 2;" name='gluedToBase' type='radio' value='on' <%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%> 
 onchange="updateMandatoryFieldMark(this.parentNode);"
  ></label>
 <br>
 <label><%=language.getString("no")%>
- <input name='gluedToBase' type='radio' value='off' <%=(model == null || model.gluedToBase ? "": "checked='checked'")%> 
+ <input style="zoom: 2;" name='gluedToBase' type='radio' value='off' <%=(model == null || model.gluedToBase ? "": "checked='checked'")%> 
 onchange="updateMandatoryFieldMark(this.parentNode);"
  ></label>
  <font color='#FF0000' size='+3'>&#8226;</font> </td>
@@ -244,6 +246,7 @@ String modelidentification = model == null ? "" : model.identification;
 	  <jsp:param name="name" value="identification"/>
 	  <jsp:param name="value" value="<%= modelidentification %>"/>
 	  <jsp:param name="mandatory" value="false"/>
+	<jsp:param name="size" value="40"/>
 	</jsp:include>
 </td>
 </tr>
@@ -283,8 +286,9 @@ for (DetailingCriteria criteria : DetailingCriteria.values())
 for (DetailingGroup group : DetailingGroup.values())
 	  {
 %>
-	<td><input name='<%= "detailing." + group.name() + "." + criteria.name() %>' 
-	type='checkbox' value='on' <%= (model == null || !model.getDetailingGroup(group).getCriteria(criteria) ? "" : "checked='checked'")%> ></td>
+	<td align="center"><label><input name='<%= "detailing." + group.name() + "." + criteria.name() %>' 
+	style="zoom: 2;"
+	type='checkbox' value='on' <%= (model == null || !model.getDetailingGroup(group).getCriteria(criteria) ? "" : "checked='checked'")%> ></label></td>
 <%	
 	  }
 %>
