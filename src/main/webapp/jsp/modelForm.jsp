@@ -94,8 +94,7 @@ onsubmit="return checkMandatory(this);"
 	<!--	scale-->
 <tr>
 <td>
-<%=language.getString("scale")%>
-: 
+<%=language.getString("scale")%>: 
 </td>
 <td>
 <%
@@ -111,8 +110,7 @@ String scale = model == null ? "" : model.scale;
 	<!--	models.name-->
 <tr bgcolor='F6F4F0'>
 <td>
-<%=language.getString("models.name")%>
-: 
+<%=language.getString("models.name")%>: 
 </td>
 <td>
 <%
@@ -131,8 +129,7 @@ String modelname = model == null ? "" : model.name;
 	<!--	models.producer-->
 <tr>
 <td>
-<%=language.getString("models.producer")%>
-: 
+<%=language.getString("models.producer")%>: 
 </td>
 <td>
 <%
@@ -148,8 +145,7 @@ String modelproducer = model == null ? "" : model.producer;
 	<!--	glued.to.base-->
 <tr bgcolor='F6F4F0'>
 <td>
-<%=language.getString("glued.to.base")%>
-: 
+<%=language.getString("glued.to.base")%>: 
 </td>
 
 <td>
@@ -168,7 +164,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 	<!--	category-->
 <tr>
 <td>
-<%= language.getString("category") %> :
+<%= language.getString("category") %>:
 </td>
 
 <td>
@@ -202,6 +198,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 <td></td>
 <td>
 <input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
+
 <%
 	if (action == "addModel")
 	{
@@ -216,8 +213,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 	<!--	models.markings-->
 <tr>
 <td>
-<%=language.getString("models.markings")%>
-: 
+<%=language.getString("models.markings")%>: 
 </td>
 <td>
 <%
@@ -235,8 +231,7 @@ String markingsLabelValue = model == null ? "-" : model.markings;
 	<!--	models.identification-->
 <tr bgcolor='F6F4F0'>
 <td>
-<%=language.getString("models.identification")%>
-: 
+<%=language.getString("models.identification")%>: 
 </td>
 <td>
 <%
@@ -254,8 +249,7 @@ String modelidentification = model == null ? "" : model.identification;
 	<!--	models.detailing-->
 <tr>
 <td>
-<%=language.getString("models.detailing")%>
-: 
+<%=language.getString("models.detailing")%>: 
 </td>
 
 <td><table cellpadding='5' style='border-collapse: collapse' border='1'>
@@ -303,6 +297,7 @@ for (DetailingGroup group : DetailingGroup.values())
 <tr>
 <td></td>
 <td><input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
+
 <%
 	if (action == "addModel")
 	{

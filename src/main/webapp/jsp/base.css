@@ -129,8 +129,12 @@ modal css start
 
 /* Modal Content */
 .modal-content {
+	float:left; 
   background-color: #fefefe;
-  margin: auto;
+margin-left: 20px;
+/*
+	margin: auto;
+*/	
   padding: 20px;
   border: 1px solid #888;
   width: 500px;
