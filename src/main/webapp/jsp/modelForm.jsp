@@ -26,6 +26,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="base.css" media="screen">
 <script type="text/javascript" src="util.js"></script>
 
@@ -68,7 +69,11 @@ function checkMandatoryElement(element)
 
 <jsp:include page="notices.jsp" />
 
-<form name='input' action='../RegistrationServlet' method='POST' accept-charset="UTF-8" onkeypress="return event.keyCode != 13;"
+<form action="main.jsp">
+	<input class="main" type='submit' value='<%= language.getString("proceed.to.main") %>'>
+</form>
+
+<form name='input' id='input' action='../RegistrationServlet' method='POST' accept-charset="UTF-8" onkeypress="return event.keyCode != 13;"
 onsubmit="return checkMandatory(this);"
 >
 <input type='hidden' name='command' value='<%= action %>'>
@@ -89,8 +94,7 @@ onsubmit="return checkMandatory(this);"
 	<!--	scale-->
 <tr>
 <td>
-<%=language.getString("scale")%>
-: 
+<%=language.getString("scale")%>: 
 </td>
 <td>
 <%
@@ -106,8 +110,7 @@ String scale = model == null ? "" : model.scale;
 	<!--	models.name-->
 <tr bgcolor='F6F4F0'>
 <td>
-<%=language.getString("models.name")%>
-: 
+<%=language.getString("models.name")%>: 
 </td>
 <td>
 <%
@@ -118,6 +121,7 @@ String modelname = model == null ? "" : model.name;
 	  <jsp:param name="value" value="<%=modelname%>"/>
 	  <jsp:param name="mandatory" value="true"/>
 	  <jsp:param name="maxlength" value="60"/>
+	  <jsp:param name="size" value="40"/>
 	</jsp:include>
 </td>
 </tr>
@@ -125,8 +129,7 @@ String modelname = model == null ? "" : model.name;
 	<!--	models.producer-->
 <tr>
 <td>
-<%=language.getString("models.producer")%>
-: 
+<%=language.getString("models.producer")%>: 
 </td>
 <td>
 <%
@@ -142,18 +145,17 @@ String modelproducer = model == null ? "" : model.producer;
 	<!--	glued.to.base-->
 <tr bgcolor='F6F4F0'>
 <td>
-<%=language.getString("glued.to.base")%>
-: 
+<%=language.getString("glued.to.base")%>: 
 </td>
 
 <td>
 <label><%=language.getString("yes")%>
- <input name='gluedToBase' type='radio' value='on' <%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%> 
+ <input style="zoom: 2;" name='gluedToBase' type='radio' value='on' <%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%> 
 onchange="updateMandatoryFieldMark(this.parentNode);"
  ></label>
 <br>
 <label><%=language.getString("no")%>
- <input name='gluedToBase' type='radio' value='off' <%=(model == null || !model.gluedToBase ? "checked='checked'" : "")%> 
+ <input style="zoom: 2;" name='gluedToBase' type='radio' value='off' <%=(model == null || model.gluedToBase ? "": "checked='checked'")%> 
 onchange="updateMandatoryFieldMark(this.parentNode);"
  ></label>
  <font color='#FF0000' size='+3'>&#8226;</font> </td>
@@ -162,7 +164,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 	<!--	category-->
 <tr>
 <td>
-<%= language.getString("category") %> :
+<%= language.getString("category") %>:
 </td>
 
 <td>
@@ -196,6 +198,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 <td></td>
 <td>
 <input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
+
 <%
 	if (action == "addModel")
 	{
@@ -204,15 +207,13 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 <%
 	}
 %>
-
 </td>
 </tr>
 
 	<!--	models.markings-->
 <tr>
 <td>
-<%=language.getString("models.markings")%>
-: 
+<%=language.getString("models.markings")%>: 
 </td>
 <td>
 <%
@@ -230,8 +231,7 @@ String markingsLabelValue = model == null ? "-" : model.markings;
 	<!--	models.identification-->
 <tr bgcolor='F6F4F0'>
 <td>
-<%=language.getString("models.identification")%>
-: 
+<%=language.getString("models.identification")%>: 
 </td>
 <td>
 <%
@@ -241,6 +241,7 @@ String modelidentification = model == null ? "" : model.identification;
 	  <jsp:param name="name" value="identification"/>
 	  <jsp:param name="value" value="<%= modelidentification %>"/>
 	  <jsp:param name="mandatory" value="false"/>
+	<jsp:param name="size" value="40"/>
 	</jsp:include>
 </td>
 </tr>
@@ -248,11 +249,10 @@ String modelidentification = model == null ? "" : model.identification;
 	<!--	models.detailing-->
 <tr>
 <td>
-<%=language.getString("models.detailing")%>
-: 
+<%=language.getString("models.detailing")%>: 
 </td>
 
-<td><table cellpadding='5' border='1'>
+<td><table cellpadding='5' style='border-collapse: collapse' border='1'>
 <tr>
 <td>&nbsp;</td>
 <%
@@ -280,8 +280,9 @@ for (DetailingCriteria criteria : DetailingCriteria.values())
 for (DetailingGroup group : DetailingGroup.values())
 	  {
 %>
-	<td><input name='<%= "detailing." + group.name() + "." + criteria.name() %>' 
-	type='checkbox' value='on' <%= (model == null || !model.getDetailingGroup(group).getCriteria(criteria) ? "" : "checked='checked'")%> ></td>
+	<td align="center"><label><input name='<%= "detailing." + group.name() + "." + criteria.name() %>' 
+	style="zoom: 2;"
+	type='checkbox' value='on' <%= (model == null || !model.getDetailingGroup(group).getCriteria(criteria) ? "" : "checked='checked'")%> ></label></td>
 <%	
 	  }
 %>
@@ -296,6 +297,7 @@ for (DetailingGroup group : DetailingGroup.values())
 <tr>
 <td></td>
 <td><input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
+
 <%
 	if (action == "addModel")
 	{

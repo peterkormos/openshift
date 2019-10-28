@@ -27,7 +27,7 @@
         			final List<Model> models = servletDAO.getModels(user.userID);
         	
         			if (models.isEmpty()) {
-        				response.sendRedirect("jsp/main.jsp");
+        				response.sendRedirect("main.jsp");
         				return;
         			}
         /*
@@ -96,13 +96,13 @@ function checkMandatory(form)
  %>
 </div>
 
+<!-- 
 <script type="text/javascript">
 var form = document.getElementsByName('input')[0];
 if(form.modelID.checked == true)
 	form.submit();
-	
 </script>
-
+ -->
 		</form>
 
 </body>

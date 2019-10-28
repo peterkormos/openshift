@@ -31,10 +31,11 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<script> 
 	    function checkShow(form) { 
-	        if (form.email.value != 'admin' && form.show.value == '')
+	        if (form.email.value != 'admin' && (form.show == null || form.show.value == ''))
 	        {  
 				document.getElementById('noticeDiv').innerHTML = '<%=language.getString("select.show")%>';
 				document.getElementById('noticeDiv').className ="flash ERROR";

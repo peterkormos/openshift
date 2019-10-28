@@ -18,7 +18,9 @@
 %>
 
 <div>
-<input type='text' maxlength='<%= maxlength %>' name='<%= request.getParameter("name") %>' placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
+<input type='text'
+size="<%= ServletUtil.getOptionalRequestAttribute(request, "size") %>" 
+maxlength='<%= maxlength %>' name='<%= request.getParameter("name") %>' placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
 <%
 	String value = request.getParameter("value");
 

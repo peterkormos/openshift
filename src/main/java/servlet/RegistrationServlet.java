@@ -71,7 +71,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.09.02.";
+	public String VERSION = "2019.10.03.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -133,6 +133,10 @@ public class RegistrationServlet extends HttpServlet {
 			presentationBuffer = loadFile(
 					config.getServletContext().getResourceAsStream("/WEB-INF/conf/presentation.html"));
 
+			try {
+                new InitDB();
+            } catch (Exception e) {
+            }
 		            try {
 						for(String show : servletDAO.getShows())
 						    preRegistrationAllowed.put(show, servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
@@ -978,25 +982,25 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-            final Category category = new Category(servletDAO.getNextID("CATEGORY", "CATEGORY_ID"),
-				ServletUtil.getRequestAttribute(request, "categorycode"),
-				ServletUtil.getRequestAttribute(request, "categorydescription"),
-				servletDAO.getCategoryGroup(
-						Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
-						servletDAO.getCategoryGroups()),
-				isCheckedIn(request, "master"),
-				ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")),
-				AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup"))
-
-		);
-
-		servletDAO.saveCategory(category);
-
+	    final Category newCategory = new Category(servletDAO.getNextID("CATEGORY", "CATEGORY_ID"),
+	            ServletUtil.getRequestAttribute(request, "categorycode"),
+	            ServletUtil.getRequestAttribute(request, "categorydescription"),
+	            servletDAO.getCategoryGroup(
+	                    Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
+	                    servletDAO.getCategoryGroups()),
+	            isCheckedIn(request, "master"),
+	            ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")),
+	            AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup"))
+	            );
+	    
 		try {
 		    Category modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
 		    servletDAO.deleteCategory(modifyingCategory.getCategoryID());
+		    newCategory.setCategoryID(modifyingCategory.getCategoryID());
 		} catch (Exception e) {
 		}
+		
+		servletDAO.saveCategory(newCategory);
 		
 		response.sendRedirect("jsp/main.jsp");
 	}
@@ -1582,12 +1586,12 @@ public class RegistrationServlet extends HttpServlet {
 		for (int i = 0; i < users.size(); i++) {
 			final User user = users.get(i);
 
-			buff.append("<input type='checkbox' name='userID" + i + "' value='" + user.userID
+			buff.append("<label><input type='checkbox' name='userID" + i + "' value='" + user.userID
 					+ "' onClick='document.input.submit()'/>");
 			buff.append(user.lastName
 					// + " " + user.firstName
 					+ " (" + user.userID + " - " + user.email + " - " + user.yearOfBirth + " - " + user.country + " - "
-					+ user.city + " - " + user.address + " - " + user.telephone + ")<br>");
+					+ user.city + " - " + user.address + " - " + user.telephone + ")</label><br>");
 		}
 
 		// buff.append("<p><input name='deleteUsers' type='submit' value='"
@@ -1715,15 +1719,23 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		servletDAO.deleteCategoryGroup(Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID")));
+		Integer categoryGroupID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID"));
+        servletDAO.deleteCategoryGroup(categoryGroupID);
+        
+	        for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /*show*/))
+	                {
+	            servletDAO.deleteCategory(category.categoryID);
+	            servletDAO.deleteModels(category.categoryID);
+	                }
 
 		response.sendRedirect("jsp/main.jsp");
 
 	}
 
 	public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		servletDAO.deleteCategory(Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID")));
-
+		Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
+                servletDAO.deleteCategory(categoryID);
+                servletDAO.deleteModels(categoryID);
 		response.sendRedirect("jsp/main.jsp");
 
 	}
@@ -1903,7 +1915,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_IDENTIFICATION__", model.identification)
 							.replaceAll("__MODEL_PRODUCER__", model.producer)
 							.replaceAll("__MODEL_COMMENT__", model.comment)
-							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model)
+							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, ".")
 
 					// "<font color='#006600'>Alapra ragasztva</font>"
 					// :
@@ -1935,7 +1947,7 @@ public class RegistrationServlet extends HttpServlet {
 		return buff;
 	}
 
-    private String getGluedToBaseHTMLCode(final ResourceBundle language, final Model model) {
+    public static String getGluedToBaseHTMLCode(final ResourceBundle language, final Model model, String imageBaseDir) {
         
         String borderColor = model.gluedToBase ? "lightgreen" : "red";
         String imageFileName = model.gluedToBase ? "glued.jpg" : "notglued.jpg";
@@ -1945,7 +1957,7 @@ public class RegistrationServlet extends HttpServlet {
         
         return 
                 "<div style='border: 3px solid " + borderColor + "; padding: 2px'>" +
-                "<img src='icons/" + imageFileName + "' style='float: right; vertical-align: middle; padding-left: 3px;'  height='25px'>" + 
+                "<img src='"+imageBaseDir+"/icons/" + imageFileName + "' style='float: right; vertical-align: middle; padding-left: 3px;'  height='25px'>" + 
                 "<font style='font-family: Calibri, Optima, Arial, sans-serif;font-size: 3mm'>" + gluedToBaseText + "</font>" +
                 "</div>";
     }

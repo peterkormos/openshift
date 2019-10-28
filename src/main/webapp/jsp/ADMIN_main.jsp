@@ -6,6 +6,7 @@
 
 <%
   RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+  ServletDAO servletDAO = servlet.getServletDAO();
   User user = servlet.getUser(request);
 
   if (user == null || !"ADMIN".equals(user.language))
@@ -20,19 +21,29 @@
 <script type="text/javascript" src="findUser.js"></script>
 </head>
 
+<!-- 
+<link rel="stylesheet" href="base.css" media="screen" />
+ -->
+ 
 <body>
 <%
     String show = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
 if (show == null)
 {
-  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+    final List<String> shows = servletDAO.getShows();
+	if (shows.isEmpty())
+	  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+	else
+	{
+	  show = shows.get(0);
+	    session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
+	}
 }
 %>
-Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
-<p>
 <form accept-charset="UTF-8" name="input" id="input" action="../RegistrationServlet"
 	method="post">
-	<p></p>
+Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
+	-
 	<input type="hidden" id="command" name="command" value=""> <input
 		type="hidden" name="language" value="HU"> <a href="#"
 		onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';this.parentNode.submit();">Felhaszn&aacute;l&oacute;i
@@ -47,135 +58,17 @@ Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
 		bel&eacute;p&eacute;s</a> - <a href="#"
 		onClick="document.getElementById('command').value='inputForPrint';this.parentNode.submit();">
 		nevez&eacute;si lapjainak nyomtat&aacute;sa </a>
-	<p>
-		<em><strong>Lek&eacute;rdez&eacute;sek...</strong></em>
-	</p>
-	<input type="hidden" name="withDetailing" value="false"> <a
-		href="#"
-		onClick="document.getElementById('input').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa</a> - <a href="../RegistrationServlet/statistics"><strong>Statisztika
-			k&eacute;sz&iacute;t&eacute;se</strong></a> - <a href="customQuery.jsp">Egyedi
-		lek&eacute;rdez&eacute;sek</a>
-</form>
-
-<form accept-charset="UTF-8" name="input"  id="input1" action="../RegistrationServlet" method="post">
-	<input type="hidden" id="command1" name="command" value=""> <input
-		type="hidden" name="withDetailing" value="true"> 
-<!-- 		
-		<a href="#"
-		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - 
- -->		
-		<a href="#"
-		onClick="document.getElementById('command1').value='listUsers';this.parentNode.submit();">&Ouml;sszes
-		felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a>
-</form>
-<!--  
-<form accept-charset="UTF-8" name="input"  id="input1a" action="../RegistrationServlet" method="post">
-	<input
-		type="hidden" name="onlyPhotos" value="true"> 
-		<a href="#"
-		onClick="document.getElementById('input1a').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa (csak k&eacute;pekkel)</a> 
-</form>
--->
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
-	<p>
-		<em><strong>Nyomtat&aacute;s...</strong></em>
-	</p>
-	<input type="hidden" id="command2" name="command" value=""> <input
-		type="hidden" name="printPreRegisteredModels" value="true"> <a
-		href="#"
-		onClick="document.getElementById('command2').value='printAllModels';this.parentNode.submit();">Nevez&eacute;si
-		lapok nyomtat&aacute;sa (El&ouml;nevezettek)</a>
-</form>
-
-<form accept-charset="UTF-8" name="input" id="input" action="../RegistrationServlet" method="post">
-	<p></p>
-	<input type="hidden" id="command3" name="command" value=""> <input
-		type="hidden" name="printPreRegisteredModels" value="false">
-	<!--
-    <a href="#" onClick="document.getElementById('command3').value='printAllModels';this.parentNode.submit();">Nevez&eacute;si 
-    lapok nyomtat&aacute;sa (Helysz&iacute;nen nevezettek)</a> - 
--->
-
+	-
 	<a href="#"
-		onClick="document.getElementById('command3').value='printCardsForAllModels';this.parentNode.submit();">A
-		makettek mell&eacute; kisk&aacute;rty&aacute;k nyomtat&aacute;sa</a>
-
-	<p>
-		<em><strong>Kateg&oacute;ri&aacute;k...</strong></em>
-	</p>
-	<p></p>
-	<a href="../static/HU_addCategoryGroup.html">&Uacute;j
-		kateg&oacute;riacsoport hozz&aacute;ad&aacute;sa</a> (Pl. Feln&otilde;tt,
-	mester, gyerek, ifi,...) - <a href="#"
-		onClick="document.getElementById('command3').value='inputForDeleteCategoryGroup';this.parentNode.submit()">Kateg&oacute;riacsoportok
-		lek&eacute;rdez&eacute;se, t&ouml;rl&eacute;se</a>
-	<p></p>
-		<a href="../RegistrationServlet/listCategories"><strong>&Ouml;sszes
-			kateg&oacute;ria list&aacute;z&aacute;sa</strong></a> 
-		- 
-		<a href="../RegistrationServlet?command=inputForAddCategory">&Uacute;j
-		kateg&oacute;ria hozz&aacute;ad&aacute;sa</a> 
-		- 
-		<a href="../RegistrationServlet?command=inputForModifyCategory">Kateg&oacute;ria
-		m&oacute;dos&iacute;t&aacute;sa</a>
-		
-			- <a href="../RegistrationServlet?command=inputForDeleteCategory">Kateg&oacute;ria
-		t&ouml;rl&eacute;se</a>
-
-	<p></p>
-	Makettez&ocirc; csal&aacute;dneve:  
-	<input name="lastname" type="text" value="<%= user == null ? "" : user.lastName %>" id="lastnameID"  onChange="sendRequest();">
-    - 
-    <select id="selectID" name="userID">
-    </select>
+		onClick="document.getElementById('command').value='inputForModifyModel';this.parentNode.submit();">Makett
+		&aacute;tsorol&aacute;sa. Sorsz&aacute;m:</a>  
+		<input type="text" name="modelID" onchange="document.getElementById('command').value='inputForModifyModel'">
+</form>
 	
-	Szakoszt&aacute;ly: <select name="modelClass">
-		<%
-		  for (ModelClass mc : ModelClass.values())
-		  {
-		%>
-		<option value='<%=mc.name()%>'><%=mc.name()%></option>
-		<%
-		  }
-		%>
-	</select> <a href="#"
-		onClick="document.getElementById('command3').value='saveModelClass';this.parentNode.submit();">Szakoszt&aacute;ly
-		ment&eacute;se</a>
 
-	<p></p>
-</form>
-<p>
-	<em><strong>Adatkezel&eacute;s..</strong>.</em>
-</p>
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
-	<input type="hidden" name="command" value="exportCategoryData">
-	<input name="exportData" type="submit"
-		value="Csak a kateg&oacute;ri&aacute;k export&aacute;l&aacute;sa">
-</form>
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
-	<input type="hidden" name="command" value="exportData"> <input
-		type="hidden" name="photos" value="yes"> <input
-		name="exportData" type="submit"
-		value="&Ouml;sszes adat export&aacute;l&aacute;sa">
-</form>
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
-	<input type="hidden" name="command" value="exportData"> <input
-		type="hidden" name="photos" value="no"> <input
-		name="exportData" type="submit"
-		value="&Ouml;sszes adat export&aacute;l&aacute;sa k&eacute;pek n&eacute;lk&uuml;l">
-</form>
-<form accept-charset="UTF-8" action="../RegistrationServlet" method="post"
-	enctype="multipart/form-data" name="input">
-	<input type="hidden" name="command" value="importData"> <input
-		type="file" name="zipFile"> <input type="submit"
-		value="Adatok import&aacute;l&aacute;sa">
-</form>
-<p>
+<p></p>
 	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
-</p>
+
 
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" id="command4" name="command" value=""> <input
@@ -203,8 +96,137 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 </form>
 
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+<p>
+	<em><strong>Nyomtat&aacute;s...</strong></em>
+</p>
+	<input type="hidden" id="command2" name="command" value=""> <input
+		type="hidden" name="printPreRegisteredModels" value="true"> <a
+		href="#"
+		onClick="document.getElementById('command2').value='printAllModels';this.parentNode.submit();">Nevez&eacute;si
+		lapok nyomtat&aacute;sa (El&ouml;nevezettek)</a>
+</form>
+
+<form accept-charset="UTF-8" name="input" id="input" action="../RegistrationServlet" method="post">
+	<p></p>
+	<input type="hidden" id="command3" name="command" value=""> <input
+		type="hidden" name="printPreRegisteredModels" value="false">
+	<!--
+    <a href="#" onClick="document.getElementById('command3').value='printAllModels';this.parentNode.submit();">Nevez&eacute;si 
+    lapok nyomtat&aacute;sa (Helysz&iacute;nen nevezettek)</a> - 
+-->
+
+	<a href="#"
+		onClick="document.getElementById('command3').value='printCardsForAllModels';this.parentNode.submit();">A
+		makettek mell&eacute; kisk&aacute;rty&aacute;k nyomtat&aacute;sa</a>
+
+	<p>
+
+		<em><strong>Kateg&oacute;ri&aacute;k...</strong></em>
+	</p>
+	<p></p>
+	<a href="../static/HU_addCategoryGroup.html">&Uacute;j
+		kateg&oacute;riacsoport hozz&aacute;ad&aacute;sa</a> (Pl. Feln&otilde;tt,
+	mester, gyerek, ifi,... !!! Új veseny felvitelekor a kategóriacsoportok felvitele után újra be kell lépni adminként!!!) - <a href="#"
+		onClick="document.getElementById('command3').value='inputForDeleteCategoryGroup';this.parentNode.submit()">Kateg&oacute;riacsoportok
+		lek&eacute;rdez&eacute;se, t&ouml;rl&eacute;se</a>
+	<p></p>
+		<a href="../RegistrationServlet/listCategories"><strong>&Ouml;sszes
+			kateg&oacute;ria list&aacute;z&aacute;sa</strong></a> 
+		- 
+		<a href="../RegistrationServlet?command=inputForAddCategory">&Uacute;j
+		kateg&oacute;ria hozz&aacute;ad&aacute;sa</a> 
+		- 
+		<a href="../RegistrationServlet?command=inputForModifyCategory">Kateg&oacute;ria
+		m&oacute;dos&iacute;t&aacute;sa</a>
+		
+			- <a href="../RegistrationServlet?command=inputForDeleteCategory">Kateg&oacute;ria
+		t&ouml;rl&eacute;se</a>
+
+	<p></p>
+	Mesteroklevelesek rögzítése. Makettez&ocirc; neve:  
+	<input name="lastname" type="text" id="fullnameID"  onChange="sendRequest();">
+    - 
+    <select id="selectID" name="userID">
+    </select>
+	
+	Szakoszt&aacute;ly: <select name="modelClass">
+		<%
+		  for (ModelClass mc : ModelClass.values())
+		  {
+		%>
+		<option value='<%=mc.name()%>'><%=mc.name()%></option>
+		<%
+		  }
+		%>
+	</select> <a href="#"
+		onClick="document.getElementById('command3').value='saveModelClass';this.parentNode.submit();">Szakoszt&aacute;ly
+		ment&eacute;se</a>
+
+	<p></p>
+</form>
+<p>
+	<em><strong>Adatkezel&eacute;s..</strong>.</em>
+</p>
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+	<input type="hidden" name="command" value="exportData"> <input
+		type="hidden" name="photos" value="yes"> <input
+		name="exportData" type="submit"
+		value="&Ouml;sszes adat export&aacute;l&aacute;sa">
+</form>
+<form accept-charset="UTF-8" action="../RegistrationServlet" method="post" enctype="multipart/form-data" name="input">
+	<input type="hidden" name="command" value="importData"> 
+	<input type="file" name="zipFile"> 
+	<input type="submit" value="Adatok import&aacute;l&aacute;sa">
+</form>
+<!-- 
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+	<input type="hidden" name="command" value="exportData"> <input
+		type="hidden" name="photos" value="no"> <input
+		name="exportData" type="submit"
+		value="&Ouml;sszes adat export&aacute;l&aacute;sa k&eacute;pek n&eacute;lk&uuml;l">
+</form>
+ -->
+ <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+	<input type="hidden" name="command" value="exportCategoryData">
+	<input name="exportData" type="submit"
+		value="Csak a kateg&oacute;ri&aacute;k export&aacute;l&aacute;sa">
+</form>
+
+	<p> 
+		<em><strong>Lek&eacute;rdez&eacute;sek...</strong></em>
+	</p>
+<form accept-charset="UTF-8" name="input"  id="input1" action="../RegistrationServlet" method="post">
+	<input type="hidden" id="command1" name="command" value=""> 
+	<input type="hidden" name="withDetailing" value="false"> 
+	<a href="#"
+		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
+		benevezett makett list&aacute;z&aacute;sa</a> - <a href="../RegistrationServlet/statistics"><strong>Statisztika
+			k&eacute;sz&iacute;t&eacute;se</strong></a> - <a href="customQuery.jsp">Egyedi
+		lek&eacute;rdez&eacute;sek</a>
+	<p></p>
+<!-- 		
+	<input type="hidden" name="withDetailing" value="true">
+		<a href="#"
+		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
+		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - 
+ -->		
+		<a href="#"
+		onClick="document.getElementById('command1').value='listUsers';this.parentNode.submit();">&Ouml;sszes
+		felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a>
+
+</form>
+<!--  
+<form accept-charset="UTF-8" name="input"  id="input1a" action="../RegistrationServlet" method="post">
+	<input
+		type="hidden" name="onlyPhotos" value="true"> 
+		<a href="#"
+		onClick="document.getElementById('input1a').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
+		benevezett makett list&aacute;z&aacute;sa (csak k&eacute;pekkel)</a> 
+</form>
+-->
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" id="command5"
-		value="deletedirectUsers">
+		value="">
 	<p>
 		<em><strong>Verseny eredm&eacute;nyek... </strong></em>
 	</p>
@@ -215,18 +237,13 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 		k&eacute;sz&iacute;t&eacute;s</a>
 	<p></p>
 
-	<a href="#"
-		onClick="document.getElementById('command5').value='inputForModifyModel';this.parentNode.submit();">Makett
-		&aacute;tsorol&aacute;sa. Sorsz&aacute;m: </a> <input type="text"
-		name="modelID">
-
-	<p>
 		<a href="awardedModels.jsp">Eredm&eacute;nyek
 			lek&eacute;rdez&eacute;se </a>- <a href="deleteAwardedModel.jsp">D&iacute;jazott
 			makett t&ouml;rl&eacute;se</a>
-	</p>
 
 </form>
+
+<hr>
 
 <p>
 	<em><strong>Hibakezel&eacute;s..</strong>.</em>
@@ -237,7 +254,6 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 </form>
 <p>
 <p></p>
-<hr>
 <p>&nbsp;</p>
 <p>
 	<em><strong><font color="#FF0000">VIGY&Aacute;ZAT!!!!</font></strong></em>
@@ -262,20 +278,24 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 		value="&Ouml;sszes helysz&iacute;nen regisztr&aacute;lt felhaszn&aacute;l&oacute; t&ouml;rl&eacute;se"
 		style="color: rgb(255, 0, 0); font-weight: bold">
 </form>
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet/sendEmails" method="post">
+	Mindenkinek email küldése. Szöveg: <input name="message" type="text">
+</form>
+<!-- 
 <p>------------------------------------------------------</p>
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="newUserIDs"> <input
 		name="newUserIDs" type="submit"
 		value="&Uacute;j regisztr&aacute;ci&oacute;s sz&aacute;mok kioszt&aacute;sa">
 </form>
-<p>
+<p></p>
 <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="newUserIDsFromOne">
 	<input name="newUserIDsFromOne" type="submit"
 		value="&Uacute;j regisztr&aacute;ci&oacute;s sz&aacute;mok kioszt&aacute;sa 1-tol">
 </form>
-</p>
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+ -->
+ <form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
 	<p>SQL update:</p>
 	<p>
 		<input type="hidden" name="command" value="sql"> <input
@@ -289,9 +309,6 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 	<p>alter table MAK_USERS modify EMAIL varchar(100)
 	<p>update MAK_USERS set EMAIL='admin' where USER_NAME='admin'
 	<p>alter table MAK_USERS drop column USER_NAME
-</form>
-<form accept-charset="UTF-8" name="input" action="../RegistrationServlet/sendEmails" method="post">
-	sendEmails: <input name="message" type="text">
 </form>
 </body>
 </html>
