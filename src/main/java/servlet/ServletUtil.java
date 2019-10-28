@@ -56,6 +56,10 @@ public class ServletUtil {
         return value.trim();
     }
 
+    /*
+     * Less secure app access
+     * https://myaccount.google.com/security
+     */
     public static void sendEmail(String smtpServer, final String from, String to, String subject, String htmlMessage, boolean debugSMTP,
             final String password) throws MessagingException  {
         if (from == null) {

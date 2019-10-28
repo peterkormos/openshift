@@ -133,8 +133,12 @@ public class RegistrationServlet extends HttpServlet {
 			presentationBuffer = loadFile(
 					config.getServletContext().getResourceAsStream("/WEB-INF/conf/presentation.html"));
 
-		            for(String show : servletDAO.getShows())
-		                preRegistrationAllowed.put(show, servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
+		            try {
+						for(String show : servletDAO.getShows())
+						    preRegistrationAllowed.put(show, servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 		            
 			updateSystemSettings();
 
