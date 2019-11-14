@@ -137,6 +137,7 @@ String modelproducer = model == null ? "" : model.producer;
 %>
 <jsp:include page="modelProducers.jsp">
   <jsp:param name="selectValue" value="<%=modelproducer%>"/>
+  <jsp:param name="mandatory" value="true"/>
   <jsp:param name="frequentlyUsed" value='<%=language.getString("frequently.used")%>'/>
 </jsp:include>
 </td>
