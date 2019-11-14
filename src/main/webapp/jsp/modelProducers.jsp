@@ -13,10 +13,12 @@
 	int maxlength = 100;
 	if(request.getParameter("maxlength") != null) 
 		maxlength = Integer.parseInt(request.getParameter("maxlength"));
+
+	boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 %>
 <div>
 <input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>" placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
-required="required"
+<%= mandatory ?  "required='required'" : "" %>
 onchange="updateMandatoryFieldMark(this);"
 size="40">
 
@@ -63,5 +65,12 @@ size="40">
     <option>Young Miniatures</option>
     <option>Zvezda</option>
 </datalist>
-<font color="#FF0000" size="+3">&#8226;</font> 
+<%
+	if (mandatory)
+	{
+%>
+	  <font color='#FF0000' size='+3'>&#8226;</font>
+<% 
+	}
+%>
 </div>
