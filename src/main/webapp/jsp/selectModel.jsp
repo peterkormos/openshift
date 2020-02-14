@@ -16,8 +16,6 @@
         		  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
         		}
         		
-        		if (servlet.isRegistrationAllowed(show)) 
-        		{
         			final User user = RegistrationServlet.getUser(request);
         			  final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
         	
@@ -26,10 +24,6 @@
         			
         			final List<Model> models = servletDAO.getModels(user.userID);
         	
-        			if (models.isEmpty()) {
-        				response.sendRedirect("main.jsp");
-        				return;
-        			}
         /*
         			else if(models.size() == 1)
         			{
@@ -89,10 +83,6 @@ function checkMandatory(form)
 			<br>
 <%
 			}
-		}
-		else {
-			response.sendRedirect("jsp/main.jsp");
-		}
  %>
 </div>
 

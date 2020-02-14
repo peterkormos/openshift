@@ -163,3 +163,27 @@ margin-left: 20px;
 /*
 modal css end
 */
+
+.tooltiptext {
+  /*
+  width: 120px;
+  border-radius: 6px;
+  right: -40px;
+  */
+  visibility: hidden;
+  top: 70px;
+  color: #fff;
+  background-color: lightblue;
+  text-align: center;
+  padding: 5px;
+
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltiptext-right {
+right:0px
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;

@@ -25,12 +25,6 @@
 	ResourceBundle language = languageUtil.getLanguage(user.language);
 	session.setAttribute(CommonSessionAttribute.Language.name(), language); 
 
-	if (user.language.length() != 2)
-	{
-	  response.sendRedirect(user.language + "_main.jsp");
-	  return;
-	}
-	
 	String show = RegistrationServlet.getShowFromSession(session);
 	if (show == null)
 	{
@@ -38,14 +32,53 @@
 	}
 %>
 <html>
-<head>
-
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link href="base.css" rel="stylesheet" type="text/css">
+<head>	
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link href="base.css" rel="stylesheet" type="text/css">
+	
+	<script type="text/javascript">
+	// <!--
+	
+	function checkDeleteUserRequest()
+	{
+		confirmed = confirm('<%=language.getString("delete.confirm")%>'); 
+		
+		if(confirmed)
+		{
+			document.getElementById('command').value='deleteUser';
+			document.getElementById('input').submit();
+		}
+	}
+	
+	function showModal(location)
+	{
+		document.getElementById('iframeID').src = location;
+	
+		var modal = document.getElementById('modalDiv');
+		modal.style.display = "block";
+	
+		// Get the <span> element that closes the modal
+	//	document.getElementsByClassName("close")[0]
+		var span = 
+		modal.getElementsByClassName("close")[0]
+		.onclick = function() {
+		  modal.style.display = "none";
+		}
+	
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+		  if (event.target == modal) {
+			modal.style.display = "none";
+		  }
+		}
+	}
+	
+	//-->
+	</script>
 </head>
 <body>
 
@@ -60,61 +93,19 @@
 <p>
 <%
     if (!servlet.isPreRegistrationAllowed(show))
-{
-%> <strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong> <%
-     }
- %>
+	{
+%> 
+		<strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong> 
+<%
+    }
+%>
 
 <p></p>
+<form action="setNewDesign.jsp">
+	<input type="hidden" name="fileName" value="<%= RegistrationServlet.MainPageType.New.getFileName()%>">
+	<input class="main" type='submit' value='Set new design'>
+</form>
 <p></p>
-
-<script type="text/javascript">
-// <!--
-
-function checkDeleteUserRequest()
-{
-	confirmed = confirm('<%=language.getString("delete.confirm")%>'); 
-	
-	if(confirmed)
-	{
-		document.getElementById('command').value='deleteUser';
-		document.getElementById('input').submit();
-	}
-}
-
-function showModal(location)
-{
-	document.getElementById('iframeID').src = location;
-
-	var modal = document.getElementById('modalDiv');
-	modal.style.display = "block";
-
-	// Get the <span> element that closes the modal
-//	document.getElementsByClassName("close")[0]
-	var span = 
-	modal.getElementsByClassName("close")[0]
-	.onclick = function() {
-	  modal.style.display = "none";
-	}
-
-	// When the user clicks anywhere outside of the modal, close it
-	window.onclick = function(event) {
-	  if (event.target == modal) {
-		modal.style.display = "none";
-	  }
-	}
-}
-
-function onIFrameLoad(iframe)
-{
-	if(iframe.contentWindow.location.href.includes("main.jsp"))
-	{
-		window.location.replace(iframe.contentWindow.location.href);
-		return;
-	}
-}
-//-->
-</script>
 
 <jsp:include page="notices.jsp" />
 
@@ -123,7 +114,7 @@ function onIFrameLoad(iframe)
 <div id="modalDiv" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
-	<iframe id="iframeID" style="border:none;width: 100%;height: 100%;" onload="onIFrameLoad(this)"></iframe>
+	<iframe id="iframeID" style="border:none;width: 100%;height: 100%;"></iframe>
   </div>
 </div>
 

@@ -93,12 +93,28 @@ public class RegistrationServlet extends HttpServlet {
 	private Properties servletConfig = new Properties();
 
 	public static enum SessionAttribute {
-	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models
+	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models, MainPageFile
 	}
 
 	public static enum Command {
 	    LOADIMAGE
 	};
+	
+	public static enum MainPageType {
+	    Old("main.jsp"), //
+	    New("main_v2.jsp");
+	    
+	    private String fileName;
+	    
+	    MainPageType(String fileName)
+	    {
+	        this.fileName = fileName;
+	    }
+
+            public String getFileName() {
+                return fileName;
+            }
+	}
 
 	public RegistrationServlet() throws Exception {
 		instance = this;
@@ -463,18 +479,38 @@ public class RegistrationServlet extends HttpServlet {
 
 		final HttpSession session = request.getSession(true);
 		session.setAttribute(SessionAttribute.UserID.name(), user);
+	        if (user.language.length() != 2) //admin user
+	          session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + MainPageType.Old.getFileName());
+	        else	        
+	            session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
+	            
 		if (show != null) {
 			session.setAttribute(SessionAttribute.Show.name(), StringEncoder.fromBase64(show));
 		}
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
+
+    private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        redirectToMainPage(request, response, false);
+    }
+    private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response, boolean goToParentDir) throws IOException {
+        response.sendRedirect((goToParentDir ? "../" : "") + "jsp/"+getMainPageFile(request.getSession(false)));
+    }
+    
+    private String getMainPageFile(HttpSession session) {
+        return session!= null ?  (String) session.getAttribute(SessionAttribute.MainPageFile.name()) : getDefaultMainPageFile();
+    }
+    
+    private String getDefaultMainPageFile() {
+        return MainPageType.New.getFileName();
+    }
 
 	public void sql(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final StringBuilder buff = servletDAO.execute(ServletUtil.getRequestAttribute(request, "sql"));
 
 		if (buff == null) {
-			response.sendRedirect("jsp/main.jsp");
+			redirectToMainPage(request, response);
 		} else {
 			final User user = getUser(request);
 			final ResourceBundle language = languageUtil.getLanguage(user.language);
@@ -581,7 +617,7 @@ public class RegistrationServlet extends HttpServlet {
 		final HttpSession session = request.getSession(true);
 		session.setAttribute(SessionAttribute.UserID.name(), user);
 
-		response.sendRedirect("../jsp/main.jsp");
+		redirectToMainPage(request, response, true);
 	}
 
 	public void exportData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -666,7 +702,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			servletDAO.saveImage(modelID, new ByteArrayInputStream(output.toByteArray()));
 
-			response.sendRedirect("jsp/main.jsp");
+			redirectToMainPage(request, response);
 		} else if ("zipFile".equals(item.getFieldName())) {
 			final StringBuilder buff = importZip(request, item.getInputStream());
 			writeResponse(response, buff);
@@ -773,7 +809,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
 
 	private User directRegisterUser(final HttpServletRequest request, final ResourceBundle language,
@@ -849,7 +885,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		request.getSession(false).setAttribute(SessionAttribute.UserID.name(), servletDAO.getUser(oldUser.userID));
 
-		response.sendRedirect("../jsp/main.jsp");
+		redirectToMainPage(request, response, true);
 	}
 
 	public void newUserIDs(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1002,7 +1038,7 @@ public class RegistrationServlet extends HttpServlet {
 		
 		servletDAO.saveCategory(newCategory);
 		
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
 
 	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1010,7 +1046,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.saveModelClass(userID, ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")));
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
 
 	public void addCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
@@ -1021,7 +1057,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.saveCategoryGroup(categoryGroup);
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
 
 	public void listUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1353,7 +1389,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (isRegistrationAllowed(getShowFromSession(request))) {
 			getModelForm(request, response, "addModel", "save.and.add.new.model", null);
 		} else {
-			response.sendRedirect("jsp/main.jsp");
+			redirectToMainPage(request, response);
 		}
 	}
 
@@ -1374,7 +1410,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
 
 	public ResourceBundle getLanguageForCurrentUser(final HttpServletRequest request) throws UserNotLoggedInException {
@@ -1399,7 +1435,7 @@ public class RegistrationServlet extends HttpServlet {
 		} else {
 			sendEmailWithModels(user, false /* insertUserDetails */);
 			setEmailSentNoticeInSession(request, user);
-			response.sendRedirect("jsp/main.jsp");
+			redirectToMainPage(request, response);
 		}
 	}
 
@@ -1494,7 +1530,7 @@ public class RegistrationServlet extends HttpServlet {
 		final List<Model> models = servletDAO.getModels(user.userID);
 
 		if (models.isEmpty()) {
-			response.sendRedirect("jsp/main.jsp");
+			redirectToMainPage(request, response);
 			return;
 		}
 
@@ -1613,7 +1649,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 
 	}
 
@@ -1625,7 +1661,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 
 	}
 
@@ -1636,7 +1672,7 @@ public class RegistrationServlet extends HttpServlet {
 		updateSystemSettings();
 	        preRegistrationAllowed.put(getShowFromSession(request), servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
 	            
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
 
 	private void deleteModel(final HttpServletRequest request)
@@ -1649,7 +1685,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 
 	}
 
@@ -1657,7 +1693,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		servletDAO.deleteAwardedModel(Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID")));
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
 
 	public void inputForDeleteCategory(final HttpServletRequest request, final HttpServletResponse response)
@@ -1728,7 +1764,7 @@ public class RegistrationServlet extends HttpServlet {
 	            servletDAO.deleteModels(category.categoryID);
 	                }
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 
 	}
 
@@ -1736,7 +1772,7 @@ public class RegistrationServlet extends HttpServlet {
 		Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
                 servletDAO.deleteCategory(categoryID);
                 servletDAO.deleteModels(categoryID);
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 
 	}
 
@@ -1988,7 +2024,7 @@ public class RegistrationServlet extends HttpServlet {
 		sendEmailWithModels(user, false);
 		setEmailSentNoticeInSession(request, user);
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
 
 	public void logout(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2026,7 +2062,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.deleteEntries("MAK_AWARDEDMODELS");
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 
 	}
 
@@ -2143,7 +2179,7 @@ public class RegistrationServlet extends HttpServlet {
 			servletDAO.saveAwardedModel(new AwardedModel(award, model));
 		}
 
-		response.sendRedirect("jsp/main.jsp");
+		redirectToMainPage(request, response);
 	}
 
 	private void printAwardedModels(final HttpServletRequest request, final HttpServletResponse response,

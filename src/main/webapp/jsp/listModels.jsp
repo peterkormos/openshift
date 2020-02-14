@@ -25,7 +25,7 @@
   List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 %>
 
-<table style='border-collapse: collapse' border='1'>
+<table style='width: 100%; border-collapse: collapse;' border='1'>
 	<tr>
 		<%
 		  if (insertAwards)

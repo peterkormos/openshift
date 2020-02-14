@@ -69,7 +69,7 @@ function checkMandatoryElement(element)
 
 <jsp:include page="notices.jsp" />
 
-<form action="main.jsp">
+<form action="<%= (String)session.getAttribute(RegistrationServlet.SessionAttribute.MainPageFile.name()) %>">
 	<input class="main" type='submit' value='<%= language.getString("proceed.to.main") %>'>
 </form>
 

@@ -34,7 +34,21 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script type="text/javascript" src="findUser.js"></script>
-	<script> 
+
+<script type="text/javascript">
+// <!--
+
+function checkDeleteUserRequest()
+{
+	confirmed = confirm('<%=language.getString("delete.confirm")%>'); 
+	
+	if(confirmed)
+	{
+		document.getElementById('command').value='deleteUser';
+		document.getElementById('input').action="../RegistrationServlet";
+		document.getElementById('input').submit();
+	}
+}
 	    function checkPassword(form) { 
 	        password1 = form.password.value; 
 	        password2 = form.password2.value; 
@@ -69,6 +83,7 @@
 				return true; 
 	        } 
 	    } 
+//-->
 	</script> 
 </head>
 
@@ -217,5 +232,17 @@ if(directRegister)
     </tr>
   </table>
   <p><font color="#FF0000" size="+3">&#8226;</font> <%= language.getString("mandatory.fields") %></p>
+      <%
+      if(user != null)
+      {
+      %>
+      <input type="hidden" id="command"  name="command" value="">
+	<a href="#" onClick="checkDeleteUserRequest();" style="{color: rgb(255,0,0);font-weight:bold}">
+  <img src="../icons/delete.png" height="30" align="center"> <%=language.getString("delete.user")%></a>
+      
+      <%
+      }
+      %>
+
 </form>
 </body></html>
