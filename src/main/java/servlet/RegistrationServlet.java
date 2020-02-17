@@ -71,7 +71,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2019.10.03.";
+	public String VERSION = "2020.02.17.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -479,6 +479,8 @@ public class RegistrationServlet extends HttpServlet {
 
 		final HttpSession session = request.getSession(true);
 		session.setAttribute(SessionAttribute.UserID.name(), user);
+		session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(user.language));
+
 	        if (user.language.length() != 2) //admin user
 	          session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + MainPageType.Old.getFileName());
 	        else	        
@@ -512,9 +514,6 @@ public class RegistrationServlet extends HttpServlet {
 		if (buff == null) {
 			redirectToMainPage(request, response);
 		} else {
-			final User user = getUser(request);
-			final ResourceBundle language = languageUtil.getLanguage(user.language);
-
 			writeResponse(response, buff);
 		}
 	}

@@ -23,7 +23,6 @@
 	}
 
 	ResourceBundle language = languageUtil.getLanguage(user.language);
-	session.setAttribute(CommonSessionAttribute.Language.name(), language); 
 
 	String show = RegistrationServlet.getShowFromSession(session);
 	if (show == null)
