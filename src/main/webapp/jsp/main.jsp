@@ -103,7 +103,7 @@
 <p></p>
 <form action="setNewDesign.jsp">
 	<input type="hidden" name="fileName" value="<%= RegistrationServlet.MainPageType.New.getFileName()%>">
-	<input class="main" type='submit' value='Set new design'>
+	<input class="main" type='submit' value='New design'>
 </form>
 <p></p>
 

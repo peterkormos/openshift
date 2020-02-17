@@ -153,7 +153,7 @@ function showModal(location)
 				
 				<td>
 					<input type="hidden" name="fileName" value="<%= RegistrationServlet.MainPageType.Old.getFileName()%>">
-					<input class="main" onClick="document.getElementById('input').action='setNewDesign.jsp'" type='submit' value='Set old design'>
+					<input class="main" onClick="document.getElementById('input').action='setNewDesign.jsp'" type='submit' value='Old design'>
 				</td>
 
 				<td style="width: 40px; text-align: right;"
