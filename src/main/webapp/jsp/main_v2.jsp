@@ -173,15 +173,17 @@ function showModal(location)
 				</td>
 			</tr>
 		</table>
+<p></p>
 
-		<%
-    if (!servlet.isPreRegistrationAllowed(show))
-{
-%> <strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong> <%
-     }
+<%
+	if (!servlet.isPreRegistrationAllowed(show))
+	{
+%> 
+		<strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong> 
+<%
+	}
  %>
 
-<p></p>
 
 <jsp:include page="notices.jsp" />
 
