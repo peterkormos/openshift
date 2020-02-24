@@ -58,7 +58,14 @@
 
 		<input type="hidden" name="command" value="login">
 		<input type="hidden" name="language" value="<%=languageCode%>">
-		<input type="hidden" name="showId" value="<%=showIdHttpParameter%>">
+<%
+ 	if(showIdHttpParameter != null)
+ 	{
+%>
+ 		<input type="hidden" name="showId" value="<%=showIdHttpParameter%>">
+<%
+ 	}
+ %>
 
 		<table border="0" height="100%" width="100%">
 			<tr>

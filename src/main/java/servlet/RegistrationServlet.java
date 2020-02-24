@@ -2054,9 +2054,8 @@ public class RegistrationServlet extends HttpServlet {
             String showId = null;
             if(session != null)
                 showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
-            else
+            if(showId == null)
                 showId = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
-            
 	    return "index.jsp" + (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId) ? "?showId=" + showId : "");
     }
 
