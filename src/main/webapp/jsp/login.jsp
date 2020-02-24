@@ -12,9 +12,7 @@
 
   final String languageCode = ServletUtil.getRequestAttribute(request, "language");
   ResourceBundle language = languageUtil.getLanguage(languageCode);
-%>
 
-<%
 	String showIdHttpParameter = request.getParameter("showId");
 	final List<String> shows = servletDAO.getShows();
 	

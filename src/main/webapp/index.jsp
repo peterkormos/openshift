@@ -7,6 +7,11 @@
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
+<%
+	String showId = request.getParameter("showId");
+ %>
+ 
 <body style="font-family: sans-serif;">
 	<div class="header"></div>
 	<table border="0" height="100%" width="100%">
@@ -19,7 +24,7 @@
 						<tr>
 							<td><img src="icons/hu.gif"></td>
 <!-- 							<td>Magyar verzi&oacute;:</td> -->
-							<td><a href="jsp/login.jsp?language=HU">Bejelentkez&eacute;s</a></td>
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=HU">Bejelentkez&eacute;s</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -33,7 +38,7 @@
 						<tr>
 							<td><img src="icons/gb.gif"></td>
 <!-- 							<td>English version:</td> -->
-							<td><a href="jsp/login.jsp?language=EN">Login</a></td>
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=EN">Login</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -48,7 +53,7 @@
 						<tr>
 							<td><img src="icons/sk.gif"></td>
 <!-- 							<td>Slovensk&aacute; verzia:</td> -->
-							<td><a href="jsp/login.jsp?language=SK">Prihl&aacute;senie
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=SK">Prihl&aacute;senie
 									sa</a></td>
 							<td>
 								<div align="center">-</div>
@@ -65,7 +70,7 @@
 						<tr>
 							<td><img src="icons/cz.gif"></td>
 <!-- 							<td>Cesk&aacute; verze:</td> -->
-							<td><a href="jsp/login.jsp?language=CZ">Prihl&aacute;&#353;en&iacute;</a></td>
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=CZ">Prihl&aacute;&#353;en&iacute;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -81,7 +86,7 @@
 						<tr>
 							<td><img src="icons/de.gif"></td>
 <!-- 							<td>Deutsch Version:</td> -->
-							<td><a href="jsp/login.jsp?language=DE">Anmelden</a></td>
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=DE">Anmelden</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -95,7 +100,7 @@
 						<tr>
 							<td><img src="icons/ru.png"></td>
 <!-- 							<td>&#1056;&#1091;&#1089;&#1089;&#1082;&#1072;&#1103; &#1074;&#1077;&#1088;&#1089;&#1080;&#1103;:</td> -->
-							<td><a href="jsp/login.jsp?language=RU">&#1051;&#1086;&#1075;&#1080;&#1085;</a></td>
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=RU">&#1051;&#1086;&#1075;&#1080;&#1085;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -111,7 +116,7 @@
 						<tr>
 							<td><img src="icons/it.png"></td>
 							<td>Deutsch Version:</td>
-							<td><a href="jsp/login.jsp?language=IT">Anmelden</a></td>
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=IT">Anmelden</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -125,7 +130,7 @@
 						<tr>
 							<td><img src="icons/pl.png"></td>
 							<td>Deutsch Version:</td>
-							<td><a href="jsp/login.jsp?language=PL">Anmelden</a></td>
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=PL">Anmelden</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
