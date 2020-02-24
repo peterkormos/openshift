@@ -11,7 +11,7 @@
 
   if (user == null || !"ADMIN".equals(user.language))
   {
-		response.sendRedirect("../index.html");
+		response.sendRedirect("../index.jsp");
 		return;
   }
 %>

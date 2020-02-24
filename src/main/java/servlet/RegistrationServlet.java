@@ -863,7 +863,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append(language.getString("email.was.sent"));
 		buff.append("<p>");
-		buff.append("<a href='../index.html'>" + language.getString("proceed.to.login") + "</a></body></html>");
+		buff.append("<a href='../index.jsp'>" + language.getString("proceed.to.login") + "</a></body></html>");
 		return buff;
 	}
 
@@ -897,7 +897,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<html><body>");
 
 		buff.append("Randomize...<p>");
-		buff.append("<a href='index.html'>" + language.getString("proceed.to.login") + "</a></body></html>");
+		buff.append("<a href='index.jsp'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
 		writeResponse(response, buff);
 	}
@@ -913,7 +913,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<html><body>");
 
 		buff.append("Randomize...<p>");
-		buff.append("<a href='index.html'>" + language.getString("proceed.to.login") + "</a></body></html>");
+		buff.append("<a href='index.jsp'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
 		writeResponse(response, buff);
 	}
@@ -927,7 +927,7 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 		buff.append("<html><body>");
 
-		buff.append("<a href='index.html'>" + language.getString("proceed.to.login") + "</a></body></html>");
+		buff.append("<a href='index.jsp'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
 		writeResponse(response, buff);
 
@@ -1505,13 +1505,13 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (session == null) {
 			throw new UserNotLoggedInException(
-					"User is not logged in! <a href='index.html'>Please go to login page...</a>");
+					"User is not logged in! <a href='index.jsp'>Please go to login page...</a>");
 		}
 
 		User userInSession = (User) session.getAttribute(SessionAttribute.UserID.name());
 		if(userInSession == null)
 		    throw new UserNotLoggedInException(
-		            "User is not logged in! <a href='index.html'>Please go to login page...</a>");
+		            "User is not logged in! <a href='index.jsp'>Please go to login page...</a>");
 		
             return userInSession;
 	}
@@ -2043,7 +2043,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (isOnSiteUse()) {
 			response.sendRedirect("helyi.html");
 		} else {
-			response.sendRedirect("index.html");
+			response.sendRedirect("index.jsp");
 		}
 	}
 

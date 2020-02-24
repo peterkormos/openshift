@@ -26,5 +26,5 @@
 
   servletDAO.saveCategoryGroup(new CategoryGroup(servletDAO.getNextID("CATEGORY_GROUP", "CATEGORY_group_ID"), "-", "-"));
 
-  response.sendRedirect("../index.html");
+  response.sendRedirect("../index.jsp");
 %>
