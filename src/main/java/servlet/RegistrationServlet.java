@@ -93,7 +93,7 @@ public class RegistrationServlet extends HttpServlet {
 	private Properties servletConfig = new Properties();
 
 	public static enum SessionAttribute {
-	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models, MainPageFile
+	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId
 	}
 
 	public static enum Command {
@@ -480,6 +480,7 @@ public class RegistrationServlet extends HttpServlet {
 		final HttpSession session = request.getSession(true);
 		session.setAttribute(SessionAttribute.UserID.name(), user);
 		session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(user.language));
+		session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, "showId"));
 
 	        if (user.language.length() != 2) //admin user
 	          session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + MainPageType.Old.getFileName());
@@ -537,7 +538,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		sendEmail(user.email, language.getString("email.subject"), buff);
 
-		writeResponse(response, getEmailWasSentResponse(language));
+		writeResponse(response, getEmailWasSentResponse(language, request));
 	}
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -854,16 +855,16 @@ public class RegistrationServlet extends HttpServlet {
 
 		sendEmailWithModels(user, true);
 
-		writeResponse(response, getEmailWasSentResponse(language));
+		writeResponse(response, getEmailWasSentResponse(language, request));
 	}
 
-	private StringBuilder getEmailWasSentResponse(final ResourceBundle language) {
+	private StringBuilder getEmailWasSentResponse(final ResourceBundle language, HttpServletRequest request) {
 		final StringBuilder buff = new StringBuilder();
 		buff.append("<html><body>");
 
 		buff.append(language.getString("email.was.sent"));
 		buff.append("<p>");
-		buff.append("<a href='../index.jsp'>" + language.getString("proceed.to.login") + "</a></body></html>");
+		buff.append("<a href='../" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
 		return buff;
 	}
 
@@ -897,7 +898,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<html><body>");
 
 		buff.append("Randomize...<p>");
-		buff.append("<a href='index.jsp'>" + language.getString("proceed.to.login") + "</a></body></html>");
+		buff.append("<a href='" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
 		writeResponse(response, buff);
 	}
@@ -913,7 +914,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<html><body>");
 
 		buff.append("Randomize...<p>");
-		buff.append("<a href='index.jsp'>" + language.getString("proceed.to.login") + "</a></body></html>");
+		buff.append("<a href='" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
 		writeResponse(response, buff);
 	}
@@ -927,7 +928,7 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 		buff.append("<html><body>");
 
-		buff.append("<a href='index.jsp'>" + language.getString("proceed.to.login") + "</a></body></html>");
+		buff.append("<a href='" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
 		writeResponse(response, buff);
 
@@ -1505,13 +1506,13 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (session == null) {
 			throw new UserNotLoggedInException(
-					"User is not logged in! <a href='index.jsp'>Please go to login page...</a>");
+					"User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
 		}
 
 		User userInSession = (User) session.getAttribute(SessionAttribute.UserID.name());
 		if(userInSession == null)
 		    throw new UserNotLoggedInException(
-		            "User is not logged in! <a href='index.jsp'>Please go to login page...</a>");
+		            "User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
 		
             return userInSession;
 	}
@@ -2035,7 +2036,8 @@ public class RegistrationServlet extends HttpServlet {
 		// }
 
 		final HttpSession session = request.getSession(false);
-
+		String startPage = getStartPage(request);
+		
 		if (session != null) {
 			session.invalidate();
 		}
@@ -2043,11 +2045,22 @@ public class RegistrationServlet extends HttpServlet {
 		if (isOnSiteUse()) {
 			response.sendRedirect("helyi.html");
 		} else {
-			response.sendRedirect("index.jsp");
+		        response.sendRedirect(startPage);
 		}
 	}
 
-	private void updateSystemSettings() throws SQLException {
+	private static String getStartPage(HttpServletRequest request) {
+            final HttpSession session = request.getSession(false);
+            String showId = null;
+            if(session != null)
+                showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
+            else
+                showId = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+            
+	    return "index.jsp" + (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId) ? "?showId=" + showId : "");
+    }
+
+    private void updateSystemSettings() throws SQLException {
 		onSiteUse = servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.ONSITEUSE);
 		systemMessage = servletDAO.getSystemParameter(ServletDAO.SYSTEMPARAMETER.SYSTEMMESSAGE);
 	}
