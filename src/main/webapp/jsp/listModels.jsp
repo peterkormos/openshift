@@ -282,8 +282,8 @@
 								  {
 					%>
 
-					<td><input type='checkbox'
-						<%=(model.getDetailingGroup(group).getCriteria(criteria) ? "checked" : "")%>></td>
+					<td align="center">
+						<%=(model.getDetailingGroup(group).getCriteria(criteria) ? "X" : "")%></td>
 					<%
 					  }
 					%>
