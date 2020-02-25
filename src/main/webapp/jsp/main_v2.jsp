@@ -90,7 +90,7 @@ function showModal(location)
   <input type="hidden" id="command"  name="command" value="">
 		<table style="border: 0px; width: 100%">
 			<tr>
-				<td>
+				<td style='white-space: nowrap'>
 <FONT COLOR='#ff0000'>
 	<b>
 		<%=show%>
