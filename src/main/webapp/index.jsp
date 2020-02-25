@@ -84,6 +84,20 @@
 									jste heslo?</a></td>
 						</tr>
 						<tr>
+							<td><img src="icons/pl.png"></td>
+<!-- 							<td>Polski wersja:</td> -->
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=PL">Zaloguj si&#281;</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td><a
+								href="jsp/user.jsp?directRegister=false&amp;action=register&amp;language=PL">Zarejestruj si&#281;</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td><a href="jsp/reminder.jsp?language=PL">Nie pami&#281;tam has&#322;a</a></td>
+						</tr>
+						<tr>
 							<td><img src="icons/de.gif"></td>
 <!-- 							<td>Deutsch Version:</td> -->
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=DE">Anmelden</a></td>
