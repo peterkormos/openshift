@@ -95,6 +95,7 @@ function checkDeleteUserRequest()
 <div class="header"></div>
 
 <form autocomplete="fuckoffchrome" name="input" id="input" action="../RegistrationServlet/<%= action %>" method="put" accept-charset="UTF-8" onSubmit = "return checkEmail(this) && checkPassword(this)">
+      <input type="hidden" id="command"  name="command" value="">
   <p> 
   </p>
   <table width="47%" border="0">
@@ -236,7 +237,6 @@ if(directRegister)
       if(user != null)
       {
       %>
-      <input type="hidden" id="command"  name="command" value="">
 	<a href="#" onClick="checkDeleteUserRequest();" style="{color: rgb(255,0,0);font-weight:bold}">
   <img src="../icons/delete.png" height="30" align="center"> <%=language.getString("delete.user")%></a>
       

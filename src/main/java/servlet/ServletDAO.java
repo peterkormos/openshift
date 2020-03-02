@@ -318,6 +318,41 @@ public class ServletDAO
   {
 	return getCategoryList(0, show);
   }
+  
+  public String getAward(Model model) throws SQLException
+  {
+        PreparedStatement queryStatement = null;
+        ResultSet rs = null;
+
+        try
+        {
+          queryStatement = getDBConnection().prepareStatement("SELECT * FROM MAK_AWARDEDMODELS"
+                  + (model == null ? "" : " WHERE MODEL_ID = " + model.getModelID()));
+
+          rs = queryStatement.executeQuery();
+
+          return rs.next() ? decodeStringFromDB(rs, "AWARD") : "-";
+        }
+        finally
+        {
+          try
+          {
+                if (rs != null)
+                {
+                  rs.close();
+                }
+                if (queryStatement != null)
+                {
+                  queryStatement.close();
+                }
+          }
+          catch (final Exception ex)
+          {
+                logger.fatal("!!! ServletDAO.getAward(): ", ex);
+          }
+        }
+  }
+
 
   public List<AwardedModel> getAwardedModels() throws SQLException
   {

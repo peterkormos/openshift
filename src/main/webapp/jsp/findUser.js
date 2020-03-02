@@ -123,6 +123,7 @@ function parseXML(xmlstring)
 
 function  loginUser(userID)
 {
+	document.getElementById('input').action="../RegistrationServlet"
 	document.getElementById('input').command.value="directLogin";
 	var newCat = document.input.command.cloneNode(true);
 	newCat.setAttribute("name", "userID");

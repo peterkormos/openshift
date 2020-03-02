@@ -8,7 +8,9 @@ import datatype.Detailing.DetailingGroup;
 
 public class Model implements Serializable
 {
-  public int modelID;
+    private static final long serialVersionUID = -3161543148518903037L;
+
+public int modelID;
 
   public int userID;
   public int categoryID;
@@ -23,8 +25,6 @@ public class Model implements Serializable
   public boolean gluedToBase;
 
   public Map<DetailingGroup, Detailing> detailing;
-
-  public String award;
 
   public Model()
   {

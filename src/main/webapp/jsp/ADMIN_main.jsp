@@ -198,6 +198,9 @@ Rendszer&uuml;zenet: <FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b
 <form accept-charset="UTF-8" name="input"  id="input1" action="../RegistrationServlet" method="post">
 	<input type="hidden" id="command1" name="command" value=""> 
 	<input type="hidden" name="withDetailing" value="false"> 
+<a href="../RegistrationServlet/exportExcel"><strong>&Ouml;sszes
+		benevezett makett Excelbe</strong></a>
+- 
 	<a href="#"
 		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
 		benevezett makett list&aacute;z&aacute;sa</a> - <a href="../RegistrationServlet/statistics"><strong>Statisztika

@@ -163,7 +163,7 @@
 				if (insertAwards)
 				{
 		%>
-		<td align='center'><%=model.award%></td>
+		<td align='center'><%=servletDAO.getAward(model)%></td>
 		<%
 		  }
 		%>

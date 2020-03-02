@@ -31,6 +31,8 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -47,6 +49,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -66,12 +69,14 @@ import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
+import tools.ExcelReportUtils;
+import tools.ExcelReportUtils.Workbook;
 import tools.InitDB;
 import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2020.02.17.";
+	public String VERSION = "2020.03.02.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -323,8 +328,12 @@ public class RegistrationServlet extends HttpServlet {
 				try {
 					loadImage(modelId, response.getOutputStream());
 				} catch (final Exception e) {
+				    response.setContentType("text/html");
+				    writeErrorResponse(response, e.getMessage());
 				}
 			}
+			else
+                            throw new IllegalArgumentException("Unrecognized path: " + pathInfo);
 			return command;
 		} else {
 			handleRequest(request, response, pathInfo);
@@ -369,7 +378,6 @@ public class RegistrationServlet extends HttpServlet {
 
 			if (param.startsWith("userID")) {
 				final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, param));
-
 				loginSuccessful(request, response, servletDAO.getUser(userID));
 				return;
 			}
@@ -477,22 +485,26 @@ public class RegistrationServlet extends HttpServlet {
 		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
 				+ show);
 
-		final HttpSession session = request.getSession(true);
-		session.setAttribute(SessionAttribute.UserID.name(), user);
-		session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(user.language));
-		session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, "showId"));
-
-	        if (user.language.length() != 2) //admin user
-	          session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + MainPageType.Old.getFileName());
-	        else	        
-	            session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
-	            
-		if (show != null) {
-			session.setAttribute(SessionAttribute.Show.name(), StringEncoder.fromBase64(show));
-		}
+		initHttpSession(request, user, show);
 
 		redirectToMainPage(request, response);
 	}
+
+    private void initHttpSession(final HttpServletRequest request, final User user, String show) {
+        final HttpSession session = request.getSession(true);
+        session.setAttribute(SessionAttribute.UserID.name(), user);
+        session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(user.language));
+        session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, "showId"));
+
+        if (user.language.length() != 2) // admin user
+            session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + MainPageType.Old.getFileName());
+        else
+            session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
+        
+        if (show != null) {
+            session.setAttribute(SessionAttribute.Show.name(), StringEncoder.fromBase64(show));
+        }
+    }
 
     private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         redirectToMainPage(request, response, false);
@@ -613,10 +625,7 @@ public class RegistrationServlet extends HttpServlet {
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		final User user = directRegisterUser(request, language, "");
-
-		final HttpSession session = request.getSession(true);
-		session.setAttribute(SessionAttribute.UserID.name(), user);
-
+		initHttpSession(request, user,  StringEncoder.toBase64(servletDAO.getShows().get(0).getBytes()));
 		redirectToMainPage(request, response, true);
 	}
 
@@ -671,6 +680,64 @@ public class RegistrationServlet extends HttpServlet {
 		e.close();
 	}
 
+        public void exportExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+            final String show = getShowFromSession(request);
+    
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    
+            ResourceBundle language = getLanguageForCurrentUser(request);
+            final List<Model> models = servletDAO.getModels(ServletDAO.INVALID_USERID);
+            Map<Integer, User> userIDs = models.stream().mapToInt(Model::getUserID).distinct().mapToObj(userID -> {
+                try {
+                    return servletDAO.getUser(userID);
+                } catch (SQLException e1) {
+                    logger.error("", e1);
+                    return null;
+                }
+            }).collect(Collectors.toMap(User::getUserID, Function.identity()));
+            
+            Map<Integer, Category> categories = servletDAO.getCategoryList(show).stream()
+                    .collect(Collectors.toMap(category -> category.getCategoryID(), Function.identity()));
+    
+            List<List<Object>> modelsForExcel = models.stream().filter(model -> {
+                return show == null || categories.get(model.categoryID).group.show.equals(show);
+            }).map(model -> {
+                ArrayList<Object> returned = new ArrayList<>();
+                Category category = categories.get(model.categoryID);
+                final User modelsUser = userIDs.get(model.userID);
+   
+                returned.add(StringEscapeUtils.unescapeHtml4(category.group.show));
+                returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.lastName));
+                returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.city));
+                returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.country));
+                returned.add(modelsUser.userID);
+                returned.add(model.modelID);
+                returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
+                returned.add(StringEscapeUtils.unescapeHtml4(model.name));
+                returned.add(StringEscapeUtils.unescapeHtml4(model.scale));
+                returned.add(StringEscapeUtils.unescapeHtml4(model.identification));
+                returned.add(StringEscapeUtils.unescapeHtml4(model.markings));
+                returned.add(StringEscapeUtils.unescapeHtml4(model.producer));
+                returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
+                return returned;
+    
+            }).collect(Collectors.toList());
+            Workbook u = ExcelReportUtils.generateExcelTableWithHeaders("model", Arrays.asList(
+                    StringEscapeUtils.unescapeHtml4(language.getString("show")), StringEscapeUtils.unescapeHtml4(language.getString("name")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("city")), StringEscapeUtils.unescapeHtml4(language.getString("country")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("userID")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("modelID")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("models.name")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("scale")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("models.identification")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("models.markings")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("models.producer")),
+                    StringEscapeUtils.unescapeHtml4(language.getString("category.description"))), modelsForExcel);
+    
+            u.writeTo(response.getOutputStream());
+        }
+	
 	public void importData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final DiskFileItemFactory factory = new DiskFileItemFactory();
 		final ServletFileUpload upload = new ServletFileUpload(factory);
@@ -883,7 +950,9 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.modifyUser(newUser, oldUser);
 
-		request.getSession(false).setAttribute(SessionAttribute.UserID.name(), servletDAO.getUser(oldUser.userID));
+		HttpSession session = request.getSession(false);
+                session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
+                session.setAttribute(SessionAttribute.UserID.name(), servletDAO.getUser(oldUser.userID));
 
 		redirectToMainPage(request, response, true);
 	}
@@ -1590,6 +1659,9 @@ public class RegistrationServlet extends HttpServlet {
 	public void inputForLoginUser(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final String language = ServletUtil.getRequestAttribute(request, "language");
+		request.getSession(true).setAttribute(SessionAttribute.Show.name(), servletDAO.getShows().get(0));
+		
+		
 		selectUser(request, response, "directLogin", languageUtil.getLanguage(language).getString("login"), language);
 	}
 
