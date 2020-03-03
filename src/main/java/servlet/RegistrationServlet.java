@@ -69,8 +69,8 @@ import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
-import tools.ExcelReportUtils;
-import tools.ExcelReportUtils.Workbook;
+import tools.ExcelUtil;
+import tools.ExcelUtil.Workbook;
 import tools.InitDB;
 import util.CommonSessionAttribute;
 import util.LanguageUtil;
@@ -722,7 +722,7 @@ public class RegistrationServlet extends HttpServlet {
                 return returned;
     
             }).collect(Collectors.toList());
-            Workbook u = ExcelReportUtils.generateExcelTableWithHeaders("model", Arrays.asList(
+            Workbook u = ExcelUtil.generateExcelTableWithHeaders("model", Arrays.asList(
                     StringEscapeUtils.unescapeHtml4(language.getString("show")), StringEscapeUtils.unescapeHtml4(language.getString("name")),
                     StringEscapeUtils.unescapeHtml4(language.getString("city")), StringEscapeUtils.unescapeHtml4(language.getString("country")),
                     StringEscapeUtils.unescapeHtml4(language.getString("userID")),

@@ -20,7 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ExcelReportUtils {
+public class ExcelUtil {
 
     public static class Spreadsheet {
         private XSSFSheet xSSFSheet;
@@ -89,7 +89,7 @@ public class ExcelReportUtils {
         DataFormat format = workbook.createDataFormat();
         bigDecimalCellStyle.setDataFormat(format.getFormat("#0.0000000000"));
 
-        XSSFCellStyle dataRowStyle = ExcelReportUtils.createDataRowStyle(workbook);
+        XSSFCellStyle dataRowStyle = ExcelUtil.createDataRowStyle(workbook);
         
         for(List<Object> resultRow :tableData) 
         {
@@ -125,7 +125,7 @@ public class ExcelReportUtils {
 
     private static int createHeaderRow(List<String> columnHeaders, XSSFWorkbook workbook, XSSFSheet spreadsheet, int row) {
         XSSFRow headerRow = spreadsheet.createRow(row);
-        XSSFCellStyle headerStyle = ExcelReportUtils.createHeaderRowStyle(workbook);
+        XSSFCellStyle headerStyle = ExcelUtil.createHeaderRowStyle(workbook);
         IntStream.range(0, columnHeaders.size()).forEach(index -> {
 
             // add cells to header row
@@ -141,7 +141,7 @@ public class ExcelReportUtils {
     private static XSSFCellStyle createHeaderRowStyle(XSSFWorkbook workbook) {
         // header row cell style
         XSSFFont headerFont = workbook.createFont();
-        headerFont.setColor(IndexedColors.ORANGE.getIndex());
+        headerFont.setColor(IndexedColors.BLACK.getIndex());
         headerFont.setBold(true);
         XSSFCellStyle headerRowStyle = workbook.createCellStyle();
         headerRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
