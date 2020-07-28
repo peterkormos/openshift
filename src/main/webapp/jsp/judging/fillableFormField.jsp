@@ -23,6 +23,7 @@
 		required="required"
 		name="<%= request.getParameter("name") %>"
 		value="<%= fieldValue %>"
+		<%= ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "disabled")) ? "" : "disabled" %>
 		min="1"
 		size="<%= ServletUtil.getOptionalRequestAttribute(request, "size").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "20") %>"
 		onChange="<%= ServletUtil.getOptionalRequestAttribute(request, "onChange").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "") %>"
