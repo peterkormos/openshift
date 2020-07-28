@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.2.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="oldal" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e49b9fb7-af9a-4e84-ba9d-0f7d8fd4e6a5">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter "/>
+	<subDataset name="Dataset1" uuid="4d2d2c67-3fc5-4198-a13f-65228a93225b">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter "/>
+		<parameter name="name" class="java.lang.String">
+			<parameterDescription><![CDATA[name]]></parameterDescription>
+			<defaultValueExpression><![CDATA[$F{name}]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="name" class="java.lang.String"/>
+	</subDataset>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="models" class="java.util.List"/>
+	<detail>
+		<band height="56" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="0" y="0" width="130" height="30" uuid="32143b4d-1062-4a84-b2db-7939a28a06ce"/>
+				<textFieldExpression><![CDATA[((datatype.Model)$F{models}.get(0)).getName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="0" width="130" height="30" uuid="5988cc8d-ee64-4f7e-853d-d64e9b4fc79e"/>
+				<textFieldExpression><![CDATA[((datatype.Model)$F{models}.get(1)).getName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="0" width="130" height="30" uuid="716132af-3772-4fd1-81da-b142a15e635e"/>
+				<textFieldExpression><![CDATA[((datatype.Model)$F{models}.get(2)).getName()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
