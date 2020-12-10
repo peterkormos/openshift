@@ -50,7 +50,7 @@
 			onClick="document.getElementById('command').value='logout';this.parentNode.submit();">Kijelentkez&eacute;s</a>
 		<hr>
 		<p></p>
-		<strong><font size="+2"><u>1 makettez&otilde;...</u> </font></strong>
+		<strong><font size="+2"><u>1 makettez&#337;...</u> </font></strong>
 		<a href="#"
 			onClick="document.getElementById('command').value='inputForLoginUser';this.parentNode.submit();">nev&eacute;ben
 			bel&eacute;p&eacute;s</a> - <a href="#"
@@ -70,7 +70,7 @@
 	</script>
 	<p></p>
 
-	Rendszer&uuml;zenet:
+	Rendszer&#369;zenet:
 	<FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
 	<p>
 	<form accept-charset="UTF-8" name="input"
@@ -79,7 +79,7 @@
 		<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
 		<textarea name="paramValue" cols="100" rows="5"></textarea>
 		<input name="setSystemParameter" type="submit"
-			value="Rendszer&uuml;zenet">
+			value="Rendszer&#369;zenet">
 	</form>
 
 	<form accept-charset="UTF-8" name="input"
@@ -122,7 +122,7 @@
 
 <form accept-charset="UTF-8" name="input" id="input5" action="../RegistrationServlet" method="post">
 <input type="hidden" id="command5" name="command" value="">
-	Mesteroklevelesek rögzítése. Makettez&ocirc; neve:  
+	Mesteroklevelesek rögzítése. Makettez&#337; neve:  
 	<input name="lastname" type="text" id="fullnameID"  onChange="sendRequest();">
     - 
     <select id="selectID" name="userID">

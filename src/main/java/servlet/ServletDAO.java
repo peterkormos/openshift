@@ -95,15 +95,15 @@ public class ServletDAO
 	charEncodeMap.put(209, "&Ntilde;");
 	charEncodeMap.put(210, "&Ograve;");
 	charEncodeMap.put(211, "&Oacute;");
-	charEncodeMap.put(212, "&Ocirc;");
-	charEncodeMap.put(213, "&Otilde;");
+	charEncodeMap.put(212, "&#337;");
+	charEncodeMap.put(213, "&#337;");
 	charEncodeMap.put(214, "&Ouml;");
 	charEncodeMap.put(215, "&times;");
 	charEncodeMap.put(216, "&Oslash;");
 	charEncodeMap.put(217, "&Ugrave;");
 	charEncodeMap.put(218, "&Uacute;");
 	charEncodeMap.put(219, "&Ucirc;");
-	charEncodeMap.put(220, "&Uuml;");
+	charEncodeMap.put(220, "&#369;");
 	charEncodeMap.put(221, "&Yacute;");
 	charEncodeMap.put(222, "&THORN;");
 	charEncodeMap.put(223, "&szlig;");
@@ -127,15 +127,15 @@ public class ServletDAO
 	charEncodeMap.put(241, "&ntilde;");
 	charEncodeMap.put(242, "&ograve;");
 	charEncodeMap.put(243, "&oacute;");
-	charEncodeMap.put(244, "&ocirc;");
-	charEncodeMap.put(245, "&otilde;");
+	charEncodeMap.put(244, "&#337;");
+	charEncodeMap.put(245, "&#337;");
 	charEncodeMap.put(246, "&ouml;");
 	charEncodeMap.put(247, "&divide;");
 	charEncodeMap.put(248, "&oslash;");
 	charEncodeMap.put(249, "&ugrave;");
 	charEncodeMap.put(250, "&uacute;");
 	charEncodeMap.put(251, "&ucirc;");
-	charEncodeMap.put(252, "&uuml;");
+	charEncodeMap.put(252, "&#369;");
 	charEncodeMap.put(253, "&yacute;");
 	charEncodeMap.put(254, "&thorn;");
 	charEncodeMap.put(255, "&yuml;");
@@ -1304,7 +1304,7 @@ public class ServletDAO
 	  // while (rs.next())
 	  // returned.add(new String[]
 	  // {
-	  // "<b>Regisztr&aacute;lt felhaszn&aacute;l&oacute;k ebb&otilde;l az orsz&aacute;gb&oacute;l:</b> "
+	  // "<b>Regisztr&aacute;lt felhaszn&aacute;l&oacute;k ebb&#337;l az orsz&aacute;gb&oacute;l:</b> "
 	  // + decodeStringFromDB(rs, "COUNTRY"),
 	  // String.valueOf(rs.getInt(2)) });
 	  // rs.close();

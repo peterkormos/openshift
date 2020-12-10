@@ -139,7 +139,7 @@ public class HibernateDAO
 	try
 	{
 	  get(record.getId(), record.getClass());
-	  throw new IllegalArgumentException("M&aacute;r l&eacute;tez&ocirc; bejegyz&eacute;s! sorsz&aacute;m: <b>" + record.getId()
+	  throw new IllegalArgumentException("M&aacute;r l&eacute;tez&#337; bejegyz&eacute;s! sorsz&aacute;m: <b>" + record.getId()
 		  + "</b>");
 	}
 	catch (Exception e)
