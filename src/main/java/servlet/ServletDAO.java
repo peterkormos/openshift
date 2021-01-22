@@ -3,6 +3,7 @@ package servlet;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,6 +23,8 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import datatype.AgeGroup;
 import datatype.AwardedModel;
@@ -30,12 +33,13 @@ import datatype.CategoryGroup;
 import datatype.Detailing;
 import datatype.Detailing.DetailingCriteria;
 import datatype.Detailing.DetailingGroup;
+import datatype.LoginConsent;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
 import exception.EmailNotFoundException;
 
-public class ServletDAO
+public class ServletDAO extends HibernateDAO
 {
   public static Logger logger = Logger.getLogger(ServletDAO.class);
 
@@ -66,9 +70,11 @@ public class ServletDAO
 	return this.dBConnection;
   }
 
-  public ServletDAO(RegistrationServlet registrationServlet, String dbURL, String dbUserName, String dbPassword)
+  public ServletDAO(RegistrationServlet registrationServlet, String dbURL, String dbUserName, String dbPassword,
+          URL configFile) 
       throws SQLException
   {
+      super(configFile);
 	this.dbURL = dbURL;
 	this.dbUserName = dbUserName;
 	this.dbPassword = dbPassword;
@@ -1713,4 +1719,48 @@ void deleteModels(final int categoryId) throws SQLException {
 	  }
 	}
   }
+
+  public void deleteLoginConsentData(int modellerId) throws Exception
+  {
+      Session session = null;
+      
+      try
+      {
+          session = getHibernateSession();
+          
+          session.beginTransaction();
+          
+          Query query = session.createQuery("delete LoginConsent where modellerID = :modellerId");
+          query.setInteger("modellerId", modellerId);
+          
+          query.executeUpdate();
+          session.getTransaction().commit();
+      }
+      finally
+      {
+          closeSession(session);
+      }
+  }
+
+  public List<LoginConsent> getLoginConsents(int modellerId) throws Exception
+  {
+      Session session = null;
+      
+      try
+      {
+          session = getHibernateSession();
+          
+          session.beginTransaction();
+
+          Query query = session.createQuery("From LoginConsent where modellerID = :modellerId");
+          query.setInteger("modellerId", modellerId);
+          
+        return new LinkedList<LoginConsent>(query.list());
+      }
+      finally
+      {
+          closeSession(session);
+      }
+  }
 }
+

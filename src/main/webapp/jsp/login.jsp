@@ -1,3 +1,4 @@
+<%@page import="datatype.LoginConsent.LoginConsentType"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 <%@page import="util.*"%>
@@ -32,11 +33,10 @@ if (showIdHttpParameter != null)
 
 <script> 
 	    function checkSubmit(form) {
-
 // 	    	alert(document.getElementById('submitbutton').disabled);
 
 	    	var showNotSet = form.show == null || form.show.value == '';
-	    	var dataUsageNoConsent = !document.getElementById('dataUsageConsent').checked;
+	    	var dataUsageNoConsent = !document.getElementById('dataUsageConsentCompetition').checked
 	    	var submitDisabled = form.email.value != 'admin' && 
 									(showNotSet || dataUsageNoConsent) 
 									;
@@ -116,7 +116,7 @@ if (showIdHttpParameter != null)
 						</tr>
 						<tr>
 							<td><FONT COLOR='#ff0000'><b><%=language.getString("email")%></b></FONT>:</td>
-							<td><input type="text" name="email"
+							<td><input type="text" name="email" id="email"
 								onchange="updateMandatoryFieldMark(this);"> <font
 								color='#FF0000' size='+3'>&#8226;</font></td>
 						</tr>
@@ -130,11 +130,28 @@ if (showIdHttpParameter != null)
 									</td>
 						</tr>
 						<tr>
-							<td colspan="2"><label> <input type="checkbox"
-									id="dataUsageConsent"
+							<td colspan="2">
+<!-- 							<label><input type="checkbox" -->
+<!-- 									id="dataUsageConsent" -->
+<!-- 									onchange="checkSubmit(document.getElementById('inputForm')) && updateMandatoryFieldMark(this);"> -->
+<%-- 									<%=language.getString("login.consent")%> <font color='#FF0000' --%>
+<!-- 									size='+3'>&#8226;</font></label> -->
+
+<%
+		    for (LoginConsentType lc : LoginConsent.LoginConsentType.values() ) {
+		%>
+							<label><input type="checkbox"
+									id="dataUsageConsent<%=lc.name() %>"
+									name="dataUsageConsent<%=lc.name() %>"
+									<%= lc.isMandatory() ? "required='required'" : "" %> 
 									onchange="checkSubmit(document.getElementById('inputForm')) && updateMandatoryFieldMark(this);">
-									<%=language.getString("login.consent")%> <font color='#FF0000'
-									size='+3'>&#8226;</font></label></td>
+									<%= language.getString("login.consent." + lc.name()) %> <font color='#FF0000'
+									size='+3'>&#8226;</font></label>
+									<br>
+		<%
+		    }
+		%>									
+									</td>
 						</tr>
 						<tr>
 							<td colspan="2" align="center"><input name="submit"
