@@ -109,12 +109,16 @@ a:active {
 }
 
 .flash.Warning {
+/*
 	background: url(../icons/warning.png) 8px 8px no-repeat;
 	background-position: left center;
+*/
+	width: 100%; 
+	padding-left: 8px;
 	background-color: #ffD1A4;
 	border: 1px solid;
 	border-color: #ff8000;
-	vertical-align: middle
+	vertical-align: middle;
 }
 
 .disabledClass {
