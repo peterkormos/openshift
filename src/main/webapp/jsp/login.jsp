@@ -33,41 +33,42 @@ if (showIdHttpParameter != null)
 
 <script> 
 	    function checkSubmit(form) {
-// 	    	alert(document.getElementById('submitbutton').disabled);
-
 	    	var showNotSet = form.show == null || form.show.value == '';
 	    	var dataUsageNoConsent = !document.getElementById('dataUsageConsentCompetition').checked
-	    	var submitDisabled = form.email.value != 'admin' && 
+	    	var submitDisabled =  
 									(showNotSet || dataUsageNoConsent) 
 									;
+	    	var noticeDiv = document.getElementById('noticeDiv');
+	    	var submitButton = document.getElementById('submitbutton');
 	    	
-// 	    	alert(submitDisabled);
-
 	    	if (submitDisabled)
 	        {  
 		        if (showNotSet)
 			    {
-					document.getElementById('noticeDiv').innerHTML = '<%=language.getString("select.show")%>';
+					noticeDiv.innerHTML = '<%=language.getString("select.show")%>';
 				}
 		        else if (dataUsageNoConsent) 
 			    {
-					document.getElementById('noticeDiv').innerHTML = '<%=language.getString("data.usage.no.consent.warning")%>';
+					noticeDiv.innerHTML = '<%=language.getString("data.usage.no.consent.warning")%>';
 			    }
 			    	
-				document.getElementById('noticeDiv').className = "flash ERROR";
+				noticeDiv.className = "flash ERROR";
 	
-				document.getElementById('submitbutton').className = "disabledClass";
-				document.getElementById('submitbutton').disabled = true;
+				submitButton.className = "disabledClass";
+				submitButton.disabled = true;
+
 				return false;
-			} else {
-				document.getElementById('noticeDiv').innerHTML = '&nbsp;';
-				document.getElementById('noticeDiv').className = "flash";
+			} 
+			else 
+			{
+				noticeDiv.innerHTML = '&nbsp;';
+				noticeDiv.className = "flash";
 	
-				document.getElementById('submitbutton').className = "";
-				document.getElementById('submitbutton').disabled = false;
+				submitButton.className = "";
+				submitButton.disabled = false;
 				
 				return true;
-		}
+			}
 	}
 </script>
 </head>
@@ -140,7 +141,9 @@ if (showIdHttpParameter != null)
 <%
 		    for (LoginConsentType lc : LoginConsent.LoginConsentType.values() ) {
 		%>
-							<label><input type="checkbox"
+							<label
+							<%= lc.isMandatory() ? "class='flash Warning'" : "" %>
+							><input type="checkbox"
 									id="dataUsageConsent<%=lc.name() %>"
 									name="dataUsageConsent<%=lc.name() %>"
 									<%= lc.isMandatory() ? "required='required'" : "" %> 
