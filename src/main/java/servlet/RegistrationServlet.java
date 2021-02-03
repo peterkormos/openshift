@@ -63,7 +63,6 @@ import datatype.Detailing.DetailingGroup;
 import datatype.EmailParameter;
 import datatype.LoginConsent;
 import datatype.LoginConsent.LoginConsentType;
-import datatype.judging.JudgingScore;
 import datatype.MainPageNotice;
 import datatype.Model;
 import datatype.ModelClass;
@@ -77,6 +76,7 @@ import tools.ExcelUtil.Workbook;
 import tools.InitDB;
 import util.CommonSessionAttribute;
 import util.LanguageUtil;
+import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
 	public String VERSION = "2021.01.28.";
@@ -99,6 +99,8 @@ public class RegistrationServlet extends HttpServlet {
 	private static RegistrationServlet instance;
 
 	private Properties servletConfig = new Properties();
+	
+	private EmailUtil emailUtil;
 
 	public static enum SessionAttribute {
 	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId
@@ -147,6 +149,8 @@ public class RegistrationServlet extends HttpServlet {
 						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml")
 						);
 			}
+			
+			emailUtil = new EmailUtil();
 
 			printBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/print.html"));
 			printCardBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/printCard.html"));
@@ -1026,7 +1030,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void sendEmailWithModels(final User user, final boolean insertUserDetails)
-			throws SQLException, MessagingException, MissingServletConfigException {
+			throws SQLException, MessagingException, MissingServletConfigException, IOException {
 		final StringBuilder message = new StringBuilder();
 		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
@@ -1098,14 +1102,13 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void sendEmail(final String to, final String subject, final StringBuilder message)
-			throws MessagingException, MissingServletConfigException {
+			throws MessagingException, MissingServletConfigException, IOException {
 		if (to.trim().length() == 0 || to.equals("-") || to.indexOf("@") == -1) {
 			return;
 		}
 		if (!isOnSiteUse())
-			ServletUtil.sendEmail(getServerConfigParamter("email.smtpServer"), getServerConfigParamter("email.from"),
-					to, subject, message.toString(), Boolean.parseBoolean(getServerConfigParamter("email.debugSMTP")),
-					getServerConfigParamter("email.password"));
+		    emailUtil.sendEmail(getServerConfigParamter("email.from"),
+					to, subject, message.toString());
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
