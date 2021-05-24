@@ -3,6 +3,7 @@ package servlet;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,6 +23,8 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import datatype.AgeGroup;
 import datatype.AwardedModel;
@@ -30,12 +33,13 @@ import datatype.CategoryGroup;
 import datatype.Detailing;
 import datatype.Detailing.DetailingCriteria;
 import datatype.Detailing.DetailingGroup;
+import datatype.LoginConsent;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
 import exception.EmailNotFoundException;
 
-public class ServletDAO
+public class ServletDAO extends HibernateDAO
 {
   public static Logger logger = Logger.getLogger(ServletDAO.class);
 
@@ -66,9 +70,11 @@ public class ServletDAO
 	return this.dBConnection;
   }
 
-  public ServletDAO(RegistrationServlet registrationServlet, String dbURL, String dbUserName, String dbPassword)
+  public ServletDAO(RegistrationServlet registrationServlet, String dbURL, String dbUserName, String dbPassword,
+          URL configFile) 
       throws SQLException
   {
+      super(configFile);
 	this.dbURL = dbURL;
 	this.dbUserName = dbUserName;
 	this.dbPassword = dbPassword;
@@ -95,15 +101,15 @@ public class ServletDAO
 	charEncodeMap.put(209, "&Ntilde;");
 	charEncodeMap.put(210, "&Ograve;");
 	charEncodeMap.put(211, "&Oacute;");
-	charEncodeMap.put(212, "&Ocirc;");
-	charEncodeMap.put(213, "&Otilde;");
+	charEncodeMap.put(212, "&#337;");
+	charEncodeMap.put(213, "&#337;");
 	charEncodeMap.put(214, "&Ouml;");
 	charEncodeMap.put(215, "&times;");
 	charEncodeMap.put(216, "&Oslash;");
 	charEncodeMap.put(217, "&Ugrave;");
 	charEncodeMap.put(218, "&Uacute;");
 	charEncodeMap.put(219, "&Ucirc;");
-	charEncodeMap.put(220, "&Uuml;");
+	charEncodeMap.put(220, "&#369;");
 	charEncodeMap.put(221, "&Yacute;");
 	charEncodeMap.put(222, "&THORN;");
 	charEncodeMap.put(223, "&szlig;");
@@ -127,15 +133,15 @@ public class ServletDAO
 	charEncodeMap.put(241, "&ntilde;");
 	charEncodeMap.put(242, "&ograve;");
 	charEncodeMap.put(243, "&oacute;");
-	charEncodeMap.put(244, "&ocirc;");
-	charEncodeMap.put(245, "&otilde;");
+	charEncodeMap.put(244, "&#337;");
+	charEncodeMap.put(245, "&#337;");
 	charEncodeMap.put(246, "&ouml;");
 	charEncodeMap.put(247, "&divide;");
 	charEncodeMap.put(248, "&oslash;");
 	charEncodeMap.put(249, "&ugrave;");
 	charEncodeMap.put(250, "&uacute;");
 	charEncodeMap.put(251, "&ucirc;");
-	charEncodeMap.put(252, "&uuml;");
+	charEncodeMap.put(252, "&#369;");
 	charEncodeMap.put(253, "&yacute;");
 	charEncodeMap.put(254, "&thorn;");
 	charEncodeMap.put(255, "&yuml;");
@@ -1304,7 +1310,7 @@ public class ServletDAO
 	  // while (rs.next())
 	  // returned.add(new String[]
 	  // {
-	  // "<b>Regisztr&aacute;lt felhaszn&aacute;l&oacute;k ebb&otilde;l az orsz&aacute;gb&oacute;l:</b> "
+	  // "<b>Regisztr&aacute;lt felhaszn&aacute;l&oacute;k ebb&#337;l az orsz&aacute;gb&oacute;l:</b> "
 	  // + decodeStringFromDB(rs, "COUNTRY"),
 	  // String.valueOf(rs.getInt(2)) });
 	  // rs.close();
@@ -1713,4 +1719,48 @@ void deleteModels(final int categoryId) throws SQLException {
 	  }
 	}
   }
+
+  public void deleteLoginConsentData(int modellerId) throws Exception
+  {
+      Session session = null;
+      
+      try
+      {
+          session = getHibernateSession();
+          
+          session.beginTransaction();
+          
+          Query query = session.createQuery("delete LoginConsent where modellerID = :modellerId");
+          query.setInteger("modellerId", modellerId);
+          
+          query.executeUpdate();
+          session.getTransaction().commit();
+      }
+      finally
+      {
+          closeSession(session);
+      }
+  }
+
+  public List<LoginConsent> getLoginConsents(int modellerId) throws Exception
+  {
+      Session session = null;
+      
+      try
+      {
+          session = getHibernateSession();
+          
+          session.beginTransaction();
+
+          Query query = session.createQuery("From LoginConsent where modellerID = :modellerId");
+          query.setInteger("modellerId", modellerId);
+          
+        return new LinkedList<LoginConsent>(query.list());
+      }
+      finally
+      {
+          closeSession(session);
+      }
+  }
 }
+

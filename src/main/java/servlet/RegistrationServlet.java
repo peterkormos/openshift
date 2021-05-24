@@ -61,6 +61,8 @@ import datatype.Detailing;
 import datatype.Detailing.DetailingCriteria;
 import datatype.Detailing.DetailingGroup;
 import datatype.EmailParameter;
+import datatype.LoginConsent;
+import datatype.LoginConsent.LoginConsentType;
 import datatype.MainPageNotice;
 import datatype.Model;
 import datatype.ModelClass;
@@ -74,9 +76,10 @@ import tools.ExcelUtil.Workbook;
 import tools.InitDB;
 import util.CommonSessionAttribute;
 import util.LanguageUtil;
+import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2020.03.02.";
+	public String VERSION = "2021.02.03.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -96,6 +99,8 @@ public class RegistrationServlet extends HttpServlet {
 	private static RegistrationServlet instance;
 
 	private Properties servletConfig = new Properties();
+	
+	private EmailUtil emailUtil;
 
 	public static enum SessionAttribute {
 	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId
@@ -140,8 +145,12 @@ public class RegistrationServlet extends HttpServlet {
 
 			if (servletDAO == null) {
 				servletDAO = new ServletDAO(this, getServerConfigParamter("db.url"),
-						getServerConfigParamter("db.username"), getServerConfigParamter("db.password"));
+						getServerConfigParamter("db.username"), getServerConfigParamter("db.password"),
+						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml")
+						);
 			}
+			
+			emailUtil = new EmailUtil();
 
 			printBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/print.html"));
 			printCardBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/printCard.html"));
@@ -484,11 +493,28 @@ public class RegistrationServlet extends HttpServlet {
 
 		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
 				+ show);
+		
+		saveLoginConsentData(request, user);
 
 		initHttpSession(request, user, show);
 
 		redirectToMainPage(request, response);
 	}
+
+    private void saveLoginConsentData(HttpServletRequest request, User user) {
+        try {
+            servletDAO.deleteLoginConsentData(user.getUserID());
+            
+            for (LoginConsentType type : LoginConsent.LoginConsentType.values()) {
+                if (isCheckedIn(request, "dataUsageConsent" + type.name())) {
+                    LoginConsent lc = new LoginConsent(servletDAO.getNextID(LoginConsent.class), user.getUserID(), type);
+                    servletDAO.save(lc);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+    }
 
     private void initHttpSession(final HttpServletRequest request, final User user, String show) {
         final HttpSession session = request.getSession(true);
@@ -1004,7 +1030,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void sendEmailWithModels(final User user, final boolean insertUserDetails)
-			throws SQLException, MessagingException, MissingServletConfigException {
+			throws SQLException, MessagingException, MissingServletConfigException, IOException {
 		final StringBuilder message = new StringBuilder();
 		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
@@ -1076,14 +1102,13 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void sendEmail(final String to, final String subject, final StringBuilder message)
-			throws MessagingException, MissingServletConfigException {
+			throws MessagingException, MissingServletConfigException, IOException {
 		if (to.trim().length() == 0 || to.equals("-") || to.indexOf("@") == -1) {
 			return;
 		}
 		if (!isOnSiteUse())
-			ServletUtil.sendEmail(getServerConfigParamter("email.smtpServer"), getServerConfigParamter("email.from"),
-					to, subject, message.toString(), Boolean.parseBoolean(getServerConfigParamter("email.debugSMTP")),
-					getServerConfigParamter("email.password"));
+		    emailUtil.sendEmail(getServerConfigParamter("email.from"),
+					to, subject, message.toString());
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1264,6 +1289,10 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(language.getString("telephone"));
 		buff.append("</th>");
 
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append("Login consent");
+		buff.append("</th>");
+		
 		buff.append("</tr>");
 
 		for (final User user : users) {
@@ -1317,6 +1346,11 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append(user.telephone);
 			buff.append("</td>");
 
+			
+			buff.append("<td align='center' >");
+            buff.append(servletDAO.getLoginConsents(user.getUserID()).stream().map(lc -> lc.getType().name()).collect(Collectors.joining(", ")));
+			buff.append("</td>");
+			
 			buff.append("</tr>");
 		}
 
@@ -1325,7 +1359,12 @@ public class RegistrationServlet extends HttpServlet {
 		return buff;
 	}
 
-	public void inputForAddCategory(final HttpServletRequest request, final HttpServletResponse response)
+	private Object getLoginConsents(int userID) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void inputForAddCategory(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final ResourceBundle language = getLanguageForCurrentUser(request);
 		
@@ -1548,11 +1587,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	boolean isCheckedIn(final HttpServletRequest request, final String parameter) {
-		try {
-			return "on".equalsIgnoreCase(ServletUtil.getRequestAttribute(request, parameter));
-		} catch (final Exception e) {
-			return false;
-		}
+			return "on".equalsIgnoreCase(ServletUtil.getOptionalRequestAttribute(request, parameter));
 	}
 
 	private Map<DetailingGroup, Detailing> getDetailing(final HttpServletRequest request) {

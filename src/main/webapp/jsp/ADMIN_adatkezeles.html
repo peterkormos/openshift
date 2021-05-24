@@ -1,0 +1,24 @@
+	<em><strong>Adatkezel&eacute;s..</strong>.</em>
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+	<input type="hidden" name="command" id="command2"> 
+	<input type="hidden" name="photos" value="yes"> 
+	<a href="#"
+		onClick="document.getElementById('command2').value='exportData';this.parentNode.submit();">&Ouml;sszes adat export&aacute;l&aacute;sa</a>
+-
+	<a href="#"
+		onClick="document.getElementById('command2').value='exportCategoryData';this.parentNode.submit();">Csak a kateg&oacute;ri&aacute;k export&aacute;l&aacute;sa</a>
+</form>
+<!-- 
+<form accept-charset="UTF-8" name="input" action="../RegistrationServlet" method="post">
+	<input type="hidden" name="command" value="exportData"> <input
+		type="hidden" name="photos" value="no"> <input
+		name="exportData" type="submit"
+		value="&Ouml;sszes adat export&aacute;l&aacute;sa k&eacute;pek n&eacute;lk&uuml;l">
+</form>
+ -->
+
+<form accept-charset="UTF-8" action="../RegistrationServlet" method="post" enctype="multipart/form-data" name="input">
+	<input type="hidden" name="command" value="importData"> 
+	<input type="file" name="zipFile"> 
+	<input type="submit" value="Adatok import&aacute;l&aacute;sa">
+</form>
