@@ -142,21 +142,38 @@ public int modelID;
   }
 
   public Model(int modelID, int userID, int categoryID, String scale, String name, String producer, String comment,
-	  String identification, String markings, boolean gluedToBase, Map<DetailingGroup, Detailing> detailing)
+		  String identification, String markings, boolean gluedToBase, Map<DetailingGroup, Detailing> detailing)
+	  {
+		this.modelID = modelID;
+		this.userID = userID;
+		this.categoryID = categoryID;
+		this.scale = scale;
+		this.name = name;
+		this.producer = producer;
+		this.comment = comment;
+
+		this.identification = identification;
+		this.markings = markings;
+		this.gluedToBase = gluedToBase;
+
+		this.detailing = detailing;
+	  }
+  
+	public Model(Model model)
   {
-	this.modelID = modelID;
-	this.userID = userID;
-	this.categoryID = categoryID;
-	this.scale = scale;
-	this.name = name;
-	this.producer = producer;
-	this.comment = comment;
+	this.modelID = model.modelID;
+	this.userID = model.userID;
+	this.categoryID = model.categoryID;
+	this.scale = model.scale;
+	this.name = model.name;
+	this.producer = model.producer;
+	this.comment = model.comment;
 
-	this.identification = identification;
-	this.markings = markings;
-	this.gluedToBase = gluedToBase;
+	this.identification = model.identification;
+	this.markings = model.markings;
+	this.gluedToBase = model.gluedToBase;
 
-	this.detailing = detailing;
+	this.detailing = model.detailing;
   }
 
   @Override

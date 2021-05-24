@@ -2,15 +2,14 @@ package datatype;
 
 import java.io.Serializable;
 
-public class AwardedModel implements Serializable
+public class AwardedModel  extends Model
 {
-  public Model model;
   public String award;
 
-  public AwardedModel(String award, Model model)
+  public AwardedModel(Model model, String award)
   {
+	  super(model);
 	this.award = award;
-	this.model = model;
   }
 
   public AwardedModel()
@@ -21,7 +20,7 @@ public class AwardedModel implements Serializable
   @Override
   public String toString()
   {
-	return " award: " + award + " model: " + model;
+	return " award: " + award + " model: " + super.toString();
   }
 
 }

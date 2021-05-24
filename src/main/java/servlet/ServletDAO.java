@@ -368,7 +368,7 @@ public class ServletDAO
 	  final List<AwardedModel> returned = new LinkedList<AwardedModel>();
 	  while (rs.next())
 	  {
-		returned.add(new AwardedModel(decodeStringFromDB(rs, "AWARD"), getModel(rs.getInt("MODEL_ID"))));
+		returned.add(new AwardedModel(getModel(rs.getInt("MODEL_ID")), decodeStringFromDB(rs, "AWARD")));
 	  }
 
 	  return returned;
@@ -591,7 +591,7 @@ public class ServletDAO
 	{
 	  queryStatement = getDBConnection().prepareStatement("insert into MAK_AWARDEDMODELS" + " (MODEL_ID, AWARD) values (?,?)");
 
-	  queryStatement.setInt(1, model.model.modelID);
+	  queryStatement.setInt(1, model.modelID);
 
 	  queryStatement.setString(2, model.award);
 

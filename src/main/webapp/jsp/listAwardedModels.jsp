@@ -23,8 +23,9 @@
 		  continue;
 		}
 
-		final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-		model.award = ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim();
+		final AwardedModel model = new AwardedModel(servletDAO.getModel(Integer.parseInt(modelID)),
+				ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim()
+				);
 		models.add(model);
   }
 

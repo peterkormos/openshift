@@ -855,8 +855,8 @@ public class RegistrationServlet extends HttpServlet {
 		final String show = getShowFromSession(request);
 
 		for (final AwardedModel awardedModel : servletDAO.getAwardedModels()) {
-			if (servletDAO.getCategory(awardedModel.model.categoryID).group.show.equals(show)) {
-				servletDAO.deleteAwardedModel(awardedModel.model.modelID);
+			if (servletDAO.getCategory(awardedModel.categoryID).group.show.equals(show)) {
+				servletDAO.deleteAwardedModel(awardedModel.modelID);
 			}
 		}
 
@@ -2259,7 +2259,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			final String award = ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim();
 
-			servletDAO.saveAwardedModel(new AwardedModel(award, model));
+			servletDAO.saveAwardedModel(new AwardedModel(model, award));
 		}
 
 		redirectToMainPage(request, response);
