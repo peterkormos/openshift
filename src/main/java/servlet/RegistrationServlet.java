@@ -709,7 +709,7 @@ public class RegistrationServlet extends HttpServlet {
         public void exportExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
             final String show = getShowFromSession(request);
     
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setContentType("application/vnd.ms-excel");
     
             ResourceBundle language = getLanguageForCurrentUser(request);
             final List<Model> models = servletDAO.getModels(ServletDAO.INVALID_USERID);
