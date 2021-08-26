@@ -70,7 +70,7 @@
 	</script>
 	<p></p>
 
-	Rendszer&#369;zenet:
+	Rendszer&#252;zenet:
 	<FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
 	<p>
 	<form accept-charset="UTF-8" name="input"
@@ -79,7 +79,7 @@
 		<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
 		<textarea name="paramValue" cols="100" rows="5"></textarea>
 		<input name="setSystemParameter" type="submit"
-			value="Rendszer&#369;zenet">
+			value="Rendszer&#252;zenet">
 	</form>
 
 	<form accept-charset="UTF-8" name="input"
