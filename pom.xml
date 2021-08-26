@@ -12,12 +12,6 @@
   </scm>
 
   <dependencies>
-<!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
-<dependency>
-    <groupId>net.sf.jasperreports</groupId>
-    <artifactId>jasperreports</artifactId>
-    <version>6.2.1</version>
-</dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
