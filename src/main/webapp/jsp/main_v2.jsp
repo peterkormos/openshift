@@ -104,7 +104,7 @@ function showModal(location)
     if (servlet.isRegistrationAllowed(show))
   {
 %> 
-				<td style="width: 40px;">
+				<td style="width: 40px; vertical-align:top;">
 						<div class="tooltip">
 	<a href="#"
 					onClick="document.getElementById('command').value='inputForAddModel';document.getElementById('input').submit();">
@@ -122,7 +122,7 @@ function showModal(location)
   if (servlet.isRegistrationAllowed(show) && !models.isEmpty())
   {
 %>
-				<td style="width: 40px;">
+				<td style="width: 40px; vertical-align:top;">
   <div class="tooltip">
   <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttribute.Action.name()%>=inputForModifyModel&<%=RegistrationServlet.SessionAttribute.SubmitLabel.name()%>=modify');">
   <img src="../icons/modify.png" height="30" align="center" /> <span
@@ -130,7 +130,7 @@ function showModal(location)
 						</a></div>
 				</td>
    
-				<td style="width: 40px;">
+				<td style="width: 40px; vertical-align:top;">
   <div class="tooltip">
   <a href="#" onClick="showModal('selectModel.jsp?<%=RegistrationServlet.SessionAttribute.Action.name()%>=deleteModel&<%=RegistrationServlet.SessionAttribute.SubmitLabel.name()%>=delete');">
   <img src="../icons/delete2.png" height="30" align="center" /> <span
@@ -142,20 +142,15 @@ function showModal(location)
 <%
 }
 %>
-				<td style="width: 100%;">
+				<td style="width: 100%; vertical-align:top;">
   <div class="tooltip">
   <a href="#" onClick="document.getElementById('command').value='sendEmail';document.getElementById('input').submit();">
   <img src="../icons/email.png" height="30" align="center" /> <span
 								class="tooltiptext"> <%=language.getString("send.email")%></span>
 						</a></div>
 				</td>
-				
-				<td>
-					<input type="hidden" name="fileName" value="<%= RegistrationServlet.MainPageType.Old.getFileName()%>">
-					<input class="main" onClick="document.getElementById('input').action='setNewDesign.jsp'" type='submit' value='Old design'>
-				</td>
 
-				<td style="width: 40px; text-align: right;"
+				<td style="width: 40px; text-align: right; vertical-align:top;"
 				>
   <div class="tooltip">
   <a href="#" onClick="document.getElementById('command').value='logout';document.getElementById('input').submit();">
@@ -164,12 +159,17 @@ function showModal(location)
 						</a></div>
 				</td>
 
-				<td style="width: 40px; text-align: right;">
+				<td style="width: 40px; text-align: right; vertical-align:top;">
   <div class="tooltip">
   <a href="#" onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
   <img src="../icons/modify2.png" height="30" align="center" /><span
 								class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
 						</a></div>
+				</td>
+				
+				<td style="vertical-align:top;">
+					<input type="hidden" name="fileName" value="<%= RegistrationServlet.MainPageType.Old.getFileName()%>">
+					<input class="main" onClick="document.getElementById('input').action='setNewDesign.jsp'" type='submit' value='Old design'>
 				</td>
 			</tr>
 		</table>
