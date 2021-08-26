@@ -142,7 +142,7 @@ public class Model implements Serializable {
         this.detailing = detailing;
     }
 
-    public Model(int modelID, int userID, int categoryID, String scale, String name, String producer, String comment, String identification,
+    public Model(int modelID, int userID, int categoryID, String scale, String name, String producer, String comment,
 	  String identification, String markings, boolean gluedToBase, Map<DetailingGroup, Detailing> detailing)
   {
 	this.modelID = modelID;
