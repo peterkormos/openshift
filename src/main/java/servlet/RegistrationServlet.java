@@ -2003,8 +2003,6 @@ public class RegistrationServlet extends HttpServlet {
 
 			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
 			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
-			// System.out.println("printModels " + models.size() + " " +
-			// subList.size() + " " + !models.isEmpty());
 			models.removeAll(subList);
 
 			modelsRemainingToPrint -= currentModelsOnPage;
@@ -2019,8 +2017,6 @@ public class RegistrationServlet extends HttpServlet {
 	StringBuilder printModels(final ResourceBundle language, final User user, final List<Model> models,
 			final StringBuilder printBuffer, final int rows, final int cols, boolean pageBreak)
 			throws Exception, IOException {
-		// System.out.println("printModels " + models.size() + " " + rows + " "
-		// + cols + " " + pageBreak);
 
 		final int width = 100 / cols;
 		final int height = 100 / rows;
@@ -2513,7 +2509,6 @@ public class RegistrationServlet extends HttpServlet {
 
 		for (final CategoryGroup group : servletDAO.getCategoryGroups()) {
 			if (show != null && !group.show.equals(show)) {
-				// System.out.println(group.show + " " + show);
 				continue;
 			}
 
@@ -2596,7 +2591,6 @@ public class RegistrationServlet extends HttpServlet {
 
 					messageBody.append("<p>\n\r");
 					messageBody.append("\n\r</body></html>");
-					System.out.println(user.userID + " " + user.email);
 
 					sendEmail(user.email, language.getString("email.subject"), messageBody);
 					Thread.sleep(TimeUnit.SECONDS.toMillis(30));
