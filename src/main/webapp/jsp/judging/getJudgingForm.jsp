@@ -28,7 +28,7 @@
 
     int maxlength = JudgingScore.MAX_COMMENT_LENGTH;
     
-    String unjudgedCriteriaStyle = "background-color: grey;";
+    String unjudgedCriteriaStyle = "background-color: lightgrey;";
 %>
 
 <%
@@ -175,9 +175,7 @@ function setModelInSession(value)
 				  {
 				  	boolean hasScore = judgedModel != null && scores.get(criteria.getId()) != null;
 				%>
-				<tr bgcolor="<%=highlight()%>"
-				<%= hasScore ? "" : "style = '"+unjudgedCriteriaStyle+"'"%>
-				>
+				<tr style="border: 1px solid; <%= hasScore ? "" : unjudgedCriteriaStyle%>">
 					<td><%=criteria.getId()%></td>
 					<td><%=criteria.getDescription()%></td>
 					<td>
@@ -200,7 +198,7 @@ function setModelInSession(value)
 						name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%= criteria.getId() %>"
 						value="<%=i%>"
 						<%= hasScore && scores.get(criteria.getId()).get(0).getScore() == i ? "checked='checked'" : "" %>
-						onchange="parentNode.parentNode.parentNode.style = '';"
+						onchange="parentNode.parentNode.parentNode.style = 'border: 1px solid; ';"
 						><%=i%> 
 						</label>
 		<%

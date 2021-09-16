@@ -66,19 +66,19 @@
 					<%
 					  for (AwardedModel awardedModel : awardedModels)
 							{
-							  if (awardedModel.model.categoryID != category.categoryID)
+							  if (awardedModel.categoryID != category.categoryID)
 								continue;
 					%>
 					<tr>
-						<td align="center"><%=awardedModel.model.name%></td>
-						<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.model.userID).getFullName()%></td>
+						<td align="center"><%=awardedModel.name%></td>
+						<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.userID).getFullName()%></td>
 						<td align="center"><%=awardedModel.award%></td>
 						<%
 						  //				  if (RegistrationServlet.onSiteUse)
 								  {
 						%>
 						<td align="center"><img
-							src='<%=servlet.getServletURL(request)%>/<%=Command.LOADIMAGE.name()%>/<%=awardedModel.model.modelID%>'>
+							src='<%=servlet.getServletURL(request)%>/<%=Command.LOADIMAGE.name()%>/<%=awardedModel.modelID%>'>
 						</td>
 						<%
 						  }

@@ -4,58 +4,59 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 public class ExcelUtil {
 
     public static class Spreadsheet {
-        private XSSFSheet xSSFSheet;
+        private Sheet sheet;
 
         public Spreadsheet(String spreadSheetName, Workbook workbook) {
-            xSSFSheet = workbook.xSSFWorkbook.createSheet(spreadSheetName);
+            sheet = workbook.workbook.createSheet(spreadSheetName);
         }
 
-        private Spreadsheet(XSSFSheet spreadsheet) {
-            xSSFSheet = spreadsheet;
+        private Spreadsheet(Sheet spreadsheet) {
+            sheet = spreadsheet;
         }
     }
 
     public static class Workbook implements AutoCloseable {
-        private XSSFWorkbook xSSFWorkbook;
+        private HSSFWorkbook workbook;
 
         public Workbook() {
-            xSSFWorkbook = new XSSFWorkbook();
+            workbook = new HSSFWorkbook();
         }
 
         @Override
         public void close() throws IOException {
-            xSSFWorkbook.close();
+            workbook.close();
 
         }
 
         public final void writeTo(OutputStream stream) throws IOException {
-            xSSFWorkbook.write(stream);
+            workbook.write(stream);
         }
 
     }
 
     public static Spreadsheet createSpreadsheet(String spreadSheetName, List<String> columnHeaders, List<List<Object>> tableData,
             Workbook workbook, int startRow) {
-        Spreadsheet spreadsheet = new Spreadsheet(createSpreadsheet(spreadSheetName, workbook.xSSFWorkbook));
+        Spreadsheet spreadsheet = new Spreadsheet(createSpreadsheet(spreadSheetName, workbook.workbook));
 
         createTableInSpreadsheet(columnHeaders, tableData, workbook, spreadsheet, startRow);
 
@@ -64,11 +65,11 @@ public class ExcelUtil {
 
     public static void createTableInSpreadsheet(List<String> columnHeaders, List<List<Object>> tableData, Workbook workbook,
             Spreadsheet spreadsheet, int startRow) {
-        int nextRow = createHeaderRow(columnHeaders, workbook.xSSFWorkbook, spreadsheet.xSSFSheet, startRow);
+        int nextRow = createHeaderRow(columnHeaders, workbook.workbook, spreadsheet.sheet, startRow);
 
-        createDataRows(columnHeaders.size(), tableData, workbook.xSSFWorkbook, spreadsheet.xSSFSheet, nextRow);
+        createDataRows(columnHeaders.size(), tableData, workbook.workbook, spreadsheet.sheet, nextRow);
 
-        IntStream.range(0, columnHeaders.size()).forEach(x -> spreadsheet.xSSFSheet.autoSizeColumn(x));
+        IntStream.range(0, columnHeaders.size()).forEach(x -> spreadsheet.sheet.autoSizeColumn(x));
     }
 
     public static Workbook createWorkbook() {
@@ -83,13 +84,13 @@ public class ExcelUtil {
         return workbook;
     }
 
-    private static void createDataRows(int columnHeadersSize, List<List<Object>> tableData, XSSFWorkbook workbook, XSSFSheet spreadsheet,
+    private static void createDataRows(int columnHeadersSize, List<List<Object>> tableData, HSSFWorkbook workbook, Sheet spreadsheet,
             int nextRow) {
         CellStyle bigDecimalCellStyle = workbook.createCellStyle();
         DataFormat format = workbook.createDataFormat();
         bigDecimalCellStyle.setDataFormat(format.getFormat("#0.0000000000"));
 
-        XSSFCellStyle dataRowStyle = ExcelUtil.createDataRowStyle(workbook);
+        HSSFCellStyle dataRowStyle = ExcelUtil.createDataRowStyle(workbook);
         
         for(List<Object> resultRow :tableData) 
         {
@@ -97,9 +98,9 @@ public class ExcelUtil {
                 throw new IllegalArgumentException(
                         String.format("resultRow.size: %d columnHeadersSize: %d", resultRow.size(), columnHeadersSize));
 
-            XSSFRow dataRow = spreadsheet.createRow(nextRow++);
+            Row dataRow = spreadsheet.createRow(nextRow++);
             IntStream.range(0, columnHeadersSize).forEach(columnIndex -> {
-                XSSFCell cell = dataRow.createCell(columnIndex);
+                Cell cell = dataRow.createCell(columnIndex);
                 cell.setCellStyle(dataRowStyle);
                 Object cellValue = resultRow.get(columnIndex);
                 if ((cellValue instanceof String) || (cellValue instanceof Character)) {
@@ -115,22 +116,22 @@ public class ExcelUtil {
         };
     }
 
-    private static XSSFCellStyle createDataRowStyle(XSSFWorkbook workbook) {
+    private static HSSFCellStyle createDataRowStyle(HSSFWorkbook workbook) {
         // data row cell style
-        XSSFFont dataRowFont = workbook.createFont();
-        XSSFCellStyle dataRowStyle = workbook.createCellStyle();
+        HSSFFont dataRowFont = workbook.createFont();
+        HSSFCellStyle dataRowStyle = workbook.createCellStyle();
         dataRowStyle.setFont(dataRowFont);
         return dataRowStyle;
     }
 
-    private static int createHeaderRow(List<String> columnHeaders, XSSFWorkbook workbook, XSSFSheet spreadsheet, int row) {
-        XSSFRow headerRow = spreadsheet.createRow(row);
-        XSSFCellStyle headerStyle = ExcelUtil.createHeaderRowStyle(workbook);
+    private static int createHeaderRow(List<String> columnHeaders, HSSFWorkbook workbook, Sheet spreadsheet, int row) {
+        Row headerRow = spreadsheet.createRow(row);
+        HSSFCellStyle headerStyle = ExcelUtil.createHeaderRowStyle(workbook);
         IntStream.range(0, columnHeaders.size()).forEach(index -> {
 
             // add cells to header row
             String columnHeader = columnHeaders.get(index);
-            XSSFCell headerCell = headerRow.createCell(index);
+            Cell headerCell = headerRow.createCell(index);
             headerCell.setCellValue(columnHeader);
             headerCell.setCellStyle(headerStyle);
         });
@@ -138,12 +139,12 @@ public class ExcelUtil {
         return ++row;
     }
 
-    private static XSSFCellStyle createHeaderRowStyle(XSSFWorkbook workbook) {
+    private static HSSFCellStyle createHeaderRowStyle(HSSFWorkbook workbook) {
         // header row cell style
-        XSSFFont headerFont = workbook.createFont();
+        HSSFFont headerFont = workbook.createFont();
         headerFont.setColor(IndexedColors.BLACK.getIndex());
         headerFont.setBold(true);
-        XSSFCellStyle headerRowStyle = workbook.createCellStyle();
+        HSSFCellStyle headerRowStyle = workbook.createCellStyle();
         headerRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         headerRowStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         headerRowStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -151,7 +152,7 @@ public class ExcelUtil {
         return headerRowStyle;
     }
 
-    private static XSSFSheet createSpreadsheet(String spreadSheetName, XSSFWorkbook workbook) {
+    private static HSSFSheet createSpreadsheet(String spreadSheetName, HSSFWorkbook workbook) {
         return workbook.createSheet(spreadSheetName);
     }
 }

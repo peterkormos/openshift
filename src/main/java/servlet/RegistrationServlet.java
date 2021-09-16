@@ -79,7 +79,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2021.02.03.";
+	public String VERSION = "2021.08.26.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -709,7 +709,7 @@ public class RegistrationServlet extends HttpServlet {
         public void exportExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
             final String show = getShowFromSession(request);
     
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setContentType("application/vnd.ms-excel");
     
             ResourceBundle language = getLanguageForCurrentUser(request);
             final List<Model> models = servletDAO.getModels(ServletDAO.INVALID_USERID);
@@ -881,8 +881,8 @@ public class RegistrationServlet extends HttpServlet {
 		final String show = getShowFromSession(request);
 
 		for (final AwardedModel awardedModel : servletDAO.getAwardedModels()) {
-			if (servletDAO.getCategory(awardedModel.model.categoryID).group.show.equals(show)) {
-				servletDAO.deleteAwardedModel(awardedModel.model.modelID);
+			if (servletDAO.getCategory(awardedModel.categoryID).group.show.equals(show)) {
+				servletDAO.deleteAwardedModel(awardedModel.modelID);
 			}
 		}
 
@@ -2003,8 +2003,6 @@ public class RegistrationServlet extends HttpServlet {
 
 			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
 			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
-			// System.out.println("printModels " + models.size() + " " +
-			// subList.size() + " " + !models.isEmpty());
 			models.removeAll(subList);
 
 			modelsRemainingToPrint -= currentModelsOnPage;
@@ -2019,8 +2017,6 @@ public class RegistrationServlet extends HttpServlet {
 	StringBuilder printModels(final ResourceBundle language, final User user, final List<Model> models,
 			final StringBuilder printBuffer, final int rows, final int cols, boolean pageBreak)
 			throws Exception, IOException {
-		// System.out.println("printModels " + models.size() + " " + rows + " "
-		// + cols + " " + pageBreak);
 
 		final int width = 100 / cols;
 		final int height = 100 / rows;
@@ -2294,7 +2290,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			final String award = ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim();
 
-			servletDAO.saveAwardedModel(new AwardedModel(award, model));
+			servletDAO.saveAwardedModel(new AwardedModel(model, award));
 		}
 
 		redirectToMainPage(request, response);
@@ -2513,7 +2509,6 @@ public class RegistrationServlet extends HttpServlet {
 
 		for (final CategoryGroup group : servletDAO.getCategoryGroups()) {
 			if (show != null && !group.show.equals(show)) {
-				// System.out.println(group.show + " " + show);
 				continue;
 			}
 
@@ -2596,7 +2591,6 @@ public class RegistrationServlet extends HttpServlet {
 
 					messageBody.append("<p>\n\r");
 					messageBody.append("\n\r</body></html>");
-					System.out.println(user.userID + " " + user.email);
 
 					sendEmail(user.email, language.getString("email.subject"), messageBody);
 					Thread.sleep(TimeUnit.SECONDS.toMillis(30));
