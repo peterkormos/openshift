@@ -315,6 +315,9 @@ public final class JudgingServlet extends HttpServlet {
                 final JudgingCriteria criteria = new JudgingCriteria(criteriaId, description, maxScore);
                 criteriaList.add(criteria);
             }
+            criteriaList.sort((c1, c2) -> 
+            	Integer.compare(c1.getId(), c2.getId())
+            );
             return criteriaList;
         } catch (Exception e) {
             fileCache.remove(fileName);
@@ -467,7 +470,8 @@ public final class JudgingServlet extends HttpServlet {
     private void login(HttpServletRequest request, HttpServletResponse response)
             throws IOException, MissingRequestParameterException {
         String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
-        setSessionAttribute(request, SessionAttribute.Judge, judge);
+        setSessionAttribute(request, SessionAttribute.Judge, ServletDAO
+				.encodeString(judge));
         setSessionAttribute(request, CommonSessionAttribute.Language,
                 languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
         redirectToMainPage(request, response);
@@ -530,7 +534,7 @@ public final class JudgingServlet extends HttpServlet {
         }
     }
 
-    private void setSessionAttribute(HttpServletRequest request, Enum name, Object value) {
+    private void setSessionAttribute(HttpServletRequest request, Enum<?> name, Object value) {
         final HttpSession session = request.getSession(true);
         session.setAttribute(name.name(), value);
     }
