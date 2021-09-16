@@ -52,7 +52,7 @@ public final class JudgingServlet extends HttpServlet {
         JudgingCriteriasForCategory, Category, Judgings, Judge, Categories
     }
 
-    private static final String VERSION = "2019.05.30.";
+    private static final String VERSION = "2021.09.16.";
     private static final String JUDGING_FILENAME = "judging.txt";
 
     public static Logger logger = Logger.getLogger(JudgingServlet.class);;
@@ -303,7 +303,7 @@ public final class JudgingServlet extends HttpServlet {
                 int criteriaId = Integer.parseInt(entry.getKey());
 
                 final String values = entry.getValue();
-                final String[] splitValues = values.split(";");
+                final String[] splitValues = values.split("#");
                 if (splitValues.length != 2) {
                     throw new IllegalArgumentException(
                             String.format("value [%s] token count is not 2 for criteriaId: [%s] in file: [%s]!", values,

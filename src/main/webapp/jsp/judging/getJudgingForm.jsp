@@ -53,6 +53,7 @@
 %>
 
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8;">
 <link href="../base.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript">
@@ -106,6 +107,7 @@ function setModelInSession(value)
 <p id="resp" />
 
 <form
+accept-charset='UTF-8'
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.SaveJudging.name()%>"
 	method="post">
 
