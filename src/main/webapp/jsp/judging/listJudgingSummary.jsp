@@ -67,7 +67,7 @@
 <table style="border: 1px solid black;">
 	<tr bgcolor="#ddddff">
 		<th><%= language.getString("category") %></th>
-		<th>Zs&utilde;rizett makettek sz&aacute;ma</th>
+		<th>Zs&#369;rizett makettek sz&aacute;ma</th>
 	</tr>
 	<%
 	  for (Map.Entry entry : scoredModelsByCategory.entrySet())

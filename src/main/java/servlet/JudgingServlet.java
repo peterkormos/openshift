@@ -354,7 +354,7 @@ public final class JudgingServlet extends HttpServlet {
         String judgeInRequestAttribute = ServletUtil.getOptionalRequestAttribute(request,
                 RequestParameter.Judge.name());
         if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute)) {
-            setSessionAttribute(request, SessionAttribute.Judge, judgeInRequestAttribute);
+            setSessionAttribute(request, SessionAttribute.Judge, ServletDAO.encodeString(judgeInRequestAttribute));
         }
 
         if (isForModification) {
@@ -470,8 +470,7 @@ public final class JudgingServlet extends HttpServlet {
     private void login(HttpServletRequest request, HttpServletResponse response)
             throws IOException, MissingRequestParameterException {
         String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
-        setSessionAttribute(request, SessionAttribute.Judge, ServletDAO
-				.encodeString(judge));
+        setSessionAttribute(request, SessionAttribute.Judge, ServletDAO.encodeString(judge));
         setSessionAttribute(request, CommonSessionAttribute.Language,
                 languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
         redirectToMainPage(request, response);
