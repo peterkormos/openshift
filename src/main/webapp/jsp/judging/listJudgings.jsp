@@ -23,7 +23,6 @@
 		<th><%= language.getString("judging.criteria") %></th>
 		<th><%= language.getString("judging.criteria.score") %></th>
 		<th><%= language.getString("comment") %></th>
-		<th>DB ID</th>
 	</tr>
 
 
@@ -43,7 +42,6 @@
 		<td><%= judgingScore.getCriteriaID()%></td>
 		<td><%= judgingScore.getScore()%></td>
 		<td><%= judgingScore.getComment()%></td>
-		<td><%= judgingScore.getId()%></td>
 	</tr>
 
 	<%	  
