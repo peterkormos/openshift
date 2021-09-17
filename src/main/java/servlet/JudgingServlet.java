@@ -18,6 +18,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletConfig;
@@ -92,13 +93,32 @@ public final class JudgingServlet extends HttpServlet {
                     .collect(Collectors.toList());
 
             if (modellerIds.size() != 1) {
+                String judges = getJudgesLinks(judgingResults.getValue(), judgingResult -> modellerIds.contains(judgingResult.getModellerID()));
+                
                 JudgingError judgingError = judgingResults.getKey();
-                judgingError.setErrorMessage(String.format("modellerIds different on model forms: %s", modellerIds));
+                judgingError.setErrorMessage(String.format("judges: (%s) put for modelId: %d different modellerIds: %s", judges, judgingError.getModelID(), modellerIds));
                 judgingError.setErrorType(JudgingError.JudgingErrorType.ModelIdAndModellerID_Mismatch);
             }
         }
 
         return judgingResultsByModelId.keySet().stream().filter(JudgingError::isPresent).collect(Collectors.toList());
+    }
+    
+    private static String getJudgingFormLink(JudgingResult judgingResult)
+    {
+        return "<a href='../../JudgingServlet/" + JudgingServlet.RequestType.GetJudgingForm.name() + "?"
+                + JudgingServlet.RequestParameter.ModelID + "=" + judgingResult.getModelID() + "&"
+                + JudgingServlet.RequestParameter.ModellerID + "=" + judgingResult.getModellerID() + "&"
+                + JudgingServlet.RequestParameter.Category + "=" + judgingResult.getCategory() + "&"
+                + JudgingServlet.RequestParameter.Judge + "=" + judgingResult.getJudge()
+                + "'>" + judgingResult.getJudge() + "</a>";
+
+    }
+
+    private static String getJudgesLinks(List<JudgingResult> judgingResults, Predicate<? super JudgingResult> filter) {
+        return judgingResults.stream()
+                .filter(filter)
+                .map(judgingResult -> getJudgingFormLink(judgingResult)).distinct().collect(Collectors.joining(", "));
     }
 
     private static List<JudgingError> checkJudgedCriteriasPerModel(Collection<JudgingResult> collection) {
@@ -108,13 +128,15 @@ public final class JudgingServlet extends HttpServlet {
 
         for (Entry<JudgingError, List<JudgingResult>> judgingResults : judgingResultsByModelId.entrySet()) {
             List<Integer> totalNumberOfDifferentScores = judgingResults.getValue().stream().mapToInt(
-                    judgingResult -> judgingResult.getScores().values().stream().mapToInt(AtomicInteger::get).sum())
+                    judgingResult -> judgingResult.getTotalScores())
                     .distinct().boxed().collect(Collectors.toList());
 
             if (totalNumberOfDifferentScores.size() != 1) {
+                String judges = getJudgesLinks(judgingResults.getValue(), judgingResult -> totalNumberOfDifferentScores.contains(judgingResult.getTotalScores()));
+                
                 JudgingError judgingError = judgingResults.getKey();
-                judgingError.setErrorMessage(String.format("total evaluated criterias on different model forms: %s",
-                        totalNumberOfDifferentScores));
+                judgingError.setErrorMessage(String.format("judges: (%s) evaluated different number of criterias: %s",
+                        judges, totalNumberOfDifferentScores));
                 judgingError.setErrorType(JudgingError.JudgingErrorType.TotalEvaluatedCriterias_Mismatch);
             }
         }
@@ -134,38 +156,28 @@ public final class JudgingServlet extends HttpServlet {
             Map<String, List<JudgingResult>> judgedModelsPerJudge = judgingResults.getValue().stream()
                     .collect(Collectors.groupingBy(JudgingResult::getJudge));
 
-            int currentlyJudgedModels = 0;
-            String currentJudge = "";
+            int firstJudgesModels = 0;
+            String firstJudge = "";
             for (Entry<String, List<JudgingResult>> judgedModelPerJudge : judgedModelsPerJudge.entrySet()) {
-                String judge = judgedModelPerJudge.getKey();
-
-                if (currentlyJudgedModels == 0) {
-                    currentlyJudgedModels = judgedModelPerJudge.getValue().size();
-                    currentJudge = judge;
+                String currentJudge = judgedModelPerJudge.getKey();
+                int currentJudgesModels = judgedModelPerJudge.getValue().size();
+                
+                if (firstJudgesModels == 0) {
+                    firstJudgesModels = currentJudgesModels;
+                    firstJudge = currentJudge;
                 }
 
-                if (currentlyJudgedModels != judgedModelPerJudge.getValue().size()) {
+                if (firstJudgesModels != currentJudgesModels) {
+//                    String judges = getJudgesLinks(judgingResults.getValue(), judgingResult -> totalNumberOfDifferentScores.contains(judgingResult.getTotalScores()));
+
                     JudgingError judgingError = new JudgingError(category,
                             judgedModelPerJudge.getValue().get(0).getModelID());
                     judgingError.setErrorType(JudgingError.JudgingErrorType.TotalEvaluatedModels_Mismatch);
-                    judgingError.setErrorMessage(String.format("judged models are different: [%s: %d] - [%s: %d]",
-                            currentJudge, currentlyJudgedModels, judge, judgedModelPerJudge.getValue().size()));
+                    judgingError.setErrorMessage(String.format("number of judged models per judge are different: [%s: %d] - [%s: %d]",
+                            firstJudge, firstJudgesModels, currentJudge, currentJudgesModels));
                     returned.add(judgingError);
                 }
             }
-            // .mapToInt(judgingResult -> judgingResult.getScores().values().stream().mapToInt(AtomicInteger::get).sum()).distinct()
-            // .boxed().collect(Collectors.toList());
-            //
-            // List<Integer> modellerIds = judgingResults.getValue().stream()
-            // .mapToInt(judgingResult -> judgingResult.getModellerID()).distinct()
-            // .boxed().collect(Collectors.toList());
-            //
-            // if (modellerIds.size() != 1)
-            // {
-            // JudgingError judgingError = judgingResults.getKey();
-            // judgingError.setErrorMessage(String.format("modellerIds different on model forms: %s", modellerIds));
-            // judgingError.setErrorType(JudgingError.JudgingErrorType.ModelIdAndModellerID_Mismatch);
-            // }
         }
 
         return returned;
