@@ -47,6 +47,7 @@ select:focus {
 }
 
 table {
+border-collapse: collapse; empty-cells: show;
 	box-shadow: 5px 5px 10px #888;
 	padding-top: 5px;
 	padding-right: 5px;
@@ -56,7 +57,7 @@ table {
 
 td, th {
 	padding: 5px;
-}
+  }
 
 a,
 label {
@@ -81,7 +82,7 @@ label:hover {
 	border-left: 3px solid #00aa00;
 	text-decoration: underline;
 	background-color: #eeeeee;
-}
+  }
 
 a:active {
 	text-decoration: underline;
@@ -200,4 +201,12 @@ right:0px
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+ 
+  tr.strikeout td { position:relative        } /* Setup a new coordinate system   */
+tr.strikeout td:before {                     /* Create a new element that       */
+  content: " ";                              /* …has no text content            */
+  position: absolute;                        /* …is absolutely positioned       */
+  left: 0; top: 50%; width: 100%;            /* …with the top across the middle */
+  border-bottom: 1px solid #000;             /* …and with a border on the top   */
 }

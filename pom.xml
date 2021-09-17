@@ -12,12 +12,6 @@
   </scm>
 
   <dependencies>
-<!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
-<dependency>
-    <groupId>net.sf.jasperreports</groupId>
-    <artifactId>jasperreports</artifactId>
-    <version>6.2.1</version>
-</dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
@@ -28,16 +22,16 @@
       <artifactId>poi</artifactId>
       <version>4.1.2</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi-ooxml</artifactId>
-      <version>4.1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi-ooxml-schemas</artifactId>
-      <version>4.1.2</version>
-    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>org.apache.poi</groupId> -->
+<!--       <artifactId>poi-ooxml</artifactId> -->
+<!--       <version>4.1.2</version> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>org.apache.poi</groupId> -->
+<!--       <artifactId>poi-ooxml-schemas</artifactId> -->
+<!--       <version>4.1.2</version> -->
+<!--     </dependency> -->
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
@@ -114,7 +108,7 @@
 		</dependency>
   </dependencies>
   <build>
-    <plugins>
+   <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
@@ -155,6 +149,12 @@
               <targetPath>WEB-INF</targetPath>
               <filtering>true</filtering>
             </resource>
+			<resource>
+				<directory>..</directory>
+				<includes>
+					<include>credentials.json</include>
+				</includes>
+			</resource>
           </webResources>
         </configuration>
       </plugin>

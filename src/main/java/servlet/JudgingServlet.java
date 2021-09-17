@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,10 +16,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletConfig;
@@ -27,15 +32,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
+import datatype.Category;
+import datatype.Model;
+import datatype.User;
 import datatype.judging.JudgedModel;
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingError;
 import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
 import exception.MissingRequestParameterException;
+import tools.ExcelUtil;
+import tools.ExcelUtil.Workbook;
 import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
@@ -45,14 +56,14 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     public enum RequestType {
-        GetCategories, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login
+        GetCategories, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login, ExportExcel
     }
 
     public enum SessionAttribute {
         JudgingCriteriasForCategory, Category, Judgings, Judge, Categories
     }
 
-    private static final String VERSION = "2019.05.30.";
+    private static final String VERSION = "2021.09.16.";
     private static final String JUDGING_FILENAME = "judging.txt";
 
     public static Logger logger = Logger.getLogger(JudgingServlet.class);;
@@ -92,13 +103,32 @@ public final class JudgingServlet extends HttpServlet {
                     .collect(Collectors.toList());
 
             if (modellerIds.size() != 1) {
+                String judges = getJudgesLinks(judgingResults.getValue(), judgingResult -> modellerIds.contains(judgingResult.getModellerID()));
+                
                 JudgingError judgingError = judgingResults.getKey();
-                judgingError.setErrorMessage(String.format("modellerIds different on model forms: %s", modellerIds));
+                judgingError.setErrorMessage(String.format("judges: (%s) put for modelId: %d different modellerIds: %s", judges, judgingError.getModelID(), modellerIds));
                 judgingError.setErrorType(JudgingError.JudgingErrorType.ModelIdAndModellerID_Mismatch);
             }
         }
 
         return judgingResultsByModelId.keySet().stream().filter(JudgingError::isPresent).collect(Collectors.toList());
+    }
+    
+    private static String getJudgingFormLink(JudgingResult judgingResult)
+    {
+        return "<a href='../../JudgingServlet/" + JudgingServlet.RequestType.GetJudgingForm.name() + "?"
+                + JudgingServlet.RequestParameter.ModelID + "=" + judgingResult.getModelID() + "&"
+                + JudgingServlet.RequestParameter.ModellerID + "=" + judgingResult.getModellerID() + "&"
+                + JudgingServlet.RequestParameter.Category + "=" + judgingResult.getCategory() + "&"
+                + JudgingServlet.RequestParameter.Judge + "=" + judgingResult.getJudge()
+                + "'>" + judgingResult.getJudge() + "</a>";
+
+    }
+
+    private static String getJudgesLinks(List<JudgingResult> judgingResults, Predicate<? super JudgingResult> filter) {
+        return judgingResults.stream()
+                .filter(filter)
+                .map(judgingResult -> getJudgingFormLink(judgingResult)).distinct().collect(Collectors.joining(", "));
     }
 
     private static List<JudgingError> checkJudgedCriteriasPerModel(Collection<JudgingResult> collection) {
@@ -108,13 +138,15 @@ public final class JudgingServlet extends HttpServlet {
 
         for (Entry<JudgingError, List<JudgingResult>> judgingResults : judgingResultsByModelId.entrySet()) {
             List<Integer> totalNumberOfDifferentScores = judgingResults.getValue().stream().mapToInt(
-                    judgingResult -> judgingResult.getScores().values().stream().mapToInt(AtomicInteger::get).sum())
+                    judgingResult -> judgingResult.getTotalScores())
                     .distinct().boxed().collect(Collectors.toList());
 
             if (totalNumberOfDifferentScores.size() != 1) {
+                String judges = getJudgesLinks(judgingResults.getValue(), judgingResult -> totalNumberOfDifferentScores.contains(judgingResult.getTotalScores()));
+                
                 JudgingError judgingError = judgingResults.getKey();
-                judgingError.setErrorMessage(String.format("total evaluated criterias on different model forms: %s",
-                        totalNumberOfDifferentScores));
+                judgingError.setErrorMessage(String.format("judges: (%s) evaluated different number of criterias: %s",
+                        judges, totalNumberOfDifferentScores));
                 judgingError.setErrorType(JudgingError.JudgingErrorType.TotalEvaluatedCriterias_Mismatch);
             }
         }
@@ -134,38 +166,28 @@ public final class JudgingServlet extends HttpServlet {
             Map<String, List<JudgingResult>> judgedModelsPerJudge = judgingResults.getValue().stream()
                     .collect(Collectors.groupingBy(JudgingResult::getJudge));
 
-            int currentlyJudgedModels = 0;
-            String currentJudge = "";
+            int firstJudgesModels = 0;
+            String firstJudge = "";
             for (Entry<String, List<JudgingResult>> judgedModelPerJudge : judgedModelsPerJudge.entrySet()) {
-                String judge = judgedModelPerJudge.getKey();
-
-                if (currentlyJudgedModels == 0) {
-                    currentlyJudgedModels = judgedModelPerJudge.getValue().size();
-                    currentJudge = judge;
+                String currentJudge = judgedModelPerJudge.getKey();
+                int currentJudgesModels = judgedModelPerJudge.getValue().size();
+                
+                if (firstJudgesModels == 0) {
+                    firstJudgesModels = currentJudgesModels;
+                    firstJudge = currentJudge;
                 }
 
-                if (currentlyJudgedModels != judgedModelPerJudge.getValue().size()) {
+                if (firstJudgesModels != currentJudgesModels) {
+//                    String judges = getJudgesLinks(judgingResults.getValue(), judgingResult -> totalNumberOfDifferentScores.contains(judgingResult.getTotalScores()));
+
                     JudgingError judgingError = new JudgingError(category,
                             judgedModelPerJudge.getValue().get(0).getModelID());
                     judgingError.setErrorType(JudgingError.JudgingErrorType.TotalEvaluatedModels_Mismatch);
-                    judgingError.setErrorMessage(String.format("judged models are different: [%s: %d] - [%s: %d]",
-                            currentJudge, currentlyJudgedModels, judge, judgedModelPerJudge.getValue().size()));
+                    judgingError.setErrorMessage(String.format("number of judged models per judge are different: [%s: %d] - [%s: %d]",
+                            firstJudge, firstJudgesModels, currentJudge, currentJudgesModels));
                     returned.add(judgingError);
                 }
             }
-            // .mapToInt(judgingResult -> judgingResult.getScores().values().stream().mapToInt(AtomicInteger::get).sum()).distinct()
-            // .boxed().collect(Collectors.toList());
-            //
-            // List<Integer> modellerIds = judgingResults.getValue().stream()
-            // .mapToInt(judgingResult -> judgingResult.getModellerID()).distinct()
-            // .boxed().collect(Collectors.toList());
-            //
-            // if (modellerIds.size() != 1)
-            // {
-            // JudgingError judgingError = judgingResults.getKey();
-            // judgingError.setErrorMessage(String.format("modellerIds different on model forms: %s", modellerIds));
-            // judgingError.setErrorType(JudgingError.JudgingErrorType.ModelIdAndModellerID_Mismatch);
-            // }
         }
 
         return returned;
@@ -235,7 +257,9 @@ public final class JudgingServlet extends HttpServlet {
                 case Login:
                     login(request, response);
                     break;
-
+                case ExportExcel:
+                	exportExcel(request, response);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown pathInfo: " + pathInfo);
                 }
@@ -303,7 +327,7 @@ public final class JudgingServlet extends HttpServlet {
                 int criteriaId = Integer.parseInt(entry.getKey());
 
                 final String values = entry.getValue();
-                final String[] splitValues = values.split(";");
+                final String[] splitValues = values.split("#");
                 if (splitValues.length != 2) {
                     throw new IllegalArgumentException(
                             String.format("value [%s] token count is not 2 for criteriaId: [%s] in file: [%s]!", values,
@@ -315,6 +339,9 @@ public final class JudgingServlet extends HttpServlet {
                 final JudgingCriteria criteria = new JudgingCriteria(criteriaId, description, maxScore);
                 criteriaList.add(criteria);
             }
+            criteriaList.sort((c1, c2) -> 
+            	Integer.compare(c1.getId(), c2.getId())
+            );
             return criteriaList;
         } catch (Exception e) {
             fileCache.remove(fileName);
@@ -351,7 +378,7 @@ public final class JudgingServlet extends HttpServlet {
         String judgeInRequestAttribute = ServletUtil.getOptionalRequestAttribute(request,
                 RequestParameter.Judge.name());
         if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute)) {
-            setSessionAttribute(request, SessionAttribute.Judge, judgeInRequestAttribute);
+            setSessionAttribute(request, SessionAttribute.Judge, ServletDAO.encodeString(judgeInRequestAttribute));
         }
 
         if (isForModification) {
@@ -409,7 +436,14 @@ public final class JudgingServlet extends HttpServlet {
 
     private void listJudgingSummary(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        final Map<String, JudgingResult> scoresByCategory = new LinkedHashMap<>();
+        Collection<JudgingResult> judgings = getJudgingSummary();
+		setSessionAttribute(request, SessionAttribute.Judgings, judgings);
+
+        redirectRequest(request, response, JSP_BASE_DIR + "listJudgingSummary.jsp");
+    }
+
+	private Collection<JudgingResult> getJudgingSummary() throws Exception, IOException {
+		final Map<String, JudgingResult> scoresByCategory = new LinkedHashMap<>();
 
         final List<JudgingScore> allScores = dao.getAll(JudgingScore.class);
 
@@ -444,11 +478,9 @@ public final class JudgingServlet extends HttpServlet {
 
         }
 
-        // System.out.println(scoresByCategory);
-        setSessionAttribute(request, SessionAttribute.Judgings, scoresByCategory.values());
-
-        redirectRequest(request, response, JSP_BASE_DIR + "listJudgingSummary.jsp");
-    }
+        Collection<JudgingResult> judgings = scoresByCategory.values();
+		return judgings;
+	}
 
     private Map<String, String> loadFile(String fileName) throws IOException {
         Properties properties = fileCache.get(fileName);
@@ -467,7 +499,7 @@ public final class JudgingServlet extends HttpServlet {
     private void login(HttpServletRequest request, HttpServletResponse response)
             throws IOException, MissingRequestParameterException {
         String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
-        setSessionAttribute(request, SessionAttribute.Judge, judge);
+        setSessionAttribute(request, SessionAttribute.Judge, ServletDAO.encodeString(judge));
         setSessionAttribute(request, CommonSessionAttribute.Language,
                 languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
         redirectToMainPage(request, response);
@@ -530,8 +562,67 @@ public final class JudgingServlet extends HttpServlet {
         }
     }
 
-    private void setSessionAttribute(HttpServletRequest request, Enum name, Object value) {
+    private void setSessionAttribute(HttpServletRequest request, Enum<?> name, Object value) {
         final HttpSession session = request.getSession(true);
         session.setAttribute(name.name(), value);
     }
+    
+    public void exportExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        response.setContentType("application/vnd.ms-excel");
+
+        if(Objects.isNull(RegistrationServlet.servletDAO))
+        	throw new IllegalStateException("Nevezesi rendszerbe be kell eloszor lepni!");
+        
+        List<String> masterCategoryList = RegistrationServlet.servletDAO.getCategoryList(null).stream().
+        	filter(Category::isMaster).
+        		map(Category::getCategoryCode).collect(Collectors.toList());
+        
+        final HttpSession session = request.getSession(false);
+        ResourceBundle language = getLanguage(session, response);
+        Collection<JudgingResult> judgings = getJudgingSummary();
+
+    			int maxScore = 
+    					judgings.stream().mapToInt(JudgingResult::getMaxScore).max().getAsInt();
+        List<List<Object>> modelsForExcel = judgings.stream().map(judgingResult -> {
+            ArrayList<Object> returned = new ArrayList<>();
+
+    		returned.add(isMasterCategory(judgingResult.getCategory(), masterCategoryList));
+    		returned.add(StringEscapeUtils.unescapeHtml4(judgingResult.getCategory()));
+            returned.add(StringEscapeUtils.unescapeHtml4(judgingResult.getJudge()));
+            returned.add(judgingResult.getModellerID());
+            returned.add(judgingResult.getModelID());
+            returned.add(StringEscapeUtils.unescapeHtml4(judgingResult.getModelsName()));
+            for (int i = 0; i <= maxScore; i++)
+            {
+            	int count = judgingResult.getCountForScore(i);
+                returned.add(count);
+            }
+            returned.add(judgingResult.getTotalScores());
+            return returned;
+
+        }).collect(Collectors.toList());
+
+        
+        List<String> header = new LinkedList<>();
+        header.add("Master?");
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("category")));
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("judge")));
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("userID")));
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("modelID")));
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("models.name")));
+        for (int i = 0; i <= maxScore; i++)
+        {
+        	header.add(String.valueOf(i));
+        }
+        header.add("Total");
+        
+        Workbook u = ExcelUtil.generateExcelTableWithHeaders("judging", header, modelsForExcel);
+
+        u.writeTo(response.getOutputStream());
+    }
+
+	private boolean isMasterCategory(String category, List<String> masterCategoryList) {
+		return masterCategoryList.contains(category);
+	}
+
 }

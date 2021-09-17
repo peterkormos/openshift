@@ -148,8 +148,16 @@ if (showIdHttpParameter != null)
 									name="dataUsageConsent<%=lc.name() %>"
 									<%= lc.isMandatory() ? "required='required'" : "" %> 
 									onchange="checkSubmit(document.getElementById('inputForm')) && updateMandatoryFieldMark(this);">
-									<%= language.getString("login.consent." + lc.name()) %> <font color='#FF0000'
-									size='+3'>&#8226;</font></label>
+									<%= language.getString("login.consent." + lc.name()) %> 
+		<%
+		    if (lc.isMandatory()) {
+		%>
+									<font color='#FF0000' size='+3'>&#8226;</font>
+		<%
+		    }
+		%>
+									
+									</label>
 									<br>
 		<%
 		    }
