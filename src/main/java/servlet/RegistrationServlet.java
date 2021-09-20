@@ -2535,6 +2535,10 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</div>");
 	}
 
+	public void getVersion(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		writeResponse(response, new StringBuilder(getVersion()));
+	}
+
 	public String getVersion() {
 		return VERSION;
 	}

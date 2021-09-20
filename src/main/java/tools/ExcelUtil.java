@@ -109,6 +109,8 @@ public class ExcelUtil {
                     cell.setCellValue(((Number) cellValue).doubleValue());
                 } else if (cellValue instanceof Date) {
                     cell.setCellValue((Date) cellValue);
+                } else if (cellValue instanceof Boolean) {
+                    cell.setCellValue((Boolean) cellValue);
                 } else {
                     throw new IllegalArgumentException("Unexpected type: " + cellValue.getClass());
                 }

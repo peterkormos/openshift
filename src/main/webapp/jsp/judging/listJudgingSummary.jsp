@@ -83,7 +83,8 @@
 </table>
 
 <p>
-
+<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.ExportExcel.name() %>"><strong>Excel export</strong></a>
+<br>			
 <table style="border: 1px solid black;">
 	<tr bgcolor="#ddddff">
 		<th><%= language.getString("category") %></th>

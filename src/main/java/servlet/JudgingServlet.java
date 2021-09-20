@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,10 +16,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -28,15 +33,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
+import datatype.Category;
+import datatype.Model;
+import datatype.User;
 import datatype.judging.JudgedModel;
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingError;
 import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
 import exception.MissingRequestParameterException;
+import tools.ExcelUtil;
+import tools.ExcelUtil.Workbook;
 import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
@@ -46,7 +57,7 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     public enum RequestType {
-        GetCategories, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login
+        GetCategories, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login, ExportExcel
     }
 
     public enum SessionAttribute {
@@ -247,7 +258,9 @@ public final class JudgingServlet extends HttpServlet {
                 case Login:
                     login(request, response);
                     break;
-
+                case ExportExcel:
+                	exportExcel(request, response);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown pathInfo: " + pathInfo);
                 }
@@ -424,7 +437,14 @@ public final class JudgingServlet extends HttpServlet {
 
     private void listJudgingSummary(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        final Map<String, JudgingResult> scoresByCategory = new LinkedHashMap<>();
+        Collection<JudgingResult> judgings = getJudgingSummary();
+		setSessionAttribute(request, SessionAttribute.Judgings, judgings);
+
+        redirectRequest(request, response, JSP_BASE_DIR + "listJudgingSummary.jsp");
+    }
+
+	private Collection<JudgingResult> getJudgingSummary() throws Exception, IOException {
+		final Map<String, JudgingResult> scoresByCategory = new LinkedHashMap<>();
 
         final List<JudgingScore> allScores = dao.getAll(JudgingScore.class);
 
@@ -459,11 +479,9 @@ public final class JudgingServlet extends HttpServlet {
 
         }
 
-        // System.out.println(scoresByCategory);
-        setSessionAttribute(request, SessionAttribute.Judgings, scoresByCategory.values());
-
-        redirectRequest(request, response, JSP_BASE_DIR + "listJudgingSummary.jsp");
-    }
+        Collection<JudgingResult> judgings = scoresByCategory.values();
+		return judgings;
+	}
 
     private Map<String, String> loadFile(String fileName) throws IOException {
         Properties properties = fileCache.get(fileName);
@@ -549,4 +567,63 @@ public final class JudgingServlet extends HttpServlet {
         final HttpSession session = request.getSession(true);
         session.setAttribute(name.name(), value);
     }
+    
+    public void exportExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        response.setContentType("application/vnd.ms-excel");
+
+        if(Objects.isNull(RegistrationServlet.servletDAO))
+        	throw new IllegalStateException("Nevezesi rendszerbe be kell eloszor lepni!");
+        
+        List<String> masterCategoryList = RegistrationServlet.servletDAO.getCategoryList(null).stream().
+        	filter(Category::isMaster).
+        		map(Category::getCategoryCode).collect(Collectors.toList());
+        
+        final HttpSession session = request.getSession(false);
+        ResourceBundle language = getLanguage(session, response);
+        Collection<JudgingResult> judgings = getJudgingSummary();
+
+    			int maxScore = 
+    					judgings.stream().mapToInt(JudgingResult::getMaxScore).max().getAsInt();
+        List<List<Object>> modelsForExcel = judgings.stream().map(judgingResult -> {
+            ArrayList<Object> returned = new ArrayList<>();
+
+    		returned.add(isMasterCategory(judgingResult.getCategory(), masterCategoryList));
+    		returned.add(StringEscapeUtils.unescapeHtml4(judgingResult.getCategory()));
+            returned.add(StringEscapeUtils.unescapeHtml4(judgingResult.getJudge()));
+            returned.add(judgingResult.getModellerID());
+            returned.add(judgingResult.getModelID());
+            returned.add(StringEscapeUtils.unescapeHtml4(judgingResult.getModelsName()));
+            for (int i = 0; i <= maxScore; i++)
+            {
+            	int count = judgingResult.getCountForScore(i);
+                returned.add(count);
+            }
+            returned.add(judgingResult.getTotalScores());
+            return returned;
+
+        }).collect(Collectors.toList());
+
+        
+        List<String> header = new LinkedList<>();
+        header.add("Master?");
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("category")));
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("judge")));
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("userID")));
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("modelID")));
+        header.add(StringEscapeUtils.unescapeHtml4(language.getString("models.name")));
+        for (int i = 0; i <= maxScore; i++)
+        {
+        	header.add(String.valueOf(i));
+        }
+        header.add("Total");
+        
+        Workbook u = ExcelUtil.generateExcelTableWithHeaders("judging", header, modelsForExcel);
+
+        u.writeTo(response.getOutputStream());
+    }
+
+	private boolean isMasterCategory(String category, List<String> masterCategoryList) {
+		return masterCategoryList.contains(category);
+	}
+
 }
