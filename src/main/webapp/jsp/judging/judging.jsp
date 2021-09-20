@@ -85,4 +85,6 @@ style="background: LightGrey; padding: 5px;"
 <%	
 	}
  %>
+ <p>
+ <img src="../../RegistrationServlet">
 </body>

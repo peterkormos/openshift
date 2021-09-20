@@ -1,4 +1,4 @@
 #kategoria sorszáma=leiras;maxpont
-1=H1 leiras 1...;5
-2=H1 leiras 2...;2
-3=H1 leiras 3...;3
+1=H1 leiras 1...#5
+2=H1 leiras 2...#2
+3=H1 leiras 3...#3

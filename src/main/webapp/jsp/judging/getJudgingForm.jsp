@@ -53,6 +53,7 @@
 %>
 
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8;">
 <link href="../base.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript">
@@ -106,6 +107,7 @@ function setModelInSession(value)
 <p id="resp" />
 
 <form
+accept-charset='UTF-8'
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.SaveJudging.name()%>"
 	method="post">
 
@@ -119,6 +121,7 @@ function setModelInSession(value)
 			<jsp:include page="fillableFormField.jsp">
 			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModellerID.name() %>"/>
 			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModellerID() %>'/>
+			  <jsp:param name="disabled" value='<%= judgedModel == null ? ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE : "disabled" %>'/>
 			  <jsp:param name="size" value='3'/>
 			  <jsp:param name="caption" value='<%= language.getString("userID") %>'/>
 			</jsp:include>
@@ -126,6 +129,7 @@ function setModelInSession(value)
 			<jsp:include page="fillableFormField.jsp">
 			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.ModelID.name() %>"/>
 			  <jsp:param name="value" value='<%= judgedModel == null ? "" : judgedModel.getModelID() %>'/>
+			  <jsp:param name="disabled" value='<%= judgedModel == null ? ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE : "disabled" %>'/>
 			  <jsp:param name="size" value='3'/>
 			  <jsp:param name="onChange" value='setModelInSession(this.value);'/>
 			  <jsp:param name="caption" value='<%= language.getString("modelID") %>'/>
@@ -154,6 +158,7 @@ function setModelInSession(value)
 			<jsp:include page="fillableFormField.jsp">
 			  <jsp:param name="name" value="<%= JudgingServlet.RequestParameter.Judge.name() %>"/>
 			  <jsp:param name="value" value='<%= judge %>'/>
+			  <jsp:param name="disabled" value='<%= judge == null ? ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE : judge %>'/>
 			  <jsp:param name="caption" value='<%= language.getString("judge") %>'/>
 			</jsp:include>
 			</td>
@@ -220,6 +225,8 @@ function setModelInSession(value)
 			<td colspan="3" align="center">
 				<input type="submit" value='<%= language.getString("save") %>'>
 				<input name='finishRegistration' type='submit' value='<%= language.getString("judging.finish") %>'>
+				
+<a href="../../JudgingServlet"><%= language.getString("proceed.to.main") %></a>
 			</td>
 		</tr>
 	</table>

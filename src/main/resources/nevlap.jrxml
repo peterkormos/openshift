@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.2.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="nevlap" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d531999d-01e5-42fe-8432-b7203931869b">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ModelDataAdapter.xml"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="identification" class="java.lang.String">
+		<fieldDescription><![CDATA[identification]]></fieldDescription>
+	</field>
+	<field name="detailing" class="java.util.Map">
+		<fieldDescription><![CDATA[detailing]]></fieldDescription>
+	</field>
+	<field name="markings" class="java.lang.String">
+		<fieldDescription><![CDATA[markings]]></fieldDescription>
+	</field>
+	<field name="gluedToBase" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[gluedToBase]]></fieldDescription>
+	</field>
+	<field name="modelID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[modelID]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="producer" class="java.lang.String">
+		<fieldDescription><![CDATA[producer]]></fieldDescription>
+	</field>
+	<field name="scale" class="java.lang.String">
+		<fieldDescription><![CDATA[scale]]></fieldDescription>
+	</field>
+	<field name="comment" class="java.lang.String">
+		<fieldDescription><![CDATA[comment]]></fieldDescription>
+	</field>
+	<field name="class" class="java.lang.Class">
+		<fieldDescription><![CDATA[class]]></fieldDescription>
+	</field>
+	<field name="userID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[userID]]></fieldDescription>
+	</field>
+	<field name="categoryID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[categoryID]]></fieldDescription>
+	</field>
+	<field name="user" class="datatype.User">
+		<fieldDescription><![CDATA[user]]></fieldDescription>
+	</field>
+	<field name="category" class="datatype.Category">
+		<fieldDescription><![CDATA[category]]></fieldDescription>
+	</field>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="0" y="0" width="100" height="30" uuid="1f22348e-dab6-4360-bbcc-c9b1aac0aafa"/>
+				<textFieldExpression><![CDATA[$F{identification}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="116" y="0" width="100" height="30" uuid="383dab6f-e7c6-4c4e-ae97-4bc3816c3b0f"/>
+				<textFieldExpression><![CDATA[$F{user}.getYearOfBirth()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="120" width="100" height="30" uuid="3eae1d31-f2b8-4040-a1c4-630651590add"/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="230" y="80" width="100" height="30" uuid="0db9720a-4681-4265-858d-d6dace6266c8"/>
+				<textFieldExpression><![CDATA[$F{scale}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="116" y="40" width="100" height="30" uuid="35f56c1d-1523-400a-a8db-3777789c3697"/>
+				<textFieldExpression><![CDATA[$F{gluedToBase}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="116" y="80" width="100" height="30" uuid="370f7e55-7278-4575-922b-256c0c0cbcef"/>
+				<textFieldExpression><![CDATA[$F{modelID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="80" width="100" height="30" uuid="e8868cf0-653e-4b5c-ac01-5cfdff55663c"/>
+				<textFieldExpression><![CDATA[$F{userID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="340" y="80" width="100" height="30" uuid="242d66e8-6d6e-49f0-809f-d420fb281e7a"/>
+				<textFieldExpression><![CDATA[$F{category}.getCategoryCode()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="160" width="100" height="30" uuid="305a799c-3ac5-4453-9ad5-164a9d1ad5a9"/>
+				<textFieldExpression><![CDATA[$F{producer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="116" y="160" width="100" height="30" uuid="587b025f-462f-44e1-a0a0-24abc9f6955e"/>
+				<textFieldExpression><![CDATA[$F{markings}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="100" height="30" uuid="2555ef48-f3d2-4de7-b9eb-f602edcfe5bc"/>
+				<textElement>
+					<font isItalic="false"/>
+				</textElement>
+				<text><![CDATA[azonositó jel
+identification number]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="540" width="423" height="30" uuid="849e4a50-8d93-4abf-850c-21d5b0b57c92"/>
+				<textFieldExpression><![CDATA[$F{user}.getLastName() + " - " + 
+$F{user}.getYearOfBirth() + " - " + 
+$F{user}.getCity() + " - " + 
+$F{user}.getCountry()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="220" width="100" height="30" uuid="fb163566-b936-42d4-a18a-876efe9f3832"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.scratch)).getCriterias().get(datatype.Detailing.DetailingCriteria.conversion) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="220" width="100" height="30" uuid="7b06629b-c341-4507-b08a-7435e64513e5"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.photoEtched)).getCriterias().get(datatype.Detailing.DetailingCriteria.conversion) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="220" width="100" height="30" uuid="aa02c84e-448e-45ff-b7e1-39b11db8fc5c"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.resin)).getCriterias().get(datatype.Detailing.DetailingCriteria.conversion) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="220" width="100" height="30" uuid="f80ecc00-d4e2-4a2a-87d2-67c0debcf397"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.documentation)).getCriterias().get(datatype.Detailing.DetailingCriteria.conversion) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="250" width="100" height="30" uuid="ddb2f37a-1bc0-48f4-925e-368907cc03b0"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.documentation)).getCriterias().get(datatype.Detailing.DetailingCriteria.externalSurface) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="250" width="100" height="30" uuid="3ee37250-c179-4de1-a731-218a86c59afc"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.photoEtched)).getCriterias().get(datatype.Detailing.DetailingCriteria.externalSurface) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="250" width="100" height="30" uuid="b4151a9f-ae72-42f1-90d4-b97dceff98ff"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.resin)).getCriterias().get(datatype.Detailing.DetailingCriteria.externalSurface) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="250" width="100" height="30" uuid="d3387134-6355-4229-99a6-01a5a9f906ed"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.scratch)).getCriterias().get(datatype.Detailing.DetailingCriteria.externalSurface) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="280" width="100" height="30" uuid="adb039d6-cfc1-49eb-905f-bf3edbf73a59"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.scratch)).getCriterias().get(datatype.Detailing.DetailingCriteria.engine) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="280" width="100" height="30" uuid="9c679ca5-0a4e-4992-8aa2-de332295bba4"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.photoEtched)).getCriterias().get(datatype.Detailing.DetailingCriteria.engine) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="280" width="100" height="30" uuid="91202d3e-0c53-400a-94f4-140a498894d7"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.documentation)).getCriterias().get(datatype.Detailing.DetailingCriteria.engine) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="280" width="100" height="30" uuid="979c6404-e37b-4e89-b1c9-a126000e2796"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.resin)).getCriterias().get(datatype.Detailing.DetailingCriteria.engine) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="310" width="100" height="30" uuid="36166190-e380-48f4-9fbf-0b7f87c06988"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.documentation)).getCriterias().get(datatype.Detailing.DetailingCriteria.undercarriage) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="310" width="100" height="30" uuid="9839b974-805d-4eb6-a7cc-372b2624a280"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.photoEtched)).getCriterias().get(datatype.Detailing.DetailingCriteria.undercarriage) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="310" width="100" height="30" uuid="cd2f632c-4323-4649-b21e-641dc543caa8"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.scratch)).getCriterias().get(datatype.Detailing.DetailingCriteria.undercarriage) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="310" width="100" height="30" uuid="f037d248-e963-465e-b054-a424547ffbbb"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.resin)).getCriterias().get(datatype.Detailing.DetailingCriteria.undercarriage) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="340" width="100" height="30" uuid="3d8e435b-6fde-4eac-9889-757d0fd9284d"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.resin)).getCriterias().get(datatype.Detailing.DetailingCriteria.cockpit) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="340" width="100" height="30" uuid="335f96ab-edf9-4372-8053-bab26e3b6fa3"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.documentation)).getCriterias().get(datatype.Detailing.DetailingCriteria.cockpit) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="340" width="100" height="30" uuid="769807ad-c8cb-4124-b544-922d2f67f82c"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.photoEtched)).getCriterias().get(datatype.Detailing.DetailingCriteria.cockpit) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="340" width="100" height="30" uuid="2ac4d71b-1791-4c35-8241-c7cba6d94ffd"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.scratch)).getCriterias().get(datatype.Detailing.DetailingCriteria.cockpit) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="370" width="100" height="30" uuid="708217e6-bb2f-4d88-b91a-ac1b5ba9a8f4"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.scratch)).getCriterias().get(datatype.Detailing.DetailingCriteria.armament) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="370" width="100" height="30" uuid="d1fc6b6e-613e-4976-8e76-aafdf9856b81"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.documentation)).getCriterias().get(datatype.Detailing.DetailingCriteria.armament) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="370" width="100" height="30" uuid="1ceb9e02-0627-4764-a1f5-8f4008a3fa4f"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.photoEtched)).getCriterias().get(datatype.Detailing.DetailingCriteria.armament) ? "X" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="370" width="100" height="30" uuid="563fb18e-9071-441b-ac32-c4b37f288568"/>
+				<textFieldExpression><![CDATA[((datatype.Detailing)$F{detailing}.get(datatype.Detailing.DetailingGroup.resin)).getCriterias().get(datatype.Detailing.DetailingCriteria.armament) ? "X" : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -89,7 +89,6 @@ a:active {
 }
 
 .flash {
-	border: 1px solid;
 	padding: 8px;
 	padding-left: 30px;
 }
@@ -97,6 +96,7 @@ a:active {
 .flash.OK {
 	background: url(../icons/true.png) 8px 8px no-repeat;
 	background-color: #dfffdf;
+	border: 1px solid;
 	border-color: #9fcf9f;
 	color: #005f00;
 }
@@ -104,15 +104,28 @@ a:active {
 .flash.Error {
 	background: url(../icons/exclamation.png) 8px 50% no-repeat;
 	background-color: #ffe3e3;
+	border: 1px solid;
 	border-color: #d88;
 	color: #880000;
 }
 
 .flash.Warning {
+/*
 	background: url(../icons/warning.png) 8px 8px no-repeat;
+	background-position: left center;
+*/
+	width: 100%; 
+	padding-left: 8px;
 	background-color: #ffD1A4;
+	border: 1px solid;
 	border-color: #ff8000;
-#	color: #005f00;
+	vertical-align: middle;
+}
+
+.disabledClass {
+	pointer-events: none;
+	background: grey !important;
+	border: 3px solid grey !important;
 }
 
 /*

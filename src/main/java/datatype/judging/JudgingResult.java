@@ -58,6 +58,10 @@ public class JudgingResult extends JudgedModel{
         return scores;
     }
 
+    public int getTotalScores() {
+        return getScores().values().stream().mapToInt(AtomicInteger::get).sum();
+    }
+
     public int getCountForScore(int score) {
         try 
         {
