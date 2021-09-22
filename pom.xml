@@ -151,6 +151,7 @@
             </resource>
 			<resource>
 				<directory>..</directory>
+				<targetPath>WEB-INF/classes</targetPath>
 				<includes>
 					<include>credentials.json</include>
 				</includes>
