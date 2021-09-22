@@ -182,7 +182,7 @@ public final class JudgingServlet extends HttpServlet {
 //                    String judges = getJudgesLinks(judgingResults.getValue(), judgingResult -> totalNumberOfDifferentScores.contains(judgingResult.getTotalScores()));
 
                     JudgingError judgingError = new JudgingError(category,
-                            judgedModelPerJudge.getValue().get(0).getModelID());
+                            -1);
                     judgingError.setErrorType(JudgingError.JudgingErrorType.TotalEvaluatedModels_Mismatch);
                     judgingError.setErrorMessage(String.format("number of judged models per judge are different: [%s: %d] - [%s: %d]",
                             firstJudge, firstJudgesModels, currentJudge, currentJudgesModels));

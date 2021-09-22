@@ -79,9 +79,13 @@ style="background: LightGrey; padding: 5px;"
  	<p>
 	 	<hr>
 		<p>
-		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgings.name()%>">List judgings</a>
+		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgings.name()%>">
+		<img src="../../icons/list.png" height="30" align="center">
+		List judgings</a>
 		<p>
-		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.DeleteJudgings.name()%>">Delete judgings</a>
+		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.DeleteJudgings.name()%>">
+		<img src="../../icons/delete2.png" height="30" align="center">
+		Delete judgings</a>
 <%	
 	}
  %>
