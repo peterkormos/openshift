@@ -139,7 +139,7 @@
 	%>
 	
 	>
-		<td align="center"
+		<td
 	<% 
 		 if(judgingErrors.contains(new JudgingError(judgingResult.getCategory(), judgingResult.getModelID())))
 		 {
