@@ -16,7 +16,10 @@
 	String judge = (String)session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
 	boolean isNormalUser = !"admin".equals(judge);
 
-  Map<String, AtomicInteger> scoredModelsByCategory = new LinkedHashMap<String, AtomicInteger>();
+	final Set<String> categories = (Set<String>)session
+			  .getAttribute(JudgingServlet.SessionAttribute.Categories.name());
+    
+    Map<String, AtomicInteger> scoredModelsByCategory = new LinkedHashMap<String, AtomicInteger>();
 
   Collection<JudgingResult> scoresByCategory = (Collection<JudgingResult>) session
 		  .getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
@@ -72,10 +75,20 @@
 	<%
 	  for (Map.Entry entry : scoredModelsByCategory.entrySet())
 	  {
+	      categories.remove(entry.getKey());
 	%>
 	<tr bgcolor="<%=highlight()%>">
-		<td><%=entry.getKey()%></td>
+		<td align="center"><%=entry.getKey()%></td>
 		<td align="center"><%=entry.getValue()%></td>
+	</tr>
+	<%
+	  }
+	  for (String notJudgedCategory : categories)
+	  {
+	%>
+	<tr bgcolor="<%=highlight()%>" class="flash ERROR">
+		<td align="center"><%=notJudgedCategory%></td>
+		<td align="center">0</td>
 	</tr>
 	<%
 	  }

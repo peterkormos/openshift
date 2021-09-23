@@ -64,7 +64,7 @@ public final class JudgingServlet extends HttpServlet {
         JudgingCriteriasForCategory, Category, Judgings, Judge, Categories
     }
 
-    private static final String VERSION = "2021.09.16.";
+    private static final String VERSION = "2021.09.23.";
     private static final String JUDGING_FILENAME = "judging.txt";
 
     public static Logger logger = Logger.getLogger(JudgingServlet.class);;
@@ -77,8 +77,8 @@ public final class JudgingServlet extends HttpServlet {
         List<JudgingError> errors = new LinkedList<>();
 
         errors.addAll(checkJudgedCriteriasPerModel(collection));
-        errors.addAll(checkIfModelandModelerCorelate(collection));
         errors.addAll(checkJudgedModelsPerCategory(collection));
+        errors.addAll(checkIfModelandModelerCorelate(collection));
 
         return errors;
     }
@@ -436,6 +436,9 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     private void listJudgingSummary(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        final Set<String> categories = loadFile(JUDGING_FILENAME).keySet();
+        setSessionAttribute(request, SessionAttribute.Categories, categories);
 
         Collection<JudgingResult> judgings = getJudgingSummary();
 		setSessionAttribute(request, SessionAttribute.Judgings, judgings);
