@@ -87,7 +87,7 @@
 	  {
 	%>
 	<tr bgcolor="<%=highlight()%>" class="flash ERROR">
-		<td align="center"><%=notJudgedCategory%></td>
+		<td align="center" class="flash ERROR"><%=notJudgedCategory%></td>
 		<td align="center">0</td>
 	</tr>
 	<%
@@ -139,7 +139,16 @@
 	%>
 	
 	>
-		<td align="center"><%=judgingResult.getCategory()%></td>
+		<td align="center"
+	<% 
+		 if(judgingErrors.contains(new JudgingError(judgingResult.getCategory(), judgingResult.getModelID())))
+		 {
+		 %>
+		 	class="flash ERROR"	
+		 <%
+		 }
+	%>
+		><%=judgingResult.getCategory()%></td>
 		<td><%=judgingResult.getJudge()%></td>
 		<td><%=judgingResult.getModellerID()%></td>
 		<td><%=judgingResult.getModelID()%></td>
