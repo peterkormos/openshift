@@ -39,17 +39,15 @@
 		<th align='center' style='white-space: nowrap'><%=language.getString("show")%>
 		</th>
 
-<!-- 
  		<%
 		  if (withDetailing)
 		  {
 		%>
-		<th align='center' style='white-space: nowrap'><%=language.getString("email")%>
+		<th align='center' style='white-space: nowrap'><%=language.getString("judge")%>
 		</th>
 		<%
 		  }
 		%>
- -->
 		<%
 		  if (!withDetailing)
 		  {
@@ -131,7 +129,6 @@
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("models.detailing")%>
 		</th>
-
 		<%
 		  }
 		  }
@@ -169,16 +166,24 @@
 		%>
 		<td align='center' style='white-space: nowrap'><%=category.group.show%>
 		</td>
-<!-- 
 		<%
 		  if (withDetailing)
 		  {
 		%>
-		<td align='center'><%=modelsUser.email%></td>
+		<td align='center'>
+		<%
+		        for(String judge : servlet.judgingServletDAO.getJudges(category.categoryCode, model.modelID, model.userID))
+		        {
+		%>
+			<a href="../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingSheet.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=model.modelID%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=model.userID%>&<%= JudgingServlet.RequestParameter.Category %>=<%=category.categoryCode%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=judge%>"><%=judge%></a>
+
+		<%
+		        }
+		%>
+		</td>
 		<%
 		  }
 		%>
- -->
 		<%
 		  if (!withDetailing)
 		  {

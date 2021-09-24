@@ -57,7 +57,7 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     public enum RequestType {
-        GetCategories, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login, ExportExcel
+        GetCategories, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login, ExportExcel
     }
 
     public enum SessionAttribute {
@@ -238,7 +238,10 @@ public final class JudgingServlet extends HttpServlet {
                     break;
 
                 case GetJudgingForm:
-                    getJudgingForm(request, response, true /* isForModification */);
+                    getJudgingForm(request, response, true /* setJudgingScoresInSession */);
+                    break;
+                case GetJudgingSheet:
+                    getJudgingForm(request, response, true /* setJudgingScoresInSession */, "getJudgingSheet.jsp");
                     break;
                 case DeleteJudgingForm:
                     deleteJudgingForm(request, response);
@@ -369,7 +372,12 @@ public final class JudgingServlet extends HttpServlet {
         return file;
     }
 
-    private void getJudgingForm(HttpServletRequest request, HttpServletResponse response, boolean isForModification)
+    private void getJudgingForm(HttpServletRequest request, HttpServletResponse response, boolean setJudgingScoresInSession)
+            throws Exception {
+        getJudgingForm(request, response, setJudgingScoresInSession, "getJudgingForm.jsp");
+    }
+    
+    private void getJudgingForm(HttpServletRequest request, HttpServletResponse response, boolean setJudgingScoresInSession, String jspPage)
             throws Exception {
         final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
 
@@ -382,14 +390,14 @@ public final class JudgingServlet extends HttpServlet {
             setSessionAttribute(request, SessionAttribute.Judge, ServletDAO.encodeString(judgeInRequestAttribute));
         }
 
-        if (isForModification) {
-            initForJudgingModification(request, category);
+        if (setJudgingScoresInSession) {
+            setJudgingScoresInSession(request, category);
         }
 
-        redirectRequest(request, response, JSP_BASE_DIR + "getJudgingForm.jsp");
+        redirectRequest(request, response, JSP_BASE_DIR + jspPage);
     }
 
-    private void initForJudgingModification(HttpServletRequest request, final String category)
+    private void setJudgingScoresInSession(HttpServletRequest request, final String category)
             throws MissingRequestParameterException, Exception {
 
         final String judge = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Judge.name());
@@ -560,7 +568,7 @@ public final class JudgingServlet extends HttpServlet {
         if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
                 .equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
             setSessionAttribute(request, SessionAttribute.Judge, judge);
-            getJudgingForm(request, response, false /* isForModification */);
+            getJudgingForm(request, response, false /* setJudgingScoresInSession */);
         } else {
             redirectToMainPage(request, response);
         }

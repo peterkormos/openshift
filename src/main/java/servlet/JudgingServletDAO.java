@@ -39,6 +39,29 @@ public class JudgingServletDAO extends HibernateDAO {
         }
     }
 
+    public List<String> getJudges(String category, int modelId, int modellerId) throws Exception
+    {
+        Session session = null;
+        
+        try
+        {
+            session = getHibernateSession();
+            
+            session.beginTransaction();
+
+            Query query = session.createQuery("select distinct judge From JudgingScore where category = :category and modelID = :modelId and modellerID = :modellerId order by judge");
+            query.setString("category", category);
+            query.setInteger("modelId", modelId);
+            query.setInteger("modellerId", modellerId);
+            
+          return new LinkedList<String>(query.list());
+        }
+        finally
+        {
+            closeSession(session);
+        }
+    }
+
     public void deleteJudgingScores(String judge, String category, int modelId, int modellerId) throws Exception
     {
         Session session = null;

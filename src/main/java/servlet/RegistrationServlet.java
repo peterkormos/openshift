@@ -101,6 +101,9 @@ public class RegistrationServlet extends HttpServlet {
 	private Properties servletConfig = new Properties();
 	
 	private EmailUtil emailUtil;
+	
+    public static JudgingServletDAO judgingServletDAO;
+
 
 	public static enum SessionAttribute {
 	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId
@@ -148,6 +151,7 @@ public class RegistrationServlet extends HttpServlet {
 						getServerConfigParamter("db.username"), getServerConfigParamter("db.password"),
 						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml")
 						);
+	            judgingServletDAO = new JudgingServletDAO(config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
 			}
 			
 			emailUtil = new EmailUtil();

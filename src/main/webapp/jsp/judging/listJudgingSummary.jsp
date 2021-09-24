@@ -151,7 +151,10 @@
 		><%=judgingResult.getCategory()%></td>
 		<td><%=judgingResult.getJudge()%></td>
 		<td><%=judgingResult.getModellerID()%></td>
-		<td><%=judgingResult.getModelID()%></td>
+		<td>
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingSheet.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=judgingResult.getJudge()%>">
+		<%=judgingResult.getModelID()%></a>
+		</td>
 		<td><%=judgingResult.getModelsName()%></td>
 		<%
 			int total = 0;
