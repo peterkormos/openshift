@@ -155,7 +155,7 @@ if(directRegister)
       if(user == null)
       {
       	if(directRegister)
-      		yearOfBirth = "2014";      	
+      		yearOfBirth = "2021";      	
       }
       else
       	yearOfBirth = String.valueOf(user.yearOfBirth);
