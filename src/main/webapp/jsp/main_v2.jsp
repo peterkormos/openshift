@@ -7,27 +7,26 @@
 <jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
 
 <%
-    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	ServletDAO servletDAO = RegistrationServlet.getServletDAO();
-	
-	User user = null;
-	
 	try
 	{
+	    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+		ServletDAO servletDAO = RegistrationServlet.getServletDAO();
+		
+		User user = null;
+	
 		user = RegistrationServlet.getUser(request);
+		ResourceBundle language = languageUtil.getLanguage(user.language);
+	
+		String show = RegistrationServlet.getShowFromSession(session);
+		if (show == null)
+		{
+		  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+		}
 	}
 	catch(Exception ex)
 	{
 		out.print(ex.getMessage());
 		return;
-	}
-
-	ResourceBundle language = languageUtil.getLanguage(user.language);
-
-	String show = RegistrationServlet.getShowFromSession(session);
-	if (show == null)
-	{
-	  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 	}
 %>
 <html>

@@ -5,14 +5,21 @@
 <%@page import="util.*"%>
 
 <%
-    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-			ServletDAO servletDAO = servlet.getServletDAO();
-			User user = servlet.getUser(request);
-
-			if (user == null || !"ADMIN".equals(user.language)) {
-				response.sendRedirect("../index.jsp");
-				return;
-			}
+	User user = null;
+	try 
+	{
+	    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+		ServletDAO servletDAO = servlet.getServletDAO();
+		
+		user = servlet.getUser(request);
+	}
+	catch(Exception ex) {
+	}
+		
+	if (user == null || !"ADMIN".equals(user.language)) {
+		response.sendRedirect("../index.jsp");
+		return;
+	}
 %>
 
 <html>
