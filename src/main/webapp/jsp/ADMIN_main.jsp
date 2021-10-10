@@ -6,11 +6,10 @@
 
 <%
 	User user = null;
-	try 
-	{
 	    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 		ServletDAO servletDAO = servlet.getServletDAO();
-		
+	try 
+	{
 		user = servlet.getUser(request);
 	}
 	catch(Exception ex) {
