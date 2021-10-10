@@ -53,11 +53,11 @@ import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet {
     public enum RequestParameter {
-        Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language
+        Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges
     }
 
     public enum RequestType {
-        GetCategories, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login, ExportExcel
+        GetCategories, GetModelsInCategory, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login, ExportExcel
     }
 
     public enum SessionAttribute {
@@ -71,7 +71,8 @@ public final class JudgingServlet extends HttpServlet {
 
     public final static String DEFAULT_PAGE = "judging.jsp";
 
-    private final static String JSP_BASE_DIR = "/jsp/judging/";
+    private final static String JSP_URL_BASE_DIR = "/jsp/";
+    private final static String JSP_URL_BASE_DIR_JUDGING = JSP_URL_BASE_DIR + "judging/";
 
     public static List<JudgingError> checkJudgingResults(Collection<JudgingResult> collection) {
         List<JudgingError> errors = new LinkedList<>();
@@ -236,7 +237,9 @@ public final class JudgingServlet extends HttpServlet {
                 case GetCategories:
                     getCategories(request, response);
                     break;
-
+                case GetModelsInCategory:
+                	getModelsInCategory(request, response);
+                    break;
                 case GetJudgingForm:
                     getJudgingForm(request, response, true /* setJudgingScoresInSession */);
                     break;
@@ -303,9 +306,22 @@ public final class JudgingServlet extends HttpServlet {
         final Set<String> categories = loadFile(JUDGING_FILENAME).keySet();
 
         setSessionAttribute(request, SessionAttribute.Categories, categories);
-        redirectRequest(request, response, JSP_BASE_DIR + "getCategories.jsp");
+        redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + "getCategories.jsp");
     }
 
+    private void getModelsInCategory(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException, SQLException {
+        final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
+        final String forJudges = ServletUtil.getRequestAttribute(request, RequestParameter.ForJudges.name());
+        int categoryID = RegistrationServlet.servletDAO.getCategory(category).getCategoryID();
+
+		List<Model> models = RegistrationServlet.servletDAO.getModelsInCategory(categoryID);
+		models.sort((m1, m2) -> Integer.valueOf(m1.getUserID()).compareTo(Integer.valueOf(m2.getUserID())));
+		
+        setSessionAttribute(request, RegistrationServlet.SessionAttribute.Models, models);
+		redirectRequest(request, response,
+				JSP_URL_BASE_DIR + "listModels.jsp?" + JudgingServlet.RequestParameter.ForJudges.name() + "=" + forJudges);
+    }
+    
     private JudgingCriteria getCriteria(String category, int criteriaId) throws IOException {
         for (JudgingCriteria criteria : getCriteriaList(category)) {
             if (criteria.getId() == criteriaId) {
@@ -394,7 +410,7 @@ public final class JudgingServlet extends HttpServlet {
             setJudgingScoresInSession(request, category);
         }
 
-        redirectRequest(request, response, JSP_BASE_DIR + jspPage);
+        redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + jspPage);
     }
 
     private void setJudgingScoresInSession(HttpServletRequest request, final String category)
@@ -440,7 +456,7 @@ public final class JudgingServlet extends HttpServlet {
 
         setSessionAttribute(request, SessionAttribute.Judgings, allScores);
 
-        redirectRequest(request, response, JSP_BASE_DIR + "listJudgings.jsp");
+        redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + "listJudgings.jsp");
     }
 
     private void listJudgingSummary(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -451,7 +467,7 @@ public final class JudgingServlet extends HttpServlet {
         Collection<JudgingResult> judgings = getJudgingSummary();
 		setSessionAttribute(request, SessionAttribute.Judgings, judgings);
 
-        redirectRequest(request, response, JSP_BASE_DIR + "listJudgingSummary.jsp");
+        redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + "listJudgingSummary.jsp");
     }
 
 	private Collection<JudgingResult> getJudgingSummary() throws Exception, IOException {
@@ -530,7 +546,7 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     private void redirectToMainPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        redirectRequest(request, response, JSP_BASE_DIR + DEFAULT_PAGE);
+        redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + DEFAULT_PAGE);
     }
 
     private void saveJudging(HttpServletRequest request, HttpServletResponse response) throws Exception {
