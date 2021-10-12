@@ -47,7 +47,7 @@ public class Model implements Serializable {
 
     public void setCategory(Category category) {
         this.category = category;
-        this.categoryID = this.category.getCategoryID();
+        this.categoryID = this.category.getId();
     }
 
     public Model() {

@@ -48,7 +48,11 @@
 
         <property name="hbm2ddl.auto">update</property>
 
+<!--         <mapping class="datatype.Category" /> -->
         <mapping class="datatype.judging.JudgingScore" />
+        <mapping class="datatype.judging.JudgingCriteria" />
+        <mapping class="datatype.judging.JudgingSheet" />
+        <mapping class="datatype.judging.JudgingCategory" />
         <mapping class="datatype.LoginConsent" />
 
     </session-factory>

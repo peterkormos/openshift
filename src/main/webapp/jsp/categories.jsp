@@ -54,7 +54,7 @@ onchange="updateMandatoryFieldMark(this);"
 						continue;
 					  }
 			%>
-			<option value='<%=category.categoryID%>'>
+			<option value='<%=category.getCategoryID()%>'>
 				<%=category.categoryCode + " - " + category.categoryDescription%>
 			</option>
 

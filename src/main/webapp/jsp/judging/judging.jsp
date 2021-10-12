@@ -1,5 +1,6 @@
 <%@page import="java.util.*" %>
 <%@page import="servlet.*"%>
+<%@page import="datatype.judging.*"%>
 <%@page import="util.*"%>
 
 <jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
@@ -83,9 +84,26 @@ style="background: LightGrey; padding: 5px;"
 		<img src="../../icons/list.png" height="30" align="center">
 		List judgings</a>
 		<p>
-		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.DeleteJudgings.name()%>">
+		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.DeleteRecords.name()%>?<%=JudgingServlet.RequestParameter.Class.name()%>=<%=JudgingScore.class.getName()%>">
 		<img src="../../icons/delete2.png" height="30" align="center">
-		Delete judgings</a>
+		Delete JudgingScore</a>
+		<p>
+		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.DeleteRecords.name()%>?<%=JudgingServlet.RequestParameter.Class.name()%>=<%=JudgingCriteria.class.getName()%>">
+		<img src="../../icons/delete2.png" height="30" align="center">
+		Delete JudgingCriteria</a>
+		<p>
+		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.DeleteRecords.name()%>?<%=JudgingServlet.RequestParameter.Class.name()%>=<%=JudgingSheet.class.getName()%>">
+		<img src="../../icons/delete2.png" height="30" align="center">
+		Delete JudgingSheet</a>
+		<p>
+		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.DeleteRecords.name()%>?<%=JudgingServlet.RequestParameter.Class.name()%>=<%=JudgingCategory.class.getName()%>">
+		<img src="../../icons/delete2.png" height="30" align="center">
+		Delete JudgingCategory</a>
+
+		<form accept-charset="UTF-8" action="../../JudgingServlet/<%=JudgingServlet.RequestType.ImportData.name()%>" method="post" enctype="multipart/form-data" name="input">
+			<input type="file" name="zipFile"> 
+			<input type="submit" value="Adatok import&aacute;l&aacute;sa">
+		</form>		
 <%	
 	}
  %>

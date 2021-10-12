@@ -2,26 +2,26 @@ package datatype;
 
 import java.io.Serializable;
 
-public class Category implements Serializable
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "MAK_CATEGORY")
+public class Category extends Record
 {
-  public int categoryID;
-
+  @Column
   public CategoryGroup group;
+  @Column
   public String categoryCode;
+  @Column
   public String categoryDescription;
+  @Column
   private boolean master;
+  @Column
   private ModelClass modelClass;
+  @Column
   private AgeGroup ageGroup;
-
-  public int getCategoryID()
-  {
-	return categoryID;
-  }
-
-  public void setCategoryID(final int categoryID)
-  {
-	this.categoryID = categoryID;
-  }
 
   public CategoryGroup getGroup()
   {
@@ -61,7 +61,7 @@ public class Category implements Serializable
   public Category(final int categoryID, final String categoryCode, final String categoryDescription, final CategoryGroup group,
 	  boolean master, ModelClass modelClass, AgeGroup ageGroup)
   {
-	this.categoryID = categoryID;
+	this.setId(categoryID);
 	this.categoryCode = categoryCode;
 	this.categoryDescription = categoryDescription;
 	this.group = group;
@@ -104,7 +104,7 @@ public class Category implements Serializable
   @Override
   public String toString()
   {
-	return "Category [categoryID=" + categoryID + ", group=" + group + ", categoryCode=" + categoryCode
+	return "Category [" + super.toString() + ", group=" + group + ", categoryCode=" + categoryCode
 	    + ", categoryDescription=" + categoryDescription + ", master=" + master + ", modelClass=" + modelClass + ", ageGroup="
 	    + ageGroup + "]";
   }

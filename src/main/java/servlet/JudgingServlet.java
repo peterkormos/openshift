@@ -2,7 +2,9 @@ package servlet;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOError;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,9 +24,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -33,18 +34,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import datatype.Category;
 import datatype.Model;
-import datatype.User;
-import datatype.judging.JudgedModel;
+import datatype.Record;
+import datatype.judging.JudgingCategory;
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingError;
 import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
+import datatype.judging.JudgingSheet;
 import exception.MissingRequestParameterException;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
@@ -53,11 +58,11 @@ import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet {
     public enum RequestParameter {
-        Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges
+        Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, Class
     }
 
     public enum RequestType {
-        GetCategories, GetModelsInCategory, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteJudgings, ListJudgingSummary, DeleteJudgingForm, Login, ExportExcel
+        GetCategories, GetModelsInCategory, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteRecords, ListJudgingSummary, DeleteJudgingForm, Login, ExportExcel, ImportData
     }
 
     public enum SessionAttribute {
@@ -255,8 +260,8 @@ public final class JudgingServlet extends HttpServlet {
                 case ListJudgings:
                     listJudgings(request, response);
                     break;
-                case DeleteJudgings:
-                    deleteJudgings(request, response);
+                case DeleteRecords:
+                    deleteRecords(request, response);
                     break;
                 case ListJudgingSummary:
                     listJudgingSummary(request, response);
@@ -267,6 +272,9 @@ public final class JudgingServlet extends HttpServlet {
                 case ExportExcel:
                 	exportExcel(request, response);
                     break;
+                case ImportData:
+                	importData(request, response);
+                	break;
                 default:
                     throw new IllegalArgumentException("Unknown pathInfo: " + pathInfo);
                 }
@@ -294,9 +302,12 @@ public final class JudgingServlet extends HttpServlet {
         redirectToMainPage(request, response);
     }
 
-    private void deleteJudgings(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        for (final JudgedModel score : dao.getAll(JudgingScore.class)) {
-            dao.delete(score.id, JudgingScore.class);
+    private void deleteRecords(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	@SuppressWarnings("unchecked")
+		Class<? extends Record> recordClass = (Class<? extends Record>) Class.forName(ServletUtil.getRequestAttribute(request, RequestParameter.Class.name()));
+		for (final Record record : dao.getAll(recordClass)) {
+			System.out.println(record);
+            dao.delete(record.id, recordClass);
         }
 
         redirectRequest(request, response, "/" + getClass().getSimpleName());
@@ -312,7 +323,7 @@ public final class JudgingServlet extends HttpServlet {
     private void getModelsInCategory(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException, SQLException {
         final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
         final String forJudges = ServletUtil.getRequestAttribute(request, RequestParameter.ForJudges.name());
-        int categoryID = RegistrationServlet.servletDAO.getCategory(category).getCategoryID();
+        int categoryID = RegistrationServlet.servletDAO.getCategory(category).getId();
 
 		List<Model> models = RegistrationServlet.servletDAO.getModelsInCategory(categoryID);
 		models.sort((m1, m2) -> Integer.valueOf(m1.getUserID()).compareTo(Integer.valueOf(m2.getUserID())));
@@ -324,7 +335,7 @@ public final class JudgingServlet extends HttpServlet {
     
     private JudgingCriteria getCriteria(String category, int criteriaId) throws IOException {
         for (JudgingCriteria criteria : getCriteriaList(category)) {
-            if (criteria.getId() == criteriaId) {
+            if (criteria.getCriteriaId() == criteriaId) {
                 return criteria;
             }
         }
@@ -360,7 +371,7 @@ public final class JudgingServlet extends HttpServlet {
                 criteriaList.add(criteria);
             }
             criteriaList.sort((c1, c2) -> 
-            	Integer.compare(c1.getId(), c2.getId())
+            	Integer.compare(c1.getCriteriaId(), c2.getCriteriaId())
             );
             return criteriaList;
         } catch (Exception e) {
@@ -595,6 +606,65 @@ public final class JudgingServlet extends HttpServlet {
         session.setAttribute(name.name(), value);
     }
     
+	public void importData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		final DiskFileItemFactory factory = new DiskFileItemFactory();
+		final ServletFileUpload upload = new ServletFileUpload(factory);
+
+		final Map<String, String> parameters = new HashMap<String, String>();
+
+		@SuppressWarnings("unchecked")
+		final List<FileItem> iter = upload.parseRequest(request);
+
+		for (final FileItem item : iter) {
+			if (item.isFormField()) {
+				parameters.put(item.getFieldName(), item.getString());
+			} else {
+				processUploadedFile(request, response, item, parameters);
+			}
+		}
+	}
+
+	private void processUploadedFile(final HttpServletRequest request, final HttpServletResponse response,
+			FileItem item, Map<String, String> parameters) throws IOException, SQLException, Exception {
+		if ("zipFile".equals(item.getFieldName())) {
+			final StringBuilder buff = importZip(request, item.getInputStream());
+			RegistrationServlet.writeResponse(response, buff);
+		}
+	}
+
+	private StringBuilder importZip(final HttpServletRequest request, final InputStream stream)
+			throws IOException, SQLException, Exception, IOError {
+		final StringBuilder buff = new StringBuilder();
+
+		final GZIPInputStream e = new GZIPInputStream(stream);
+		final List<? extends Record> data = (List<? extends Record>) Serialization.deserialize(e);
+		e.close();
+		
+		for (Record record : data) {
+			setIdInRecord(buff, record);
+		}
+		
+		return buff;
+	}
+
+	private void setIdInRecord(StringBuilder buff, Record record) throws Exception {
+		if(JudgingCategory.class.isInstance(record))
+			setIdInRecord(buff, JudgingCategory.class.cast(record).getJudgingSheet());
+		else if(JudgingSheet.class.isInstance(record)) {
+			JudgingSheet.class.cast(record).getCriterias().forEach(criteria -> {
+				try {
+					setIdInRecord(buff, criteria);
+				} catch (Exception e) {
+					throw new IllegalStateException(e);
+				}
+			});
+		}
+
+		record.setId(dao.getNextID(record.getClass()));
+		dao.save(record);
+		buff.append(".");
+	}
+
     public void exportExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType("application/vnd.ms-excel");
 
