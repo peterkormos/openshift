@@ -7,11 +7,35 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingScore;
 
 public class JudgingServletDAO extends HibernateDAO {
     public JudgingServletDAO(URL configFile) {
         super(configFile);
+    }
+
+    @SuppressWarnings("unchecked")
+	public List<JudgingCriteria> getJudgingCriteria(int categoryId) throws Exception
+    {
+        Session session = null;
+        
+        try
+        {
+            session = getHibernateSession();
+            
+            session.beginTransaction();
+
+            Query query = session.createQuery(
+"select s.criterias from JudgingCategory c join c.judgingSheet s where c.categoryId = :categoryId");
+            query.setInteger("categoryId", categoryId);
+            
+          return new LinkedList<JudgingCriteria>(query.list());
+        }
+        finally
+        {
+            closeSession(session);
+        }
     }
 
     @SuppressWarnings("unchecked")

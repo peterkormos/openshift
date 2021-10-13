@@ -14,7 +14,7 @@ public class JudgingCategory extends Record{
 	@Column
 	private int categoryId;
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne()
 	private JudgingSheet judgingSheet;
 
 	public JudgingCategory() {

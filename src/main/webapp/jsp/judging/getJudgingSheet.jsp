@@ -129,7 +129,7 @@
 				  	boolean hasScore = judgedModel != null && scores.get(criteria.getId()) != null;
 				%>
 				<tr style="border: 1px solid; <%= hasScore ? "" : unjudgedCriteriaStyle%>">
-					<td><%=criteria.getId()%></td>
+					<td><%=criteria.getCriteriaId()%></td>
 					<td><%=criteria.getDescription()%></td>
 					<td>
 						<label>

@@ -16,7 +16,7 @@
 	String judge = (String)session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
 	boolean isNormalUser = !"admin".equals(judge);
 
-	final Set<String> categories = (Set<String>)session
+	final List<String> categories = (List<String>)session
 			  .getAttribute(JudgingServlet.SessionAttribute.Categories.name());
     
     Map<String, AtomicInteger> scoredModelsByCategory = new LinkedHashMap<String, AtomicInteger>();

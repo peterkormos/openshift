@@ -63,8 +63,11 @@ function setModelInSession(value)
     List<JudgingCriteria> criteriaList = (List<JudgingCriteria>) session
             .getAttribute(JudgingServlet.SessionAttribute.JudgingCriteriasForCategory.name());
 
-    if (criteriaList == null) {
+    boolean simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+    
+    if (criteriaList == null || simpleJudging) {
         criteriaList = Arrays.asList(JudgingCriteria.getDefault());
+        JudgingServlet.setSessionAttribute(request, JudgingServlet.SessionAttribute.JudgingCriteriasForCategory, criteriaList);
     }
 %>
 

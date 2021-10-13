@@ -1527,6 +1527,8 @@ void deleteModels(final int categoryId) throws SQLException {
 		rs = queryStatement.executeQuery(sql);
 
 		final StringBuilder buff = new StringBuilder();
+		buff.append(sql);
+		buff.append("\n<br>\n");
 		buff.append("<table border='1'>\n");
 		final ResultSetMetaData rsm = rs.getMetaData();
 		buff.append("  <tr>\n");

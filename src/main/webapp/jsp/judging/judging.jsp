@@ -7,14 +7,20 @@
 
 <%
     ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
-	 
+	String languageCode = null;
+	
 	if(language == null)
 	{
-		final String languageCode = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Language.name());
+		languageCode = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Language.name());
+		if(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(languageCode)) {
+			languageCode = "HU";
+		}
 		language = languageUtil.getLanguage(languageCode);
 		
 		session.setAttribute(CommonSessionAttribute.Language.name(), language); 
 	}
+	else
+		languageCode = language.getLocale().getLanguage();
 
 	String judge = (String)session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
 %>
@@ -45,8 +51,8 @@ style="background: LightGrey; padding: 5px;"
 	<%= language.getString("language") %>: 
  <jsp:include page="../language.jsp">
   <jsp:param name="parameterName" value="<%= JudgingServlet.RequestParameter.Language.name() %>"/>
-  <jsp:param name="selectLabel" value=""/>
-  <jsp:param name="selectValue" value=""/>
+  <jsp:param name="selectLabel" value="<%=languageCode %>"/>
+  <jsp:param name="selectValue" value="<%=languageCode %>"/>
   <jsp:param name="required" value="required"/>
 </jsp:include>
 	
@@ -59,7 +65,7 @@ style="background: LightGrey; padding: 5px;"
 	<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>">
 	<img src="../../icons/add.png" height="30" align="center"> <%= language.getString("judging.type.form") %></a>
 	<p>
-	<a href="getJudgingForm.jsp">
+	<a href="getJudgingForm.jsp?<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>=true">
 	<img src="../../icons/add.png" height="30" align="center">
 	<%= language.getString("judging.type.looking") %></a>
 <%
@@ -79,6 +85,10 @@ style="background: LightGrey; padding: 5px;"
 %>
  	<p>
 	 	<hr>
+		<p>
+		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.JoinCategoryWithForm.name()%>">
+		<img src="../../icons/list.png" height="30" align="center">
+		JoinCategoryWithForm</a>
 		<p>
 		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgings.name()%>">
 		<img src="../../icons/list.png" height="30" align="center">

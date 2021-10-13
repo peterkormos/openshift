@@ -17,10 +17,10 @@
 	<%= language.getString("category.code") %>:
 	<p>
 	<%
-	    Set<String> categories = (Set<String>) session.getAttribute(JudgingServlet.SessionAttribute.Categories.name());
+		List<String> categories = (List<String>) session.getAttribute(JudgingServlet.SessionAttribute.Categories.name());
 
-		  for (String category : categories)
-		  {
+	  for (String category : categories)
+	  {
 	%>
 			<label>
 			<%= category %>
@@ -31,7 +31,7 @@
 		</a>
 			<br>
 	<%
-		  }
+	  }
 	%>
 	
 </form>
