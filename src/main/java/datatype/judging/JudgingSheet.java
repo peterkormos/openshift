@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import datatype.Record;
+import servlet.ServletDAO;
 
 @Entity
 @Table(name = "mak_judgingsheet")
@@ -26,7 +27,7 @@ public class JudgingSheet extends Record {
 
 	public JudgingSheet(String name, List<JudgingCriteria> criterias) {
 		super();
-		this.name = name;
+		this.name = ServletDAO.encodeString(name);
 		this.criterias = criterias;
 	}
 

@@ -10,17 +10,17 @@ import datatype.Record;
 
 @Entity
 @Table(name = "mak_judgingcategory")
-public class JudgingCategory extends Record{
+public class JudgingCategoryToSheetMapping extends Record{
 	@Column
 	private int categoryId;
 	
 	@OneToOne()
 	private JudgingSheet judgingSheet;
 
-	public JudgingCategory() {
+	public JudgingCategoryToSheetMapping() {
 	}
 
-	public JudgingCategory(int categoryId, JudgingSheet judgingSheet) {
+	public JudgingCategoryToSheetMapping(int categoryId, JudgingSheet judgingSheet) {
 		super();
 		this.categoryId = categoryId;
 		this.judgingSheet = judgingSheet;

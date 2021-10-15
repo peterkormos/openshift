@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -42,7 +43,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import datatype.Category;
 import datatype.Model;
 import datatype.Record;
-import datatype.judging.JudgingCategory;
+import datatype.judging.JudgingCategoryToSheetMapping;
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingError;
 import datatype.judging.JudgingResult;
@@ -55,7 +56,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet {
-	private static final String VERSION = "2021.10.13.";
+	private static final String VERSION = "2021.10.15.";
 
 	public enum RequestParameter {
         Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, Class, SimpleJudging
@@ -66,7 +67,7 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     public enum SessionAttribute {
-        JudgingCriteriasForCategory, Category, Judgings, Judge, Categories, Forms
+        JudgingCriteriasForCategory, Category, Judgings, Judge, Categories, Forms, JudgingCategoryToSheetMapping
     }
 
     public static Logger logger = Logger.getLogger(JudgingServlet.class);;
@@ -289,15 +290,20 @@ public final class JudgingServlet extends HttpServlet {
         }
     }
     
-    private void joinCategoryWithForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
-    	List<Category> categories = servletDAO.getCategoryList(null /*show*/);
-    	setSessionAttribute(request, SessionAttribute.Categories, categories);
+	private void joinCategoryWithForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		List<Category> categories = servletDAO.getCategoryList(null /* show */);
+		setSessionAttribute(request, SessionAttribute.Categories, categories);
 
-    	List<JudgingSheet> forms = dao.getAll(JudgingSheet.class);
-    	setSessionAttribute(request, SessionAttribute.Forms, forms);
-    	
-    	redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + "joinCategoryWithForm.jsp");
-    }
+		List<JudgingSheet> forms = dao.getAll(JudgingSheet.class);
+		setSessionAttribute(request, SessionAttribute.Forms, forms);
+
+		Map<Integer, JudgingSheet> categoryMapping = dao.getJudgingCategories().stream().collect(Collectors.toMap(
+				JudgingCategoryToSheetMapping::getCategoryId, JudgingCategoryToSheetMapping::getJudgingSheet));
+		setSessionAttribute(request, SessionAttribute.JudgingCategoryToSheetMapping,
+				categoryMapping);
+
+		redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + "joinCategoryWithForm.jsp");
+	}
     
     private void deleteJudgingForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
@@ -333,7 +339,7 @@ public final class JudgingServlet extends HttpServlet {
     }
 
 	private List<String> getCategories() throws Exception {
-		List<String> categories = dao.getAll(JudgingCategory.class).stream()
+		List<String> categories = dao.getAll(JudgingCategoryToSheetMapping.class).stream()
 				.sorted((jc1, jc2) -> Integer.compare(jc1.getCategoryId(), jc2.getCategoryId()))
 				.map(judgingCategory -> {
 					try {
@@ -373,6 +379,7 @@ public final class JudgingServlet extends HttpServlet {
 
         String judgeInRequestAttribute = ServletUtil.getOptionalRequestAttribute(request,
                 RequestParameter.Judge.name());
+        
         if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute)) {
             setSessionAttribute(request, SessionAttribute.Judge, ServletDAO.encodeString(judgeInRequestAttribute));
         }
@@ -392,7 +399,7 @@ public final class JudgingServlet extends HttpServlet {
 	private void setJudgingScoresInSession(HttpServletRequest request, final String category)
             throws MissingRequestParameterException, Exception {
 
-        final String judge = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Judge.name());
+        final String judge = ServletDAO.encodeString(ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Judge.name()));
         final String modelId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ModelID.name());
         final String modellerId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ModellerID.name());
 
@@ -487,8 +494,8 @@ public final class JudgingServlet extends HttpServlet {
 
     private void login(HttpServletRequest request, HttpServletResponse response)
             throws IOException, MissingRequestParameterException {
-        String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
-        setSessionAttribute(request, SessionAttribute.Judge, ServletDAO.encodeString(judge));
+        String judge = ServletDAO.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
+        setSessionAttribute(request, SessionAttribute.Judge, judge);
         setSessionAttribute(request, CommonSessionAttribute.Language,
                 languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
         redirectToMainPage(request, response);
@@ -510,30 +517,40 @@ public final class JudgingServlet extends HttpServlet {
         redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + DEFAULT_PAGE);
     }
     
-    private void saveCategoryWithForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
-    	List<Category> categories = servletDAO.getCategoryList(null /*show*/);
-    	
-    	for (Category category : categories) {
-    		int categoryId = category.getId();
+	private void saveCategoryWithForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		List<Category> categories = servletDAO.getCategoryList(null /* show */);
+
+		for (Category category : categories) {
+			int categoryId = category.getId();
 			try {
-				final int judgingSheetId = Integer.parseInt(ServletUtil.getRequestAttribute(request, RequestParameter.Category.name() + categoryId));
-				
+				final int judgingSheetId = Integer.parseInt(
+						ServletUtil.getRequestAttribute(request, RequestParameter.Category.name() + categoryId));
+
 				JudgingSheet judgingSheet = dao.get(judgingSheetId, JudgingSheet.class);
+
+				Optional<JudgingCategoryToSheetMapping> judgingCategoryOptional = dao.getJudgingCategory(categoryId);
+				JudgingCategoryToSheetMapping judgingCategory = null;
 				
-				JudgingCategory judgingCategory = new JudgingCategory(categoryId, judgingSheet);
-				judgingCategory.setId(dao.getNextID(JudgingCategory.class));
-				
+				if(judgingCategoryOptional.isPresent()) {
+					judgingCategory = judgingCategoryOptional.get();
+					judgingCategory.setJudgingSheet(judgingSheet);
+				}
+				else {
+					judgingCategory = new JudgingCategoryToSheetMapping(categoryId, judgingSheet);
+					judgingCategory.setId(dao.getNextID(JudgingCategoryToSheetMapping.class));
+				}
+
 				dao.save(judgingCategory);
 			} catch (Exception e) {
 			}
 		}
-    	
-    	redirectToMainPage(request, response);
-    }
+
+		redirectToMainPage(request, response);
+	}
     
     private void saveJudging(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
-        final String judge = ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name());
+        final String judge = ServletDAO.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
         final String modelsName = ServletUtil.getRequestAttribute(request, RequestParameter.ModelsName.name());
         final int modelId = Integer.parseInt(ServletUtil.getRequestAttribute(request, RequestParameter.ModelID.name()));
         final int modellerId = Integer
@@ -619,8 +636,8 @@ public final class JudgingServlet extends HttpServlet {
 	}
 
 	private void setIdInRecord(StringBuilder buff, Record record) throws Exception {
-		if(JudgingCategory.class.isInstance(record))
-			setIdInRecord(buff, JudgingCategory.class.cast(record).getJudgingSheet());
+		if(JudgingCategoryToSheetMapping.class.isInstance(record))
+			setIdInRecord(buff, JudgingCategoryToSheetMapping.class.cast(record).getJudgingSheet());
 		else if(JudgingSheet.class.isInstance(record)) {
 			JudgingSheet.class.cast(record).getCriterias().forEach(criteria -> {
 				try {

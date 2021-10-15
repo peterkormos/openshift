@@ -106,9 +106,9 @@ style="background: LightGrey; padding: 5px;"
 		<img src="../../icons/delete2.png" height="30" align="center">
 		Delete JudgingSheet</a>
 		<p>
-		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.DeleteRecords.name()%>?<%=JudgingServlet.RequestParameter.Class.name()%>=<%=JudgingCategory.class.getName()%>">
+		<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.DeleteRecords.name()%>?<%=JudgingServlet.RequestParameter.Class.name()%>=<%=JudgingCategoryToSheetMapping.class.getName()%>">
 		<img src="../../icons/delete2.png" height="30" align="center">
-		Delete JudgingCategory</a>
+		Delete JudgingCategoryToSheetMapping</a>
 
 		<form accept-charset="UTF-8" action="../../JudgingServlet/<%=JudgingServlet.RequestType.ImportData.name()%>" method="post" enctype="multipart/form-data" name="input">
 			<input type="file" name="zipFile"> 

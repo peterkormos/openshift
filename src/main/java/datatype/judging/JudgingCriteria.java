@@ -8,6 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import datatype.Record;
+import servlet.ServletDAO;
 
 @Entity
 @Table(name = "mak_judgingcriteria")
@@ -32,7 +33,7 @@ public class JudgingCriteria extends Record
   {
 	super();
 	this.criteriaId = criteriaId;
-	this.description = description;
+	this.description = ServletDAO.encodeString(description);
 	this.maxScore = maxScore;
   }
 

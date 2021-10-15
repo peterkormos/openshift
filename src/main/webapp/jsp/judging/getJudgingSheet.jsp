@@ -85,7 +85,7 @@
 			  <jsp:param name="onChange" value='setModelInSession(this.value);'/>
 			  <jsp:param name="caption" value='<%= language.getString("modelID") %>'/>
 			</jsp:include>
-
+			<input type="button" value=">">
 			</td>
 		</tr>
 		<tr>

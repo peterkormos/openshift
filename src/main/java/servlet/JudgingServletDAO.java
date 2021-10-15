@@ -3,10 +3,12 @@ package servlet;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import datatype.judging.JudgingCategoryToSheetMapping;
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingScore;
 
@@ -27,7 +29,7 @@ public class JudgingServletDAO extends HibernateDAO {
             session.beginTransaction();
 
             Query query = session.createQuery(
-"select s.criterias from JudgingCategory c join c.judgingSheet s where c.categoryId = :categoryId");
+"select s.criterias from JudgingCategoryToSheetMapping c join c.judgingSheet s where c.categoryId = :categoryId");
             query.setInteger("categoryId", categoryId);
             
           return new LinkedList<JudgingCriteria>(query.list());
@@ -37,6 +39,42 @@ public class JudgingServletDAO extends HibernateDAO {
             closeSession(session);
         }
     }
+
+    @SuppressWarnings("unchecked")
+	public Optional<JudgingCategoryToSheetMapping> getJudgingCategory(int categoryId) throws Exception
+    {
+        Session session = null;
+        
+        try
+        {
+            session = getHibernateSession();
+            
+            session.beginTransaction();
+
+            Query query = session.createQuery(
+"select c from JudgingCategoryToSheetMapping c where c.categoryId = :categoryId");
+            query.setInteger("categoryId", categoryId);
+            
+          return Optional.ofNullable((JudgingCategoryToSheetMapping)query.uniqueResult());
+        }
+        finally
+        {
+            closeSession(session);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+	public List<JudgingCategoryToSheetMapping> getJudgingCategories() throws Exception {
+		Session session = null;
+		try {
+			session = getHibernateSession();
+			session.beginTransaction();
+			Query query = session.createQuery("from JudgingCategoryToSheetMapping");
+			return (List<JudgingCategoryToSheetMapping>) query.list();
+		} finally {
+			closeSession(session);
+		}
+	}
 
     @SuppressWarnings("unchecked")
     public List<JudgingScore> getJudgingScores(String judge, String category, int modelId, int modellerId) throws Exception
