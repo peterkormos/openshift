@@ -27,6 +27,8 @@
 
 <table style='width: 100%; border-collapse: collapse;' border='1'>
 	<tr>
+		<th align='center' style='white-space: nowrap'>
+		</th>
 		<%
 		  if (insertAwards)
 		  {
@@ -154,6 +156,20 @@
 			}
 	%>
 	<tr bgcolor="<%=highlight()%>">
+		<td>
+			<div class="tooltip">
+				<a href="#" onClick="document.getElementById('command').value='inputForModifyModel';document.getElementById('modelID').value='<%=model.modelID%>';document.getElementById('input').submit();">
+					<img src="../icons/modify.png" height="30" align="center" /> <span class="tooltiptext"> <%=language.getString("modify")%></span>
+				</a>
+			</div>
+
+			<div class="tooltip">
+				<a href="#" onClick="document.getElementById('command').value='deleteModel';document.getElementById('modelID').value='<%=model.modelID%>';document.getElementById('input').submit();">
+					<img src="../icons/delete2.png" height="30" align="center" /> <span class="tooltiptext"> <%=language.getString("delete")%></span>
+				</a>
+			</div>
+
+		</td>
 
 		<%
 		  final User modelsUser = servletDAO.getUser(model.userID);
