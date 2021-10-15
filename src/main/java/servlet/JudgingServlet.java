@@ -668,7 +668,7 @@ public final class JudgingServlet extends HttpServlet {
         Collection<JudgingResult> judgings = getJudgingSummary();
 
     			int maxScore = 
-    					judgings.stream().mapToInt(JudgingResult::getMaxScore).max().getAsInt();
+    					judgings.stream().mapToInt(JudgingResult::getMaxScore).max().orElse(0);
         List<List<Object>> modelsForExcel = judgings.stream().map(judgingResult -> {
             ArrayList<Object> returned = new ArrayList<>();
 
