@@ -14,13 +14,13 @@
 
   RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
-  User user = servlet.getUser(request);
 
   final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 
   boolean insertAwards = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "insertAwards", false));
   boolean withDetailing = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "withDetailing", false));
   boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
+  boolean forJudges = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
   List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 %>
@@ -30,29 +30,31 @@
 		<th align='center' style='white-space: nowrap'>
 		</th>
 		<%
-		  if (insertAwards)
+		  if(!forJudges)
 		  {
+			  if (insertAwards)
+			  {
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("award")%>
 		</th>
 		<%
-		  }
+			  }
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("show")%>
 		</th>
 
  		<%
-		  if (withDetailing)
-		  {
+			  if (withDetailing)
+			  {
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("judge")%>
 		</th>
 		<%
-		  }
+			  }
 		%>
 		<%
-		  if (!withDetailing)
-		  {
+			  if (!withDetailing)
+			  {
 		%>
 
 		<th align='center' style='white-space: nowrap'><%=language.getString("name")%>
@@ -64,19 +66,20 @@
 		<th align='center' style='white-space: nowrap'><%=language.getString("country")%>
 		</th>
 		<%
-		  }
+			  }
+		  }	
 		%>
 
 		<%
-		  if (!insertAwards)
-		  {
-				if (onlyPhotos)
-				{
+			  if (!insertAwards)
+			  {
+					if (onlyPhotos)
+					{
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("photo")%>
 		</th>
 		<%
-		  }
+		  			}
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("userID")%>
 		</th>
@@ -173,36 +176,38 @@
 
 		<%
 		  final User modelsUser = servletDAO.getUser(model.userID);
+		  if(!forJudges)
+		  {
 				if (insertAwards)
 				{
 		%>
 		<td align='center'><%=servletDAO.getAward(model)%></td>
 		<%
-		  }
+			  }
 		%>
 		<td align='center' style='white-space: nowrap'><%=category.group.show%>
 		</td>
 		<%
-		  if (withDetailing)
-		  {
+			  if (withDetailing)
+			  {
 		%>
 		<td align='center'>
 		<%
 		        for(String judge : servlet.judgingServletDAO.getJudges(category.categoryCode, model.modelID, model.userID))
 		        {
 		%>
-			<a href="../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingSheet.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=model.modelID%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=model.userID%>&<%= JudgingServlet.RequestParameter.Category %>=<%=category.categoryCode%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=judge%>"><%=judge%></a>
+			<a href="../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingSheet.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=model.modelID%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=model.userID%>&<%= JudgingServlet.RequestParameter.Category %>=<%=category.categoryCode%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
 
 		<%
 		        }
 		%>
 		</td>
 		<%
-		  }
+			  }
 		%>
 		<%
-		  if (!withDetailing)
-		  {
+			  if (!withDetailing)
+			  {
 		%>
 		<td align='center'><%=modelsUser.lastName%></td>
 
@@ -212,11 +217,12 @@
 
 		<td align='center'><%=modelsUser.country%></td>
 		<%
-		  }
+				}
+			  }
 		%>
 
 		<%
-		  if (!insertAwards)
+			  if (!insertAwards)
 				{
 				  if (onlyPhotos)
 				  {
@@ -226,7 +232,7 @@
 			src='<%=servlet.getServletURL(request)%>/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=model.modelID%>'>
 		</td>
 		<%
-		  }
+					  }
 		%>
 		<td align='center'><%=model.userID%></td>
 
@@ -279,7 +285,7 @@
 
 					<%
 					for (DetailingGroup group : DetailingGroup.values())
-								{
+					{
 					%>
 					<td><%=language.getString("detailing." + group.name())%>
 					</td>

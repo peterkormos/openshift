@@ -1,11 +1,13 @@
 package datatype;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class Record implements Comparable<Record>
+public class Record implements Comparable<Record>, Serializable
 {
   @Id
   @Column

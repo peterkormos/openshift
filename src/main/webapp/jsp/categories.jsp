@@ -31,7 +31,6 @@ onchange="updateMandatoryFieldMark(this);"
 		  {
 				if (show != null && !group.show.equals(show))
 				{
-				  // System.out.println(group.show + " " + show);
 				  continue;
 				}
 		%>
@@ -54,7 +53,7 @@ onchange="updateMandatoryFieldMark(this);"
 						continue;
 					  }
 			%>
-			<option value='<%=category.categoryID%>'>
+			<option value='<%=category.getId()%>'>
 				<%=category.categoryCode + " - " + category.categoryDescription%>
 			</option>
 

@@ -175,7 +175,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 	String categoryLabel = model == null ? language.getString("select") : category.categoryCode + " - "
 	    + category.categoryDescription;
 	   
-	String categoryLabelValue = model == null ? "" : String.valueOf(category.categoryID);
+	String categoryLabelValue = model == null ? "" : String.valueOf(category.getId());
 %>
 <jsp:include page="categories.jsp">
   <jsp:param name="selectedLabel" value="<%= categoryLabel %>"/>

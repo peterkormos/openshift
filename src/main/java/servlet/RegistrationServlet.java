@@ -79,7 +79,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2021.09.16.";
+	public String VERSION = "2021.10.03.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -379,7 +379,7 @@ public class RegistrationServlet extends HttpServlet {
 		writeResponse(response, buff);
 	}
 
-	public void writeResponse(final HttpServletResponse response, final StringBuilder message) throws IOException {
+	public static void writeResponse(final HttpServletResponse response, final StringBuilder message) throws IOException {
 		response.setContentType("text/html");
 		response.getOutputStream().write(message.toString().getBytes());
 	}
@@ -727,7 +727,7 @@ public class RegistrationServlet extends HttpServlet {
             }).collect(Collectors.toMap(User::getUserID, Function.identity()));
             
             Map<Integer, Category> categories = servletDAO.getCategoryList(show).stream()
-                    .collect(Collectors.toMap(category -> category.getCategoryID(), Function.identity()));
+                    .collect(Collectors.toMap(category -> category.getId(), Function.identity()));
     
             List<List<Object>> modelsForExcel = models.stream().filter(model -> {
                 return show == null || categories.get(model.categoryID).group.show.equals(show);
@@ -897,7 +897,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		for (final Category category : servletDAO.getCategoryList(show)) {
-			servletDAO.deleteCategory(category.categoryID);
+			servletDAO.deleteCategory(category.getId());
 		}
 
 		for (final CategoryGroup categoryGroup : servletDAO.getCategoryGroups()) {
@@ -1129,8 +1129,8 @@ public class RegistrationServlet extends HttpServlet {
 	    
 		try {
 		    Category modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
-		    servletDAO.deleteCategory(modifyingCategory.getCategoryID());
-		    newCategory.setCategoryID(modifyingCategory.getCategoryID());
+		    servletDAO.deleteCategory(modifyingCategory.getId());
+		    newCategory.setId(modifyingCategory.getId());
 		} catch (Exception e) {
 		}
 		
@@ -1210,7 +1210,7 @@ public class RegistrationServlet extends HttpServlet {
 		for (final Category category : categories) {
 			buff.append("<tr>");
 			buff.append("<td align='center' >");
-			buff.append(category.categoryID);
+			buff.append(category.getId());
 			buff.append("</td>");
 			buff.append("<td align='center' >");
 			buff.append(category.group.show);
@@ -1392,8 +1392,8 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append("<form accept-charset=\"UTF-8\" name='input' action='./RegistrationServlet' method='POST'>");
 		buff.append("<input type='hidden' name='command' value='addCategory'>");
-		if(category.getCategoryID() != 0)
-		    buff.append("<input type='hidden' name='categoryID' value='" + category.getCategoryID() +"'>");
+		if(category.getId() != 0)
+		    buff.append("<input type='hidden' name='categoryID' value='" + category.getId() +"'>");
 		buff.append("<table border='0'>");
 
 		buff.append("<tr>");
@@ -1871,8 +1871,8 @@ public class RegistrationServlet extends HttpServlet {
         
 	        for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /*show*/))
 	                {
-	            servletDAO.deleteCategory(category.categoryID);
-	            servletDAO.deleteModels(category.categoryID);
+	            servletDAO.deleteCategory(category.getId());
+	            servletDAO.deleteModels(category.getId());
 	                }
 
 		redirectToMainPage(request, response);
@@ -1927,7 +1927,7 @@ public class RegistrationServlet extends HttpServlet {
 		final List<Model> allModels = new LinkedList<Model>();
 		final List<Category> categories = servletDAO.getCategoryList(getShowFromSession(request));
 		for (final Category category : categories) {
-			final List<Model> models = servletDAO.getModelsInCategory(category.categoryID);
+			final List<Model> models = servletDAO.getModelsInCategory(category.getId());
 			for (final Model model : models) {
 				model.identification = category.group.show;
 			}
@@ -2523,7 +2523,7 @@ public class RegistrationServlet extends HttpServlet {
 					continue;
 				}
 
-				buff.append("<option value='" + category.categoryID + "'>");
+				buff.append("<option value='" + category.getId() + "'>");
 				buff.append(category.categoryCode + " - " + category.categoryDescription);
 				buff.append("</option>");
 

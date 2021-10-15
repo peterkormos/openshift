@@ -289,9 +289,9 @@ public class ServletDAO extends HibernateDAO
 	      + " (CATEGORY_ID, CATEGORY_CODE, CATEGORY_DESCRIPTION, CATEGORY_GROUP_ID, MASTER, MODEL_CLASS,ageGroup) values "
 	      + "(?,?,?,?,?,?,?)");
 
-	  logger.debug("ServletDAO.saveCategory(): categoryID: " + category.categoryID);
+	  logger.debug("ServletDAO.saveCategory(): categoryID: " + category.getId());
 
-	  queryStatement.setInt(1, category.categoryID);
+	  queryStatement.setInt(1, category.getId());
 	  encodeStringForDB(queryStatement, 2, category.categoryCode);
 	  encodeStringForDB(queryStatement, 3, category.categoryDescription);
 	  queryStatement.setInt(4, category.group.categoryGroupID);
@@ -1148,7 +1148,7 @@ public class ServletDAO extends HibernateDAO
   {
 	for (final Category category : getCategoryList(null))
 	{
-	  if (category.categoryID == categoryID)
+	  if (category.getId() == categoryID)
 	  {
 		return category;
 	  }
@@ -1244,7 +1244,7 @@ public class ServletDAO extends HibernateDAO
 		  continue;
 		}
 
-		final List<Model> models = getModelsInCategory(category.categoryID);
+		final List<Model> models = getModelsInCategory(category.getId());
 
 		returned.add(new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
 		    String.valueOf(models.size()) });
@@ -1527,6 +1527,8 @@ void deleteModels(final int categoryId) throws SQLException {
 		rs = queryStatement.executeQuery(sql);
 
 		final StringBuilder buff = new StringBuilder();
+		buff.append(sql);
+		buff.append("\n<br>\n");
 		buff.append("<table border='1'>\n");
 		final ResultSetMetaData rsm = rs.getMetaData();
 		buff.append("  <tr>\n");

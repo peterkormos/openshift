@@ -16,7 +16,7 @@
 	String judge = (String)session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
 	boolean isNormalUser = !"admin".equals(judge);
 
-	final Set<String> categories = (Set<String>)session
+	final List<String> categories = (List<String>)session
 			  .getAttribute(JudgingServlet.SessionAttribute.Categories.name());
     
     Map<String, AtomicInteger> scoredModelsByCategory = new LinkedHashMap<String, AtomicInteger>();
@@ -152,7 +152,7 @@
 		<td><%=judgingResult.getJudge()%></td>
 		<td><%=judgingResult.getModellerID()%></td>
 		<td>
-		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingSheet.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=judgingResult.getJudge()%>">
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingSheet.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=java.net.URLEncoder.encode(judgingResult.getJudge())%>">
 		<%=judgingResult.getModelID()%></a>
 		</td>
 		<td><%=judgingResult.getModelsName()%></td>
@@ -170,10 +170,10 @@
 		%>
 		<td><%= total %></td>
 		<td>
-		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingForm.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=judgingResult.getJudge()%>">
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingForm.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=java.net.URLEncoder.encode(judgingResult.getJudge())%>">
 		<%= language.getString("modify") %></a>
 		
-		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.DeleteJudgingForm.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=judgingResult.getJudge()%>">
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.DeleteJudgingForm.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=java.net.URLEncoder.encode(judgingResult.getJudge())%>">
 		<%= language.getString("delete") %></a>
 </td>
 	</tr>

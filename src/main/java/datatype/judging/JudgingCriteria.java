@@ -1,32 +1,50 @@
 package datatype.judging;
 
-public class JudgingCriteria
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import datatype.Record;
+import servlet.ServletDAO;
+
+@Entity
+@Table(name = "mak_judgingcriteria")
+public class JudgingCriteria extends Record
 {
-  private int id;
+  @Column
+  private int criteriaId;
+  @Column
   private String description;
+  @Column
   private int maxScore;
   
+	public JudgingCriteria() {
+	}
+	
   public static final JudgingCriteria getDefault()
   {
       return new JudgingCriteria(1, "", 10);
   }
 
-  public JudgingCriteria(int id, String description, int maxScore)
+  public JudgingCriteria(int criteriaId, String description, int maxScore)
   {
 	super();
-	this.id = id;
-	this.description = description;
+	this.criteriaId = criteriaId;
+	this.description = ServletDAO.encodeString(description);
 	this.maxScore = maxScore;
   }
 
-  public int getId()
+  public int getCriteriaId()
   {
-	return id;
+	return criteriaId;
   }
 
-  public void setId(int id)
+  public void setCriteriaId(int id)
   {
-	this.id = id;
+	this.criteriaId = id;
   }
 
   public String getDescription()

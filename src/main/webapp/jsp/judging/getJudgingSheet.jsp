@@ -85,7 +85,7 @@
 			  <jsp:param name="onChange" value='setModelInSession(this.value);'/>
 			  <jsp:param name="caption" value='<%= language.getString("modelID") %>'/>
 			</jsp:include>
-
+			<input type="button" value=">">
 			</td>
 		</tr>
 		<tr>
@@ -129,7 +129,7 @@
 				  	boolean hasScore = judgedModel != null && scores.get(criteria.getId()) != null;
 				%>
 				<tr style="border: 1px solid; <%= hasScore ? "" : unjudgedCriteriaStyle%>">
-					<td><%=criteria.getId()%></td>
+					<td><%=criteria.getCriteriaId()%></td>
 					<td><%=criteria.getDescription()%></td>
 					<td>
 						<label>

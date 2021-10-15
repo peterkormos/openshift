@@ -17,18 +17,21 @@
 	<%= language.getString("category.code") %>:
 	<p>
 	<%
-	    Set<String> categories = (Set<String>) session.getAttribute(JudgingServlet.SessionAttribute.Categories.name());
+		List<String> categories = (List<String>) session.getAttribute(JudgingServlet.SessionAttribute.Categories.name());
 
-		  for (String category : categories)
-		  {
+	  for (String category : categories)
+	  {
 	%>
 			<label>
 			<%= category %>
 			<input type="radio" name="<%=JudgingServlet.RequestParameter.Category.name()%>" value="<%= category %>" onclick="submit()">
 			</label>
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModelsInCategory.name() %>?<%= JudgingServlet.RequestParameter.Category %>=<%=category%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
+		<%= language.getString("list.models") %>
+		</a>
 			<br>
 	<%
-		  }
+	  }
 	%>
 	
 </form>
