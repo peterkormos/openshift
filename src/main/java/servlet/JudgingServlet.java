@@ -67,7 +67,7 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     public enum SessionAttribute {
-        JudgingCriteriasForCategory, Category, Judgings, Judge, Categories, Forms, JudgingCategoryToSheetMapping
+        JudgingCriteriasForCategory, Category, Judgings, Judge, Categories, Forms, JudgingCategoryToSheetMapping, SimpleJudging
     }
 
     public static Logger logger = Logger.getLogger(JudgingServlet.class);;
@@ -559,6 +559,7 @@ public final class JudgingServlet extends HttpServlet {
         final int judgingCriterias = Integer
                 .parseInt(ServletUtil.getRequestAttribute(request, RequestParameter.JudgingCriterias.name()));
         final String comment = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Comment.name());
+        boolean simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
 
         dao.deleteJudgingScores(judge, category, modelId, modellerId);
         for (int i = 1; i <= judgingCriterias; i++) {
@@ -583,6 +584,7 @@ public final class JudgingServlet extends HttpServlet {
         if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
                 .equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
             setSessionAttribute(request, SessionAttribute.Judge, judge);
+            setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);
             getJudgingForm(request, response, false /* setJudgingScoresInSession */);
         } else {
             redirectToMainPage(request, response);
