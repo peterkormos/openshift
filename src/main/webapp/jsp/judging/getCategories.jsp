@@ -5,6 +5,11 @@
 
 <%
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
+
+    Boolean simpleJudging = (Boolean) session.getAttribute(JudgingServlet.SessionAttribute.SimpleJudging.name());
+    if(simpleJudging == null) {
+        simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+    }
 %>
 
 <head>
@@ -14,6 +19,10 @@
 <form
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingForm.name()%>"
 	method="post">
+    <input type="hidden"
+        name="<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>"
+        value="<%=simpleJudging%>">
+
 	<%= language.getString("category.code") %>:
 	<p>
 	<%

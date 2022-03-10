@@ -65,7 +65,7 @@ style="background: LightGrey; padding: 5px;"
 	<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>">
 	<img src="../../icons/add.png" height="30" align="center"> <%= language.getString("judging.type.form") %></a>
 	<p>
-	<a href="getJudgingForm.jsp?<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>=true">
+    <a href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>?<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>=true">
 	<img src="../../icons/add.png" height="30" align="center">
 	<%= language.getString("judging.type.looking") %></a>
 <%

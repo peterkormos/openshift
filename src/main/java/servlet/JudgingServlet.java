@@ -56,7 +56,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet {
-	private static final String VERSION = "2021.10.15.";
+	private static final String VERSION = "2022.03.10.";
 
 	public enum RequestParameter {
         Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, Class, SimpleJudging
@@ -332,8 +332,18 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     private void getCategories(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<String> categories = getCategories();
+    	List<String> categories;
+    	
+        boolean simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+        if(simpleJudging) {
+        	categories = servletDAO.getCategoryList(null /* show */).stream().map(Category::getCategoryCode).collect(Collectors.toList());
+        	categories.removeAll(getCategories());
+        }
+        else {
+        	categories = getCategories();
+        }
 
+		setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);
         setSessionAttribute(request, SessionAttribute.Categories, categories);
         redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + "getCategories.jsp");
     }
@@ -374,8 +384,11 @@ public final class JudgingServlet extends HttpServlet {
             throws Exception {
         final String categoryCode = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
 
-        setSessionAttribute(request, SessionAttribute.JudgingCriteriasForCategory, getCriteriaList(categoryCode));
-        setSessionAttribute(request, SessionAttribute.Category, categoryCode);
+		boolean simpleJudging = Boolean.valueOf(
+				ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+		setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);
+		setSessionAttribute(request, SessionAttribute.JudgingCriteriasForCategory, getCriteriaList(categoryCode));
+		setSessionAttribute(request, SessionAttribute.Category, categoryCode);
 
         String judgeInRequestAttribute = ServletUtil.getOptionalRequestAttribute(request,
                 RequestParameter.Judge.name());
@@ -476,7 +489,7 @@ public final class JudgingServlet extends HttpServlet {
             if (judgingResult == null) {
                 judgingResult = new JudgingResult(score);
                 judgingResult.setMaxScore(getCriteriaList(score.getCategory()).stream()
-                        .mapToInt(JudgingCriteria::getMaxScore).max().getAsInt());
+                        .mapToInt(JudgingCriteria::getMaxScore).max().orElse(JudgingCriteria.getDefault().getMaxScore()));
                 scoresByCategory.put(key, judgingResult);
             }
 
