@@ -24,7 +24,7 @@
 		  for (Category category : categories)
 		  {
 		%>
-		<a href="awardedModels.jsp?<%=CATEGORY_ID%>=<%=category.getCategoryID()%>"><%=category.categoryCode%>
+		<a href="awardedModels.jsp?<%=CATEGORY_ID%>=<%=category.getId()%>"><%=category.categoryCode%>
 			- <%=category.categoryDescription%></a> <br>
 		<%
 		  }
@@ -66,7 +66,7 @@
 					<%
 					  for (AwardedModel awardedModel : awardedModels)
 							{
-							  if (awardedModel.categoryID != category.getCategoryID())
+							  if (awardedModel.categoryID != category.getId())
 								continue;
 					%>
 					<tr>

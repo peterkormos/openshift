@@ -26,7 +26,9 @@ public class JudgingCriteria extends Record
 	
   public static final JudgingCriteria getDefault()
   {
-      return new JudgingCriteria(1, "", 10);
+      JudgingCriteria judgingCriteria = new JudgingCriteria(1, "", 10);
+      judgingCriteria.setId(judgingCriteria.getCriteriaId());
+	return judgingCriteria;
   }
 
   public JudgingCriteria(int criteriaId, String description, int maxScore)

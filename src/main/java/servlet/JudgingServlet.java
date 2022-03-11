@@ -70,7 +70,7 @@ public final class JudgingServlet extends HttpServlet {
         JudgingCriteriasForCategory, Category, Judgings, Judge, Categories, Forms, JudgingCategoryToSheetMapping
     }
 
-    public static Logger logger = Logger.getLogger(JudgingServlet.class);;
+    public static Logger logger = Logger.getLogger(JudgingServlet.class);
 
     public final static String DEFAULT_PAGE = "judging.jsp";
 
@@ -233,6 +233,8 @@ public final class JudgingServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String pathInfo = request.getPathInfo();
+            
+            logger.debug(pathInfo);
             if (pathInfo != null) {
                 pathInfo = pathInfo.substring(1);
 
