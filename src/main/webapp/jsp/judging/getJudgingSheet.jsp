@@ -126,7 +126,7 @@
 			<%
 				  for (JudgingCriteria criteria : criteriaList)
 				  {
-				  	boolean hasScore = judgedModel != null && scores.get(criteria.getId()) != null;
+				  	boolean hasScore = judgedModel != null && scores.get(criteria.getCriteriaId()) != null;
 				%>
 				<tr style="border: 1px solid; <%= hasScore ? "" : unjudgedCriteriaStyle%>">
 					<td><%=criteria.getCriteriaId()%></td>
@@ -134,7 +134,7 @@
 					<td>
 						<label>
 						<input type="radio" 
-						name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%= criteria.getId() %>"
+						name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%= criteria.getCriteriaId() %>"
 						value="<%= ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE %>"
 						onchange="parentNode.parentNode.parentNode.style = '<%= unjudgedCriteriaStyle %>';"
 						><%= ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE %> 
@@ -148,9 +148,9 @@
 						%> 
 						<label>
 						<input type="radio" 
-						name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%= criteria.getId() %>"
+						name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%= criteria.getCriteriaId() %>"
 						value="<%=i%>"
-						<%= hasScore && scores.get(criteria.getId()).get(0).getScore() == i ? "checked='checked'" : "" %>
+						<%= hasScore && scores.get(criteria.getCriteriaId()).get(0).getScore() == i ? "checked='checked'" : "" %>
 						onchange="parentNode.parentNode.parentNode.style = 'border: 1px solid; ';"
 						><%=i%> 
 						</label>

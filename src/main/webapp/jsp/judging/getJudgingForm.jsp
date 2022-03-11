@@ -63,7 +63,10 @@ function setModelInSession(value)
     List<JudgingCriteria> criteriaList = (List<JudgingCriteria>) session
             .getAttribute(JudgingServlet.SessionAttribute.JudgingCriteriasForCategory.name());
 
-    boolean simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+    Boolean simpleJudging = (Boolean) session.getAttribute(JudgingServlet.SessionAttribute.SimpleJudging.name());
+    if(simpleJudging == null) {
+        simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+    }
     
     if (criteriaList == null || simpleJudging) {
         criteriaList = Arrays.asList(JudgingCriteria.getDefault());
@@ -75,9 +78,13 @@ function setModelInSession(value)
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.SaveJudging.name()%>"
 	method="post">
 
-	<input type="hidden"
-		name="<%=JudgingServlet.RequestParameter.JudgingCriterias.name()%>"
-		value="<%=criteriaList.size()%>">
+    <input type="hidden"
+        name="<%=JudgingServlet.RequestParameter.JudgingCriterias.name()%>"
+        value="<%=criteriaList.size()%>">
+
+    <input type="hidden"
+        name="<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>"
+        value="<%=simpleJudging%>">
 
 
 	<jsp:include page="getJudgingSheet.jsp" />

@@ -15,8 +15,12 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import datatype.User;
 import exception.MissingRequestParameterException;
+import exception.UserNotLoggedInException;
+import servlet.RegistrationServlet.SessionAttribute;
 
 public class ServletUtil {
 
@@ -124,4 +128,13 @@ public class ServletUtil {
         Transport.send(message);
     }
 
+	public static Object getSessionAttribute(final HttpServletRequest request, String name) throws UserNotLoggedInException {
+		final HttpSession session = request.getSession(false);
+
+		if (session == null) {
+			throw new UserNotLoggedInException("User is not logged in!");
+		}
+
+		return session.getAttribute(name);
+	}
 }

@@ -101,10 +101,10 @@
 <table style="border: 1px solid black;">
 	<tr bgcolor="#ddddff">
 		<th><%= language.getString("category") %></th>
-		<th><%= language.getString("judge") %></th>
 		<th><%= language.getString("userID") %></th>
 		<th><%= language.getString("modelID") %></th>
 		<th><%= language.getString("models.name") %></th>
+		<th><%= language.getString("judge") %></th>
 		<%
 		  for (int i = 0; i <= maxScore; i++)
 		  {
@@ -149,13 +149,21 @@
 		 }
 	%>
 		><%=judgingResult.getCategory()%></td>
-		<td><%=judgingResult.getJudge()%></td>
 		<td><%=judgingResult.getModellerID()%></td>
 		<td>
-		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingSheet.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=java.net.URLEncoder.encode(judgingResult.getJudge())%>">
-		<%=judgingResult.getModelID()%></a>
+        <a href="../../RegistrationServlet?command=listModel&modelID=<%=judgingResult.getModelID()%>">
+		<%=judgingResult.getModelID()%>
+		</a>
 		</td>
-		<td><%=judgingResult.getModelsName()%></td>
+		<td>
+        <%=judgingResult.getModelsName()%>
+		
+		</td>
+		<td>
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingSheet.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=java.net.URLEncoder.encode(judgingResult.getJudge())%>">
+		<%=judgingResult.getJudge()%>
+        </a>
+		</td>
 		<%
 			int total = 0;
 		  for (int i = 0; i <= maxScore; i++)

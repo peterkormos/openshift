@@ -71,6 +71,7 @@ import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
+import servlet.JudgingServlet.RequestParameter;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import tools.InitDB;
@@ -79,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2021.10.03.";
+	public String VERSION = "2022.03.10.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -2608,5 +2609,20 @@ public class RegistrationServlet extends HttpServlet {
 				}
 
 		writeResponse(response, new StringBuilder("emailsSent: " + emailsSent));
+	}
+	
+	public void listModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		final String modelID = ServletUtil.getRequestAttribute(request, "modelID");
+		final Model model = servletDAO.getModel(Integer.parseInt(modelID));
+
+		final StringBuilder buff = new StringBuilder();
+
+		ResourceBundle language = (ResourceBundle) ServletUtil.getSessionAttribute(request,
+				CommonSessionAttribute.Language.name());
+		User user = servletDAO.getUser(model.getUserID());
+		
+		buff.append(printModels(language, user, Arrays.asList(model), printBuffer, 1, 3, false));
+		
+		writeResponse(response, buff);
 	}
 }
