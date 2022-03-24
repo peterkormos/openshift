@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,6 +21,7 @@ public class HibernateDAO
 {
   private static SessionFactory sessionFactory;
   private final URL configFile;
+  public static Logger logger = Logger.getLogger(HibernateDAO.class);
 
   protected Session getHibernateSession()
   {
@@ -153,6 +155,8 @@ public class HibernateDAO
 	  session.beginTransaction();
 	  session.saveOrUpdate(record);
 	  session.getTransaction().commit();
+	  
+	  logger.debug(record);
 	}
 	finally
 	{
