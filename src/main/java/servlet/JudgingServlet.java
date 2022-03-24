@@ -130,7 +130,7 @@ public final class JudgingServlet extends HttpServlet {
                 + JudgingServlet.RequestParameter.ModelID + "=" + judgingResult.getModelID() + "&"
                 + JudgingServlet.RequestParameter.ModellerID + "=" + judgingResult.getModellerID() + "&"
                 + JudgingServlet.RequestParameter.Category + "=" + judgingResult.getCategory() + "&"
-                + JudgingServlet.RequestParameter.Judge + "=" + judgingResult.getJudge()
+                + JudgingServlet.RequestParameter.Judge + "=" + java.net.URLEncoder.encode(judgingResult.getJudge())
                 + "'>" + judgingResult.getJudge() + "</a>";
 
     }
