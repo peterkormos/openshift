@@ -10,7 +10,7 @@ public class JudgingResult extends JudgedModel{
     private String judge;
 
     // value:count
-    private final Map<Integer, AtomicInteger> scores = new LinkedHashMap<Integer, AtomicInteger>();
+    private final Map<Integer, AtomicInteger> scoresSummary = new LinkedHashMap<Integer, AtomicInteger>();
     private int maxScore;
     
     public int getMaxScore() 
@@ -34,7 +34,7 @@ public class JudgingResult extends JudgedModel{
 
     @Override
     public String toString() {
-        return "JudgingResult [category=" + category + ", judge=" + judge + ", scores=" + scores + ", " + super.toString() + "]";
+        return "JudgingResult [category=" + category + ", judge=" + judge + ", scores=" + scoresSummary + ", " + super.toString() + "]";
     }
 
 
@@ -54,23 +54,35 @@ public class JudgingResult extends JudgedModel{
         this.judge = judge;
     }
 
-    public Map<Integer, AtomicInteger> getScores() {
-        return scores;
+    public Map<Integer, AtomicInteger> getScoresSummary() {
+        return scoresSummary;
     }
 
     public int getTotalScores() {
-        return getScores().values().stream().mapToInt(AtomicInteger::get).sum();
+        return getScoresSummary().values().stream().mapToInt(AtomicInteger::get).sum();
     }
 
     public int getCountForScore(int score) {
         try 
         {
-            return scores.get(score).get();
+            return scoresSummary.get(score).get();
         } 
         catch (Exception e) 
         {
             return 0;
         }
     }
+
+	public void saveScores(JudgingScore score) {
+        try {
+        	scoresSummary.get(score.getScore()).incrementAndGet();
+        } catch (Exception e) {
+        	scoresSummary.put(score.getScore(), new AtomicInteger(1));
+        }
+
+		score.getScore()
+		// TODO Auto-generated method stub
+		
+	}
     
 }

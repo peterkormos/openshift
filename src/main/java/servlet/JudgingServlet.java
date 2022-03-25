@@ -495,12 +495,7 @@ public final class JudgingServlet extends HttpServlet {
                 scoresByCategory.put(key, judgingResult);
             }
 
-            try {
-                judgingResult.getScores().get(score.getScore()).incrementAndGet();
-            } catch (Exception e) {
-                judgingResult.getScores().put(score.getScore(), new AtomicInteger(1));
-            }
-
+            judgingResult.saveScores(score);
         }
 
         Collection<JudgingResult> judgings = scoresByCategory.values();
