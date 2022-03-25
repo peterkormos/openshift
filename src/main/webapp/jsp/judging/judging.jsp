@@ -86,6 +86,11 @@ style="background: LightGrey; padding: 5px;"
 	if(judge != null && !isNormalUser)
 	{
 %>
+	<p>
+	<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgingSheets.name()%>">
+	<img src="../../icons/list.png" height="30" align="center">
+	<%= language.getString("list.models") %></a>
+
  	<p>
 	 	<hr>
 		<p>

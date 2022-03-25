@@ -36,6 +36,13 @@ public class JudgedModel extends Record {
         this(0, model.getModelID(), model.getUserID(), model.getName());
     }
     
+    public void setModel(Model model)
+    {
+        this.modelID = model.getModelID();
+        this.modellerID = model.getUserID();
+        this.modelsName = model.getName();
+    }
+    
     public JudgedModel(int id, int modelID, int modellerID, String modelsName) {
         super(id);
         

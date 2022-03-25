@@ -377,12 +377,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</div>\n");
 		buff.append("</body></html>\n");
 
-		writeResponse(response, buff);
-	}
-
-	public static void writeResponse(final HttpServletResponse response, final StringBuilder message) throws IOException {
-		response.setContentType("text/html");
-		response.getOutputStream().write(message.toString().getBytes());
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void directLogin(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -414,18 +409,6 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 	}
-
-	public void setModelInSession(final HttpServletRequest request, final HttpServletResponse response) throws Exception 
-	{
-	    final String modelID = ServletUtil.getRequestAttribute(request, "modelID");
-	    
-	    final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-
-	    final HttpSession session = request.getSession();
-	    session.setAttribute(CommonSessionAttribute.Model.name(), model);
-	    
-	    writeResponse(response, new StringBuilder("ok"));
-	}
 	
 	public void getModelInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String modelID = ServletUtil.getRequestAttribute(request, "modelID");
@@ -440,7 +423,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(" - ");
 		buff.append(model.name);
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void getSimilarLastNames(final HttpServletRequest request, final HttpServletResponse response)
@@ -456,7 +439,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append(bout.toString());
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -558,7 +541,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (buff == null) {
 			redirectToMainPage(request, response);
 		} else {
-			writeResponse(response, buff);
+			ServletUtil.writeResponse(response, buff);
 		}
 	}
 
@@ -581,7 +564,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		sendEmail(user.email, language.getString("email.subject"), buff);
 
-		writeResponse(response, getEmailWasSentResponse(language, request));
+		ServletUtil.writeResponse(response, getEmailWasSentResponse(language, request));
 	}
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -639,7 +622,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (!users.isEmpty()) {
 			for (final User user1 : users) {
-				writeResponse(response,
+				ServletUtil.writeResponse(response,
 						printModelsForUser(language, user1.userID, request, true /* allModelsPrinted */));
 			}
 		}
@@ -803,7 +786,7 @@ public class RegistrationServlet extends HttpServlet {
 			redirectToMainPage(request, response);
 		} else if ("zipFile".equals(item.getFieldName())) {
 			final StringBuilder buff = importZip(request, item.getInputStream());
-			writeResponse(response, buff);
+			ServletUtil.writeResponse(response, buff);
 		}
 	}
 
@@ -953,7 +936,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		sendEmailWithModels(user, true);
 
-		writeResponse(response, getEmailWasSentResponse(language, request));
+		ServletUtil.writeResponse(response, getEmailWasSentResponse(language, request));
 	}
 
 	private StringBuilder getEmailWasSentResponse(final ResourceBundle language, HttpServletRequest request) {
@@ -1000,7 +983,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("Randomize...<p>");
 		buff.append("<a href='" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void newUserIDsFromOne(final HttpServletRequest request, final HttpServletResponse response)
@@ -1016,7 +999,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("Randomize...<p>");
 		buff.append("<a href='" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void deleteUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1030,7 +1013,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append("<a href='" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 
 	}
 
@@ -1160,7 +1143,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void listUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		writeResponse(response, getUserTable(getUser(request).language));
+		ServletUtil.writeResponse(response, getUserTable(getUser(request).language));
 	}
 
 	public void listCategories(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1169,7 +1152,7 @@ public class RegistrationServlet extends HttpServlet {
 		getCategoryTable(buff, servletDAO.getCategoryList(getShowFromSession(request)),
 				getLanguageForCurrentUser(request));
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	private void getCategoryTable(final StringBuilder buff, final List<Category> categories,
@@ -1486,7 +1469,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(
 				"<p><font color='#FF0000' size='+3'>&#8226;</font>" + language.getString("mandatory.fields") + "</p>");
 		buff.append("</form></body></html>");
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void inputForModifyModel(final HttpServletRequest request, final HttpServletResponse response)
@@ -1654,7 +1637,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<p><input type='submit' value='" + language.getString("save") + "'>");
 		buff.append("</form>");
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	private StringBuilder inputForSelectModel(final User user, final String action, final String submitLabel,
@@ -1746,7 +1729,7 @@ public class RegistrationServlet extends HttpServlet {
 		// + submitLabel + "'>");
 		buff.append("</form></body></html>");
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void deleteUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1835,7 +1818,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<p><input name='"+command+"' type='submit' value='" + commandLabel + "'>");
 		buff.append("</form></body></html>");
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void inputForDeleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
@@ -1862,7 +1845,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<p><input name='deleteCategoryGroup' type='submit' value='" + language.getString("delete") + "'>");
 		buff.append("</form></body></html>");
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void deleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
@@ -1939,7 +1922,7 @@ public class RegistrationServlet extends HttpServlet {
 		do {
 			final List<Model> sublist = allModels.subList(0, Math.min(cols * rows, allModels.size()));
 
-			writeResponse(response, printModels(language, user, sublist, printCardBuffer, rows, cols, true));
+			ServletUtil.writeResponse(response, printModels(language, user, sublist, printCardBuffer, rows, cols, true));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
@@ -1969,7 +1952,7 @@ public class RegistrationServlet extends HttpServlet {
 				}
 			}
 
-			writeResponse(response, buff);
+			ServletUtil.writeResponse(response, buff);
 		}
 
 		showPrintDialog(response);
@@ -1977,7 +1960,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void printModelsForUser(final HttpServletRequest request, final HttpServletResponse response,
 			final ResourceBundle language, final int userID, boolean allModelsPrinted) throws Exception, IOException {
-		writeResponse(response, printModelsForUser(language, userID, request, allModelsPrinted));
+		ServletUtil.writeResponse(response, printModelsForUser(language, userID, request, allModelsPrinted));
 	}
 
 	private StringBuilder printModelsForUser(final ResourceBundle language, final int userID,
@@ -2188,7 +2171,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void initDB(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		new InitDB();
 
-		writeResponse(response, new StringBuilder("initDB done..."));
+		ServletUtil.writeResponse(response, new StringBuilder("initDB done..."));
 	}
 
 	public void statistics(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2214,7 +2197,7 @@ public class RegistrationServlet extends HttpServlet {
 		    statistics(buff, show,language);
 		
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	private void statistics(final StringBuilder buff, String show, ResourceBundle language) throws SQLException {
@@ -2247,7 +2230,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append(data.toHTML());
 		}
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void getawardedModelsPage(final HttpServletRequest request, final HttpServletResponse response)
@@ -2264,7 +2247,7 @@ public class RegistrationServlet extends HttpServlet {
 
 				.replaceAll("__MODELID__", language.getString("modelID"))
 				.replaceAll("__AWARD__", language.getString("award")).replaceAll("__LANGUAGE__", languageCode));
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void printAwardedModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -2334,7 +2317,7 @@ public class RegistrationServlet extends HttpServlet {
 							ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim()));
 		}
 
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void getbatchAddModelPage(final HttpServletRequest request, final HttpServletResponse response)
@@ -2382,7 +2365,7 @@ public class RegistrationServlet extends HttpServlet {
 				.replaceAll("__LOGOUT__", language.getString("logout"))
 
 		);
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	private User createUser(final HttpServletRequest request, final String email) throws Exception {
@@ -2541,7 +2524,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void getVersion(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		writeResponse(response, new StringBuilder(getVersion()));
+		ServletUtil.writeResponse(response, new StringBuilder(getVersion()));
 	}
 
 	public String getVersion() {
@@ -2608,7 +2591,7 @@ public class RegistrationServlet extends HttpServlet {
 					logger.debug("", e);
 				}
 
-		writeResponse(response, new StringBuilder("emailsSent: " + emailsSent));
+		ServletUtil.writeResponse(response, new StringBuilder("emailsSent: " + emailsSent));
 	}
 	
 	public void listModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2623,6 +2606,6 @@ public class RegistrationServlet extends HttpServlet {
 		
 		buff.append(printModels(language, user, Arrays.asList(model), printBuffer, 1, 3, false));
 		
-		writeResponse(response, buff);
+		ServletUtil.writeResponse(response, buff);
 	}
 }

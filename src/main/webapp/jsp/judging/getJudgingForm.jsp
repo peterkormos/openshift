@@ -11,7 +11,7 @@
 // <!--
 function setModelInSession(value)
 {
-	var url = "../../RegistrationServlet?command=setModelInSession&modelID=" + value;
+	var url = "../../JudgingServlet/<%= JudgingServlet.RequestType.SetModelInSession.name() %>/modelID=" + value;
 	var req = false;
 
 	if (window.XMLHttpRequest) 
@@ -60,17 +60,13 @@ function setModelInSession(value)
 <%
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
 
-    List<JudgingCriteria> criteriaList = (List<JudgingCriteria>) session
-            .getAttribute(JudgingServlet.SessionAttribute.JudgingCriteriasForCategory.name());
-
+	JudgingResult judgingResult = (JudgingResult) session.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+	
+	int criteriaListSize = judgingResult.getCriterias().size();
+    
     Boolean simpleJudging = (Boolean) session.getAttribute(JudgingServlet.SessionAttribute.SimpleJudging.name());
     if(simpleJudging == null) {
         simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
-    }
-    
-    if (criteriaList == null || simpleJudging) {
-        criteriaList = Arrays.asList(JudgingCriteria.getDefault());
-        JudgingServlet.setSessionAttribute(request, JudgingServlet.SessionAttribute.JudgingCriteriasForCategory, criteriaList);
     }
 %>
 
@@ -80,7 +76,7 @@ function setModelInSession(value)
 
     <input type="hidden"
         name="<%=JudgingServlet.RequestParameter.JudgingCriterias.name()%>"
-        value="<%=criteriaList.size()%>">
+        value="<%=criteriaListSize%>">
 
     <input type="hidden"
         name="<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>"

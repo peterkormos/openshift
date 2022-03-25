@@ -1,5 +1,6 @@
 package servlet;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.mail.BodyPart;
@@ -15,6 +16,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import datatype.User;
@@ -136,5 +138,10 @@ public class ServletUtil {
 		}
 
 		return session.getAttribute(name);
+	}
+
+	public static void writeResponse(final HttpServletResponse response, final StringBuilder message) throws IOException {
+		response.setContentType("text/html");
+		response.getOutputStream().write(message.toString().getBytes());
 	}
 }

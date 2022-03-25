@@ -148,5 +148,21 @@ public class JudgingServletDAO extends HibernateDAO {
             closeSession(session);
         }
     }
+
+	@SuppressWarnings("unchecked")
+	public List<JudgingScore> getAllJudgingScores() {
+		Session session = null;
+		try {
+			session = getHibernateSession();
+			session.beginTransaction();
+
+			Query query = session.createQuery(
+					"From JudgingScore js join fetch js.criteria order by js.id asc");
+
+			return query.list();
+		} finally {
+			closeSession(session);
+		}
+	}
     
 }

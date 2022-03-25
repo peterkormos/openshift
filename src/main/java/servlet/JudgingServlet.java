@@ -4,6 +4,7 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,11 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -51,6 +48,7 @@ import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
 import datatype.judging.JudgingSheet;
 import exception.MissingRequestParameterException;
+import servlet.RegistrationServlet.Command;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import util.CommonSessionAttribute;
@@ -60,15 +58,18 @@ public final class JudgingServlet extends HttpServlet {
 	public static final String VERSION = "2022.03.25.";
 
 	public enum RequestParameter {
-        Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, Class, SimpleJudging
+        Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, 
+        Class, SimpleJudging
     }
 
-    public enum RequestType {
-        GetCategories, GetModelsInCategory, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteRecords, ListJudgingSummary, DeleteJudgingForm, Login, ExportExcel, ImportData, JoinCategoryWithForm, SaveCategoryWithForm
-    }
+	public enum RequestType {
+		GetCategories, GetModelsInCategory, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteRecords, 
+		ListJudgingSummary, ListJudgingSheets, DeleteJudgingForm, Login, ExportExcel, ImportData, JoinCategoryWithForm, 
+		SaveCategoryWithForm, SetModelInSession
+	}
 
     public enum SessionAttribute {
-        JudgingCriteriasForCategory, Category, Judgings, Judge, Categories, Forms, JudgingCategoryToSheetMapping, SimpleJudging
+        Judgings, Judge, Categories, Forms, JudgingCategoryToSheetMapping, SimpleJudging
     }
 
     public static Logger logger = Logger.getLogger(JudgingServlet.class);
@@ -238,7 +239,9 @@ public final class JudgingServlet extends HttpServlet {
             logger.debug(pathInfo);
             if (pathInfo != null) {
                 pathInfo = pathInfo.substring(1);
-
+                if(pathInfo.indexOf("/") > -1)
+                pathInfo = pathInfo.substring(0, pathInfo.indexOf("/"));
+                
                 switch (RequestType.valueOf(pathInfo)) {
                 case GetCategories:
                     getCategories(request, response);
@@ -267,6 +270,9 @@ public final class JudgingServlet extends HttpServlet {
                 case ListJudgingSummary:
                     listJudgingSummary(request, response);
                     break;
+                case ListJudgingSheets:
+                    listJudgingSheets(request, response);
+                    break;
                 case Login:
                     login(request, response);
                     break;
@@ -281,6 +287,9 @@ public final class JudgingServlet extends HttpServlet {
                 	break;
                 case SaveCategoryWithForm:
                 	saveCategoryWithForm(request, response);
+                	break;
+                case SetModelInSession:
+                	setModelInSession(request, response, request.getPathInfo().substring(1));
                 	break;
                 default:
                     throw new IllegalArgumentException("Unknown pathInfo: " + pathInfo);
@@ -390,48 +399,49 @@ public final class JudgingServlet extends HttpServlet {
 		boolean simpleJudging = Boolean.valueOf(
 				ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
 		setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);
-		setSessionAttribute(request, SessionAttribute.JudgingCriteriasForCategory, getCriteriaList(categoryCode));
-		setSessionAttribute(request, SessionAttribute.Category, categoryCode);
 
-        String judgeInRequestAttribute = ServletUtil.getOptionalRequestAttribute(request,
-                RequestParameter.Judge.name());
-        
+		
+	    Model model = (Model) getSessionAttribute(request, CommonSessionAttribute.Model);
+	    if(model == null) {
+			String modelId = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.ModelID.name());
+			if(!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelId))
+				model = servletDAO.getModel(Integer.parseInt(modelId));
+		}
+
+	    JudgingResult judgingResult = model != null ? new JudgingResult(model) : new JudgingResult();
+		
+	    String modellerID = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.ModellerID.name());
+		if(!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerID))
+			judgingResult.setModellerID(Integer.parseInt(modellerID));
+		
+		judgingResult.setCategory(categoryCode);
+	    if (simpleJudging)
+	    	judgingResult.setCriterias(Arrays.asList(JudgingCriteria.getDefault()));
+	    else
+	    	judgingResult.setCriterias(getCriteriaList(judgingResult.getCategory()));
+
+	    String judgeInRequestAttribute = ServletDAO.encodeString(ServletUtil.getOptionalRequestAttribute(request,
+                RequestParameter.Judge.name()));
         if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute)) {
-            setSessionAttribute(request, SessionAttribute.Judge, ServletDAO.encodeString(judgeInRequestAttribute));
+        	judgingResult.setJudge(judgeInRequestAttribute);
         }
+        else
+        	judgingResult.setJudge((String) getSessionAttribute(request, SessionAttribute.Judge));
 
-        if (setJudgingScoresInSession) {
-            setJudgingScoresInSession(request, categoryCode);
-        }
+		if (setJudgingScoresInSession && judgingResult.getJudge() != null && judgingResult.isModelPresent()) {
+				dao.getJudgingScores(judgingResult.getJudge(), judgingResult.getCategory(), judgingResult.getModelID(),
+						judgingResult.getModellerID()).forEach(score -> judgingResult.saveScores(score));
+		}
 
-        redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + jspPage);
+		setSessionAttribute(request, SessionAttribute.Judgings, judgingResult);
+
+    	redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + jspPage);
     }
 
     private List<JudgingCriteria> getCriteriaList(String categoryCode) throws Exception {
     	Category category = servletDAO.getCategory(categoryCode);
     	return dao.getJudgingCriteria(category.getId());
 	}
-
-	private void setJudgingScoresInSession(HttpServletRequest request, final String category)
-            throws MissingRequestParameterException, Exception {
-
-        final String judge = ServletDAO.encodeString(ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Judge.name()));
-        final String modelId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ModelID.name());
-        final String modellerId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ModellerID.name());
-
-        if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judge) && //
-                !ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelId) && //
-                !ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerId)) {
-
-            // key: CriteriaID
-            Map<Integer, JudgingScore> scores = dao
-                    .getJudgingScores(judge, category, Integer.parseInt(modelId), Integer.parseInt(modellerId)).stream()
-                    .collect(Collectors.toMap(JudgingScore::getCriteriaID, Function.identity()));
-            setSessionAttribute(request, SessionAttribute.Judgings, scores);
-        } else {
-            request.getSession(false).removeAttribute(SessionAttribute.Judgings.name());
-        }
-    }
 
     private void listJudgings(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final List<JudgingScore> allScores = dao.getAll(JudgingScore.class);
@@ -461,17 +471,23 @@ public final class JudgingServlet extends HttpServlet {
 		List<String> categories = getCategories();
         setSessionAttribute(request, SessionAttribute.Categories, categories);
 
-        Collection<JudgingResult> judgings = getJudgingSummary();
+        Collection<JudgingResult> judgings = getJudgingResults(true /* withCriterias */);
 		setSessionAttribute(request, SessionAttribute.Judgings, judgings);
 
         redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + "listJudgingSummary.jsp");
     }
 
-	private Collection<JudgingResult> getJudgingSummary() throws Exception, IOException {
+    private void listJudgingSheets(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		setSessionAttribute(request, SessionAttribute.Judgings, getJudgingResults(true /* withCriterias */));
+
+        redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + "listJudgingSheets.jsp");
+    }
+
+	private Collection<JudgingResult> getJudgingResults(boolean withCriterias) throws Exception, IOException {
 		final Map<String, JudgingResult> scoresByCategory = new LinkedHashMap<>();
 
-        final List<JudgingScore> allScores = dao.getAll(JudgingScore.class);
-
+        final List<JudgingScore> allScores = withCriterias ? dao.getAllJudgingScores() : dao.getAll(JudgingScore.class);
+        
         Collections.sort(allScores, new Comparator<JudgingScore>() {
             @Override
             public int compare(JudgingScore result1, JudgingScore result2) {
@@ -489,26 +505,24 @@ public final class JudgingServlet extends HttpServlet {
             JudgingResult judgingResult = scoresByCategory.get(key);
             if (judgingResult == null) {
                 judgingResult = new JudgingResult(score);
-                judgingResult.setMaxScore(getCriteriaList(score.getCategory()).stream()
-                        .mapToInt(JudgingCriteria::getMaxScore).max().orElse(JudgingCriteria.getDefault().getMaxScore()));
+                judgingResult.setCriterias(getCriteriaList(judgingResult.getCategory()));
                 scoresByCategory.put(key, judgingResult);
             }
 
             judgingResult.saveScores(score);
         }
 
-        Collection<JudgingResult> judgings = scoresByCategory.values();
-		return judgings;
+		return scoresByCategory.values();
 	}
 
-    private void login(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, MissingRequestParameterException {
-        String judge = ServletDAO.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
-        setSessionAttribute(request, SessionAttribute.Judge, judge);
-        setSessionAttribute(request, CommonSessionAttribute.Language,
-                languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
-        redirectToMainPage(request, response);
-    }
+	private void login(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, MissingRequestParameterException {
+		String judge = ServletDAO.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
+		setSessionAttribute(request, SessionAttribute.Judge, judge);
+		setSessionAttribute(request, CommonSessionAttribute.Language,
+				languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
+		redirectToMainPage(request, response);
+	}
 
     private void redirectRequest(HttpServletRequest request, HttpServletResponse response, String path)
             throws IOException {
@@ -586,13 +600,14 @@ public final class JudgingServlet extends HttpServlet {
         }
 
         final HttpSession session = request.getSession(false);
-        session.removeAttribute(SessionAttribute.JudgingCriteriasForCategory.name());
-        session.removeAttribute(SessionAttribute.Category.name());
         session.removeAttribute(CommonSessionAttribute.Model.name());
+    	session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
 
         if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
                 .equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
-            setSessionAttribute(request, SessionAttribute.Judge, judge);
+        	System.out.println("getSessionAttribute(request, SessionAttribute.Judge): "  + getSessionAttribute(request, SessionAttribute.Judge));
+            if(getSessionAttribute(request, SessionAttribute.Judge) == null)
+            	setSessionAttribute(request, SessionAttribute.Judge, judge);
             setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);
             getJudgingForm(request, response, false /* setJudgingScoresInSession */);
         } else {
@@ -603,6 +618,11 @@ public final class JudgingServlet extends HttpServlet {
     public static void setSessionAttribute(HttpServletRequest request, Enum<?> name, Object value) {
         final HttpSession session = request.getSession(true);
         session.setAttribute(name.name(), value);
+    }
+    
+    public static Object getSessionAttribute(HttpServletRequest request, Enum<?> name) {
+        final HttpSession session = request.getSession(false);
+        return session != null ? session.getAttribute(name.name()) : null;
     }
     
 	public void importData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -627,7 +647,7 @@ public final class JudgingServlet extends HttpServlet {
 			FileItem item, Map<String, String> parameters) throws IOException, SQLException, Exception {
 		if ("zipFile".equals(item.getFieldName())) {
 			final StringBuilder buff = importZip(request, item.getInputStream());
-			RegistrationServlet.writeResponse(response, buff);
+			ServletUtil.writeResponse(response, buff);
 		}
 	}
 
@@ -676,7 +696,7 @@ public final class JudgingServlet extends HttpServlet {
         
         final HttpSession session = request.getSession(false);
         ResourceBundle language = getLanguage(session, response);
-        Collection<JudgingResult> judgings = getJudgingSummary();
+        Collection<JudgingResult> judgings = getJudgingResults(true /* withCriterias */);
 
     			int maxScore = 
     					judgings.stream().mapToInt(JudgingResult::getMaxScore).max().orElse(0);
@@ -720,6 +740,26 @@ public final class JudgingServlet extends HttpServlet {
 
 	private boolean isMasterCategory(String category, List<String> masterCategoryList) {
 		return masterCategoryList.contains(category);
+	}
+
+	public void setModelInSession(final HttpServletRequest request, final HttpServletResponse response, String pathInfo)
+			throws Exception {
+		if (pathInfo.indexOf('/') > -1) {
+			final String[] splitText = pathInfo.split("/");
+			final String command = splitText[0];
+
+			response.setContentType("image/jpeg");
+
+			final String params = splitText[1];
+			final int modelID = Integer.parseInt(params.substring(params.indexOf("=") + 1));
+
+			final Model model = servletDAO.getModel(modelID);
+			JudgingResult judgingResult = (JudgingResult) getSessionAttribute(request, SessionAttribute.Judgings);
+			judgingResult.setModel(model);
+			setSessionAttribute(request, SessionAttribute.Judgings, judgingResult);
+
+			ServletUtil.writeResponse(response, new StringBuilder("ok"));
+		}
 	}
 
 }

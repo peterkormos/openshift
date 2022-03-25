@@ -7,11 +7,15 @@
 <%@include file="../util.jsp"%>
 
 <%
-	for (int i = 0; i < 3; i++) {
-		session.setAttribute("s1", "" + i);
+	Collection<JudgingResult> judgingResults = (Collection<JudgingResult>) session
+			.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+
+	for (JudgingResult judgingResult : judgingResults) {
+		session.setAttribute(JudgingServlet.SessionAttribute.Judgings.name(), judgingResult);
 %>
 <jsp:include page="getJudgingSheet2.jsp" />
-
+<p>
 <%
 	}
+	session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
 %>

@@ -1,9 +1,12 @@
 package datatype.judging;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import datatype.Model;
 
 public class JudgingResult extends JudgedModel{
     private String category;
@@ -13,9 +16,13 @@ public class JudgingResult extends JudgedModel{
     private final Map<Integer, AtomicInteger> scoresSummary = new LinkedHashMap<Integer, AtomicInteger>();
     private int maxScore;
     
+    //criteriaID, JudgingScore
+    private Map<Integer, JudgingScore> scores = new HashMap<>();
+	private List<JudgingCriteria> criterias;
+    
     public int getMaxScore() 
     {
-        return maxScore;
+        return maxScore == 0 ? JudgingCriteria.getDefault().getMaxScore() : maxScore;
     }
 
     public void setMaxScore(int maxScore) 
@@ -31,6 +38,16 @@ public class JudgingResult extends JudgedModel{
         this.judge = result.getJudge();
     }
 
+    public JudgingResult(Model model) {
+        super(model);
+    }
+
+    public JudgingResult() {
+    }
+    
+    public boolean isModelPresent() {
+    	return getModelID() != 0;
+    }
 
     @Override
     public String toString() {
@@ -80,9 +97,22 @@ public class JudgingResult extends JudgedModel{
         	scoresSummary.put(score.getScore(), new AtomicInteger(1));
         }
 
-		score.getScore()
-		// TODO Auto-generated method stub
-		
+        scores.put(score.getCriteriaID(), score);
+
+        if(score.getCriteria().getMaxScore() > getMaxScore()) {
+        	setMaxScore(score.getCriteria().getMaxScore());
+        }
 	}
-    
+
+	public List<JudgingCriteria> getCriterias() {
+		return criterias;
+	}
+	
+	public void setCriterias(List<JudgingCriteria> criterias) {
+		this.criterias = criterias;
+	}
+	
+	public Map<Integer, JudgingScore> getScores() {
+		return scores;
+	}
 }

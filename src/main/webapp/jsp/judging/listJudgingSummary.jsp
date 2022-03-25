@@ -156,8 +156,9 @@
 		</a>
 		</td>
 		<td>
+        <a href="../../RegistrationServlet?command=listModel&modelID=<%=judgingResult.getModelID()%>">
         <%=judgingResult.getModelsName()%>
-		
+		</a>
 		</td>
 		<td>
 		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetJudgingSheet.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ModellerID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.Judge %>=<%=java.net.URLEncoder.encode(judgingResult.getJudge())%>">
