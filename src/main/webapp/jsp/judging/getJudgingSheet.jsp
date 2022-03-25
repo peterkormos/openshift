@@ -31,18 +31,18 @@
     
     String unjudgedCriteriaStyle = "background-color: lightgrey;";
 
-    Map<Integer, List<JudgingScore>> scores = (Map<Integer, List<JudgingScore>>) session.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+    Map<Integer, JudgingScore> scores = (Map<Integer, JudgingScore>) session.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
     session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
     
     JudgedModel judgedModel = null;
     if(scores != null)
     {
-    	Optional<List<JudgingScore>> optional = scores.values().stream().findFirst();
+    	Optional<JudgingScore> optional = scores.values().stream().findFirst();
     	if(optional.isPresent())
-      		judgedModel = optional.get().get(0);
+      		judgedModel = optional.get();
     }
     else
-    	scores = new HashMap<Integer, List<JudgingScore>>();  
+    	scores = new HashMap<Integer, JudgingScore>();  
     
 	Model model = (Model)session.getAttribute(CommonSessionAttribute.Model.name());
     if(judgedModel == null && model != null)
@@ -53,11 +53,11 @@
 
 
 <%!
-	String getComment(JudgedModel judgedModel, Map<Integer, List<JudgingScore>> scores)
+	String getComment(JudgedModel judgedModel, Map<Integer, JudgingScore> scores)
 	{
 		try
 		{
-			return scores.values().iterator().next().get(0).getComment();
+			return scores.values().iterator().next().getComment();
 		}
 		catch(Exception ex)
 		{
@@ -150,7 +150,7 @@
 						<input type="radio" 
 						name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%= criteria.getCriteriaId() %>"
 						value="<%=i%>"
-						<%= hasScore && scores.get(criteria.getCriteriaId()).get(0).getScore() == i ? "checked='checked'" : "" %>
+						<%= hasScore && scores.get(criteria.getCriteriaId()).getScore() == i ? "checked='checked'" : "" %>
 						onchange="parentNode.parentNode.parentNode.style = 'border: 1px solid; ';"
 						><%=i%> 
 						</label>

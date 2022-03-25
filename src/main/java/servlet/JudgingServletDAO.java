@@ -87,7 +87,7 @@ public class JudgingServletDAO extends HibernateDAO {
             
             session.beginTransaction();
 
-            Query query = session.createQuery("From JudgingScore where judge = :judge and category = :category and modelID = :modelId and modellerID = :modellerId order by id asc");
+            Query query = session.createQuery("From JudgingScore js join fetch js.criteria where js.judge = :judge and js.category = :category and js.modelID = :modelId and js.modellerID = :modellerId order by js.id asc");
             query.setString("judge", judge);
             query.setString("category", category);
             query.setInteger("modelId", modelId);

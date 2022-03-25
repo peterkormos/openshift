@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -56,7 +57,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet {
-	private static final String VERSION = "2022.03.10.";
+	public static final String VERSION = "2022.03.25.";
 
 	public enum RequestParameter {
         Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, Class, SimpleJudging
@@ -423,10 +424,9 @@ public final class JudgingServlet extends HttpServlet {
                 !ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerId)) {
 
             // key: CriteriaID
-            Map<Integer, List<JudgingScore>> scores = dao
+            Map<Integer, JudgingScore> scores = dao
                     .getJudgingScores(judge, category, Integer.parseInt(modelId), Integer.parseInt(modellerId)).stream()
-                    .collect(Collectors.groupingBy(JudgingScore::getCriteriaID));
-
+                    .collect(Collectors.toMap(JudgingScore::getCriteriaID, Function.identity()));
             setSessionAttribute(request, SessionAttribute.Judgings, scores);
         } else {
             request.getSession(false).removeAttribute(SessionAttribute.Judgings.name());
@@ -484,7 +484,6 @@ public final class JudgingServlet extends HttpServlet {
         });
 
         for (final JudgingScore score : allScores) {
-
             String key = score.getJudge() + score.getCategory() + score.getModellerID() + score.getModelID();
 
             JudgingResult judgingResult = scoresByCategory.get(key);

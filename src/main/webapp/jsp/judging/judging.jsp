@@ -57,6 +57,9 @@ style="background: LightGrey; padding: 5px;"
 </jsp:include>
 	
 <input type="submit" value='<%= language.getString("login") %>'>
+<div style="text-align: right;">
+<%= JudgingServlet.VERSION %>
+</div>
 </form>
 <%	
 	}

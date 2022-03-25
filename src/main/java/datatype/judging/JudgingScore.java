@@ -2,7 +2,12 @@ package datatype.judging;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.Hibernate;
 
 @Entity
 @Table(name = "mak_judgingscore")
@@ -15,6 +20,11 @@ public class JudgingScore extends JudgedModel
   private String judge;
   @Column
   private int criteriaID;
+  
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "criteriaID", insertable = false, updatable = false)
+  private JudgingCriteria criteria; 
+  
   @Column
   private int score;
   @Column(length = MAX_COMMENT_LENGTH, nullable = true)
@@ -89,9 +99,12 @@ public class JudgingScore extends JudgedModel
 
 @Override
 public String toString() {
-    return "JudgingScore [category=" + category + ", judge=" + judge + ", criteriaID=" + criteriaID + ", score=" + score + ", comment="
+    return "JudgingScore [category=" + category + ", judge=" + judge + ", criteriaID=" + criteriaID + ", criteria=" + (Hibernate.isInitialized(criteria) ? criteria : "Not loaded") + ", score=" + score + ", comment="
             + comment + ", " + super.toString() + "]";
 }
 
- 
+	public JudgingCriteria getCriteria() {
+		return criteria;
+	}
+	
 }
