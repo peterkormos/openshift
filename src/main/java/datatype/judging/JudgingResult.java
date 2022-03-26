@@ -1,5 +1,6 @@
 package datatype.judging;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -109,7 +110,10 @@ public class JudgingResult extends JudgedModel{
 	}
 	
 	public void setCriterias(List<JudgingCriteria> criterias) {
-		this.criterias = criterias;
+	    if (criterias.isEmpty())
+	    	this.criterias = Arrays.asList(JudgingCriteria.getDefault());
+	    else
+	    	this.criterias = criterias;
 	}
 	
 	public Map<Integer, JudgingScore> getScores() {

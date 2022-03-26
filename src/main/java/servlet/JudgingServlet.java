@@ -432,6 +432,9 @@ public final class JudgingServlet extends HttpServlet {
 				dao.getJudgingScores(judgingResult.getJudge(), judgingResult.getCategory(), judgingResult.getModelID(),
 						judgingResult.getModellerID()).forEach(score -> judgingResult.saveScores(score));
 		}
+		else {
+			judgingResult.setModel(null);
+		}
 
 		setSessionAttribute(request, SessionAttribute.Judgings, judgingResult);
 
@@ -605,7 +608,6 @@ public final class JudgingServlet extends HttpServlet {
 
         if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
                 .equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
-        	System.out.println("getSessionAttribute(request, SessionAttribute.Judge): "  + getSessionAttribute(request, SessionAttribute.Judge));
             if(getSessionAttribute(request, SessionAttribute.Judge) == null)
             	setSessionAttribute(request, SessionAttribute.Judge, judge);
             setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);

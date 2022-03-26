@@ -425,8 +425,6 @@ public class ServletDAO extends HibernateDAO
 		if (show == null || category.group.show.equals(show))
 		{
 		  returned.add(category);
-		  // else
-		  // System.out.println(category.group.show + " " + show);
 		}
 	  }
 
