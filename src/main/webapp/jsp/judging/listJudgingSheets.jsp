@@ -13,7 +13,7 @@
 	for (JudgingResult judgingResult : judgingResults) {
 		session.setAttribute(JudgingServlet.SessionAttribute.Judgings.name(), judgingResult);
 %>
-<jsp:include page="getJudgingSheet2.jsp" />
+<jsp:include page="getJudgingSheet.jsp" />
 <p>
 <%
 	}

@@ -107,7 +107,7 @@ public class RegistrationServlet extends HttpServlet {
 
 
 	public static enum SessionAttribute {
-	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId
+	    Notices, Action, SubmitLabel, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId
 	}
 
 	public static enum Command {
@@ -506,7 +506,7 @@ public class RegistrationServlet extends HttpServlet {
 
     private void initHttpSession(final HttpServletRequest request, final User user, String show) {
         final HttpSession session = request.getSession(true);
-        session.setAttribute(SessionAttribute.UserID.name(), user);
+        session.setAttribute(CommonSessionAttribute.UserID.name(), user);
         session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(user.language));
         session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, "showId"));
 
@@ -966,7 +966,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		HttpSession session = request.getSession(false);
                 session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
-                session.setAttribute(SessionAttribute.UserID.name(), servletDAO.getUser(oldUser.userID));
+                session.setAttribute(CommonSessionAttribute.UserID.name(), servletDAO.getUser(oldUser.userID));
 
 		redirectToMainPage(request, response, true);
 	}
@@ -1601,7 +1601,7 @@ public class RegistrationServlet extends HttpServlet {
 					"User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
 		}
 
-		User userInSession = (User) session.getAttribute(SessionAttribute.UserID.name());
+		User userInSession = (User) session.getAttribute(CommonSessionAttribute.UserID.name());
 		if(userInSession == null)
 		    throw new UserNotLoggedInException(
 		            "User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");

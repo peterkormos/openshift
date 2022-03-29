@@ -167,7 +167,7 @@
 			</div>
 
 			<div class="tooltip">
-				<a href="#" onClick="document.getElementById('command').value='deleteModel';document.getElementById('modelID').value='<%=model.modelID%>';document.getElementById('input').submit();">
+                <a href="../RegistrationServlet?command=deleteModel&modelID=<%=model.modelID%>">
 					<img src="../icons/delete2.png" height="30" align="center" /> <span class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
 			</div>

@@ -4,7 +4,6 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +40,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import datatype.Category;
 import datatype.Model;
 import datatype.Record;
+import datatype.User;
 import datatype.judging.JudgingCategoryToSheetMapping;
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingError;
@@ -48,7 +48,6 @@ import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
 import datatype.judging.JudgingSheet;
 import exception.MissingRequestParameterException;
-import servlet.RegistrationServlet.Command;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import util.CommonSessionAttribute;
@@ -534,8 +533,16 @@ public final class JudgingServlet extends HttpServlet {
 			throws IOException, MissingRequestParameterException {
 		String judge = ServletDAO.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
 		setSessionAttribute(request, SessionAttribute.Judge, judge);
+		String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.name());
 		setSessionAttribute(request, CommonSessionAttribute.Language,
-				languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
+				languageUtil.getLanguage(languageCode));
+		
+		User user = new User(languageCode);
+		user.setYearOfBirth(1977);
+		
+		setSessionAttribute(request, CommonSessionAttribute.UserID, user);
+		setSessionAttribute(request, RegistrationServlet.SessionAttribute.MainPageFile, "judging/judging.jsp");
+				
 		redirectToMainPage(request, response);
 	}
 
