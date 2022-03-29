@@ -42,7 +42,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 	String returned = JudgingServlet.RequestParameter.JudgingCriteria.name() + criteria.getCriteriaId();
 	
 	if(listMode)
-		returned += judgingResult.getCategory()+judgingResult.getJudge()+judgingResult.getModellerID()+judgingResult.getModelID();
+		returned += judgingResult.getCategory()+judgingResult.getJudge()+judgingResult.getModellerID()+"_"+judgingResult.getModelID();
 	return returned;
 }
 		%>
