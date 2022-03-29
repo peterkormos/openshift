@@ -1,6 +1,6 @@
 package util;
 
 public enum CommonSessionAttribute {
-    Language, Model
+    Language, Model, UserID
 
 }

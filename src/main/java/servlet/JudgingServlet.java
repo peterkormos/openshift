@@ -4,7 +4,6 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +40,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import datatype.Category;
 import datatype.Model;
 import datatype.Record;
+import datatype.User;
 import datatype.judging.JudgingCategoryToSheetMapping;
 import datatype.judging.JudgingCriteria;
 import datatype.judging.JudgingError;
@@ -48,22 +48,21 @@ import datatype.judging.JudgingResult;
 import datatype.judging.JudgingScore;
 import datatype.judging.JudgingSheet;
 import exception.MissingRequestParameterException;
-import servlet.RegistrationServlet.Command;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet {
-	public static final String VERSION = "2022.03.25.";
+	public static final String VERSION = "2022.03.29.";
 
 	public enum RequestParameter {
         Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, 
-        Class, SimpleJudging
+        Class, SimpleJudging, UserID
     }
 
 	public enum RequestType {
-		GetCategories, GetModelsInCategory, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteRecords, 
+		GetCategories, GetModels, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteRecords, 
 		ListJudgingSummary, ListJudgingSheets, DeleteJudgingForm, Login, ExportExcel, ImportData, JoinCategoryWithForm, 
 		SaveCategoryWithForm, SetModelInSession
 	}
@@ -246,8 +245,8 @@ public final class JudgingServlet extends HttpServlet {
                 case GetCategories:
                     getCategories(request, response);
                     break;
-                case GetModelsInCategory:
-                	getModelsInCategory(request, response);
+                case GetModels:
+                	getModels(request, response);
                     break;
                 case GetJudgingForm:
                     getJudgingForm(request, response, true /* setJudgingScoresInSession */);
@@ -374,13 +373,28 @@ public final class JudgingServlet extends HttpServlet {
 		return categories;
 	}
 
-    private void getModelsInCategory(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException, SQLException {
-        final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
+    private void getModels(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException, SQLException {
         final String forJudges = ServletUtil.getRequestAttribute(request, RequestParameter.ForJudges.name());
-        int categoryID = servletDAO.getCategory(category).getId();
-
-		List<Model> models = servletDAO.getModelsInCategory(categoryID);
-		models.sort((m1, m2) -> Integer.valueOf(m1.getUserID()).compareTo(Integer.valueOf(m2.getUserID())));
+        List<Model> models = null;
+        
+        Optional<String> category = ServletUtil.getOptionalAttribute(request, RequestParameter.Category.name());
+		if (category.isPresent()) {
+			models = servletDAO.getModelsInCategory(servletDAO.getCategory(category.get()).getId());
+		}
+		
+        Optional<String> modelID = ServletUtil.getOptionalAttribute(request, RequestParameter.ModelID.name());
+		if (modelID.isPresent()) {
+			models = Arrays.asList(servletDAO.getModel(Integer.parseInt(modelID.get())));
+		}
+		
+		Optional<String> userID = ServletUtil.getOptionalAttribute(request, RequestParameter.UserID.name());
+		if (userID.isPresent()) {
+			models = servletDAO.getModels(Integer.parseInt(userID.get()));
+		}
+		
+		if(models != null) {
+			models.sort((m1, m2) -> Integer.valueOf(m1.getUserID()).compareTo(Integer.valueOf(m2.getUserID())));
+		}
 		
         setSessionAttribute(request, RegistrationServlet.SessionAttribute.Models, models);
 		redirectRequest(request, response,
@@ -522,8 +536,16 @@ public final class JudgingServlet extends HttpServlet {
 			throws IOException, MissingRequestParameterException {
 		String judge = ServletDAO.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
 		setSessionAttribute(request, SessionAttribute.Judge, judge);
+		String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.name());
 		setSessionAttribute(request, CommonSessionAttribute.Language,
-				languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.name())));
+				languageUtil.getLanguage(languageCode));
+		
+		User user = new User(languageCode);
+		user.setYearOfBirth(1977);
+		
+		setSessionAttribute(request, CommonSessionAttribute.UserID, user);
+		setSessionAttribute(request, RegistrationServlet.SessionAttribute.MainPageFile, "judging/judging.jsp");
+				
 		redirectToMainPage(request, response);
 	}
 

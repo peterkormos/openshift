@@ -80,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2022.03.10.";
+	public String VERSION = "2022.03.29.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -107,7 +107,7 @@ public class RegistrationServlet extends HttpServlet {
 
 
 	public static enum SessionAttribute {
-	    Notices, Action, SubmitLabel, UserID, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId
+	    Notices, Action, SubmitLabel, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId
 	}
 
 	public static enum Command {
@@ -403,7 +403,7 @@ public class RegistrationServlet extends HttpServlet {
 				final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, param));
 
 				printModelsForUser(request, response, languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, "language")),
-						userID, true/* allModelsPrinted */);
+						userID, true/* alwaysPageBreak */);
 				showPrintDialog(response);
 				return;
 			}
@@ -506,7 +506,7 @@ public class RegistrationServlet extends HttpServlet {
 
     private void initHttpSession(final HttpServletRequest request, final User user, String show) {
         final HttpSession session = request.getSession(true);
-        session.setAttribute(SessionAttribute.UserID.name(), user);
+        session.setAttribute(CommonSessionAttribute.UserID.name(), user);
         session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(user.language));
         session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, "showId"));
 
@@ -966,7 +966,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		HttpSession session = request.getSession(false);
                 session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
-                session.setAttribute(SessionAttribute.UserID.name(), servletDAO.getUser(oldUser.userID));
+                session.setAttribute(CommonSessionAttribute.UserID.name(), servletDAO.getUser(oldUser.userID));
 
 		redirectToMainPage(request, response, true);
 	}
@@ -1601,7 +1601,7 @@ public class RegistrationServlet extends HttpServlet {
 					"User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
 		}
 
-		User userInSession = (User) session.getAttribute(SessionAttribute.UserID.name());
+		User userInSession = (User) session.getAttribute(CommonSessionAttribute.UserID.name());
 		if(userInSession == null)
 		    throw new UserNotLoggedInException(
 		            "User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
@@ -1894,7 +1894,7 @@ public class RegistrationServlet extends HttpServlet {
 			// || (!printPreRegisteredModels &&
 			// user.userName.indexOf(DIRECT_USER) >
 			// -1))
-			printModelsForUser(request, response, language, user.userID, true /* allModelsPrinted */);
+			printModelsForUser(request, response, language, user.userID, true /* alwaysPageBreak */);
 		}
 
 		showPrintDialog(response);
@@ -1936,7 +1936,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
 			printModelsForUser(request, response, languageUtil.getLanguage(user.language), user.userID,
-					false /* allModelsPrinted */);
+					false /* alwaysPageBreak */);
 		} else {
 			final StringBuilder buff = new StringBuilder();
 
@@ -1959,12 +1959,18 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void printModelsForUser(final HttpServletRequest request, final HttpServletResponse response,
-			final ResourceBundle language, final int userID, boolean allModelsPrinted) throws Exception, IOException {
-		ServletUtil.writeResponse(response, printModelsForUser(language, userID, request, allModelsPrinted));
+			final ResourceBundle language, final int userID, boolean alwaysPageBreak) throws Exception, IOException {
+		ServletUtil.writeResponse(response, printModelsForUser(language, userID, request, alwaysPageBreak));
 	}
 
 	private StringBuilder printModelsForUser(final ResourceBundle language, final int userID,
 			final HttpServletRequest request, boolean alwaysPageBreak) throws Exception, IOException {
+		return printModelsForUser(language, userID,
+				request, alwaysPageBreak, 3 /*modelsOnPage*/);
+
+	}
+	private StringBuilder printModelsForUser(final ResourceBundle language, final int userID,
+			final HttpServletRequest request, boolean alwaysPageBreak, int modelsOnPage) throws Exception, IOException {
 		final List<Model> models = servletDAO.getModels(userID);
 
 		// remove models that are not for the current show
@@ -1987,8 +1993,6 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = servletDAO.getUser(userID);
 		int modelsRemainingToPrint = models.size();
 		while (!models.isEmpty()) {
-			final int modelsOnPage = 3;
-
 			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
 			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
 			models.removeAll(subList);
@@ -2592,20 +2596,5 @@ public class RegistrationServlet extends HttpServlet {
 				}
 
 		ServletUtil.writeResponse(response, new StringBuilder("emailsSent: " + emailsSent));
-	}
-	
-	public void listModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final String modelID = ServletUtil.getRequestAttribute(request, "modelID");
-		final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-
-		final StringBuilder buff = new StringBuilder();
-
-		ResourceBundle language = (ResourceBundle) ServletUtil.getSessionAttribute(request,
-				CommonSessionAttribute.Language.name());
-		User user = servletDAO.getUser(model.getUserID());
-		
-		buff.append(printModels(language, user, Arrays.asList(model), printBuffer, 1, 3, false));
-		
-		ServletUtil.writeResponse(response, buff);
 	}
 }

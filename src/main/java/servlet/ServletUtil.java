@@ -1,6 +1,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Properties;
 
 import javax.mail.BodyPart;
@@ -10,7 +11,6 @@ import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -19,15 +19,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import datatype.User;
 import exception.MissingRequestParameterException;
 import exception.UserNotLoggedInException;
-import servlet.RegistrationServlet.SessionAttribute;
 
 public class ServletUtil {
 
     public static final String ATTRIBUTE_NOT_FOUND_VALUE = "-";
 
+    public static Optional<String> getOptionalAttribute(final HttpServletRequest request, final String name) {
+        final String value = ServletUtil.getOptionalRequestAttribute(request, name);
+
+        return  ATTRIBUTE_NOT_FOUND_VALUE.equals(value) ? Optional.empty() : Optional.of(value);
+    }
+    
     public static String getOptionalRequestAttribute(final HttpServletRequest request, final String name) {
         try {
             final String value = ServletUtil.getRequestAttribute(request, name, false);

@@ -22,7 +22,7 @@
 
 			  User user = new User("HU");
 			  session = request.getSession(true);
-			  session.setAttribute(RegistrationServlet.SessionAttribute.UserID.name(), user);
+			  session.setAttribute(CommonSessionAttribute.UserID.name(), user);
 	%>
 	Verseny:
 	<FONT COLOR='#ff0000'><b><%=show%></b></FONT>

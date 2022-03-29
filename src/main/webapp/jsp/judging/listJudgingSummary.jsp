@@ -148,15 +148,23 @@
 		 <%
 		 }
 	%>
-		><%=judgingResult.getCategory()%></td>
-		<td><%=judgingResult.getModellerID()%></td>
+		>
+        <a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
+        <%= judgingResult.getCategory() %>
+        </a>
+		</td>
 		<td>
-        <a href="../../RegistrationServlet?command=listModel&modelID=<%=judgingResult.getModelID()%>">
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.UserID %>=<%=judgingResult.getModellerID()%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
+		<%=judgingResult.getModellerID()%>
+		</a>
+		</td>
+		<td>
+        <a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
 		<%=judgingResult.getModelID()%>
 		</a>
 		</td>
 		<td>
-        <a href="../../RegistrationServlet?command=listModel&modelID=<%=judgingResult.getModelID()%>">
+        <a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.ModelID %>=<%=judgingResult.getModelID()%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
         <%=judgingResult.getModelsName()%>
 		</a>
 		</td>
