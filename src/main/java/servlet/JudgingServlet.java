@@ -55,15 +55,15 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet {
-	public static final String VERSION = "2022.03.25.";
+	public static final String VERSION = "2022.03.29.";
 
 	public enum RequestParameter {
         Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, 
-        Class, SimpleJudging
+        Class, SimpleJudging, UserID
     }
 
 	public enum RequestType {
-		GetCategories, GetModelsInCategory, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteRecords, 
+		GetCategories, GetModels, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteRecords, 
 		ListJudgingSummary, ListJudgingSheets, DeleteJudgingForm, Login, ExportExcel, ImportData, JoinCategoryWithForm, 
 		SaveCategoryWithForm, SetModelInSession
 	}
@@ -246,8 +246,8 @@ public final class JudgingServlet extends HttpServlet {
                 case GetCategories:
                     getCategories(request, response);
                     break;
-                case GetModelsInCategory:
-                	getModelsInCategory(request, response);
+                case GetModels:
+                	getModels(request, response);
                     break;
                 case GetJudgingForm:
                     getJudgingForm(request, response, true /* setJudgingScoresInSession */);
@@ -374,13 +374,28 @@ public final class JudgingServlet extends HttpServlet {
 		return categories;
 	}
 
-    private void getModelsInCategory(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException, SQLException {
-        final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
+    private void getModels(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException, SQLException {
         final String forJudges = ServletUtil.getRequestAttribute(request, RequestParameter.ForJudges.name());
-        int categoryID = servletDAO.getCategory(category).getId();
-
-		List<Model> models = servletDAO.getModelsInCategory(categoryID);
-		models.sort((m1, m2) -> Integer.valueOf(m1.getUserID()).compareTo(Integer.valueOf(m2.getUserID())));
+        List<Model> models = null;
+        
+        Optional<String> category = ServletUtil.getOptionalAttribute(request, RequestParameter.Category.name());
+		if (category.isPresent()) {
+			models = servletDAO.getModelsInCategory(servletDAO.getCategory(category.get()).getId());
+		}
+		
+        Optional<String> modelID = ServletUtil.getOptionalAttribute(request, RequestParameter.ModelID.name());
+		if (modelID.isPresent()) {
+			models = Arrays.asList(servletDAO.getModel(Integer.parseInt(modelID.get())));
+		}
+		
+		Optional<String> userID = ServletUtil.getOptionalAttribute(request, RequestParameter.UserID.name());
+		if (userID.isPresent()) {
+			models = servletDAO.getModels(Integer.parseInt(userID.get()));
+		}
+		
+		if(models != null) {
+			models.sort((m1, m2) -> Integer.valueOf(m1.getUserID()).compareTo(Integer.valueOf(m2.getUserID())));
+		}
 		
         setSessionAttribute(request, RegistrationServlet.SessionAttribute.Models, models);
 		redirectRequest(request, response,
@@ -605,7 +620,6 @@ public final class JudgingServlet extends HttpServlet {
 
         if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
                 .equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
-        	System.out.println("getSessionAttribute(request, SessionAttribute.Judge): "  + getSessionAttribute(request, SessionAttribute.Judge));
             if(getSessionAttribute(request, SessionAttribute.Judge) == null)
             	setSessionAttribute(request, SessionAttribute.Judge, judge);
             setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);

@@ -35,7 +35,7 @@
 			<%= category %>
 			<input type="radio" name="<%=JudgingServlet.RequestParameter.Category.name()%>" value="<%= category %>" onclick="submit()">
 			</label>
-		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModelsInCategory.name() %>?<%= JudgingServlet.RequestParameter.Category %>=<%=category%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
+		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.Category %>=<%=category%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
 		<%= language.getString("list.models") %>
 		</a>
 			<br>

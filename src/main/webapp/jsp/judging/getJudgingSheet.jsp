@@ -18,8 +18,7 @@
 	JudgingResult judgingResult = (JudgingResult) session
 			.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
 
-	String judge = judgingResult.getJudge();
-	System.out.println(judge);
+	String judge = Optional.ofNullable(judgingResult.getJudge()).orElse("");
 	List<JudgingCriteria> criteriaList = judgingResult.getCriterias();
 	String category = judgingResult.getCategory();
 	Map<Integer, JudgingScore> scores = judgingResult.getScores();
