@@ -13,7 +13,9 @@
 	for (JudgingResult judgingResult : judgingResults) {
 		session.setAttribute(JudgingServlet.SessionAttribute.Judgings.name(), judgingResult);
 %>
-<jsp:include page="getJudgingSheet.jsp" />
+<jsp:include page="getJudgingSheet.jsp" >
+	<jsp:param name="listMode" value='true' />
+</jsp:include>
 <p>
 <%
 	}

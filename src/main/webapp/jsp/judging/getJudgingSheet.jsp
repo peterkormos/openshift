@@ -23,6 +23,10 @@
 	String category = judgingResult.getCategory();
 	Map<Integer, JudgingScore> scores = judgingResult.getScores();
 	JudgedModel judgedModel = judgingResult.isModelPresent() ? judgingResult : null;
+	
+	boolean listMode = Boolean.parseBoolean(
+			ServletUtil.getOptionalRequestAttribute(request, "listMode").
+			replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "false"));
 %>
 
 
@@ -32,7 +36,16 @@
 		} catch (Exception ex) {
 			return "";
 		}
-	}%>
+	}
+
+String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingResult, boolean listMode) {
+	String returned = JudgingServlet.RequestParameter.JudgingCriteria.name() + criteria.getCriteriaId();
+	
+	if(listMode)
+		returned += judgingResult.getCategory()+judgingResult.getJudge()+judgingResult.getModellerID()+judgingResult.getModelID();
+	return returned;
+}
+		%>
 <link href="../base.css" rel="stylesheet" type="text/css">
 <table style="border: 1px solid black;">
 	<tr>
@@ -110,7 +123,7 @@
 
  			// 								judgingScores.get(i)
  %> <label> <input type="radio"
-				name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%=criteria.getCriteriaId()%>"
+				name="<%=getJudgingCriteriaName(criteria, judgingResult, listMode)%>"
 				value="<%=i%>"
 				<%=hasScore && scores.get(criteria.getCriteriaId()).getScore() == i ? "checked='checked'"
 							: ""%>
