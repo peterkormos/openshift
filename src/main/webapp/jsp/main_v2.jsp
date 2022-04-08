@@ -53,30 +53,6 @@ function checkDeleteUserRequest()
 	}
 }
 
-function showModal(location)
-{
-	document.getElementById('iframeID').src = location;
-
-	var modal = document.getElementById('modalDiv');
-	modal.style.display = "block";
-
-	// Get the <span> element that closes the modal
-//	document.getElementsByClassName("close")[0]
-	var span = 
-	modal.getElementsByClassName("close")[0]
-	.onclick = function() {
-	  modal.style.display = "none";
-	}
-
-	// When the user clicks anywhere outside of the modal, close it
-	window.onclick = function(event) {
-	  if (event.target == modal) {
-		modal.style.display = "none";
-	  }
-	}
-}
-
-
 //-->
 </script>
 
@@ -116,32 +92,6 @@ function showModal(location)
     }
 %>
 
-<%
-	final List<Model> models = servletDAO.getModels(user.userID);
-
-  if (servlet.isRegistrationAllowed(show) && !models.isEmpty())
-  {
-%>
-				<td style="width: 40px; vertical-align:top;">
-  <div class="tooltip">
-  <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttribute.Action.name()%>=inputForModifyModel&<%=RegistrationServlet.SessionAttribute.SubmitLabel.name()%>=modify');">
-  <img src="../icons/modify.png" height="30" align="center" /> <span
-								class="tooltiptext"> <%=language.getString("modify.model")%></span>
-						</a></div>
-				</td>
-   
-				<td style="width: 40px; vertical-align:top;">
-  <div class="tooltip">
-  <a href="#" onClick="showModal('selectModel.jsp?<%=RegistrationServlet.SessionAttribute.Action.name()%>=deleteModel&<%=RegistrationServlet.SessionAttribute.SubmitLabel.name()%>=delete');">
-  <img src="../icons/delete2.png" height="30" align="center" /> <span
-								class="tooltiptext"> <%=language.getString("delete")%></span>
-						</a></div>
-				</td>
-
-<p></p>
-<%
-}
-%>
 				<td style="width: 100%; vertical-align:top;">
   <div class="tooltip">
   <a href="#" onClick="document.getElementById('command').value='sendEmail';document.getElementById('input').submit();">
@@ -188,14 +138,6 @@ function showModal(location)
 <jsp:include page="notices.jsp" />
 
 <p></p>
-
-<div id="modalDiv" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-	<iframe id="iframeID" style="border:none;width: 100%;height: 100%;" ></iframe>
-  </div>
-</div>
-
 								    <!--
   <a href="#" onClick="document.getElementById('command').value='inputForPhotoUpload';document.getElementById('input').submit();">
   <img src="../icons/photo.png" height="30" align="center">language.getString("photo")to")%>

@@ -23,6 +23,12 @@
   boolean forJudges = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
   List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
+  
+  String show = RegistrationServlet.getShowFromSession(session);
+  if (show == null)
+  {
+    show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+  }
 %>
 
 <table style='width: 100%; border-collapse: collapse;' border='1'>
@@ -160,6 +166,10 @@
 	%>
 	<tr bgcolor="<%=highlight()%>">
 		<td>
+<%
+  if (servlet.isRegistrationAllowed(show))
+  {
+%>
 			<div class="tooltip">
 				<a href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.modelID%>">
 					<img src="../icons/modify.png" height="30" align="center" /> <span class="tooltiptext"> <%=language.getString("modify")%></span>
@@ -171,7 +181,9 @@
 					<img src="../icons/delete2.png" height="30" align="center" /> <span class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
 			</div>
-
+<%
+}
+%>
 		</td>
 
 		<%
