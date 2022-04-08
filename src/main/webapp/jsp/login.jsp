@@ -132,12 +132,6 @@ if (showIdHttpParameter != null)
 						</tr>
 						<tr>
 							<td colspan="2">
-<!-- 							<label><input type="checkbox" -->
-<!-- 									id="dataUsageConsent" -->
-<!-- 									onchange="checkSubmit(document.getElementById('inputForm')) && updateMandatoryFieldMark(this);"> -->
-<%-- 									<%=language.getString("login.consent")%> <font color='#FF0000' --%>
-<!-- 									size='+3'>&#8226;</font></label> -->
-
 <%
 		    for (LoginConsentType lc : LoginConsent.LoginConsentType.values() ) {
 		%>
