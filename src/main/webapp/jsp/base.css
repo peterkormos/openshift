@@ -178,6 +178,11 @@ margin-left: 20px;
 modal css end
 */
 
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
 .tooltiptext {
   /*
   width: 120px;
@@ -193,6 +198,8 @@ modal css end
 
   position: absolute;
   z-index: 1;
+  top: 25px;
+  left: 0px;
 }
 
 .tooltiptext-right {

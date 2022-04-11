@@ -30,7 +30,7 @@ public class InitDB
 	s.execute("create table mak_awardedmodels(AWARD varchar(100),MODEL_ID numeric(6))");
 
 	s.execute(
-	    "create table MAK_CATEGORY (CATEGORY_ID numeric(6) primary key, CATEGORY_GROUP_ID numeric(6)  not null, CATEGORY_CODE varchar(200) not null, CATEGORY_DESCRIPTION varchar(200) not null, MASTER numeric(1),MODEL_CLASS varchar(100), AGEGROUP varchar(100))");
+	    "create table MAK_CATEGORY (CATEGORY_ID numeric(6) primary key, CATEGORY_GROUP_ID numeric(6)  not null, CATEGORY_CODE varchar(200) not null, CATEGORY_DESCRIPTION varchar(1000) not null, MASTER numeric(1),MODEL_CLASS varchar(100), AGEGROUP varchar(100))");
 
 	s.execute(
 	    "create table MAK_CATEGORY_GROUP (CATEGORY_group_ID numeric(6) primary key, MODEL_SHOW varchar(100) not null, CATEGORY_GROUP varchar(100) not null)");
