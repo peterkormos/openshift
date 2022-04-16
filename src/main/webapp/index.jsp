@@ -98,6 +98,19 @@
 							<td><a href="jsp/reminder.jsp?language=PL">Nie pami&#281;tam has&#322;a</a></td>
 						</tr>
 						<tr>
+							<td><img src="icons/it.png"></td>
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=IT">Login</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td><a
+								href="jsp/user.jsp?directRegister=false&amp;action=register&amp;language=IT">Registrazione</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td><a href="jsp/reminder.jsp?language=IT">Hai dimenticato la tua password</a></td>
+						</tr>
+						<tr>
 							<td><img src="icons/de.gif"></td>
 <!-- 							<td>Deutsch Version:</td> -->
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=DE">Anmelden</a></td>
