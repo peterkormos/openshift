@@ -116,11 +116,6 @@ function checkDeleteUserRequest()
 								class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
 						</a></div>
 				</td>
-				
-				<td style="vertical-align:top;">
-					<input type="hidden" name="fileName" value="<%= RegistrationServlet.MainPageType.Old.getFileName()%>">
-					<input class="main" onClick="document.getElementById('input').action='setNewDesign.jsp'" type='submit' value='Old design'>
-				</td>
 			</tr>
 		</table>
 <p></p>
