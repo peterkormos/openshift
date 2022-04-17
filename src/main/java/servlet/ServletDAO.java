@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -1288,34 +1289,11 @@ public class ServletDAO extends HibernateDAO
 	  returned.add(new String[] { language.getString("competitors.number")+": ", String.valueOf(modelers) });
 
 	  // jelenleg nevezok
-	  for (final String country : activeModelers.keySet())
+	  for (final String country : activeModelers.keySet().stream().sorted().collect(Collectors.toList()))
 	  {
 		returned.add(new String[] { language.getString("competitors.number.per.country")+": <b>" + country + "</b>",
 		    String.valueOf(activeModelers.get(country).size()) });
 	  }
-
-	  // queryStatement = getDBConnection()
-	  // .prepareStatement("SELECT count(*) FROM MAK_USERS");
-	  // rs = queryStatement.executeQuery();
-	  // rs.next();
-	  // returned.add(new String[]
-	  // { "&Ouml;sszes regisztr&aacute;lt felhaszn&aacute;l&oacute;k: ",
-	  // String.valueOf(rs.getInt(1)) });
-	  // rs.close();
-	  // queryStatement.close();
-	  //
-	  // queryStatement = getDBConnection()
-	  // .prepareStatement("select COUNTRY, count(*)  from MAK_USERS group by COUNTRY order by COUNTRY");
-	  // rs = queryStatement.executeQuery();
-	  // while (rs.next())
-	  // returned.add(new String[]
-	  // {
-	  // "<b>Regisztr&aacute;lt felhaszn&aacute;l&oacute;k ebb&#337;l az orsz&aacute;gb&oacute;l:</b> "
-	  // + decodeStringFromDB(rs, "COUNTRY"),
-	  // String.valueOf(rs.getInt(2)) });
-	  // rs.close();
-	  // queryStatement.close();
-
 	}
 	finally
 	{
