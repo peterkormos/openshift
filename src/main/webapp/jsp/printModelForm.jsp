@@ -7,25 +7,34 @@
 <%@page import="java.util.*"%>
 
 <%
-final User user = RegistrationServlet.getUser(request);
+	final User user = RegistrationServlet.getUser(request);
 
-final RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-final ResourceBundle language = (ResourceBundle) session.getAttribute(CommonSessionAttribute.Language.name());
-final ServletDAO servletDAO = servlet.getServletDAO();
+	final RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	final ResourceBundle language = (ResourceBundle) session
+			.getAttribute(CommonSessionAttribute.Language.name());
+	final ServletDAO servletDAO = servlet.getServletDAO();
 
-final Model model = (Model) session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
-final Category category = servletDAO.getCategory(model.categoryID);
-String show = RegistrationServlet.getShowFromSession(session);
-if (show == null) {
-	show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
-}
+	final Model model = (Model) session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
+	final Category category = servletDAO.getCategory(model.categoryID);
+	String show = RegistrationServlet.getShowFromSession(session);
+	if (show == null) {
+		show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+	}
+
+	boolean insertAwards = Boolean
+			.parseBoolean(ServletUtil.getRequestAttribute(request, "insertAwards", false));
+	boolean withDetailing = Boolean
+			.parseBoolean(ServletUtil.getRequestAttribute(request, "withDetailing", false));
+	boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
+	boolean forJudges = Boolean.parseBoolean(
+			ServletUtil.getRequestAttribute(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 %>
 
 <table style="border: 1px solid black">
 	<tr>
 		<td>
 			<%
-			if (servlet.isRegistrationAllowed(show)) {
+				if (servlet.isRegistrationAllowed(show)) {
 			%>
 			<div class="tooltip">
 				<a
@@ -42,8 +51,20 @@ if (show == null) {
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
 			</div> <%
- }
- %>
+ 	}
+ %> <%
+ 	List<String> judges = servlet.judgingServletDAO.getJudges(category.categoryCode, model.modelID,
+ 			model.userID);
+ 	if (!judges.isEmpty()) {
+ %><p> <%=language.getString("judge")%>: <%
+ 	}
+ 	for (String judge : judges) {
+ %><br> <a
+			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.ModelID%>=<%=model.modelID%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
+
+			<%
+				}
+			%>
 		</td>
 	</tr>
 	<tr>
@@ -111,31 +132,31 @@ if (show == null) {
 				<tr>
 					<td>&nbsp;</td>
 					<%
-					for (DetailingGroup group : DetailingGroup.values()) {
+						for (DetailingGroup group : DetailingGroup.values()) {
 					%>
 					<td><%=language.getString("detailing." + group.name())%></td>
 					<%
-					}
+						}
 					%>
 				</tr>
 				<%
-				for (DetailingCriteria criteria : DetailingCriteria.values()) {
-					if (!criteria.isVisible())
-						continue;
+					for (DetailingCriteria criteria : DetailingCriteria.values()) {
+						if (!criteria.isVisible())
+							continue;
 				%>
 				<tr>
 					<td><%=language.getString("detailing." + criteria.name())%></td>
 					<%
-					for (DetailingGroup group : DetailingGroup.values()) {
+						for (DetailingGroup group : DetailingGroup.values()) {
 					%>
 					<td align="center"><%=model.getDetailingGroup(group).getCriteria(criteria) ? "X" : "&nbsp"%>
 					</td>
 					<%
-					}
+						}
 					%>
 				</tr>
 				<%
-				}
+					}
 				%>
 			</table>
 		</td>
