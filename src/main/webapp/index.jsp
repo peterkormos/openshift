@@ -102,16 +102,16 @@
 							<img src="icons/it.png">
 							<img src="icons/new.png"> 
 							</td>
-							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=IT">Accedi</a></td>
+							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=IT">Accedere</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="jsp/user.jsp?directRegister=false&amp;action=register&amp;language=IT">Registrati</a></td>
+								href="jsp/user.jsp?directRegister=false&amp;action=register&amp;language=IT">Registrazione</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="jsp/reminder.jsp?language=IT">Hai dimenticato la tua password</a></td>
+							<td><a href="jsp/reminder.jsp?language=IT">Password dimenticato</a></td>
 						</tr>
 						<tr>
 							<td><img src="icons/de.gif"></td>
