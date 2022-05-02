@@ -113,10 +113,10 @@
 								<td colspan="2"><font><%=model.getProducer()%></font></td>
 								<td colspan="2"><font><%=model.getMarkings()%></font></td>
 							</tr>
-							<tr>
-								<td colspan="2"><%=language.getString("models.producer")%></td>
-								<td colspan="2"><%=language.getString("models.markings")%></td>
-							</tr>
+<!-- 							<tr> -->
+<%-- 								<td colspan="2"><%=language.getString("models.producer")%></td> --%>
+<%-- 								<td colspan="2"><%=language.getString("models.markings")%></td> --%>
+<!-- 							</tr> -->
 						</table></td>
 				</tr>
 			</table>
