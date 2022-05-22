@@ -108,11 +108,12 @@ if (showIdHttpParameter != null)
 								%> <label><input type='radio' name='show'
 									onchange="updateMandatoryFieldMark(this);"
 									value='<%=StringEncoder.toBase64(show.getBytes())%>'
-									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <FONT
-									COLOR='#ff0000'><b> <%=show%></b></FONT></label><br> <%
+									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <span
+									style="color:red"><b> <%=show%></b></span>
+								 <%=shows.isEmpty() || shows.size() == 1 ?  "" : "<font color='#FF0000' size='+3'>&#8226;</font>"%>									
+									</label><br> <%
 								     }
 								 %> 
-								 <%=shows.isEmpty() || shows.size() == 1 ?  "" : "<font color='#FF0000' size='+3'>&#8226;</font>"%>
 							</td>
 						</tr>
 						<tr>

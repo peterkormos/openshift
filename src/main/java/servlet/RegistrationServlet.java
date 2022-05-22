@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -80,7 +81,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2022.04.11.";
+	public String VERSION = "2022.05.06.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -107,7 +108,7 @@ public class RegistrationServlet extends HttpServlet {
 
 
 	public static enum SessionAttribute {
-	    Notices, Action, SubmitLabel, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId, Model
+	    Notices, Action, SubmitLabel, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId, Model, Categories
 	}
 
 	public static enum Command {
@@ -464,7 +465,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user)
-			throws IOException {
+			throws IOException, SQLException {
 		String show;
 
 		try {
@@ -504,7 +505,7 @@ public class RegistrationServlet extends HttpServlet {
         }
     }
 
-    private void initHttpSession(final HttpServletRequest request, final User user, String show) {
+    private void initHttpSession(final HttpServletRequest request, final User user, String show) throws SQLException {
         final HttpSession session = request.getSession(true);
         session.setAttribute(CommonSessionAttribute.UserID.name(), user);
         session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(user.language));
@@ -516,7 +517,13 @@ public class RegistrationServlet extends HttpServlet {
             session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
         
         if (show != null) {
-            session.setAttribute(SessionAttribute.Show.name(), StringEncoder.fromBase64(show));
+        	show = StringEncoder.fromBase64(show);
+            session.setAttribute(SessionAttribute.Show.name(), show);
+            
+            Map<Integer, Category> categories = servletDAO.getCategoryList(show).stream()
+                    .collect(Collectors.toMap(category -> category.getId(), Function.identity()));
+            session.setAttribute(SessionAttribute.Categories.name(), categories);
+
         }
     }
 
@@ -710,12 +717,10 @@ public class RegistrationServlet extends HttpServlet {
                 }
             }).collect(Collectors.toMap(User::getUserID, Function.identity()));
             
-            Map<Integer, Category> categories = servletDAO.getCategoryList(show).stream()
-                    .collect(Collectors.toMap(category -> category.getId(), Function.identity()));
+            Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
+				SessionAttribute.Categories.name());
     
-            List<List<Object>> modelsForExcel = models.stream().filter(model -> {
-                return show == null || categories.get(model.categoryID).group.show.equals(show);
-            }).map(model -> {
+            List<List<Object>> modelsForExcel = getModelsForShow(show, models, categories).stream().map(model -> {
                 ArrayList<Object> returned = new ArrayList<>();
                 Category category = categories.get(model.categoryID);
                 final User modelsUser = userIDs.get(model.userID);
@@ -751,6 +756,16 @@ public class RegistrationServlet extends HttpServlet {
     
             u.writeTo(response.getOutputStream());
         }
+
+		public static List<Model> getModelsForShow(final String show, final List<Model> models,
+				Map<Integer, Category> categories) {
+			return models.stream().filter(model -> {
+                Category category = categories.get(model.categoryID);
+                if(category == null)
+                	return false;
+				return show == null || category.group.show.equals(show);
+            }).collect(Collectors.toList());
+		}
 	
 	public void importData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -1896,7 +1911,7 @@ public class RegistrationServlet extends HttpServlet {
 			// -1))
 			printModelsForUser(request, response, language, user.userID, true /* alwaysPageBreak */);
 		}
-
+		response.getOutputStream().write("<p>Itt a vege...".getBytes());
 		showPrintDialog(response);
 	}
 

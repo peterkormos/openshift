@@ -5,18 +5,23 @@
 <%@page import="util.*"%>
 
 <%
-RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-ServletDAO servletDAO = servlet.getServletDAO();
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	ServletDAO servletDAO = servlet.getServletDAO();
 
-User user = servlet.getUser(request);
-List<Model> models = servletDAO.getModels(user.userID);
+	User user = servlet.getUser(request);
+	String show = RegistrationServlet.getShowFromSession(session);
+	List<Model> models = servletDAO.getModels(user.userID);
+	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
+			RegistrationServlet.SessionAttribute.Categories.name());
 
-for (Model model : models) {
-	session.setAttribute(RegistrationServlet.SessionAttribute.Model.name(), model);
+	models = RegistrationServlet.getModelsForShow(show, models, categories);
+	
+	for(Model model : models) {
+		session.setAttribute(RegistrationServlet.SessionAttribute.Model.name(), model);
 %>
-    <jsp:include page="printModelForm.jsp" />
-    <p>
-<%
-session.removeAttribute(RegistrationServlet.SessionAttribute.Model.name());
-}
-%>
+<jsp:include page="printModelForm.jsp" />
+<p>
+	<%
+		session.removeAttribute(RegistrationServlet.SessionAttribute.Model.name());
+		};
+	%>
