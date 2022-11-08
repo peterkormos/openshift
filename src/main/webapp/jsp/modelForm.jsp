@@ -17,6 +17,15 @@
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 	ServletDAO servletDAO = servlet.getServletDAO();
+
+	Model model = null;
+	if(modelID != null) {
+		try {
+			model = servletDAO.getModel(modelID);
+		} catch(Exception ex) {
+			response.sendRedirect("main_v2.jsp");
+		}
+	}
 %>
 
 <html>
