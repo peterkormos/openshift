@@ -10,17 +10,13 @@
     //input parameters	
 	String submitLabel = (String)session.getAttribute(RegistrationServlet.SessionAttribute.SubmitLabel.name());
 	String action = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name()); 
-	Integer modelID = (Integer)session.getAttribute(RegistrationServlet.SessionAttribute.ModelID.name());
+	Model model = (Model)session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
  		
 	User user = RegistrationServlet.getUser(request);
 	
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 	ServletDAO servletDAO = servlet.getServletDAO();
-
-	Model model = null;
-	if(modelID != null)
-		model = servletDAO.getModel(modelID);
 %>
 
 <html>

@@ -1490,8 +1490,13 @@ public class RegistrationServlet extends HttpServlet {
 	public void inputForModifyModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final int modelID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "modelID"));
-
-		getModelForm(request, response, "modifyModel", "modify", modelID);
+		final Model model = servletDAO.getModel(modelID);
+		User user = getUser(request);
+		if (user.userID == model.userID) {
+			getModelForm(request, response, "modifyModel", "modify", model);
+		}else {
+			redirectToMainPage(request, response);
+		}
 	}
 
 	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response)
@@ -1514,12 +1519,16 @@ public class RegistrationServlet extends HttpServlet {
 
 		final Model model = createModel(modelID, servletDAO.getModel(modelID).userID, request);
 
-		deleteModel(request);
-		servletDAO.saveModel(model);
+		User user = getUser(request);
+		if (user.userID == model.userID) {
+			deleteModel(request);
+			servletDAO.saveModel(model);
 
-		session.removeAttribute(SessionAttribute.ModelID.name());
+			session.removeAttribute(SessionAttribute.ModelID.name());
+			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
 
-		setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
+			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
+		}
 
 		redirectToMainPage(request, response);
 	}
@@ -1786,17 +1795,20 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void deleteModel(final HttpServletRequest request)
-			throws MissingRequestParameterException, NumberFormatException, SQLException {
-		servletDAO.deleteModel(Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID")));
+			throws MissingRequestParameterException, NumberFormatException, SQLException, UserNotLoggedInException {
+		Integer modelID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID"));
+		final Model model = servletDAO.getModel(modelID);
+
+		User user = getUser(request);
+		if (user.userID == model.userID) {
+			servletDAO.deleteModel(modelID);
+			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
+		}
 	}
 
 	public void deleteModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		deleteModel(request);
-
-		setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
-
 		redirectToMainPage(request, response);
-
 	}
 
 	public void deleteAwardedModel(final HttpServletRequest request, final HttpServletResponse response)
@@ -2492,13 +2504,13 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void getModelForm(final HttpServletRequest request, final HttpServletResponse response, final String action,
-			final String submitLabel, final Integer modelID) throws Exception {
+			final String submitLabel, final Model model) throws Exception {
 		final HttpSession session = request.getSession(true);
 
 		session.setAttribute(SessionAttribute.Action.name(), action);
 		session.setAttribute(SessionAttribute.SubmitLabel.name(), submitLabel);
-		if (modelID != null) {
-			session.setAttribute(SessionAttribute.ModelID.name(), modelID);
+		if (model != null) {
+			session.setAttribute(SessionAttribute.Model.name(), model);
 		}
 
 		response.sendRedirect("jsp/modelForm.jsp");
