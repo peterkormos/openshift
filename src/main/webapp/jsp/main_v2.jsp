@@ -172,9 +172,6 @@ if(servlet.isOnSiteUse())
 %>
 </form>
 
-<%=language.getString("list.models")%>
-<p>
-
 <jsp:include page="listMyModels.jsp"/>
 
 </body></html>

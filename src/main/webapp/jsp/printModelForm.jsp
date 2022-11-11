@@ -74,14 +74,6 @@
 					<td style="border-bottom: 1px solid; border-bottom-style: dashed;">
 						<table style="box-shadow: none; height: 100%; width: 100%">
 							<tr>
-								<td><font><%=model.getIdentification()%></font></td>
-								<td valign="middle"><font><%=user.getYearOfBirth()%></font></td>
-							</tr>
-							<tr>
-								<td><%=language.getString("models.identification")%></td>
-								<td><%=language.getString("year.of.birth")%></td>
-							</tr>
-							<tr>
 								<td style="white-space: nowrap;"><%=language.getString("glued.to.base")%></td>
 
 								<td><font><%=RegistrationServlet.getGluedToBaseHTMLCode(language, model, "..")%></font></td>
@@ -105,12 +97,15 @@
 								<td valign="middle"><font
 									style="border: 1px solid black; padding: 1mm; font-size: 4mm; white-space: nowrap;"><%=category.categoryCode%></font></td>
 							</tr>
+							<tr height="3mm">
+								<td colspan="2"><font><%=model.getProducer()%></font></td>
+							</tr>
 							<tr>
 								<td colspan="4"><b><font
 										style="font-family: Calibri, Optima, Arial, sans-serif; font-size: 5mm"><%=model.getName()%></font></b></td>
 							</tr>
-							<tr height="3mm">
-								<td colspan="2"><font><%=model.getProducer()%></font></td>
+							<tr>
+								<td colspan="2"><font><%=model.getIdentification()%></font></td>
 								<td colspan="2"><font><%=model.getMarkings()%></font></td>
 							</tr>
 <!-- 							<tr> -->

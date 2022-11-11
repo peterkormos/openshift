@@ -100,7 +100,7 @@
 						<tr>
 							<td>
 							<img src="icons/it.png">
-							<img src="icons/new.png"> 
+<!-- 							<img src="icons/new.png">  -->
 							</td>
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=IT">Accedere</a></td>
 							<td>
