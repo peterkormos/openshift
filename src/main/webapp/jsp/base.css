@@ -61,20 +61,15 @@ td, th {
 
 a,
 label {
-	border-style: solid;
 	border-color: transparent;
 	border-width: 3px;
-	padding-left: 5px;
+	border-style: solid;
+/* 	
+	padding-left: 5px; 
+	height: 20px;
+*/
 	display: inline-block;
-	height: 30px;
-}
-
-a:link {
-	text-decoration: none;
-}
-
-a:visited {
-	text-decoration: none;
+	padding: 5px;
 }
 
 a:hover,
@@ -84,16 +79,20 @@ label:hover {
 	background-color: #eeeeee;
   }
 
+a:link, a:visited {
+	text-decoration: none;
+}
+
 a:active {
 	text-decoration: underline;
 }
 
 .flash {
-	padding: 8px;
-	padding-left: 30px;
+	padding: 5px;
 }
 
 .flash.OK {
+	padding-left: 20px;
 	background: url(../icons/true.png) 8px 8px no-repeat;
 	background-color: #dfffdf;
 	border: 1px solid;
@@ -102,6 +101,7 @@ a:active {
 }
 
 .flash.Error {
+	padding-left: 20px;
 	background: url(../icons/exclamation.png) 8px 50% no-repeat;
 	background-color: #ffe3e3;
 	border: 1px solid;
@@ -113,9 +113,9 @@ a:active {
 /*
 	background: url(../icons/warning.png) 8px 8px no-repeat;
 	background-position: left center;
+	padding-left: 8px;
 */
 	width: 100%; 
-	padding-left: 8px;
 	background-color: #ffD1A4;
 	border: 1px solid;
 	border-color: #ff8000;

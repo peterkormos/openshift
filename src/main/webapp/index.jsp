@@ -6,6 +6,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="jsp/base.css" media="screen" />
 </head>
 
 <%
