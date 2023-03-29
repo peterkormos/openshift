@@ -1518,18 +1518,16 @@ public class RegistrationServlet extends HttpServlet {
 		final int modelID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID"));
 
 		final Model model = createModel(modelID, servletDAO.getModel(modelID).userID, request);
-
 		User user = getUser(request);
+        if(!user.isAdminUser() && user.getUserID() == model.getUserID()) {   
 		if (user.userID == model.userID) {
 			deleteModel(request);
 			servletDAO.saveModel(model);
 
-			session.removeAttribute(SessionAttribute.ModelID.name());
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
-
 			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
 		}
-
+		session.removeAttribute(SessionAttribute.ModelID.name());
 		redirectToMainPage(request, response);
 	}
 
@@ -1800,7 +1798,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 
 		User user = getUser(request);
-		if (user.userID == model.userID) {
+		if(!user.isAdminUser() && user.getUserID() == model.getUserID()) {
 			servletDAO.deleteModel(modelID);
 			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
 		}
