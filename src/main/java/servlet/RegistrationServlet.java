@@ -81,7 +81,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2022.11.08.";
+	public String VERSION = "2023.03.30.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -112,7 +112,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static enum Command {
-	    LOADIMAGE
+	    LOADIMAGE, addModel, modifyModel
 	};
 	
 	public static enum MainPageType {
@@ -1493,7 +1493,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 		User user = getUser(request);
 		if (user.userID == model.userID) {
-			getModelForm(request, response, "modifyModel", "modify", model);
+			getModelForm(request, response, Command.modifyModel.name(), "modify", model);
 		}else {
 			redirectToMainPage(request, response);
 		}
@@ -1503,7 +1503,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 	    
 		if (isRegistrationAllowed(getShowFromSession(request))) {
-			getModelForm(request, response, "addModel", "save.and.add.new.model", null);
+			getModelForm(request, response, Command.addModel.name(), "save.and.add.new.model", null);
 		} else {
 			redirectToMainPage(request, response);
 		}
@@ -1520,7 +1520,6 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = createModel(modelID, servletDAO.getModel(modelID).userID, request);
 		User user = getUser(request);
         if(!user.isAdminUser() && user.getUserID() == model.getUserID()) {   
-		if (user.userID == model.userID) {
 			deleteModel(request);
 			servletDAO.saveModel(model);
 

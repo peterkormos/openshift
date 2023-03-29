@@ -1,3 +1,4 @@
+<%@page import="org.apache.poi.util.SystemOutLogger"%>
 <%@page import="datatype.Detailing.DetailingCriteria"%>
 <%@page import="datatype.Detailing.DetailingGroup"%>
 <%@page import="datatype.*"%>
@@ -18,13 +19,8 @@
 	ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 	ServletDAO servletDAO = servlet.getServletDAO();
 
-	Model model = null;
-	if(modelID != null) {
-		try {
-			model = servletDAO.getModel(modelID);
-		} catch(Exception ex) {
-			response.sendRedirect("main_v2.jsp");
-		}
+	if(model == null && RegistrationServlet.Command.modifyModel.name().equals(action) ) {
+		response.sendRedirect("main_v2.jsp");
 	}
 %>
 
@@ -206,7 +202,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 <input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
 
 <%
-	if (action == "addModel")
+	if (action == RegistrationServlet.Command.addModel.name() )
 	{
 %>
 <input name='finishRegistration' type='submit' value='<%= language.getString("finish.model.registration") %>'>
@@ -305,7 +301,7 @@ for (DetailingGroup group : DetailingGroup.values())
 <td><input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
 
 <%
-	if (action == "addModel")
+	if (action == RegistrationServlet.Command.addModel.name())
 	{
 %>
 <input name='finishRegistration' type='submit' value='<%= language.getString("finish.model.registration") %>'>
