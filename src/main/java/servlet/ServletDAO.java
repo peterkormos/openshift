@@ -101,7 +101,7 @@ public class ServletDAO extends HibernateDAO
 		charEncodeMap.put(217, "&Ugrave;");
 		charEncodeMap.put(218, "&Uacute;");
 		charEncodeMap.put(219, "&Ucirc;");
-		charEncodeMap.put(220, "&#369;");
+		charEncodeMap.put(220, "&Uuml;");
 		charEncodeMap.put(221, "&Yacute;");
 		charEncodeMap.put(222, "&THORN;");
 		charEncodeMap.put(223, "&szlig;");
@@ -132,8 +132,8 @@ public class ServletDAO extends HibernateDAO
 		charEncodeMap.put(248, "&oslash;");
 		charEncodeMap.put(249, "&ugrave;");
 		charEncodeMap.put(250, "&uacute;");
-		charEncodeMap.put(251, "&ucirc;");
-		charEncodeMap.put(252, "&#369;");
+		charEncodeMap.put(251, "&#369;");
+		charEncodeMap.put(252, "&uuml;");
 		charEncodeMap.put(253, "&yacute;");
 		charEncodeMap.put(254, "&thorn;");
 		charEncodeMap.put(255, "&yuml;");
