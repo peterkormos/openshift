@@ -129,7 +129,7 @@
 					<%
 						for (DetailingGroup group : DetailingGroup.values()) {
 					%>
-					<td><%=language.getString("detailing." + group.name())%></td>
+					<td align="center"><%=language.getString("detailing." + group.name())%></td>
 					<%
 						}
 					%>
