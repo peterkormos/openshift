@@ -67,9 +67,9 @@ label {
 /* 	
 	padding-left: 5px; 
 	height: 20px;
+	padding: 5px;
 */
 	display: inline-block;
-	padding: 5px;
 }
 
 a:hover,
@@ -190,7 +190,7 @@ modal css end
   right: -40px;
   */
   visibility: hidden;
-  top: 70px;
+  top: 40px;
   color: #fff;
   background-color: lightblue;
   text-align: center;
@@ -198,7 +198,6 @@ modal css end
 
   position: absolute;
   z-index: 1;
-  top: 25px;
   left: 0px;
 }
 
@@ -212,8 +211,8 @@ right:0px
  
   tr.strikeout td { position:relative        } /* Setup a new coordinate system   */
 tr.strikeout td:before {                     /* Create a new element that       */
-  content: " ";                              /* …has no text content            */
-  position: absolute;                        /* …is absolutely positioned       */
-  left: 0; top: 50%; width: 100%;            /* …with the top across the middle */
-  border-bottom: 1px solid #000;             /* …and with a border on the top   */
+  content: " ";                              /* ï¿½has no text content            */
+  position: absolute;                        /* ï¿½is absolutely positioned       */
+  left: 0; top: 50%; width: 100%;            /* ï¿½with the top across the middle */
+  border-bottom: 1px solid #000;             /* ï¿½and with a border on the top   */
 }

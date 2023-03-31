@@ -66,16 +66,6 @@ function checkDeleteUserRequest()
   <input type="hidden" id="command"  name="command" value="">
 		<table style="border: 0px; width: 100%">
 			<tr>
-				<td style="white-space: nowrap">
-<FONT COLOR='#ff0000'>
-	<b>
-		<%=show%>
-		<p>
-		<%=servlet.getSystemMessage()%>
-	</b>
-</FONT>
-				</td>
-
 <%
     if (servlet.isRegistrationAllowed(show))
   {
@@ -92,12 +82,22 @@ function checkDeleteUserRequest()
     }
 %>
 
-				<td style="width: 100%; vertical-align:top;">
+				<td style="width: 40px; vertical-align:top;">
   <div class="tooltip">
   <a href="#" onClick="document.getElementById('command').value='sendEmail';document.getElementById('input').submit();">
   <img src="../icons/email.png" height="30" align="center" /> <span
 								class="tooltiptext"> <%=language.getString("send.email")%></span>
 						</a></div>
+				</td>
+
+				<td style="width: 100%; white-space: nowrap">
+<FONT COLOR='#ff0000'>
+	<b>
+		<%=show%>
+		<p>
+		<%=servlet.getSystemMessage()%>
+	</b>
+</FONT>
 				</td>
 
 				<td style="width: 40px; text-align: right; vertical-align:top;"
