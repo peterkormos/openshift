@@ -164,7 +164,7 @@ public class User implements Serializable {
 	}
 
 	public int getAge() {
-		return Calendar.getInstance().get(Calendar.YEAR) - yearOfBirth;
+		return Calendar.getInstance().get(Calendar.YEAR) - yearOfBirth-1;
 	}
 
 	public boolean isLocalUser() {
