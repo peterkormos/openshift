@@ -39,7 +39,7 @@
 			<div class="tooltip">
 				<a
 					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.modelID%>">
-					<img src="../icons/modify.png" height="30" align="center" /> <span
+					<img src="../icons/add.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 				</a>
 			</div>
