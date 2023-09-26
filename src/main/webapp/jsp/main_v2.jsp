@@ -94,8 +94,6 @@ function checkDeleteUserRequest()
 <FONT COLOR='#ff0000'>
 	<b>
 		<%=show%>
-		<p>
-		<%=servlet.getSystemMessage()%>
 	</b>
 </FONT>
 				</td>
@@ -117,6 +115,15 @@ function checkDeleteUserRequest()
 						</a></div>
 				</td>
 			</tr>
+<tr>
+				<td colspan="5" style="width: 100%; white-space: nowrap">
+<FONT COLOR='#ff0000'>
+	<b>
+		<%=servlet.getSystemMessage()%>
+	</b>
+</FONT>
+				</td>
+</tr>
 		</table>
 <p></p>
 
