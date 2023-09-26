@@ -61,9 +61,7 @@ function checkDeleteUserRequest()
 	        } 
 	        else
 	        {  
-				document.getElementById('noticeDiv').innerHTML = '';
-				document.getElementById('noticeDiv').className ="";
-				return true; 
+				return checkOK(); 
 	        } 
 	    } 
 	    function checkEmail(form) { 
@@ -78,11 +76,26 @@ function checkDeleteUserRequest()
 	        } 
 	        else
 	        {  
-				document.getElementById('noticeDiv').innerHTML = '';
-				document.getElementById('noticeDiv').className ="";
-				return true; 
+				return checkOK(); 
 	        } 
-	    } 
+	    }
+
+	    function checkName(form) {
+			if(form.fullname.value.split(' ').length == 1) {
+				document.getElementById('noticeDiv').innerHTML = '<%= language.getString("name.too.short") %>';
+				document.getElementById('noticeDiv').className ="flash ERROR";
+				return false; 
+			}
+			else {
+				return checkOK(); 
+			}
+	    }
+
+	    function checkOK() {
+			document.getElementById('noticeDiv').innerHTML = '';
+			document.getElementById('noticeDiv').className ="";
+			return true; 
+	    }
 //-->
 	</script> 
 </head>
@@ -94,7 +107,7 @@ function checkDeleteUserRequest()
 <link href="css/base.css" rel="stylesheet" type="text/css"/>
 <div class="header"></div>
 
-<form autocomplete="fuckoffchrome" name="input" id="input" action="../RegistrationServlet/<%= action %>" method="put" accept-charset="UTF-8" onSubmit = "return checkEmail(this) && checkPassword(this)">
+<form autocomplete="fuckoffchrome" name="input" id="input" action="../RegistrationServlet/<%= action %>" method="put" accept-charset="UTF-8" onSubmit = "return checkEmail(this) && checkPassword(this) && checkName(this)">
       <input type="hidden" id="command"  name="command" value="">
   <p> 
   </p>
