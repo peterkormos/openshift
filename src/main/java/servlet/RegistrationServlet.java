@@ -81,7 +81,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2023.09.26.";
+	public String VERSION = "2023.10.08.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1945,11 +1945,17 @@ public class RegistrationServlet extends HttpServlet {
 		do {
 			final List<Model> sublist = allModels.subList(0, Math.min(cols * rows, allModels.size()));
 
-			ServletUtil.writeResponse(response, printModels(language, user, sublist, printCardBuffer, rows, cols, true));
+			int fee = calculateEntryFee(allModels);
+			ServletUtil.writeResponse(response, printModels(language, user, sublist, printCardBuffer, rows, cols, true, fee ));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
 		showPrintDialog(response);
+	}
+
+	private int calculateEntryFee(List<Model> allModels) {
+		int size = allModels.size();
+		return 5 + (Math.max(0, size - 3) > 0 ? 2 * (size - 3) : 0);
 	}
 
 	public void printMyModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1964,13 +1970,14 @@ public class RegistrationServlet extends HttpServlet {
 			final StringBuilder buff = new StringBuilder();
 
 			final List<Model> models = servletDAO.getModels(user.userID);
+			int fee = calculateEntryFee(models);
 			for (final Model model : models) {
 				if (model.modelID == Integer.parseInt(modelID)) {
 					final List<Model> subList = new LinkedList<Model>();
 					subList.add(model);
 
 					buff.append(printModels(languageUtil.getLanguage(user.language), servletDAO.getUser(user.userID), subList,
-							printBuffer, 1, 3, false));
+							printBuffer, 1, 3, false, fee));
 					break;
 				}
 			}
@@ -2015,6 +2022,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final User user = servletDAO.getUser(userID);
 		int modelsRemainingToPrint = models.size();
+		int fee = calculateEntryFee(models);
 		while (!models.isEmpty()) {
 			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
 			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
@@ -2022,7 +2030,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			modelsRemainingToPrint -= currentModelsOnPage;
 			boolean pageBreak = alwaysPageBreak || modelsRemainingToPrint > 0;
-			buff.append(printModels(language, user, subList, printBuffer, 1, modelsOnPage, pageBreak));
+			buff.append(printModels(language, user, subList, printBuffer, 1, modelsOnPage, pageBreak, fee));
 		}
 
 		return buff;
@@ -2030,7 +2038,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	StringBuilder printModels(final ResourceBundle language, final User user, final List<Model> models,
-			final StringBuilder printBuffer, final int rows, final int cols, boolean pageBreak)
+			final StringBuilder printBuffer, final int rows, final int cols, boolean pageBreak, final int fee)
 			throws Exception, IOException {
 
 		final int width = 100 / cols;
@@ -2069,14 +2077,15 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_IDENTIFICATION__", model.identification)
 							.replaceAll("__MODEL_PRODUCER__", model.producer)
 							.replaceAll("__MODEL_COMMENT__", model.comment)
-							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, ".")
+							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, "."))
+							.replaceAll("__FEE__", String.valueOf(fee))
 
 					// "<font color='#006600'>Alapra ragasztva</font>"
 					// :
 					// "<font color='#FF0000'><strong>Nincs leragasztva!!!
 					// </strong></font> "
 
-					);
+					;
 
 					for (DetailingGroup group : DetailingGroup.values()) {
 						for (DetailingCriteria criteria : DetailingCriteria.values()) {
@@ -2416,7 +2425,7 @@ public class RegistrationServlet extends HttpServlet {
 		// httpParameterPostTag);
 		ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag);
 		ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag);
-		ServletUtil.getOptionalRequestAttribute(request, "city" + httpParameterPostTag);
+		ServletUtil.getRequestAttribute(request, "city" + httpParameterPostTag);
 		ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag);
 		ServletUtil.getOptionalRequestAttribute(request, "telephone" + httpParameterPostTag);
 

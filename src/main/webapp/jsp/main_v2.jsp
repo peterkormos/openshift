@@ -61,11 +61,10 @@ function checkDeleteUserRequest()
 
 <div class="header"></div>
 
-<form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">
-  <input type='hidden' id='modelID' name='modelID' >
-  <input type="hidden" id="command"  name="command" value="">
 		<table style="border: 0px; width: 100%">
 			<tr>
+<form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">
+  <input type="hidden" id="command"  name="command" value="">
 <%
     if (servlet.isRegistrationAllowed(show))
   {
@@ -114,6 +113,7 @@ function checkDeleteUserRequest()
 								class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
 						</a></div>
 				</td>
+</form>
 			</tr>
 <tr>
 				<td colspan="5" style="width: 100%; white-space: nowrap">
@@ -128,7 +128,7 @@ function checkDeleteUserRequest()
 <p></p>
 
 <%
-	if (!servlet.isPreRegistrationAllowed(show))
+	if (!(servlet.isPreRegistrationAllowed(show) || servlet.isOnSiteUse()))
 	{
 %> 
 		<strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong> 
@@ -160,24 +160,17 @@ function checkDeleteUserRequest()
 if(servlet.isOnSiteUse())
 {
 %>
-	<a href='../helyi.html'> helyi.html bet&ouml;lt&eacute;se...</a>
+	<a href='../helyi.html'> Helyi bel&eacute;p&eacute;si oldal bet&ouml;lt&eacute;se...</a>
 	<p>
-	<form name='input' action='../RegistrationServlet' method='put' accept-charset="UTF-8">
-	<input type='hidden' name='command' value='printMyModels'>
-	&Ouml;sszes makett nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa: 
-	<input name='printMyModels' type='submit' value='<%=language.getString("print.models")%>'>
-	</form>
-	<p><hr>
+
 	Egy makett nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa: 
 	<jsp:include page="modelSelect.jsp">
 	  <jsp:param name="action" value="printMyModels"/>
 	  <jsp:param name="submitLabel" value='<%=language.getString("print.models")%>'/>
 	</jsp:include>
-
 <%
 }
 %>
-</form>
 
 <jsp:include page="listMyModels.jsp"/>
 

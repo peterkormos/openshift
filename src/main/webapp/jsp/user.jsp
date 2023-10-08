@@ -227,7 +227,9 @@ if(directRegister)
     </tr>
     <tr  bgcolor='F6F4F0'> 
       <td><%= language.getString("city") %>: </td>
-      <td><input autocomplete="fuckoffchrome" name="city" type="text" value="<%= user == null ? "" : user.city %>"></td>
+      <td><input autocomplete="fuckoffchrome" name="city" type="text" value="<%= user == null ? "" : user.city %>">
+      <font color="#FF0000" size="+3">&#8226;</font>
+      </td>
     </tr>
     <tr > 
       <td><%= language.getString("address") %>: </td>
