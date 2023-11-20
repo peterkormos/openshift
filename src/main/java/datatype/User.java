@@ -23,7 +23,7 @@ public class User implements Serializable {
 	public static final String LOCAL_USER = "_LOCAL_";
 
 	public String getFullName() {
-		return lastName + " " + firstName;
+		return "-".equals(firstName) ? lastName : lastName + " " + firstName;
 	}
 
 	public int getUserID() {

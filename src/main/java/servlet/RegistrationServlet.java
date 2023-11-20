@@ -81,7 +81,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2023.10.08.";
+	public String VERSION = "2023.11.20.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -508,7 +508,8 @@ public class RegistrationServlet extends HttpServlet {
     private void initHttpSession(final HttpServletRequest request, final User user, String show) throws SQLException {
         final HttpSession session = request.getSession(true);
         session.setAttribute(CommonSessionAttribute.UserID.name(), user);
-        session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(user.language));
+        ResourceBundle language = languageUtil.getLanguage(user.language);
+		session.setAttribute(CommonSessionAttribute.Language.name(), language);
         session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, "showId"));
 
         if (user.language.length() != 2) // admin user
@@ -524,6 +525,10 @@ public class RegistrationServlet extends HttpServlet {
                     .collect(Collectors.toMap(category -> category.getId(), Function.identity()));
             session.setAttribute(SessionAttribute.Categories.name(), categories);
 
+        }
+        
+        if(user.getFullName().split(" ").length == 1) {
+        	setNoticeInSession(session, new MainPageNotice(MainPageNotice.NoticeType.Error, "<a href='user.jsp?action=modifyUser'>(" + user.getFullName() + ") " + language.getString("name.too.short") + "</a>"));
         }
     }
 
