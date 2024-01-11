@@ -25,7 +25,6 @@
 					<tbody>
 						<tr>
 							<td><img src="icons/hu.gif"></td>
-<!-- 							<td>Magyar verzi&oacute;:</td> -->
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=HU">Bejelentkez&eacute;s</a></td>
 							<td>
 								<div align="center">-</div>
@@ -39,7 +38,6 @@
 						</tr>
 						<tr>
 							<td><img src="icons/gb.gif"></td>
-<!-- 							<td>English version:</td> -->
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=EN">Login</a></td>
 							<td>
 								<div align="center">-</div>
@@ -54,7 +52,6 @@
 						</tr>
 						<tr>
 							<td><img src="icons/sk.gif"></td>
-<!-- 							<td>Slovensk&aacute; verzia:</td> -->
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=SK">Prihl&aacute;senie
 									sa</a></td>
 							<td>
@@ -71,7 +68,6 @@
 						</tr>
 						<tr>
 							<td><img src="icons/cz.gif"></td>
-<!-- 							<td>Cesk&aacute; verze:</td> -->
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=CZ">Prihl&aacute;&#353;en&iacute;</a></td>
 							<td>
 								<div align="center">-</div>
@@ -87,7 +83,6 @@
 						</tr>
 						<tr>
 							<td><img src="icons/pl.png"></td>
-<!-- 							<td>Polski wersja:</td> -->
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=PL">Zaloguj si&#281;</a></td>
 							<td>
 								<div align="center">-</div>
@@ -117,7 +112,6 @@
 						</tr>
 						<tr>
 							<td><img src="icons/de.gif"></td>
-<!-- 							<td>Deutsch Version:</td> -->
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=DE">Anmelden</a></td>
 							<td>
 								<div align="center">-</div>
@@ -131,7 +125,6 @@
 						</tr>
 						<tr>
 							<td><img src="icons/ru.png"></td>
-<!-- 							<td>&#1056;&#1091;&#1089;&#1089;&#1082;&#1072;&#1103; &#1074;&#1077;&#1088;&#1089;&#1080;&#1103;:</td> -->
 							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=RU">&#1051;&#1086;&#1075;&#1080;&#1085;</a></td>
 							<td>
 								<div align="center">-</div>
@@ -144,36 +137,6 @@
 							</td>
 							<td><a href="jsp/reminder.jsp?language=RU">&#1047;&#1072;&#1073;&#1099;&#1083;&#1080; &#1087;&#1072;&#1088;&#1086;&#1083;&#1100;</a></td>
 						</tr>
-<!-- 
-						<tr>
-							<td><img src="icons/it.png"></td>
-							<td>Deutsch Version:</td>
-							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=IT">Anmelden</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td><a
-								href="jsp/user.jsp?directRegister=false&amp;action=register&amp;language=IT">Registration</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td><a href="jsp/reminder.jsp?language=IT">Passwort vergessen</a></td>
-						</tr>
-						<tr>
-							<td><img src="icons/pl.png"></td>
-							<td>Deutsch Version:</td>
-							<td><a href="jsp/login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=PL">Anmelden</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td><a
-								href="jsp/user.jsp?directRegister=false&amp;action=register&amp;language=PL">Registration</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td><a href="jsp/reminder.jsp?language=PL">Passwort vergessen</a></td>
-						</tr>
- -->
 					</tbody>
 				</table>
 				<p>This site was developed and is maintained for free.</p> 
