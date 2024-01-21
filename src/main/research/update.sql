@@ -14,3 +14,6 @@ alter table MAK_CATEGORY add category_language varchar(100);
 update MAK_CATEGORY set category_language='-';
 
 alter table mak_system modify param_value varchar(1000)
+
+alter table MAK_MODEL add MODEL_width numeric(3);
+alter table MAK_MODEL add MODEL_height numeric(3);

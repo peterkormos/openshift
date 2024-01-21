@@ -67,6 +67,7 @@ import datatype.LoginConsent.LoginConsentType;
 import datatype.MainPageNotice;
 import datatype.Model;
 import datatype.ModelClass;
+import datatype.ModelWithDimension;
 import datatype.User;
 import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
@@ -81,7 +82,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2023.11.20.";
+	public String VERSION = "2024.01.15.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1589,15 +1590,33 @@ public class RegistrationServlet extends HttpServlet {
 
 	private Model createModel(final int modelID, final int userID, final HttpServletRequest request,
 			final String httpParameterPostTag) throws NumberFormatException, MissingRequestParameterException {
-		return new Model(modelID, userID,
-				Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryID" + httpParameterPostTag)),
-				ServletUtil.getRequestAttribute(request, "modelscale" + httpParameterPostTag),
-				ServletUtil.getRequestAttribute(request, "modelname" + httpParameterPostTag),
-				ServletUtil.getRequestAttribute(request, "modelproducer" + httpParameterPostTag),
-				ServletUtil.getOptionalRequestAttribute(request, "modelcomment" + httpParameterPostTag),
-				ServletUtil.getOptionalRequestAttribute(request, "identification" + httpParameterPostTag),
-				ServletUtil.getOptionalRequestAttribute(request, "markings" + httpParameterPostTag),
-				isCheckedIn(request, "gluedToBase" + httpParameterPostTag), getDetailing(request));
+		Model model = new Model(modelID, userID,
+						Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryID" + httpParameterPostTag)),
+						ServletUtil.getRequestAttribute(request, "modelscale" + httpParameterPostTag),
+						ServletUtil.getRequestAttribute(request, "modelname" + httpParameterPostTag),
+						ServletUtil.getRequestAttribute(request, "modelproducer" + httpParameterPostTag),
+						ServletUtil.getOptionalRequestAttribute(request, "modelcomment" + httpParameterPostTag),
+						ServletUtil.getOptionalRequestAttribute(request, "identification" + httpParameterPostTag),
+						ServletUtil.getOptionalRequestAttribute(request, "markings" + httpParameterPostTag),
+						isCheckedIn(request, "gluedToBase" + httpParameterPostTag), getDetailing(request)
+								);
+		
+		return setDimensions(model, request, httpParameterPostTag);
+	}
+	
+	Model setDimensions(final Model model, final HttpServletRequest request, final String httpParameterPostTag) {
+		try {
+			int modelWidth = Integer
+					.parseInt(ServletUtil.getRequestAttribute(request, "modelWidth" + httpParameterPostTag));
+			int modelHeight = Integer
+					.parseInt(ServletUtil.getRequestAttribute(request, "modelHeight" + httpParameterPostTag));
+			
+			return new ModelWithDimension(model, modelWidth, modelHeight);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return model;
 	}
 
 	boolean isCheckedIn(final HttpServletRequest request, final String parameter) {
@@ -1960,7 +1979,8 @@ public class RegistrationServlet extends HttpServlet {
 
 	private int calculateEntryFee(List<Model> allModels) {
 		int size = allModels.size();
-		return 5 + (Math.max(0, size - 3) > 0 ? 2 * (size - 3) : 0);
+//		return 5 + (Math.max(0, size - 3) > 0 ? 2 * (size - 3) : 0);
+		return 8;
 	}
 
 	public void printMyModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

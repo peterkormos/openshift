@@ -46,6 +46,9 @@ function checkMandatory(form)
 */
 	returned = checkMandatoryElement(form.categoryID) && returned;
 
+	returned = checkMandatoryElement(form.modelWidth) && returned;
+	returned = checkMandatoryElement(form.modelHeight) && returned;
+
 	return returned; 
 }
 
@@ -195,7 +198,38 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 <%-- <td><textarea name='modelcomment' cols='50' rows='10' maxlength="250" placeholder="Max. 250 char."><%=  (model != null) ? model.comment : "" %></textarea></td> --%>
 <!-- </tr> -->
 
-	<!--	submit-->
+<tr bgcolor='F6F4F0'>
+	<td>
+		<b><%=language.getString("models.space")%>:</b>
+	</td>
+	<td>
+	<b>
+	<%=language.getString("models.width")%>:
+		<%
+		String modelWidth = model == null ? "" : String.valueOf(ModelWithDimension.class.cast(model).getWidth());
+		%> <jsp:include page="textInput.jsp">
+			<jsp:param name="name" value="modelWidth" />
+			<jsp:param name="value" value="<%=modelWidth%>" />
+			<jsp:param name="mandatory" value="true" />
+			<jsp:param name="maxlength" value="3" />
+			<jsp:param name="size" value="10" />
+		</jsp:include>
+
+<%=language.getString("models.length")%>:
+		<%
+		String modelHeight = model == null ? "" : String.valueOf(ModelWithDimension.class.cast(model).getHeight());
+		%> <jsp:include page="textInput.jsp">
+			<jsp:param name="name" value="modelHeight" />
+			<jsp:param name="value" value="<%=modelHeight%>" />
+			<jsp:param name="mandatory" value="true" />
+			<jsp:param name="maxlength" value="3" />
+			<jsp:param name="size" value="10" />
+		</jsp:include>
+		</b>
+	</td>
+</tr>
+
+<!--	submit-->
 <tr>
 <td></td>
 <td>

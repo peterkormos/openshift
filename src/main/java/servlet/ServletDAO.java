@@ -37,6 +37,7 @@ import datatype.Detailing.DetailingGroup;
 import datatype.LoginConsent;
 import datatype.Model;
 import datatype.ModelClass;
+import datatype.ModelWithDimension;
 import datatype.User;
 import exception.EmailNotFoundException;
 
@@ -634,37 +635,32 @@ public class ServletDAO extends HibernateDAO
 
 	try
 	{
-	  queryStatement = getDBConnection().prepareStatement(
-	      "insert into MAK_MODEL" + " (MODEL_ID, USER_ID, CATEGORY_ID, MODEL_SCALE, MODEL_NAME, PRODUCER, COMMENTS, "
-	          + "IDENTIFICATION, MARKINGS, GLUEDTOBASE, "
-	          + "SCRATCH_EXTERNALSURFACE, SCRATCH_COCKPIT, SCRATCH_ENGINE, SCRATCH_UNDERCARRIAGE, SCRATCH_GEARBAY, SCRATCH_ARMAMENT, SCRATCH_CONVERSION, "
-	          + "PHOTOETCHED_EXTERNALSURFACE, PHOTOETCHED_COCKPIT, PHOTOETCHED_ENGINE, PHOTOETCHED_UNDERCARRIAGE, PHOTOETCHED_GEARBAY, PHOTOETCHED_ARMAMENT, PHOTOETCHED_CONVERSION, "
-	          + "RESIN_EXTERNALSURFACE, RESIN_COCKPIT, RESIN_ENGINE, RESIN_UNDERCARRIAGE, RESIN_GEARBAY, RESIN_ARMAMENT, RESIN_CONVERSION, "
-	          + "DOCUMENTATION_EXTERNALSURFACE, DOCUMENTATION_COCKPIT, DOCUMENTATION_ENGINE, DOCUMENTATION_UNDERCARRIAGE, DOCUMENTATION_GEARBAY, DOCUMENTATION_ARMAMENT, DOCUMENTATION_CONVERSION)"
-	          + " values " + "(?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?"
-	          + ")");
+		queryStatement = getDBConnection().prepareStatement("insert into MAK_MODEL" + " (" + model.getDBFields() + ")"
+				+ " values " + "(" + model.getDBFieldPlaceholders() + ")");
 
-	  queryStatement.setInt(1, model.modelID);
+		int statementCounter = 0;
+	  queryStatement.setInt(++statementCounter, model.modelID);
 
-	  queryStatement.setInt(2, model.userID);
-	  queryStatement.setInt(3, model.categoryID);
-	  encodeStringForDB(queryStatement, 4, model.scale);
-	  encodeStringForDB(queryStatement, 5, model.name);
-	  encodeStringForDB(queryStatement, 6, model.producer);
-	  encodeStringForDB(queryStatement, 7, model.comment);
+	  queryStatement.setInt(++statementCounter, model.userID);
+	  queryStatement.setInt(++statementCounter, model.categoryID);
+	  encodeStringForDB(queryStatement, ++statementCounter, model.scale);
+	  encodeStringForDB(queryStatement, ++statementCounter, model.name);
+	  encodeStringForDB(queryStatement, ++statementCounter, model.producer);
+	  encodeStringForDB(queryStatement, ++statementCounter, model.comment);
 
-	  encodeStringForDB(queryStatement, 8, model.identification);
-	  encodeStringForDB(queryStatement, 9, model.markings);
-	  queryStatement.setInt(10, model.gluedToBase ? 1 : 0);
+	  encodeStringForDB(queryStatement, ++statementCounter, model.identification);
+	  encodeStringForDB(queryStatement, ++statementCounter, model.markings);
+	  queryStatement.setInt(++statementCounter, model.gluedToBase ? 1 : 0);
 
-	  int statementCounter = 11;
 	  for (DetailingGroup group : DetailingGroup.values())
 	  {
 		  for (DetailingCriteria criteria : DetailingCriteria.values())
 		{
-		  queryStatement.setInt(statementCounter++, model.getDetailingGroup(group).getCriteria(criteria) ? 1 : 0);
+		  queryStatement.setInt(++statementCounter, model.getDetailingGroup(group).getCriteria(criteria) ? 1 : 0);
 		}
 	  }
+	  
+	  statementCounter = saveCustomModelData(model, queryStatement, statementCounter);
 
 	  queryStatement.executeUpdate();
 
@@ -688,6 +684,16 @@ public class ServletDAO extends HibernateDAO
 	  }
 	}
   }
+
+	private int saveCustomModelData(final Model model, PreparedStatement queryStatement, int statementCounter)
+			throws SQLException {
+		if (ModelWithDimension.class.isInstance(model)) {
+			ModelWithDimension modelWithDimension = ModelWithDimension.class.cast(model);
+			queryStatement.setInt(++statementCounter, modelWithDimension.getWidth());
+			queryStatement.setInt(++statementCounter, modelWithDimension.getHeight());
+		}
+		return statementCounter;
+	}
 
   public synchronized int getNextID(final String table, final String column) throws SQLException
   {
@@ -1050,10 +1056,7 @@ public class ServletDAO extends HibernateDAO
 
 	  while (rs.next())
 	  {
-		returned.add(new Model(rs.getInt("model_ID"), rs.getInt("user_ID"), rs.getInt("category_ID"),
-		    decodeStringFromDB(rs, "MODEL_scale"), decodeStringFromDB(rs, "MODEL_name"), decodeStringFromDB(rs, "producer"),
-		    decodeStringFromDB(rs, "comments"), decodeStringFromDB(rs, "identification"), decodeStringFromDB(rs, "markings"),
-		    rs.getInt("gluedToBase") == 1, getDetailing(rs)));
+		returned.add(getModel(rs));
 	  }
 	  return returned;
 	}
@@ -1077,6 +1080,20 @@ public class ServletDAO extends HibernateDAO
 	}
   }
 
+	private Model getModel(ResultSet rs) throws SQLException {
+		Model model = new Model(rs.getInt("model_ID"), rs.getInt("user_ID"), rs.getInt("category_ID"),
+				decodeStringFromDB(rs, "MODEL_scale"), decodeStringFromDB(rs, "MODEL_name"),
+				decodeStringFromDB(rs, "producer"), decodeStringFromDB(rs, "comments"),
+				decodeStringFromDB(rs, "identification"), decodeStringFromDB(rs, "markings"),
+				rs.getInt("gluedToBase") == 1, getDetailing(rs));
+
+		try {
+			return new ModelWithDimension(model, rs.getInt("MODEL_width"), rs.getInt("MODEL_height"));
+		} catch (Exception e) {
+		}
+		return model;
+	}
+
   public Model getModel(final int modelID) throws SQLException
   {
 	PreparedStatement queryStatement = null;
@@ -1091,10 +1108,7 @@ public class ServletDAO extends HibernateDAO
 	  rs = queryStatement.executeQuery();
 	  if (rs.next())
 	  {
-		return new Model(rs.getInt("model_ID"), rs.getInt("user_ID"), rs.getInt("category_ID"),
-		    decodeStringFromDB(rs, "MODEL_scale"), decodeStringFromDB(rs, "MODEL_name"), decodeStringFromDB(rs, "producer"),
-		    decodeStringFromDB(rs, "comments"), decodeStringFromDB(rs, "identification"), decodeStringFromDB(rs, "markings"),
-		    rs.getInt("gluedToBase") == 1, getDetailing(rs));
+		return getModel(rs);
 	  }
 	  else
 	  {
@@ -1215,7 +1229,10 @@ public class ServletDAO extends HibernateDAO
   public List<String[]> getStatistics(final String show, ResourceBundle language) throws SQLException
   {
 	final List<String[]> returned = new LinkedList<String[]>();
-
+	final List<String[]> tablespaceStatas = new LinkedList<String[]>();
+	tablespaceStatas.add(new String[] { "&nbsp", "" });
+	tablespaceStatas.add(new String[] { "Versenymunk&aacute;k helyig&eacute;nye:", "" });
+	
 	final PreparedStatement queryStatement = null;
 	final ResultSet rs = null;
 
@@ -1267,8 +1284,9 @@ public class ServletDAO extends HibernateDAO
 			  userIDs.add(user.userID);
 			}
 		  }
-
 		}
+
+		createCustomStats(models, category, tablespaceStatas);
 	  }
 
 	  returned.add(new String[] { "&nbsp", "" });
@@ -1294,6 +1312,9 @@ public class ServletDAO extends HibernateDAO
 		returned.add(new String[] { language.getString("competitors.number.per.country")+": <b>" + country + "</b>",
 		    String.valueOf(activeModelers.get(country).size()) });
 	  }
+	  
+	  //helyfoglalás
+	  returned.addAll(tablespaceStatas);
 	}
 	finally
 	{
@@ -1317,7 +1338,17 @@ public class ServletDAO extends HibernateDAO
 	return returned;
   }
 
-  public void deleteModel(final int id) throws SQLException
+  private void createCustomStats(final List<Model> models, final Category category, final List<String[]> tablespaceStatas) {
+		int tablespace = models.stream().map(m -> ModelWithDimension.class.cast(m)).mapToInt(m -> (int)m.getWidth() * m.getHeight()).sum();
+		long modelsWithDimension = models.stream().map(m -> ModelWithDimension.class.cast(m)).filter(m -> m.getWidth() * m.getHeight() > 0).count();
+		
+		tablespaceStatas.add(new String[] {
+				"<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>", models.size()
+				+ " db makettb&#337;l " + modelsWithDimension + " db adatai alapj&aacute;n: " + tablespace + " cm<sup>2</sup>" });
+	
+}
+
+public void deleteModel(final int id) throws SQLException
   {
 	deleteEntry("MAK_MODEL", "model_id", id);
 	deleteEntry("MAK_PICTURES", "model_id", id);

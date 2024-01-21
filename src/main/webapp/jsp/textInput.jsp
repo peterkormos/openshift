@@ -17,7 +17,6 @@
 	boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 %>
 
-<div>
 <input type='text'
 size="<%= ServletUtil.getOptionalRequestAttribute(request, "size") %>" 
 maxlength='<%= maxlength %>' name='<%= request.getParameter("name") %>' placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
@@ -43,4 +42,3 @@ onchange="updateMandatoryFieldMark(this);"
 <% 
 	}
 %>
-</div>
