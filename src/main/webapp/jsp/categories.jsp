@@ -18,7 +18,7 @@
 
 <div id='categories'>
 	<select name='categoryID'
-	required="required"
+	'<%= mandatory ? "required='required'" : "" %>' 
 onchange="updateMandatoryFieldMark(this);"
 	>
 

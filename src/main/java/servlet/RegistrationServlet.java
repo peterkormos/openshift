@@ -82,7 +82,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.01.15.";
+	public String VERSION = "2024.01.27.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -496,7 +496,7 @@ public class RegistrationServlet extends HttpServlet {
             servletDAO.deleteLoginConsentData(user.getUserID());
             
             for (LoginConsentType type : LoginConsent.LoginConsentType.values()) {
-                if (isCheckedIn(request, "dataUsageConsent" + type.name())) {
+                if (ServletUtil.isCheckedIn(request, "dataUsageConsent" + type.name())) {
                     LoginConsent lc = new LoginConsent(servletDAO.getNextID(LoginConsent.class), user.getUserID(), type);
                     servletDAO.save(lc);
                 }
@@ -1127,7 +1127,7 @@ public class RegistrationServlet extends HttpServlet {
 	            servletDAO.getCategoryGroup(
 	                    Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
 	                    servletDAO.getCategoryGroups()),
-	            isCheckedIn(request, "master"),
+	            ServletUtil.isCheckedIn(request, "master"),
 	            ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")),
 	            AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup"))
 	            );
@@ -1498,7 +1498,7 @@ public class RegistrationServlet extends HttpServlet {
 		final int modelID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "modelID"));
 		final Model model = servletDAO.getModel(modelID);
 		User user = getUser(request);
-		if (user.userID == model.userID) {
+		if (user.isAdminUser() || user.userID == model.userID) {
 			getModelForm(request, response, Command.modifyModel.name(), "modify", model);
 		}else {
 			redirectToMainPage(request, response);
@@ -1525,7 +1525,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final Model model = createModel(modelID, servletDAO.getModel(modelID).userID, request);
 		User user = getUser(request);
-        if(!user.isAdminUser() && user.getUserID() == model.getUserID()) {   
+        if(user.isAdminUser() || (!user.isAdminUser() && user.getUserID() == model.getUserID())) {   
 			deleteModel(request);
 			servletDAO.saveModel(model);
 
@@ -1598,7 +1598,7 @@ public class RegistrationServlet extends HttpServlet {
 						ServletUtil.getOptionalRequestAttribute(request, "modelcomment" + httpParameterPostTag),
 						ServletUtil.getOptionalRequestAttribute(request, "identification" + httpParameterPostTag),
 						ServletUtil.getOptionalRequestAttribute(request, "markings" + httpParameterPostTag),
-						isCheckedIn(request, "gluedToBase" + httpParameterPostTag), getDetailing(request)
+						ServletUtil.isCheckedIn(request, "gluedToBase" + httpParameterPostTag), getDetailing(request)
 								);
 		
 		return setDimensions(model, request, httpParameterPostTag);
@@ -1619,10 +1619,6 @@ public class RegistrationServlet extends HttpServlet {
 		return model;
 	}
 
-	boolean isCheckedIn(final HttpServletRequest request, final String parameter) {
-			return "on".equalsIgnoreCase(ServletUtil.getOptionalRequestAttribute(request, parameter));
-	}
-
 	private Map<DetailingGroup, Detailing> getDetailing(final HttpServletRequest request) {
 		final Map<DetailingGroup, Detailing> detailing = new HashMap<DetailingGroup, Detailing>();
 
@@ -1630,7 +1626,7 @@ public class RegistrationServlet extends HttpServlet {
 			final Map<DetailingCriteria, Boolean> criterias = new HashMap<DetailingCriteria, Boolean>();
 
 			for (DetailingCriteria criteria : DetailingCriteria.values()) {
-				criterias.put(criteria, isCheckedIn(request, "detailing." + group.name() + "." + criteria.name()));
+				criterias.put(criteria, ServletUtil.isCheckedIn(request, "detailing." + group.name() + "." + criteria.name()));
 			}
 			detailing.put(group, new Detailing(group, criterias));
 		}
@@ -1821,7 +1817,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 
 		User user = getUser(request);
-		if(!user.isAdminUser() && user.getUserID() == model.getUserID()) {
+		if(user.isAdminUser() || (!user.isAdminUser() && user.getUserID() == model.getUserID())) {
 			servletDAO.deleteModel(modelID);
 			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
 		}

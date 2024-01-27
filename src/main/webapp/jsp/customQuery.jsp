@@ -22,7 +22,7 @@
 					%> <jsp:include page="categories.jsp">
 						<jsp:param name="selectedLabel" value="<%=categoryLabel%>" />
 						<jsp:param name="selectedValue" value="<%=categoryLabelValue%>" />
-						<jsp:param name="mandatory" value="true" />
+						<jsp:param name="mandatory" value="false" />
 					</jsp:include>
 
 				</td>
@@ -65,6 +65,11 @@
 						<jsp:param name="frequentlyUsed"
 							value='<%=language.getString("frequently.used")%>' />
 					</jsp:include></td>
+			</tr>
+			<tr>
+				<td>Oversized :</td>
+				<td><label><input
+						name='filterToOversized' type='checkbox' value='on'> <%=language.getString("yes")%></label></td>
 			</tr>
 
 			<tr>

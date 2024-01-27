@@ -26,6 +26,7 @@
 	boolean forJudges = Boolean.parseBoolean(
 			ServletUtil.getRequestAttribute(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
+	boolean filterToOversized = ServletUtil.isCheckedIn(request, "filterToOversized");
   List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
   
   String show = RegistrationServlet.getShowFromSession(session);
@@ -139,12 +140,21 @@
 			}
 		%>
 
+		<th align='center' style='white-space: nowrap'><%=language.getString("models.width")%>
+		</th>
+		<th align='center' style='white-space: nowrap'><%=language.getString("models.length")%>
+		</th>
+		<th align='center' style='white-space: nowrap'></th>
 	</tr>
 
 	<%
 		for (final Model model : models) {
+			if(filterToOversized && !ModelWithDimension.class.cast(model).isOversized()) {
+				continue;
+			}
+			
 			final Category category = servletDAO.getCategory(model.categoryID);
-
+			
 			if (onlyPhotos) {
 				try {
 					servletDAO.loadImage(model.modelID);
@@ -153,7 +163,7 @@
 				}
 			}
 	%>
-	<tr bgcolor="<%=highlight()%>">
+	<tr bgcolor="<%= highlight(ModelWithDimension.class.cast(model).isOversized())%>">
 		<td>
 <%
   if (servlet.isRegistrationAllowed(show))
@@ -315,6 +325,34 @@
 				}
 		%>
 
+		<td align='center' style='white-space: nowrap'><%=String.valueOf(ModelWithDimension.class.cast(model).getWidth())%>
+		</td>
+		<td align='center' style='white-space: nowrap'><%=String.valueOf(ModelWithDimension.class.cast(model).getLength())%>
+		</td>
+		<td>
+<%
+  if (servlet.isRegistrationAllowed(show))
+  {
+%>
+			<div class="tooltip">
+				<a
+					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.modelID%>">
+					<img src="../icons/modify.png" height="30" align="center" /> <span
+					class="tooltiptext"> <%=language.getString("modify")%></span>
+				</a>
+			</div>
+
+			<div class="tooltip">
+				<a
+					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.modelID%>">
+					<img src="../icons/delete2.png" height="30" align="center" /> <span
+					class="tooltiptext"> <%=language.getString("delete")%></span>
+				</a>
+			</div>
+<%
+}
+%>
+		</td>
 	</tr>
 	<%
 		}

@@ -148,4 +148,8 @@ public class ServletUtil {
 		response.setContentType("text/html");
 		response.getOutputStream().write(message.toString().getBytes());
 	}
+
+	public static boolean isCheckedIn(final HttpServletRequest request, final String parameter) {
+			return "on".equalsIgnoreCase(getOptionalRequestAttribute(request, parameter));
+	}
 }

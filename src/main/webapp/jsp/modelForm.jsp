@@ -217,8 +217,8 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 
 <%=language.getString("models.length")%>:
 		<%
-		String modelHeight = model == null ? "" : String.valueOf(ModelWithDimension.class.cast(model).getHeight());
-		%> <jsp:include page="textInput.jsp">
+		String modelHeight = model == null ? "" : String.valueOf(ModelWithDimension.class.cast(model).getLength());
+%> <jsp:include page="textInput.jsp">
 			<jsp:param name="name" value="modelHeight" />
 			<jsp:param name="value" value="<%=modelHeight%>" />
 			<jsp:param name="mandatory" value="true" />

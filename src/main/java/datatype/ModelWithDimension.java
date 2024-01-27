@@ -2,7 +2,7 @@ package datatype;
 
 public class ModelWithDimension extends Model {
 	private int width;
-	private int height;
+	private int length;
 	
 	public ModelWithDimension(final Model model, final int width, final int height) {
 		super(model);
@@ -17,17 +17,25 @@ public class ModelWithDimension extends Model {
 		this.width = width;
 	}
 	
-	public int getHeight() {
-		return height;
+	public int getLength() {
+		return length;
 	}
 	
-	public void setHeight(int height) {
-		this.height = height;
+	public void setLength(int length) {
+		this.length = length;
 	}
 
 	public void setDimensions(int width, int height) {
 		this.width = width;
-		this.height = height;
+		this.length = height;
+	}
+	
+	public int getArea() {
+		return width * length;
+	}
+	
+	public boolean isOversized() {
+		return getArea() > 1000;
 	}
 
 	@Override

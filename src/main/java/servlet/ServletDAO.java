@@ -690,7 +690,7 @@ public class ServletDAO extends HibernateDAO
 		if (ModelWithDimension.class.isInstance(model)) {
 			ModelWithDimension modelWithDimension = ModelWithDimension.class.cast(model);
 			queryStatement.setInt(++statementCounter, modelWithDimension.getWidth());
-			queryStatement.setInt(++statementCounter, modelWithDimension.getHeight());
+			queryStatement.setInt(++statementCounter, modelWithDimension.getLength());
 		}
 		return statementCounter;
 	}
@@ -1339,8 +1339,8 @@ public class ServletDAO extends HibernateDAO
   }
 
   private void createCustomStats(final List<Model> models, final Category category, final List<String[]> tablespaceStatas) {
-		int tablespace = models.stream().map(m -> ModelWithDimension.class.cast(m)).mapToInt(m -> (int)m.getWidth() * m.getHeight()).sum();
-		long modelsWithDimension = models.stream().map(m -> ModelWithDimension.class.cast(m)).filter(m -> m.getWidth() * m.getHeight() > 0).count();
+		int tablespace = models.stream().map(m -> ModelWithDimension.class.cast(m)).mapToInt(m -> (int)m.getWidth() * m.getLength()).sum();
+		long modelsWithDimension = models.stream().map(m -> ModelWithDimension.class.cast(m)).filter(m -> m.getWidth() * m.getLength() > 0).count();
 		
 		tablespaceStatas.add(new String[] {
 				"<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>", models.size()
