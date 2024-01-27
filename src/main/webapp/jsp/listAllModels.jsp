@@ -4,6 +4,8 @@
 <%@page import="servlet.*"%>
 <%@page import="util.*"%>
 
+<link href="base.css" rel="stylesheet" type="text/css">
+
 <%
     RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
