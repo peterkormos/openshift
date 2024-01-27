@@ -1338,15 +1338,15 @@ public class ServletDAO extends HibernateDAO
 	return returned;
   }
 
-  private void createCustomStats(final List<Model> models, final Category category, final List<String[]> tablespaceStatas) {
-		int tablespace = models.stream().map(m -> ModelWithDimension.class.cast(m)).mapToInt(m -> (int)m.getWidth() * m.getLength()).sum();
-		long modelsWithDimension = models.stream().map(m -> ModelWithDimension.class.cast(m)).filter(m -> m.getWidth() * m.getLength() > 0).count();
-		
-		tablespaceStatas.add(new String[] {
-				"<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>", models.size()
-				+ " db makettb&#337;l " + modelsWithDimension + " db adatai alapj&aacute;n: " + tablespace + " cm<sup>2</sup>" });
-	
-}
+	private void createCustomStats(final List<Model> models, final Category category,
+			final List<String[]> tablespaceStatas) {
+		int tablespace = models.stream().map(m -> ModelWithDimension.class.cast(m))
+				.mapToInt(m -> (int) m.getWidth() * m.getLength()).sum();
+
+		tablespaceStatas
+				.add(new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
+						tablespace + " cm<sup>2</sup>" });
+	}
 
 public void deleteModel(final int id) throws SQLException
   {
