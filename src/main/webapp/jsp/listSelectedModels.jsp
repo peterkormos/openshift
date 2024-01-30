@@ -14,7 +14,7 @@
   
   session.setAttribute(RegistrationServlet.SessionAttribute.Models.name(), models);
 %>
-
+<link href="base.css" rel="stylesheet" type="text/css">
 <jsp:include page="listModels.jsp"></jsp:include>
 
 <%
