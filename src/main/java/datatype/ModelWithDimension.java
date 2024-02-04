@@ -1,6 +1,10 @@
 package datatype;
 
 public class ModelWithDimension extends Model {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4001419714556682249L;
 	private int width;
 	private int length;
 	
