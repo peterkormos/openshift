@@ -82,7 +82,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.01.27.";
+	public String VERSION = "2024.02.06.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1681,6 +1681,23 @@ public class RegistrationServlet extends HttpServlet {
 		ServletUtil.writeResponse(response, buff);
 	}
 
+	public void inputForLogoUpload(final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		final StringBuilder buff = new StringBuilder();
+		final User user = getUser(request);
+		final ResourceBundle language = languageUtil.getLanguage(user.language);
+
+		buff.append(
+				"<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='post'  enctype='multipart/form-data'>");
+		buff.append("<input type='hidden' name='modelID' value='-1'/>");
+		buff.append("<p><input type='file' name='imageFile' />");
+
+		buff.append("<p><input type='submit' value='" + language.getString("save") + "'>");
+		buff.append("</form>");
+
+		ServletUtil.writeResponse(response, buff);
+	}
+
 	private StringBuilder inputForSelectModel(final User user, final String action, final String submitLabel,
 			final List<Model> models) throws Exception {
 		final StringBuilder buff = new StringBuilder();
@@ -1966,7 +1983,7 @@ public class RegistrationServlet extends HttpServlet {
 			final List<Model> sublist = allModels.subList(0, Math.min(cols * rows, allModels.size()));
 
 			int fee = calculateEntryFee(allModels);
-			ServletUtil.writeResponse(response, printModels(language, user, sublist, printCardBuffer, rows, cols, true, fee ));
+			ServletUtil.writeResponse(response, printModels(language, user, sublist, printCardBuffer, rows, cols, true, fee, request ));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
@@ -1998,7 +2015,7 @@ public class RegistrationServlet extends HttpServlet {
 					subList.add(model);
 
 					buff.append(printModels(languageUtil.getLanguage(user.language), servletDAO.getUser(user.userID), subList,
-							printBuffer, 1, 3, false, fee));
+							printBuffer, 1, 3, false, fee, request));
 					break;
 				}
 			}
@@ -2051,7 +2068,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			modelsRemainingToPrint -= currentModelsOnPage;
 			boolean pageBreak = alwaysPageBreak || modelsRemainingToPrint > 0;
-			buff.append(printModels(language, user, subList, printBuffer, 1, modelsOnPage, pageBreak, fee));
+			buff.append(printModels(language, user, subList, printBuffer, 1, modelsOnPage, pageBreak, fee, request));
 		}
 
 		return buff;
@@ -2059,7 +2076,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	StringBuilder printModels(final ResourceBundle language, final User user, final List<Model> models,
-			final StringBuilder printBuffer, final int rows, final int cols, boolean pageBreak, final int fee)
+			final StringBuilder printBuffer, final int rows, final int cols, boolean pageBreak, final int fee, HttpServletRequest request)
 			throws Exception, IOException {
 
 		final int width = 100 / cols;
@@ -2100,6 +2117,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, "."))
 							.replaceAll("__FEE__", String.valueOf(fee))
+							.replaceAll("__LOGO_URL__", getServletURL(request)+"/"+Command.LOADIMAGE.name()+"/-1")
 
 					// "<font color='#006600'>Alapra ragasztva</font>"
 					// :

@@ -48,11 +48,16 @@
 	%>
 	<form accept-charset="UTF-8" name="input" id="input"
 		action="../RegistrationServlet" method="post">
-		Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT> - <input
+		Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
+			- <a
+			href="#"
+			onClick="document.getElementById('command').value='inputForLogoUpload';this.parentNode.submit();">Versenyhez log&oacute; felt&ouml;lt&eacute;s</a>
+		 - <input
 			type="hidden" id="command" name="command" value=""> <input
 			type="hidden" name="language" value="HU"> <a href="#"
 			onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';this.parentNode.submit();">Felhaszn&aacute;l&oacute;i
-			adatok lek&eacute;rdez&eacute;se/m&oacute;dos&iacute;t&aacute;sa</a> - <a
+			adatok lek&eacute;rdez&eacute;se/m&oacute;dos&iacute;t&aacute;sa</a> 			
+			- <a
 			href="#"
 			onClick="document.getElementById('command').value='logout';this.parentNode.submit();">Kijelentkez&eacute;s</a>
 		<hr>
