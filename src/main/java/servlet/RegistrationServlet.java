@@ -2088,7 +2088,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		int ModelCount = 0;
 		for (int row = 0; row < rows; row++) {
-			buff.append("<tr>");
+			buff.append("<tr valign='bottom'>");
 			for (int col = 0; col < cols; col++) {
 				buff.append("<td width='" + width + "%' height='" + height + "%'>");
 
