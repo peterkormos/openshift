@@ -82,7 +82,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.02.06.";
+	public String VERSION = "2024.03.09.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1911,24 +1911,35 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		Integer categoryGroupID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID"));
-
-		for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /* show */)) {
-			servletDAO.deleteModels(category.getId());
-			servletDAO.deleteCategory(category.getId());
+		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
+			Integer categoryGroupID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID"));
+			
+			for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /* show */)) {
+				servletDAO.deleteModels(category.getId());
+				servletDAO.deleteCategory(category.getId());
+			}
+			servletDAO.deleteCategoryGroup(categoryGroupID);
 		}
-		servletDAO.deleteCategoryGroup(categoryGroupID);
+		else {
+			writeErrorResponse(response, "Most m&aacute;r nem lehet t&ouml;r&ouml;lni!");
+			return;
+		}
 
 		redirectToMainPage(request, response);
-
 	}
 
 	public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
-		servletDAO.deleteModels(categoryID);
-		servletDAO.deleteCategory(categoryID);
-		redirectToMainPage(request, response);
+		if (getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
+			Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
+			servletDAO.deleteModels(categoryID);
+			servletDAO.deleteCategory(categoryID);
+		}
+		else {
+			writeErrorResponse(response, "Most m&aacute;r nem lehet t&ouml;r&ouml;lni!");
+			return;
+		}
 
+		redirectToMainPage(request, response);
 	}
 
 	public void printAllModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
