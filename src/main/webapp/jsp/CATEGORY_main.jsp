@@ -75,5 +75,17 @@
 		</script>
 		<p></p>
 	</form>
+
+	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
+
+<form accept-charset="UTF-8" name="input" id="input4" action="../RegistrationServlet" method="post">
+	<input type="hidden" id="command4" name="command" value=""> <input
+		type="hidden" id="paramName" name="paramName" value=""> <input
+		type="hidden" id="paramValue" name="paramValue" value=""> 
+<a href="#"
+		onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">El&ouml;nevez&eacute;s
+		kez&eacute;se</a>
+</form>
+
 </body>
 </html>

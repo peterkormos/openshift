@@ -33,7 +33,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -73,7 +72,6 @@ import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
-import servlet.JudgingServlet.RequestParameter;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import tools.InitDB;
@@ -1121,6 +1119,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
 	    final Category newCategory = new Category(servletDAO.getNextID("CATEGORY", "CATEGORY_ID"),
 	            ServletUtil.getRequestAttribute(request, "categorycode"),
 	            ServletUtil.getRequestAttribute(request, "categorydescription"),
@@ -1140,7 +1139,11 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		
 		servletDAO.saveCategory(newCategory);
-		
+		}		
+		else {
+			writeErrorResponse(response, "Most m&aacute;r nem lehet felvenni!");
+			return;
+		}
 		redirectToMainPage(request, response);
 	}
 
@@ -1154,12 +1157,17 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void addCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
+		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
 		final CategoryGroup categoryGroup = new CategoryGroup(
 				servletDAO.getNextID("CATEGORY_GROUP", "CATEGORY_group_ID"),
 				ServletUtil.getRequestAttribute(request, "show"), ServletUtil.getRequestAttribute(request, "group"));
 
 		servletDAO.saveCategoryGroup(categoryGroup);
-
+		}
+		else {
+			writeErrorResponse(response, "Most m&aacute;r nem lehet felvenni!");
+			return;
+		}
 		redirectToMainPage(request, response);
 	}
 
