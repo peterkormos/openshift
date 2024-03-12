@@ -1953,10 +1953,6 @@ public class RegistrationServlet extends HttpServlet {
 	public void printAllModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final ResourceBundle language = getLanguageForCurrentUser(request);
 
-		// boolean printPreRegisteredModels =
-		// Boolean.parseBoolean(getRequestAttribute(request,
-		// "printPreRegisteredModels"));
-
 		List<User> users = servletDAO.getUsers();
 
 		Collections.sort(users, new Comparator() {
@@ -1967,12 +1963,6 @@ public class RegistrationServlet extends HttpServlet {
 		});
 
 		for (final User user : users) {
-			// if ((printPreRegisteredModels &&
-			// user.userName.indexOf(DIRECT_USER) ==
-			// -1)
-			// || (!printPreRegisteredModels &&
-			// user.userName.indexOf(DIRECT_USER) >
-			// -1))
 			printModelsForUser(request, response, language, user.userID, true /* alwaysPageBreak */);
 		}
 		response.getOutputStream().write("<p>Itt a vege...".getBytes());
