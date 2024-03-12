@@ -5,20 +5,18 @@
 <%@page import="util.*"%>
 
 <%
-	User user = null;
-	    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-		ServletDAO servletDAO = servlet.getServletDAO();
-	try 
-	{
-		user = servlet.getUser(request);
-	}
-	catch(Exception ex) {
-	}
-		
-	if (user == null || !"CATEGORY".equals(user.language)) {
-		response.sendRedirect("../index.jsp");
-		return;
-	}
+User user = null;
+RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+ServletDAO servletDAO = servlet.getServletDAO();
+try {
+	user = servlet.getUser(request);
+} catch (Exception ex) {
+}
+
+if (user == null || !"CATEGORY".equals(user.language)) {
+	response.sendRedirect("../index.jsp");
+	return;
+}
 %>
 
 <html>
@@ -35,35 +33,31 @@
 
 <body>
 	<%
-	    String show = (String) session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
-				if (show == null) {
-					final List<String> shows = servletDAO.getShows();
-					if (shows.isEmpty())
-						show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
-					else {
-						show = shows.get(0);
-						session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
-					}
-				}
+	String show = (String) session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
+	if (show == null) {
+		final List<String> shows = servletDAO.getShows();
+		if (shows.isEmpty())
+			show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+		else {
+			show = shows.get(0);
+			session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
+		}
+	}
 	%>
 	<form accept-charset="UTF-8" name="input" id="input"
 		action="../RegistrationServlet" method="post">
-		Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT>
-			- <a
-			href="#"
-			onClick="document.getElementById('command').value='inputForLogoUpload';this.parentNode.submit();">Versenyhez log&oacute; felt&ouml;lt&eacute;s</a>
-		 - <input
-			type="hidden" id="command" name="command" value=""> <input
-			type="hidden" name="language" value="HU"> <a href="#"
+		Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT> - <a href="#"
+			onClick="document.getElementById('command').value='inputForLogoUpload';this.parentNode.submit();">Versenyhez
+			log&oacute; felt&ouml;lt&eacute;s</a> - <input type="hidden" id="command"
+			name="command" value=""> <input type="hidden" name="language"
+			value="HU"> <a href="#"
 			onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';this.parentNode.submit();">Felhaszn&aacute;l&oacute;i
-			adatok lek&eacute;rdez&eacute;se/m&oacute;dos&iacute;t&aacute;sa</a> 			
-			- <a
+			adatok lek&eacute;rdez&eacute;se/m&oacute;dos&iacute;t&aacute;sa</a> - <a
 			href="#"
 			onClick="document.getElementById('command').value='logout';this.parentNode.submit();">Kijelentkez&eacute;s</a>
 	</form>
 
-	<form accept-charset="UTF-8" name="input"
-	id="input3"
+	<form accept-charset="UTF-8" name="input" id="input3"
 		action="../RegistrationServlet" method="post">
 		<input type="hidden" id="command3" name="command">
 
@@ -78,14 +72,25 @@
 
 	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
 
-<form accept-charset="UTF-8" name="input" id="input4" action="../RegistrationServlet" method="post">
-	<input type="hidden" id="command4" name="command" value=""> <input
-		type="hidden" id="paramName" name="paramName" value=""> <input
-		type="hidden" id="paramValue" name="paramValue" value=""> 
-<a href="#"
-		onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">El&ouml;nevez&eacute;s
-		kez&eacute;se</a>
-</form>
+	<form accept-charset="UTF-8" name="input" id="input4"
+		action="../RegistrationServlet" method="post">
+		<input type="hidden" id="command4" name="command" value=""> <input
+			type="hidden" id="paramName" name="paramName" value=""> <input
+			type="hidden" id="paramValue" name="paramValue" value=""> <a
+			href="#"
+			onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">El&ouml;nevez&eacute;s
+			kezd&eacute;se</a>
+	</form>
+
+	<form accept-charsddet="UTF-8" name="input" id="input3"
+		action="../RegistrationServlet" method="post">
+		<input type="hidden" id="command3" name="command">
+	 <input
+		type="hidden" id="printPreRegisteredModels"
+		name="printPreRegisteredModels"> <a href="#"
+		onClick="document.getElementById('printPreRegisteredModels').value='true'; document.getElementById('command3').value='printAllModels';document.getElementById('input3').submit();">Nevez&eacute;si
+		lapok nyomtat&aacute;sa (El&ouml;nevezettek)</a>
+	</form>
 
 </body>
 </html>
