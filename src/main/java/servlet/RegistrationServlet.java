@@ -1158,9 +1158,13 @@ public class RegistrationServlet extends HttpServlet {
 	public void addCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
+			String show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
 		final CategoryGroup categoryGroup = new CategoryGroup(
 				servletDAO.getNextID("CATEGORY_GROUP", "CATEGORY_group_ID"),
-				ServletUtil.getRequestAttribute(request, "show"), ServletUtil.getRequestAttribute(request, "group"));
+				show, ServletUtil.getRequestAttribute(request, "group"));
+
+    	final HttpSession session = request.getSession(false);
+        session.setAttribute(SessionAttribute.Show.name(), show);
 
 		servletDAO.saveCategoryGroup(categoryGroup);
 		}

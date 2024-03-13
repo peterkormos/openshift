@@ -130,6 +130,17 @@
 			$("#ADMIN_lekerdezes").load("ADMIN_lekerdezes.html");
 		});
 	</script>
+
+	<hr>
+
+	<div id="ADMIN_egyeb"></div>
+	<script>
+		$(function() {
+			$("#ADMIN_egyeb").load("ADMIN_egyeb.html");
+		});
+	</script>
+	<p></p>
+
 	<p></p>
 
 <form accept-charset="UTF-8" name="input" id="input5" action="../RegistrationServlet" method="post">
@@ -153,6 +164,7 @@
 		onClick="document.getElementById('command5').value='saveModelClass';this.parentNode.submit();">Szakoszt&aacute;ly
 		ment&eacute;se</a>
 
+</form>
 	<p></p>
 
 	<div id="ADMIN_verseny_eredmenyek"></div>
@@ -162,17 +174,6 @@
 					.load("ADMIN_verseny_eredmenyek.html");
 		});
 	</script>
-</form>
-
-	<hr>
-
-	<div id="ADMIN_egyeb"></div>
-	<script>
-		$(function() {
-			$("#ADMIN_egyeb").load("ADMIN_egyeb.html");
-		});
-	</script>
-	<p></p>
 
 </body>
 </html>

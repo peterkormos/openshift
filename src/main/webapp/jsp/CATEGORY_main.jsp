@@ -69,7 +69,11 @@ if (user == null || !"CATEGORY".equals(user.language)) {
 		</script>
 		<p></p>
 	</form>
-
+<p>
+	<a href="../RegistrationServlet/statistics?language=HU"><strong>Statisztika
+			k&eacute;sz&iacute;t&eacute;se</strong></a>
+<p>
+			
 	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
 
 	<form accept-charset="UTF-8" name="input" id="input4"
