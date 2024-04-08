@@ -1345,7 +1345,7 @@ public class ServletDAO extends HibernateDAO
 
 		tablespaceStatas
 				.add(new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
-						tablespace });
+						String.valueOf(tablespace) });
 	}
 
 public void deleteModel(final int id) throws SQLException
