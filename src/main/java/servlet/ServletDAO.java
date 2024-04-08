@@ -1231,7 +1231,7 @@ public class ServletDAO extends HibernateDAO
 	final List<String[]> returned = new LinkedList<String[]>();
 	final List<String[]> tablespaceStatas = new LinkedList<String[]>();
 	tablespaceStatas.add(new String[] { "&nbsp", "" });
-	tablespaceStatas.add(new String[] { "Versenymunk&aacute;k helyig&eacute;nye:", "" });
+	tablespaceStatas.add(new String[] { "Versenymunk&aacute;k helyig&eacute;nye (cm<sup>2</sup>):", "" });
 	
 	final PreparedStatement queryStatement = null;
 	final ResultSet rs = null;
@@ -1345,7 +1345,7 @@ public class ServletDAO extends HibernateDAO
 
 		tablespaceStatas
 				.add(new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
-						tablespace + " cm<sup>2</sup>" });
+						tablespace });
 	}
 
 public void deleteModel(final int id) throws SQLException
