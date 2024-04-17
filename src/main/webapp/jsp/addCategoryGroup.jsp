@@ -1,7 +1,14 @@
+<%@page import="java.util.*"%>
+<%@page import="servlet.*"%>
+
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
+	<%
+	    String show = (String) session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
+	%>
+
 <body>
 &Uacute;j kateg&oacute;riacsoport hozz&aacute;ad&aacute;sa... 
 <form name="input" action="../RegistrationServlet" method="POST" accept-charset="UTF-8">
@@ -10,7 +17,7 @@
   <table border="0">
     <tr> 
       <td>Verseny: </td>
-      <td><input name="show" type="text" size="50"></td>
+      <td><input name="show" type="text" size="50" value="<%=show%>"></td>
     </tr>
     <tr> 
       <td>Kateg&oacute;ria csoport (Pl. Feln&otilde;tt, gyerek, ifi, stb.): </td>

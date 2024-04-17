@@ -172,6 +172,14 @@ public class User implements Serializable {
 	}
 
 	public boolean isAdminUser() {
+		return isSuperAdminUser() || isCategoryAdminUser();
+	}
+
+	public boolean isSuperAdminUser() {
 		return "ADMIN".equals(language);
+	}
+
+	public boolean isCategoryAdminUser() {
+		return "CATEGORY".equals(language);
 	}
 }

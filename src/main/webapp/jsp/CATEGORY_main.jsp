@@ -46,21 +46,57 @@ if (user == null || !"CATEGORY".equals(user.language)) {
 	%>
 	<form accept-charset="UTF-8" name="input" id="input"
 		action="../RegistrationServlet" method="post">
+		<input type="hidden" id="command" name="command" value=""> 
+		<input type="hidden" name="language" value="HU">
 		Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT> - <a href="#"
 			onClick="document.getElementById('command').value='inputForLogoUpload';this.parentNode.submit();">Versenyhez
-			log&oacute; felt&ouml;lt&eacute;s</a> - <input type="hidden" id="command"
-			name="command" value=""> <input type="hidden" name="language"
-			value="HU"> <a href="#"
-			onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';this.parentNode.submit();">Felhaszn&aacute;l&oacute;i
-			adatok lek&eacute;rdez&eacute;se/m&oacute;dos&iacute;t&aacute;sa</a> - <a
+			log&oacute; felt&ouml;lt&eacute;s</a> - <a
 			href="#"
 			onClick="document.getElementById('command').value='logout';this.parentNode.submit();">Kijelentkez&eacute;s</a>
+		<hr>
+		<p></p>
+		<strong><font size="+2"><u>1 makettez&#337;...</u> </font></strong>
+		<a href="#"
+			onClick="document.getElementById('command').value='inputForLoginUser';this.parentNode.submit();">nev&eacute;ben
+			bel&eacute;p&eacute;s</a> - <a href="#"
+			onClick="document.getElementById('command').value='inputForPrint';this.parentNode.submit();">
+			nevez&eacute;si lapjainak nyomtat&aacute;sa </a> - <a href="#"
+			onClick="document.getElementById('command').value='inputForModifyModel';this.parentNode.submit();">Makett
+			&aacute;tsorol&aacute;sa. Sorsz&aacute;m:</a> <input type="text"
+			name="modelID"
+			onchange="document.getElementById('command').value='inputForModifyModel'">
+	</form>
+
+	<div id="ADMIN_elonevezes"></div>
+	<script>
+		$(function() {
+			$("#ADMIN_elonevezes").load("ADMIN_elonevezes.html");
+		});
+	</script>
+	</p>
+
+	Rendszer&#252;zenet:
+	<FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
+	<p>
+	<form accept-charset="UTF-8" name="input"
+		action="../RegistrationServlet" method="post">
+		<input type="hidden" name="command" value="setSystemParameter">
+		<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
+		<textarea name="paramValue" cols="100" rows="5"></textarea>
+		<input name="setSystemParameter" type="submit"
+			value="Rendszer&#252;zenet">
 	</form>
 
 	<form accept-charset="UTF-8" name="input" id="input3"
 		action="../RegistrationServlet" method="post">
 		<input type="hidden" id="command3" name="command">
 
+		<div id="ADMIN_nyomtatas"></div><script>
+			$(function() {
+				$("#ADMIN_nyomtatas").load("ADMIN_nyomtatas.html");
+			});
+		</script>
+<p></p>
 		<div id="ADMIN_kategoria"></div>
 		<script>
 			$(function() {
@@ -69,32 +105,21 @@ if (user == null || !"CATEGORY".equals(user.language)) {
 		</script>
 		<p></p>
 	</form>
-<p>
-	<a href="../RegistrationServlet/statistics?language=HU"><strong>Statisztika
-			k&eacute;sz&iacute;t&eacute;se</strong></a>
-<p>
-			
-	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
 
-	<form accept-charset="UTF-8" name="input" id="input4"
-		action="../RegistrationServlet" method="post">
-		<input type="hidden" id="command4" name="command" value=""> <input
-			type="hidden" id="paramName" name="paramName" value=""> <input
-			type="hidden" id="paramValue" name="paramValue" value=""> <a
-			href="#"
-			onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">El&ouml;nevez&eacute;s
-			kezd&eacute;se</a>
-	</form>
+	<div id="ADMIN_adatkezeles"></div>
+	<script>
+		$(function() {
+			$("#ADMIN_adatkezeles").load("ADMIN_adatkezeles.html");
+		});
+	</script>
+	<p></p>
 
-	<form accept-charsddet="UTF-8" name="input" id="input3"
-		action="../RegistrationServlet" method="post">
-		<input type="hidden" id="command3" name="command">
-	 <input
-		type="hidden" id="printPreRegisteredModels"
-		name="printPreRegisteredModels"> <a href="#"
-		onClick="document.getElementById('printPreRegisteredModels').value='true'; document.getElementById('command3').value='printAllModels';document.getElementById('input3').submit();">Nevez&eacute;si
-		lapok nyomtat&aacute;sa (El&ouml;nevezettek)</a>
-	</form>
+	<div id="ADMIN_lekerdezes"></div>
+	<script>
+		$(function() {
+			$("#ADMIN_lekerdezes").load("ADMIN_lekerdezes.html");
+		});
+	</script>
 
 </body>
 </html>

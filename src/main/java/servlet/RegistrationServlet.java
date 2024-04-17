@@ -80,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.04.14.";
+	public String VERSION = "2024.04.17.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -387,7 +387,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			if (param.startsWith("userID")) {
 				final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, param));
-				loginSuccessful(request, response, servletDAO.getUser(userID));
+				loginSuccessful(request, response, servletDAO.getUser(userID), servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show")));
 				return;
 			}
 		}
@@ -451,34 +451,36 @@ public class RegistrationServlet extends HttpServlet {
 			final String passwordInRequest = servletDAO
 					.encodeString(ServletUtil.getRequestAttribute(request, "password"));
 
-			if (StringEncoder.encode(passwordInRequest).equals(user.password) && user.enabled) {
-				loginSuccessful(request, response, user);
-			} else {
+			String show;
+			
+			try {
+				show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
+			} catch (final Exception e) {
+				if(user.isAdminUser() || isOnSiteUse())
+					show = null;
+				else
+				{
+					writeErrorResponse(response, languageUtil.getLanguage(user.language).getString("select.show"));
+					return;
+				}
+			}
+			
+			if (!user.enabled || // 
+					!StringEncoder.encode(passwordInRequest).equals(user.password) || // 
+					(user.isCategoryAdminUser() && !user.getEmail().equals(StringEncoder.fromBase64(show)))) {
 				logger.info("login(): Authentication failed. email: " + email + " user.password: [" + user.password
 						+ "] HTTP password: [" + ServletUtil.getRequestAttribute(request, "password")
 						+ "] user.enabled: " + user.enabled);
 
 				writeErrorResponse(response, language.getString("authentication.failed") + " "
 						+ language.getString("email") + ": [" + email + "]");
-			}
-	}
-
-	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user)
-			throws IOException, SQLException {
-		String show;
-
-		try {
-			show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
-		} catch (final Exception e) {
-			if(user.isAdminUser() || isOnSiteUse())
-				show = null;
-			else
-			{
-				writeErrorResponse(response, languageUtil.getLanguage(user.language).getString("select.show"));
-				return;
+			} else {
+				loginSuccessful(request, response, user, show);
 			}
 		}
 
+	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user, final String show)
+			throws IOException, SQLException {
 		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
 				+ show);
 		
@@ -1317,6 +1319,10 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</tr>");
 
 		for (final User user : users) {
+			if(user.isAdminUser()) {
+				continue;
+			}
+
 			buff.append("<tr>");
 
 			buff.append("<td align='center' >");
@@ -1786,6 +1792,10 @@ public class RegistrationServlet extends HttpServlet {
 		// + submitLabel + "'><p>");
 		for (int i = 0; i < users.size(); i++) {
 			final User user = users.get(i);
+			
+			if(user.isAdminUser()) {
+				continue;
+			}
 
 			buff.append("<label><input type='checkbox' name='userID" + i + "' value='" + user.userID
 					+ "' onClick='document.input.submit()'/>");
