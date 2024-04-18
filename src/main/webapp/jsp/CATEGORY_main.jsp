@@ -5,33 +5,31 @@
 <%@page import="util.*"%>
 
 <%
-User user = null;
-RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-ServletDAO servletDAO = servlet.getServletDAO();
-try {
-	user = servlet.getUser(request);
-} catch (Exception ex) {
-}
 
-if (user == null || !"CATEGORY".equals(user.language)) {
-	response.sendRedirect("../index.jsp");
-	return;
-}
+System.out.println("kaka....");
+
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	ServletDAO servletDAO = servlet.getServletDAO();
+	User user = null;
+	try {
+		user = servlet.getUser(request);
+	} catch (Exception ex) {
+	}
+	
+	if (user == null || !user.isAdminUser()) {
+		response.sendRedirect("../index.jsp");
+		return;
+	}
 %>
 
-<html>
-<head>
 <link rel="stylesheet" href="base.css" media="screen" />
 <script type="text/javascript" src="findUser.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <!-- 
 <link rel="stylesheet" href="base.css" media="screen" />
  -->
 
-<body>
 	<%
 	String show = (String) session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
 	if (show == null) {
@@ -50,7 +48,19 @@ if (user == null || !"CATEGORY".equals(user.language)) {
 		<input type="hidden" name="language" value="HU">
 		Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT> - <a href="#"
 			onClick="document.getElementById('command').value='inputForLogoUpload';this.parentNode.submit();">Versenyhez
-			log&oacute; felt&ouml;lt&eacute;s</a> - <a
+			log&oacute; felt&ouml;lt&eacute;s</a> 
+<%
+	if(user.isSuperAdminUser()) {
+%>
+			-
+			<a href="#"
+			onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';this.parentNode.submit();">Felhaszn&aacute;l&oacute;i
+			adatok lek&eacute;rdez&eacute;se/m&oacute;dos&iacute;t&aacute;sa</a> 			
+<%
+	}
+%>
+			- 			
+			<a
 			href="#"
 			onClick="document.getElementById('command').value='logout';this.parentNode.submit();">Kijelentkez&eacute;s</a>
 		<hr>
@@ -120,6 +130,3 @@ if (user == null || !"CATEGORY".equals(user.language)) {
 			$("#ADMIN_lekerdezes").load("ADMIN_lekerdezes.html");
 		});
 	</script>
-
-</body>
-</html>
