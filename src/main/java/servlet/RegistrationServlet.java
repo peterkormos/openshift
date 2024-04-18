@@ -1178,7 +1178,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void listUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		ServletUtil.writeResponse(response, getUserTable(getUser(request).language));
+		ServletUtil.writeResponse(response, getUserTable(getUser(request)));
 	}
 
 	public void listCategories(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1258,8 +1258,8 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</table>");
 	}
 
-	public StringBuilder getUserTable(final String languageCode) throws Exception {
-		final ResourceBundle language = languageUtil.getLanguage(languageCode);
+	public StringBuilder getUserTable(final User loggedInUser) throws Exception {
+		final ResourceBundle language = languageUtil.getLanguage(loggedInUser.language);
 
 		final StringBuilder buff = new StringBuilder();
 
@@ -1319,7 +1319,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</tr>");
 
 		for (final User user : users) {
-			if(user.isAdminUser()) {
+			if(!loggedInUser.isSuperAdminUser() && user.isAdminUser()) {
 				continue;
 			}
 
@@ -1793,7 +1793,7 @@ public class RegistrationServlet extends HttpServlet {
 		for (int i = 0; i < users.size(); i++) {
 			final User user = users.get(i);
 			
-			if(user.isAdminUser()) {
+			if(!getUser(request).isSuperAdminUser() && user.isAdminUser()) {
 				continue;
 			}
 
