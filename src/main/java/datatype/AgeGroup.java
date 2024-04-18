@@ -2,7 +2,7 @@ package datatype;
 
 public enum AgeGroup
 {
-  ADULT(19, 999), JUNIOR(16, 18), YOUNGSTER(13, 15), CHILD(0, 12), ALL(0, 999);
+  ADULT(19, 999), JUNIOR(16, 18), YOUNGSTER(13, 15), CHILD(0, 12), UpToAdult(0, 18), ALL(0, 999);
 
   private int from;
   private int to;
