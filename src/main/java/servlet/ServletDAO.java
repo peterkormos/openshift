@@ -1028,6 +1028,32 @@ public class ServletDAO extends HibernateDAO
 	return getModels(where);
   }
 
+	public int getModelsInCategory(final int userID, final int categoryID) throws SQLException {
+		ResultSet rs = null;
+		try {
+			final PreparedStatement queryStatement = getDBConnection()
+					.prepareStatement("select count(*) from MAK_MODEL where USER_ID = ? AND CATEGORY_ID = ?");
+
+			queryStatement.setInt(1, userID);
+			queryStatement.setInt(2, categoryID);
+			rs = queryStatement.executeQuery();
+			rs.next();
+			return rs.getInt(1);
+		} finally {
+			closeResultSet(rs);
+		}
+	}
+
+	public void closeResultSet(ResultSet rs) {
+		try {
+			if (rs != null) {
+				rs.close();
+			}
+		} catch (final Exception ex) {
+			logger.fatal("", ex);
+		}
+	}
+
   public List<Model> getModels(final int userID) throws SQLException
   {
 	return getModels(userID == INVALID_USERID ? "" : "USER_ID = " + userID);
