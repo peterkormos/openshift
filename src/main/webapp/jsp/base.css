@@ -101,7 +101,7 @@ a:active {
 }
 
 .flash.Error {
-	padding-left: 20px;
+	padding-left: 30px;
 	background: url(../icons/exclamation.png) 8px 50% no-repeat;
 	background-color: #ffe3e3;
 	border: 1px solid;
