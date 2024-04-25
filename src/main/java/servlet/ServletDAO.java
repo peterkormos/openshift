@@ -1272,7 +1272,8 @@ public class ServletDAO extends HibernateDAO
 
 	  returned.add(new String[] { "&nbsp", "" });
 	  final List<User> users = getUsers();
-	  final Map<String, HashSet<Integer>> activeModelers = new HashMap<String, HashSet<Integer>>();
+	  final Map<String, HashSet<Integer>> modelersPerCountry = new HashMap<>();
+	  final Map<String, HashSet<Model>> modelsPerCountrySet = new HashMap<>();
 
 	  int allModels = 0;
 
@@ -1301,13 +1302,21 @@ public class ServletDAO extends HibernateDAO
 		  {
 			if (user.userID == model.userID)
 			{
-			  HashSet<Integer> userIDs = activeModelers.get(user.country);
+			  HashSet<Integer> userIDs = modelersPerCountry.get(user.country);
 			  if (userIDs == null)
 			  {
 				userIDs = new HashSet<Integer>();
-				activeModelers.put(user.country, userIDs);
+				modelersPerCountry.put(user.country, userIDs);
 			  }
 			  userIDs.add(user.userID);
+
+			  HashSet<Model> modelsPerCountry = modelsPerCountrySet.get(user.country);
+			  if (modelsPerCountry == null)
+			  {
+				  modelsPerCountry = new HashSet<Model>();
+				  modelsPerCountrySet.put(user.country, modelsPerCountry);
+			  }
+			  modelsPerCountry.add(model);
 			}
 		  }
 		}
@@ -1325,18 +1334,27 @@ public class ServletDAO extends HibernateDAO
 
 	  // ossz regisztralt felhasznalo
 	  int modelers = 0;
-	  for (final String country : activeModelers.keySet())
+	  for (final String country : modelersPerCountry.keySet())
 	  {
-		modelers += activeModelers.get(country).size();
+		modelers += modelersPerCountry.get(country).size();
 	  }
 
 	  returned.add(new String[] { language.getString("competitors.number")+": ", String.valueOf(modelers) });
 
 	  // jelenleg nevezok
-	  for (final String country : activeModelers.keySet().stream().sorted().collect(Collectors.toList()))
+	  for (final String country : modelersPerCountry.keySet().stream().sorted().collect(Collectors.toList()))
 	  {
 		returned.add(new String[] { language.getString("competitors.number.per.country")+": <b>" + country + "</b>",
-		    String.valueOf(activeModelers.get(country).size()) });
+		    String.valueOf(modelersPerCountry.get(country).size()) });
+	  }
+	  
+	  returned.add(new String[] { "&nbsp", "" });
+
+	  // nevezett makettek száma országonként
+	  for (final String country : modelsPerCountrySet.keySet().stream().sorted().collect(Collectors.toList()))
+	  {
+		  returned.add(new String[] { "Nevezett makettek száma országonként: <b>" + country + "</b>",
+				  String.valueOf(modelsPerCountrySet.get(country).size()) });
 	  }
 	  
 	  //helyfoglalás
