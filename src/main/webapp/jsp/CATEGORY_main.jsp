@@ -6,8 +6,6 @@
 
 <%
 
-System.out.println("kaka....");
-
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ServletDAO servletDAO = servlet.getServletDAO();
 	User user = null;
