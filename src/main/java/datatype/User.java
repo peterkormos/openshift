@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class User implements Serializable {
+	
+	private static final long serialVersionUID = -8059689879773108457l;
 	public int userID;
 	public String password;
 	public String firstName;

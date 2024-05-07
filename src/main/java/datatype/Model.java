@@ -4,27 +4,44 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import datatype.Detailing.DetailingGroup;
 
+@Table(name = "MAK_MODEL")
 public class Model implements Serializable {
     private static final long serialVersionUID = -3161543148518903037L;
 
+    @Column(name = "MODEL_ID")
     public int modelID;
-
+    
+    @Column(name = "USER_ID")
     public int userID;
+    @Column(name = "CATEGORY_ID")
     public int categoryID;
 
+    @Column(name = "MODEL_SCALE")
     public String scale;
+    @Column(name = "MODEL_NAME")
     public String name;
+    @Column(name = "PRODUCER")
     public String producer;
+    @Column(name = "COMMENTS")
     public String comment;
 
+    @Column(name = "IDENTIFICATION")
     public String identification;
+    @Column(name = "MARKINGS")
     public String markings;
+    @Column(name = "GLUEDTOBASE")
     public boolean gluedToBase;
 
+//SCRATCH_EXTERNALSURFACE, SCRATCH_COCKPIT, SCRATCH_ENGINE, SCRATCH_UNDERCARRIAGE, SCRATCH_GEARBAY, SCRATCH_ARMAMENT, SCRATCH_CONVERSION, "
+//PHOTOETCHED_EXTERNALSURFACE, PHOTOETCHED_COCKPIT, PHOTOETCHED_ENGINE, PHOTOETCHED_UNDERCARRIAGE, PHOTOETCHED_GEARBAY, PHOTOETCHED_ARMAMENT, PHOTOETCHED_CONVERSION, "
+//RESIN_EXTERNALSURFACE, RESIN_COCKPIT, RESIN_ENGINE, RESIN_UNDERCARRIAGE, RESIN_GEARBAY, RESIN_ARMAMENT, RESIN_CONVERSION, "
+//DOCUMENTATION_EXTERNALSURFACE, DOCUMENTATION_COCKPIT, DOCUMENTATION_ENGINE, DOCUMENTATION_UNDERCARRIAGE, DOCUMENTATION_GEARBAY, DOCUMENTATION_ARMAMENT, DOCUMENTATION_CONVERSION"
     public Map<DetailingGroup, Detailing> detailing;
 
     @Transient
