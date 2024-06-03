@@ -4,23 +4,39 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "MAK_CATEGORY")
 public class Category extends Record
 {
-  @Column
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "CATEGORY_GROUP_ID")
+//	@JoinTable(name = "MAK_CAT_CATG", joinColumns = {
+//	})
   public CategoryGroup group;
-  @Column
+  @Column(name = "CATEGORY_CODE")
   public String categoryCode;
-  @Column
+  @Column(name = "CATEGORY_DESCRIPTION")
   public String categoryDescription;
-  @Column
+  @Column(name = "MASTER")
   private boolean master;
-  @Column
+  @Column(name = "MODEL_CLASS")
+  @Enumerated(EnumType.STRING)
   private ModelClass modelClass;
-  @Column
+	@Column(name = "ageGroup")
+	@Enumerated(EnumType.STRING)
   private AgeGroup ageGroup;
 
   public CategoryGroup getGroup()
@@ -58,10 +74,9 @@ public class Category extends Record
 
   }
 
-  public Category(final int categoryID, final String categoryCode, final String categoryDescription, final CategoryGroup group,
+  public Category(final String categoryCode, final String categoryDescription, final CategoryGroup group,
 	  boolean master, ModelClass modelClass, AgeGroup ageGroup)
   {
-	this.setId(categoryID);
 	this.categoryCode = categoryCode;
 	this.categoryDescription = categoryDescription;
 	this.group = group;
@@ -108,4 +123,19 @@ public class Category extends Record
 	    + ", categoryDescription=" + categoryDescription + ", master=" + master + ", modelClass=" + modelClass + ", ageGroup="
 	    + ageGroup + "]";
   }
-}
+	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_Category")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
+	@Id
+	@Column(name = "CATEGORY_ID")
+	public int id;
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+	}

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -51,7 +52,7 @@ public class HibernateDAO
 	this.configFile = configFile;
   }
 
-  public void delete(int id, Class<? extends Record> recordClass) throws Exception
+  public void delete(int id, Class<? extends Record> recordClass)
   {
 	Session session = null;
 
@@ -71,7 +72,27 @@ public class HibernateDAO
 	}
   }
 
-  public int getNextID(Class<? extends Record> recordClass) throws Exception
+  public void delete(Record record)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  
+		  session.beginTransaction();
+		  
+		  session.delete(record);
+		  
+		  session.getTransaction().commit();
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public int getNextID(Class<? extends Record> recordClass)
   {
 	Session session = null;
 
@@ -91,7 +112,7 @@ public class HibernateDAO
 	}
   }
 
-  public <T> T get(int id, Class<T> recordClass) throws Exception
+  public <T> T get(int id, Class<T> recordClass)
   {
 	Session session = null;
 
@@ -101,12 +122,12 @@ public class HibernateDAO
 
 	  session.beginTransaction();
 
-	  T returned = (T) session.createQuery("From " + recordClass.getSimpleName() + " as u where u.id = ?")
+	  T returned = (T) session.createQuery("From " + recordClass.getName() + " as r where r.id = ?")
 		  .setInteger(0, id).uniqueResult();
 
 	  if (returned == null)
 	  {
-		throw new Exception("No record is found with id: " + id);
+		throw new IllegalArgumentException("No record is found with id: " + id);
 	  }
 	  
 	  return returned;
@@ -117,8 +138,87 @@ public class HibernateDAO
 	}
   }
 
+  public <T> List<T> get(Class<T> recordClass, String whereClause)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  
+		  session.beginTransaction();
+		  
+		  List<T> returned = (List<T>) session.createQuery("From " + recordClass.getName() + " as r where " + whereClause)
+				  .list();
+		  
+		  if (returned == null)
+		  {
+			  throw new IllegalArgumentException("No record is found with whereClause: " + whereClause);
+		  }
+		  
+		  return returned;
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public <T> void delete(Class<T> recordClass, String setWhereClause)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  session.createQuery("delete from " + recordClass.getName() + " as r set " + setWhereClause).executeUpdate();
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public <T> void update(Class<T> recordClass, String whereClause)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  session.createQuery("update " + recordClass.getName() + " as r where " + whereClause).executeUpdate();
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public <T> int count(Class<T> recordClass, String whereClause)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  
+		  session.beginTransaction();
+		  
+		  int returned = (int) session.createQuery("count(*) From " + recordClass.getName() + " as r where " + whereClause)
+				  .uniqueResult();
+		  
+		  return returned;
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
   @SuppressWarnings("unchecked")
-  public <T> List<T> getAll(Class<T> recordClass) throws Exception
+  public <T> List<T> getAll(Class<T> recordClass)
   {
 	Session session = null;
 
@@ -136,7 +236,7 @@ public class HibernateDAO
 	}
   }
 
-  public void save(Record record) throws Exception
+  public void save(Record record)
   {
 	try
 	{

@@ -2,21 +2,22 @@ package datatype;
 
 import java.io.Serializable;
 
-public class CategoryGroup implements Serializable
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "MAK_CATEGORY_GROUP")
+public class CategoryGroup extends Record
 {
+	@Column(name = "MODEL_SHOW")
   public String show;
+	@Column(name = "CATEGORY_GROUP")
   public String name;
-  public int categoryGroupID;
-
-  public int getCategoryGroupID()
-  {
-	return categoryGroupID;
-  }
-
-  public void setCategoryGroupID(final int categoryGroupID)
-  {
-	this.categoryGroupID = categoryGroupID;
-  }
 
   public String getShow()
   {
@@ -43,9 +44,8 @@ public class CategoryGroup implements Serializable
 
   }
 
-  public CategoryGroup(final int categoryGroupID, final String show, final String group)
+  public CategoryGroup(final String show, final String group)
   {
-	this.categoryGroupID = categoryGroupID;
 	this.show = show;
 	this.name = group;
   }
@@ -53,7 +53,22 @@ public class CategoryGroup implements Serializable
   @Override
   public String toString()
   {
-	return "CategoryGroup [show=" + show + ", categoryGroupID=" + categoryGroupID + ", group=" + name + "]";
+	return "CategoryGroup [show=" + show + ", categoryGroupID=" + getId() + ", group=" + name + "]";
   }
 
+	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_Category")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
+	@Id
+	@Column(name = "CATEGORY_GROUP_ID")
+	public int id;
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
 }

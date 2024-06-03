@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import datatype.Detailing;
-import datatype.Detailing.DetailingCriteria;
-import datatype.Detailing.DetailingGroup;
 import datatype.Model;
 import datatype.User;
 //import net.sf.jasperreports.engine.JRException;

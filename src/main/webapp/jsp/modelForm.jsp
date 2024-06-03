@@ -1,6 +1,6 @@
 <%@page import="org.apache.poi.util.SystemOutLogger"%>
-<%@page import="datatype.Detailing.DetailingCriteria"%>
-<%@page import="datatype.Detailing.DetailingGroup"%>
+<%@page import="datatype.DetailingCriteria"%>
+<%@page import="datatype.DetailingGroup"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 <%@page import="util.*"%>
@@ -87,7 +87,7 @@ onsubmit="return checkMandatory(this);"
 	if (model != null)
 	{
 %>
-		<input type='hidden' name='modelID' value='<%=model.modelID%>'>
+		<input type='hidden' name='modelID' value='<%=model.getId()%>'>
 <%
 	}
 %>
@@ -206,7 +206,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 	<b>
 	<%=language.getString("models.width")%>:
 		<%
-		String modelWidth = model == null ? "" : String.valueOf(ModelWithDimension.class.cast(model).getWidth());
+		String modelWidth = model == null ? "" : String.valueOf(model.getWidth());
 		%> <jsp:include page="textInput.jsp">
 			<jsp:param name="name" value="modelWidth" />
 			<jsp:param name="value" value="<%=modelWidth%>" />
@@ -217,7 +217,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 
 <%=language.getString("models.length")%>:
 		<%
-		String modelHeight = model == null ? "" : String.valueOf(ModelWithDimension.class.cast(model).getLength());
+		String modelHeight = model == null ? "" : String.valueOf(model.getLength());
 %> <jsp:include page="textInput.jsp">
 			<jsp:param name="name" value="modelHeight" />
 			<jsp:param name="value" value="<%=modelHeight%>" />
@@ -318,7 +318,7 @@ for (DetailingGroup group : DetailingGroup.values())
 %>
 	<td align="center"><label><input name='<%= "detailing." + group.name() + "." + criteria.name() %>' 
 	style="zoom: 2;"
-	type='checkbox' value='on' <%= (model == null || !model.getDetailingGroup(group).getCriteria(criteria) ? "" : "checked='checked'")%> ></label></td>
+	type='checkbox' value='on' <%= (model == null || !model.isDetailed(group, criteria) ? "" : "checked='checked'")%> ></label></td>
 <%	
 	  }
 %>

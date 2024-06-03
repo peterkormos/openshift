@@ -17,6 +17,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -58,15 +59,14 @@ import datatype.AwardedModel;
 import datatype.Category;
 import datatype.CategoryGroup;
 import datatype.Detailing;
-import datatype.Detailing.DetailingCriteria;
-import datatype.Detailing.DetailingGroup;
+import datatype.DetailingCriteria;
+import datatype.DetailingGroup;
 import datatype.EmailParameter;
 import datatype.LoginConsent;
 import datatype.LoginConsent.LoginConsentType;
 import datatype.MainPageNotice;
 import datatype.Model;
 import datatype.ModelClass;
-import datatype.ModelWithDimension;
 import datatype.User;
 import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
@@ -80,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.04.23.";
+	public String VERSION = "2024.05.09.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -592,37 +592,22 @@ public class RegistrationServlet extends HttpServlet {
 		for (int i = 1; i <= rows; i++) {
 			final String httpParameterPostTag = String.valueOf(i);
 
-			// if (ServletUtil.getRequestAttribute(request, "firstname" +
-			// httpParameterPostTag).trim().length() == 0)
-			// {
-			// continue;
-			// }
-
 			if (ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag).trim().length() == 0) {
 				continue;
 			}
 
 			// register model for new user...
 			if (i == 1 || !(
-			// ServletUtil.getRequestAttribute(request, "firstname" +
-			// httpParameterPostTag)
-			// +
 			ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag)).equals((
-			// ServletUtil.getRequestAttribute(request, "firstname" +
-			// String.valueOf(i - 1))
-			// +
 			ServletUtil.getRequestAttribute(request, "lastname" + String.valueOf(i - 1))))) {
-				// if (user != null && user.email != null && i > 1)
-				// {
-				// sendEmail(user, true);
-				// }
 
 				user = directRegisterUser(request, language, httpParameterPostTag);
 				users.add(user);
 			}
 
-			final Model model = createModel(servletDAO.getNextID("MODEL", "MODEL_ID"), user.userID, request,
-					httpParameterPostTag);
+			final Model model = new Model();
+			model.setUser(user);
+			createModel(model, request, httpParameterPostTag);
 
 			servletDAO.saveModel(model);
 
@@ -736,7 +721,7 @@ public class RegistrationServlet extends HttpServlet {
                 returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.city));
                 returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.country));
                 returned.add(modelsUser.userID);
-                returned.add(model.modelID);
+                returned.add(model.getId());
                 returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
                 returned.add(StringEscapeUtils.unescapeHtml4(model.name));
                 returned.add(StringEscapeUtils.unescapeHtml4(model.scale));
@@ -891,13 +876,13 @@ public class RegistrationServlet extends HttpServlet {
 
 		for (final AwardedModel awardedModel : servletDAO.getAwardedModels()) {
 			if (servletDAO.getCategory(awardedModel.categoryID).group.show.equals(show)) {
-				servletDAO.deleteAwardedModel(awardedModel.modelID);
+				servletDAO.deleteAwardedModel(awardedModel.getId());
 			}
 		}
 
 		for (final Model model : servletDAO.getModels(servletDAO.INVALID_USERID)) {
 			if (servletDAO.getCategory(model.categoryID).group.show.equals(show)) {
-				servletDAO.deleteModel(model.modelID);
+				servletDAO.deleteModel(model);
 			}
 		}
 
@@ -907,7 +892,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		for (final CategoryGroup categoryGroup : servletDAO.getCategoryGroups()) {
 			if (categoryGroup.show.equals(show)) {
-				servletDAO.deleteCategoryGroup(categoryGroup.categoryGroupID);
+				servletDAO.deleteCategoryGroup(categoryGroup.getId());
 			}
 		}
 
@@ -1081,7 +1066,7 @@ public class RegistrationServlet extends HttpServlet {
 			final Category category = servletDAO.getCategory(model.categoryID);
 			List<EmailParameter> modelParameters = Arrays.asList(//
 					EmailParameter.create(language.getString("show"), category.group.show), //
-					EmailParameter.create(language.getString("modelID"), String.valueOf(model.modelID)), //
+					EmailParameter.create(language.getString("modelID"), String.valueOf(model.getId())), //
 					EmailParameter.create(language.getString("models.name"), model.name), //
 					EmailParameter.create(language.getString("scale"), model.scale), //
 					EmailParameter.create(language.getString("models.producer"), model.producer), //
@@ -1122,7 +1107,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
-	    final Category newCategory = new Category(servletDAO.getNextID("CATEGORY", "CATEGORY_ID"),
+	    final Category newCategory = new Category(
 	            ServletUtil.getRequestAttribute(request, "categorycode"),
 	            ServletUtil.getRequestAttribute(request, "categorydescription"),
 	            servletDAO.getCategoryGroup(
@@ -1162,7 +1147,6 @@ public class RegistrationServlet extends HttpServlet {
 		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
 			String show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
 		final CategoryGroup categoryGroup = new CategoryGroup(
-				servletDAO.getNextID("CATEGORY_GROUP", "CATEGORY_group_ID"),
 				show, ServletUtil.getRequestAttribute(request, "group"));
 
     	final HttpSession session = request.getSession(false);
@@ -1433,8 +1417,8 @@ public class RegistrationServlet extends HttpServlet {
 				continue;
 			}
 
-			buff.append("<label><input type='radio' name='categoryGroupID' value='" + group.categoryGroupID + "' "
-			        + (group.getCategoryGroupID() == category.getGroup().getCategoryGroupID() ? "checked='checked'" :  "")
+			buff.append("<label><input type='radio' name='categoryGroupID' value='" + group.getId() + "' "
+			        + (group.getId() == category.getGroup().getId() ? "checked='checked'" :  "")
 			        + "/>");
 			buff.append(group.show + " - " + group.name + "</label><br>");
 		}
@@ -1541,7 +1525,8 @@ public class RegistrationServlet extends HttpServlet {
 
 		final int modelID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID"));
 
-		final Model model = createModel(modelID, servletDAO.getModel(modelID).userID, request);
+		final Model model = servletDAO.getModel(modelID);
+		createModel(model, request);
 		User user = getUser(request);
         if(user.isAdminUser() || (!user.isAdminUser() && user.getUserID() == model.getUserID())) {   
 			deleteModel(request);
@@ -1563,7 +1548,9 @@ public class RegistrationServlet extends HttpServlet {
 			UserNotLoggedInException, NumberFormatException, MissingRequestParameterException {
 		final User user = getUser(request);
 
-		final Model model = createModel(servletDAO.getNextID("MODEL", "MODEL_ID"), user.userID, request);
+		final Model model = new Model();
+		model.setUser(user);
+		createModel(model, request);
 		
 		final int maxModelsPerCategory = 3;
 		if(servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
@@ -1571,7 +1558,7 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 
-		servletDAO.saveModel(model);
+		servletDAO.save(model);
 
 		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
 			final HttpSession session = request.getSession(false);
@@ -1607,24 +1594,25 @@ public class RegistrationServlet extends HttpServlet {
                 setNoticeInSession(session, new MainPageNotice(MainPageNotice.NoticeType.OK, noticeText));
 	}
 
-	private Model createModel(final int modelID, final int userID, final HttpServletRequest request)
+	private Model createModel(final Model model, final HttpServletRequest request)
 			throws NumberFormatException, MissingRequestParameterException {
-		return createModel(modelID, userID, request, "");
+		return createModel(model, request, "");
 	}
 
-	private Model createModel(final int modelID, final int userID, final HttpServletRequest request,
-			final String httpParameterPostTag) throws NumberFormatException, MissingRequestParameterException {
-		Model model = new Model(modelID, userID,
-						Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryID" + httpParameterPostTag)),
-						ServletUtil.getRequestAttribute(request, "modelscale" + httpParameterPostTag),
-						ServletUtil.getRequestAttribute(request, "modelname" + httpParameterPostTag),
-						ServletUtil.getRequestAttribute(request, "modelproducer" + httpParameterPostTag),
-						ServletUtil.getOptionalRequestAttribute(request, "modelcomment" + httpParameterPostTag),
-						ServletUtil.getOptionalRequestAttribute(request, "identification" + httpParameterPostTag),
-						ServletUtil.getOptionalRequestAttribute(request, "markings" + httpParameterPostTag),
-						ServletUtil.isCheckedIn(request, "gluedToBase" + httpParameterPostTag), getDetailing(request)
-								);
-		
+	private Model createModel(final Model model, final HttpServletRequest request, final String httpParameterPostTag)
+			throws NumberFormatException, MissingRequestParameterException {
+		model.setCategoryID(
+				Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryID" + httpParameterPostTag)));
+		model.setScale(ServletUtil.getRequestAttribute(request, "modelscale" + httpParameterPostTag));
+		model.setName(ServletUtil.getRequestAttribute(request, "modelname" + httpParameterPostTag));
+		model.setProducer(ServletUtil.getRequestAttribute(request, "modelproducer" + httpParameterPostTag));
+		model.setComment(ServletUtil.getOptionalRequestAttribute(request, "modelcomment" + httpParameterPostTag));
+		model.setIdentification(
+				ServletUtil.getOptionalRequestAttribute(request, "identification" + httpParameterPostTag));
+		model.setMarkings(ServletUtil.getOptionalRequestAttribute(request, "markings" + httpParameterPostTag));
+		model.setGluedToBase(ServletUtil.isCheckedIn(request, "gluedToBase" + httpParameterPostTag));
+		model.setDetailing(getDetailing(model, request));
+
 		return setDimensions(model, request, httpParameterPostTag);
 	}
 	
@@ -1635,7 +1623,8 @@ public class RegistrationServlet extends HttpServlet {
 			int modelHeight = Integer
 					.parseInt(ServletUtil.getRequestAttribute(request, "modelHeight" + httpParameterPostTag));
 			
-			return new ModelWithDimension(model, modelWidth, modelHeight);
+			model.setDimensions(modelWidth, modelHeight);
+			return model;
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -1643,16 +1632,16 @@ public class RegistrationServlet extends HttpServlet {
 		return model;
 	}
 
-	private Map<DetailingGroup, Detailing> getDetailing(final HttpServletRequest request) {
-		final Map<DetailingGroup, Detailing> detailing = new HashMap<DetailingGroup, Detailing>();
+	private Collection<Detailing> getDetailing(final Model model, final HttpServletRequest request) {
+		final Collection<Detailing> detailing = new LinkedList<>();
 
 		for (DetailingGroup group : DetailingGroup.values()) {
-			final Map<DetailingCriteria, Boolean> criterias = new HashMap<DetailingCriteria, Boolean>();
-
 			for (DetailingCriteria criteria : DetailingCriteria.values()) {
-				criterias.put(criteria, ServletUtil.isCheckedIn(request, "detailing." + group.name() + "." + criteria.name()));
+				boolean checked = ServletUtil.isCheckedIn(request, "detailing." + group.name() + "." + criteria.name());
+				if (checked) {
+					detailing.add(new Detailing(model, group, criteria, checked));
+				}
 			}
-			detailing.put(group, new Detailing(group, criterias));
 		}
 
 		return detailing;
@@ -1694,7 +1683,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(
 				"<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='post'  enctype='multipart/form-data'>");
 		for (final Model model : models) {
-			buff.append("<input type='radio' name='modelID' value='" + model.modelID + "'/>");
+			buff.append("<input type='radio' name='modelID' value='" + model.getId() + "'/>");
 			buff.append(model.scale + " - " + model.producer + " - " + model.name + "<br>");
 		}
 		buff.append("<p><input type='file' name='imageFile' />");
@@ -1743,7 +1732,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		for (final Model model : models) {
 			buff.append("<label>\n");
-			buff.append("<input type='radio' name='modelID' value='" + model.modelID + "' "
+			buff.append("<input type='radio' name='modelID' value='" + model.getId() + "' "
 					+ (models.size() == 1 ? "checked" : "") + "/>\n");
 			buff.append(model.scale + " - " + model.producer + " - " + model.name + "<br>");
 			buff.append("</label>\n");
@@ -1863,7 +1852,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		User user = getUser(request);
 		if(user.isAdminUser() || (!user.isAdminUser() && user.getUserID() == model.getUserID())) {
-			servletDAO.deleteModel(modelID);
+			servletDAO.deleteModel(model);
 			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
 		}
 	}
@@ -1927,7 +1916,7 @@ public class RegistrationServlet extends HttpServlet {
 				continue;
 			}
 
-			buff.append("<label><input type='radio' name='categoryGroupID' value='" + group.categoryGroupID + "'/>");
+			buff.append("<label><input type='radio' name='categoryGroupID' value='" + group.getId() + "'/>");
 			buff.append(group.show + " - " + group.name + "</label><br>");
 		}
 
@@ -2039,7 +2028,7 @@ public class RegistrationServlet extends HttpServlet {
 			final List<Model> models = servletDAO.getModels(user.userID);
 			int fee = calculateEntryFee(models);
 			for (final Model model : models) {
-				if (model.modelID == Integer.parseInt(modelID)) {
+				if (model.getId() == Integer.parseInt(modelID)) {
 					final List<Model> subList = new LinkedList<Model>();
 					subList.add(model);
 
@@ -2134,7 +2123,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__COUNTRY__", String.valueOf(user.country))
 
 							.replaceAll("__USER_ID__", String.valueOf(model.userID))
-							.replaceAll("__MODEL_ID__", String.valueOf(model.modelID))
+							.replaceAll("__MODEL_ID__", String.valueOf(model.getId()))
 							.replaceAll("__YEAR_OF_BIRTH__",
 									String.valueOf(servletDAO.getUser(model.userID).yearOfBirth))
 							.replaceAll("__MODEL_SCALE__", model.scale)
@@ -2159,7 +2148,7 @@ public class RegistrationServlet extends HttpServlet {
 						for (DetailingCriteria criteria : DetailingCriteria.values()) {
 							print = print.replaceAll(
 									"__" + group.getTemplateID() + "_" + criteria.getTemplateID() + "__",
-									model.getDetailingGroup(group).getCriteria(criteria) ? "X"
+									model.isDetailed(group, criteria) ? "X"
 
 											: "&nbsp");
 						}
@@ -2251,7 +2240,7 @@ public class RegistrationServlet extends HttpServlet {
                 showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
             if(showId == null)
                 showId = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
-	    return "index.jsp" + (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId) ? "?showId=" + showId : "");
+	    return "jsp/index.jsp" + (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId) ? "?showId=" + showId : "");
     }
 
     private void updateSystemSettings() throws SQLException {
@@ -2415,7 +2404,7 @@ public class RegistrationServlet extends HttpServlet {
 					.replaceAll("__CATEGORY_CODE__", String.valueOf(category.categoryCode))
 					.replaceAll("__CATEGORY_CODE__", String.valueOf(category.categoryCode))
 					.replaceAll("__MODEL_NAME__", String.valueOf(model.name))
-					.replaceAll("__MODEL_ID__", String.valueOf(model.modelID))
+					.replaceAll("__MODEL_ID__", String.valueOf(model.getId()))
 
 					.replaceAll("__AWARD__",
 							ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim()));
@@ -2607,7 +2596,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("<optgroup label='" + group.show + " - " + group.name + "'>");
 
 			for (final Category category : servletDAO.getCategoryList(show)) {
-				if (category.group.categoryGroupID != group.categoryGroupID) {
+				if (category.group.getId() != group.getId()) {
 					continue;
 				}
 

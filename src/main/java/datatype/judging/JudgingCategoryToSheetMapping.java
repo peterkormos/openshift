@@ -3,7 +3,11 @@ package datatype.judging;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import datatype.Record;
@@ -47,4 +51,19 @@ public class JudgingCategoryToSheetMapping extends Record{
 		return "JudgingCategory [categoryId=" + categoryId + ", judgingSheet=" + judgingSheet + "]";
 	}
 	
-}
+	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_JudgingSheet")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
+	@Id
+	@Column
+	public int id;
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+	}

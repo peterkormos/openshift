@@ -38,7 +38,7 @@ onchange="updateMandatoryFieldMark(this);"
 			<%
 			  for (final Category category : categoryList)
 					{
-					  if (category.group.categoryGroupID != group.categoryGroupID)
+					  if (category.group.getId() != group.getId())
 					  {
 						continue;
 					  }

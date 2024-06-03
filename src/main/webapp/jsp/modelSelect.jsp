@@ -13,7 +13,7 @@
 	{
 %>
 <label>
-		<input type='radio' name='modelID' value='<%=model.modelID%>'/>
+		<input type='radio' name='modelID' value='<%=model.getId()%>'/>
 		<%=model.scale%>
 		-
 		<%=model.producer%> 

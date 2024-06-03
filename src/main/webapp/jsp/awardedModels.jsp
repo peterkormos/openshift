@@ -78,7 +78,7 @@
 								  {
 						%>
 						<td align="center"><img
-							src='<%=servlet.getServletURL(request)%>/<%=Command.LOADIMAGE.name()%>/<%=awardedModel.modelID%>'>
+							src='<%=servlet.getServletURL(request)%>/<%=Command.LOADIMAGE.name()%>/<%=awardedModel.getId()%>'>
 						</td>
 						<%
 						  }

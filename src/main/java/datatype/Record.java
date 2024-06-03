@@ -3,50 +3,36 @@ package datatype;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 
 @MappedSuperclass
-public class Record implements Comparable<Record>, Serializable
-{
-  @Id
-  @Column
-  public int id;
+public abstract class Record implements Comparable<Record>, Serializable {
+	public Record() {
 
-  public Record()
-  {
+	}
 
-  }
+	public Record(int id) {
+		setId(id);
+	}
 
-  public Record(int id)
-  {
-	this.id = id;
-  }
+	public void update(Record record) {
+		setId(record.getId());
+	}
 
-  public void update(Record record)
-  {
-	this.id = record.id;
-  }
+	@Override
+	public String toString() {
+		return "id: " + getId();
+	}
 
-  @Override
-  public String toString()
-  {
-	return "id: " + id;
-  }
+	public abstract int getId();
+	public abstract void setId(int id);
 
-  public int getId()
-  {
-	return id;
-  }
-
-  public void setId(int id)
-  {
-	this.id = id;
-  }
-
-  @Override
-  public int compareTo(Record o)
-  {
-	return new Integer(id).compareTo(o.id);
-  }
+	@Override
+	public int compareTo(Record o) {
+		return new Integer(getId()).compareTo(o.getId());
+	}
 }

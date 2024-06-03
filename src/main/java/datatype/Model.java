@@ -1,22 +1,31 @@
 package datatype;
 
-import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import datatype.Detailing.DetailingGroup;
-
+@Entity
 @Table(name = "MAK_MODEL")
-public class Model implements Serializable {
+public class Model extends Record {
     private static final long serialVersionUID = -3161543148518903037L;
 
-    @Column(name = "MODEL_ID")
-    public int modelID;
-    
     @Column(name = "USER_ID")
     public int userID;
     @Column(name = "CATEGORY_ID")
@@ -38,11 +47,13 @@ public class Model implements Serializable {
     @Column(name = "GLUEDTOBASE")
     public boolean gluedToBase;
 
-//SCRATCH_EXTERNALSURFACE, SCRATCH_COCKPIT, SCRATCH_ENGINE, SCRATCH_UNDERCARRIAGE, SCRATCH_GEARBAY, SCRATCH_ARMAMENT, SCRATCH_CONVERSION, "
-//PHOTOETCHED_EXTERNALSURFACE, PHOTOETCHED_COCKPIT, PHOTOETCHED_ENGINE, PHOTOETCHED_UNDERCARRIAGE, PHOTOETCHED_GEARBAY, PHOTOETCHED_ARMAMENT, PHOTOETCHED_CONVERSION, "
-//RESIN_EXTERNALSURFACE, RESIN_COCKPIT, RESIN_ENGINE, RESIN_UNDERCARRIAGE, RESIN_GEARBAY, RESIN_ARMAMENT, RESIN_CONVERSION, "
-//DOCUMENTATION_EXTERNALSURFACE, DOCUMENTATION_COCKPIT, DOCUMENTATION_ENGINE, DOCUMENTATION_UNDERCARRIAGE, DOCUMENTATION_GEARBAY, DOCUMENTATION_ARMAMENT, DOCUMENTATION_CONVERSION"
-    public Map<DetailingGroup, Detailing> detailing;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "MAK_MAK_DETAILING")
+    @Nullable
+    public Collection<Detailing> detailing;
+    
+    @Transient
+    public Map<DetailingGroup, Map<DetailingCriteria, Boolean>> details;
 
     @Transient
     public User user;
@@ -69,14 +80,6 @@ public class Model implements Serializable {
 
     public Model() {
 
-    }
-
-    public int getModelID() {
-        return modelID;
-    }
-
-    public void setModelID(int modelID) {
-        this.modelID = modelID;
     }
 
     public int getUserID() {
@@ -151,18 +154,37 @@ public class Model implements Serializable {
         this.gluedToBase = gluedToBase;
     }
 
-    public Map<DetailingGroup, Detailing> getDetailing() {
-        return detailing;
-    }
-
-    public void setDetailing(Map<DetailingGroup, Detailing> detailing) {
+    public void setDetailing(Collection<Detailing> detailing) {
         this.detailing = detailing;
     }
 
-    public Model(int modelID, int userID, int categoryID, String scale, String name, String producer, String comment,
-	  String identification, String markings, boolean gluedToBase, Map<DetailingGroup, Detailing> detailing)
+    
+    @PostLoad
+    public void postLoad() {
+    	if(Objects.isNull(details)) {
+    		details = new HashMap<>();
+    		detailing.forEach(d -> {
+    			DetailingGroup detailingGroup = d.getDetailingGroup();
+    			Map<DetailingCriteria, Boolean> criterias = details.get(detailingGroup);
+    			if(Objects.isNull(criterias)) {
+    				criterias = new HashMap<>(); 
+    				details.put(detailingGroup, criterias);
+    			}
+    			
+    			criterias.put(d.getDetailingCriteria(), d.getChecked());
+    		});
+    	}
+    }
+    
+	public boolean isDetailed(DetailingGroup group, final DetailingCriteria criteria) {
+		postLoad();
+		
+		return Boolean.TRUE.equals(details.getOrDefault(group, new HashMap<>()).get(criteria));
+	}
+
+    public Model(int userID, int categoryID, String scale, String name, String producer, String comment,
+	  String identification, String markings, boolean gluedToBase)
   {
-	this.modelID = modelID;
 	this.userID = userID;
 	this.categoryID = categoryID;
 	this.scale = scale;
@@ -173,13 +195,11 @@ public class Model implements Serializable {
 	this.identification = identification;
 	this.markings = markings;
 	this.gluedToBase = gluedToBase;
-
-	this.detailing = detailing;
 	  }
   
 	public Model(Model model)
   {
-	this.modelID = model.modelID;
+	this.setId(model.getId());
 	this.userID = model.userID;
 	this.categoryID = model.categoryID;
 	this.scale = model.scale;
@@ -196,7 +216,7 @@ public class Model implements Serializable {
 
     @Override
     public String toString() {
-        String returned = " modelID: " + modelID + " userID: " + userID + " categoryID: " + categoryID + " scale: " + scale + " name: "
+        String returned = super.toString() + " userID: " + userID + " categoryID: " + categoryID + " scale: " + scale + " name: "
                 + name + " producer: " + producer + " comment: " + comment +
 
                 " identification: " + identification + " markings: " + markings + " gluedToBase: " + gluedToBase +
@@ -206,20 +226,53 @@ public class Model implements Serializable {
         return returned;
     }
 
-    public Detailing getDetailingGroup(DetailingGroup group) {
-        return detailing.get(group);
-    }
+	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_Model")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
+	@Id
+	@Column
+	public int id;
 
-	public String getDBFields() {
-		return "MODEL_ID, USER_ID, CATEGORY_ID, MODEL_SCALE, MODEL_NAME, PRODUCER, COMMENTS, "
-		          + "IDENTIFICATION, MARKINGS, GLUEDTOBASE, "
-		          + "SCRATCH_EXTERNALSURFACE, SCRATCH_COCKPIT, SCRATCH_ENGINE, SCRATCH_UNDERCARRIAGE, SCRATCH_GEARBAY, SCRATCH_ARMAMENT, SCRATCH_CONVERSION, "
-		          + "PHOTOETCHED_EXTERNALSURFACE, PHOTOETCHED_COCKPIT, PHOTOETCHED_ENGINE, PHOTOETCHED_UNDERCARRIAGE, PHOTOETCHED_GEARBAY, PHOTOETCHED_ARMAMENT, PHOTOETCHED_CONVERSION, "
-		          + "RESIN_EXTERNALSURFACE, RESIN_COCKPIT, RESIN_ENGINE, RESIN_UNDERCARRIAGE, RESIN_GEARBAY, RESIN_ARMAMENT, RESIN_CONVERSION, "
-		          + "DOCUMENTATION_EXTERNALSURFACE, DOCUMENTATION_COCKPIT, DOCUMENTATION_ENGINE, DOCUMENTATION_UNDERCARRIAGE, DOCUMENTATION_GEARBAY, DOCUMENTATION_ARMAMENT, DOCUMENTATION_CONVERSION";
+	@Override
+	public int getId() {
+		return id;
 	}
 
-	public String getDBFieldPlaceholders() {
-		return "?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?";
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Column(name = "MODEL_width")
+	private int width;
+	@Column(name = "MODEL_height")
+	private int length;
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public void setWidth(int width) {
+		this.width = width;
+	}
+	
+	public int getLength() {
+		return length;
+	}
+	
+	public void setLength(int length) {
+		this.length = length;
+	}
+
+	public void setDimensions(int width, int height) {
+		this.width = width;
+		this.length = height;
+	}
+	
+	public int getArea() {
+		return width * length;
+	}
+	
+	public boolean isOversized() {
+		return getArea() > 1000;
 	}
 }

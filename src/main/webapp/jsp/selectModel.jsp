@@ -23,13 +23,6 @@
         			String submitLabel = ServletUtil.getRequestAttribute(request, RegistrationServlet.SessionAttribute.SubmitLabel.name());
         			
         			final List<Model> models = servletDAO.getModels(user.userID);
-        	
-        /*
-        			else if(models.size() == 1)
-        			{
-        				response.sendRedirect("../RegistrationServlet/" + action + "?" + "modelID" + "=" + models.get(0).getModelID());			
-        			}
-        */
     %>
 
 <!DOCTYPE html>
@@ -77,7 +70,7 @@ function checkMandatory(form)
 			{
  %>
  			<label>
-			<input type='radio' name='modelID' value='<%= model.modelID %>' <%= (models.size() == 1 ? " checked='checked' " : "")  %>/>
+			<input type='radio' name='modelID' value='<%= model.getId() %>' <%= (models.size() == 1 ? " checked='checked' " : "")  %>/>
 			<%=model.scale + " - " + model.producer + " - " + model.name %>
 			</label>
 			<br>

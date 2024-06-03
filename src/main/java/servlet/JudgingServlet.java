@@ -336,7 +336,7 @@ public final class JudgingServlet extends HttpServlet {
     	@SuppressWarnings("unchecked")
 		Class<? extends Record> recordClass = (Class<? extends Record>) Class.forName(ServletUtil.getRequestAttribute(request, RequestParameter.Class.name()));
 		for (final Record record : dao.getAll(recordClass)) {
-            dao.delete(record.id, recordClass);
+            dao.delete(record.getId(), recordClass);
         }
 
         redirectRequest(request, response, "/" + getClass().getSimpleName());

@@ -1,6 +1,5 @@
-<%@page import="datatype.Detailing.DetailingCriteria"%>
-<%@page import="datatype.Detailing.DetailingCriteria"%>
-<%@page import="datatype.Detailing.DetailingGroup"%>
+<%@page import="datatype.DetailingCriteria"%>
+<%@page import="datatype.DetailingGroup"%>
 <%@page import="servlet.*"%>
 <%@page import="java.util.*"%>
 
@@ -149,7 +148,7 @@
 
 	<%
 		for (final Model model : models) {
-			if(filterToOversized && !ModelWithDimension.class.cast(model).isOversized()) {
+			if(filterToOversized && model.isOversized()) {
 				continue;
 			}
 			
@@ -157,13 +156,13 @@
 			
 			if (onlyPhotos) {
 				try {
-					servletDAO.loadImage(model.modelID);
+					servletDAO.loadImage(model.getId());
 				} catch (Exception ex) {
 					continue;
 				}
 			}
 	%>
-	<tr bgcolor="<%= highlight(ModelWithDimension.class.cast(model).isOversized())%>">
+	<tr bgcolor="<%= highlight(model.isOversized())%>">
 		<td>
 <%
   if (servlet.isRegistrationAllowed(show))
@@ -171,7 +170,7 @@
 %>
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.modelID%>">
+					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
 					<img src="../icons/add.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 				</a>
@@ -179,7 +178,7 @@
 
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.modelID%>">
+					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
 					<img src="../icons/delete2.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
@@ -205,10 +204,10 @@
 		%>
 		<td align='center'>
 			<%
-				for (String judge : servlet.judgingServletDAO.getJudges(category.categoryCode, model.modelID,
+				for (String judge : servlet.judgingServletDAO.getJudges(category.categoryCode, model.getId(),
 									model.userID)) {
 			%> <a
-			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.ModelID%>=<%=model.modelID%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
+			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.getId()%>=<%=model.getId()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
 
 			<%
 				}
@@ -237,15 +236,15 @@
 					if (onlyPhotos) {
 		%>
 		<td align='center' style='white-space: nowrap'><img
-			alt='<%=category.categoryCode%> - <%=model.modelID%>.jpg'
-			src='<%=servlet.getServletURL(request)%>/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=model.modelID%>'>
+			alt='<%=category.categoryCode%> - <%=model.getId()%>.jpg'
+			src='<%=servlet.getServletURL(request)%>/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=model.getId()%>'>
 		</td>
 		<%
 			}
 		%>
 		<td align='center'><%=model.userID%></td>
 
-		<td align='center'><%=model.modelID%></td>
+		<td align='center'><%=model.getId()%></td>
 		<%
 			}
 		%>
@@ -311,7 +310,7 @@
 						for (DetailingGroup group : DetailingGroup.values()) {
 					%>
 
-					<td align="center"><%=(model.getDetailingGroup(group).getCriteria(criteria) ? "X" : "")%></td>
+					<td align="center"><%=(model.isDetailed(group, criteria) ? "X" : "")%></td>
 					<%
 						}
 					%>
@@ -325,9 +324,9 @@
 				}
 		%>
 
-		<td align='center' style='white-space: nowrap'><%=String.valueOf(ModelWithDimension.class.cast(model).getWidth())%>
+		<td align='center' style='white-space: nowrap'><%=String.valueOf(model.getWidth())%>
 		</td>
-		<td align='center' style='white-space: nowrap'><%=String.valueOf(ModelWithDimension.class.cast(model).getLength())%>
+		<td align='center' style='white-space: nowrap'><%=String.valueOf(model.getLength())%>
 		</td>
 		<td>
 <%
@@ -336,7 +335,7 @@
 %>
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.modelID%>">
+					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
 					<img src="../icons/add.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 				</a>
@@ -344,7 +343,7 @@
 
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.modelID%>">
+					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
 					<img src="../icons/delete2.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>

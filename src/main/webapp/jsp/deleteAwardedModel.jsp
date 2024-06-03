@@ -10,8 +10,8 @@
     for (AwardedModel model : RegistrationServlet.servletDAO.getAwardedModels())
     {
       %>
-      <input type='radio' name='modelID' value='<%= model.modelID%>'/>
-      <%= model.modelID%>  -  
+      <input type='radio' name='modelID' value='<%= model.getId()%>'/>
+      <%= model.getId()%>  -  
       <%= model.scale%>  - 
       <%= model.name%>  -
       <%= RegistrationServlet.servletDAO.getUser(

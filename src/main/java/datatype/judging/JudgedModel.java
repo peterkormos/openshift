@@ -1,7 +1,11 @@
 package datatype.judging;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 
 import datatype.Model;
 import datatype.Record;
@@ -33,7 +37,7 @@ public class JudgedModel extends Record {
     
     public JudgedModel(Model model)
     {
-        this(0, model.getModelID(), model.getUserID(), model.getName());
+        this(0, model.getId(), model.getUserID(), model.getName());
     }
     
     public void setModel(Model model)
@@ -44,7 +48,7 @@ public class JudgedModel extends Record {
 	        this.modelsName = null;    		
     	}
     	else {
-	        this.modelID = model.getModelID();
+	        this.modelID = model.getId();
 	        this.modellerID = model.getUserID();
 	        this.modelsName = model.getName();
     	}
@@ -82,4 +86,19 @@ public class JudgedModel extends Record {
     	this.modellerID = modellerID;
       }
 
-}
+	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_JudgedModel")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
+	@Id
+	@Column
+	public int id;
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+	}

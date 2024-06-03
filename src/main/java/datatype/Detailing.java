@@ -1,98 +1,106 @@
 package datatype;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
-import datatype.Detailing.DetailingCriteria;
-import datatype.Detailing.DetailingGroup;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.MapKeyEnumerated;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-public class Detailing implements Serializable
-{
-  public static enum DetailingGroup { scratch("SCRATCH"), photoEtched("PE"), resin("RESIN"), documentation("DOC");
-	  private String templateID;
-	  DetailingGroup(String templateID) 
-	  {
-		  this.templateID = templateID;
-  }
-	  public String getTemplateID() {
-		return templateID;
+@Entity
+@Table(name = "MAK_DETAILING")
+public class Detailing extends Record {
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinTable(name = "MAK_MAK_DETAILING")
+	private Model model;
+	@Column
+	@Enumerated(EnumType.STRING)
+	private DetailingGroup detailingGroup;
+	@Column
+	@Enumerated(EnumType.STRING)
+	private DetailingCriteria detailingCriteria;
+	@Column
+	private Boolean checked;
+
+	public Detailing() {
+
 	}
-  };
 
-  public static enum DetailingCriteria  { externalSurface("externalSurface"), cockpit("cockpit"), engine("engine"), 
-		  undercarriage("undercarriage"),
-	gearBay("gearBay",
-		      false), 
-	armament("armament"), conversion("conversion") ;
-	  
-	  private String templateID;
-	  private boolean visible = true;
-
-	  DetailingCriteria(String templateID) 
-	  {
-		  this.templateID = templateID;
-  }
-	  public String getTemplateID() {
-		return templateID;
+	public Detailing(Model model, DetailingGroup detailingGroup, DetailingCriteria detailingCriteria, Boolean checked) {
+//		super(id);
+		this.model = model;
+		this.detailingGroup = detailingGroup;
+		this.detailingCriteria = detailingCriteria;
+		this.checked = checked;
 	}
-	  
-	  DetailingCriteria(String templateID, boolean visible)
-	  {
-		  this(templateID);
-		  this.visible = visible;
-  }
-	  
-	  public boolean isVisible() {
-		return visible;
+
+	public Model getModel() {
+		return model;
 	}
-	};
 
-  public DetailingGroup group;
+	public void setModel(Model model) {
+		this.model = model;
+	}
 
-  public Map<DetailingCriteria, Boolean> criterias = new HashMap<DetailingCriteria, Boolean>();
+	public DetailingGroup getDetailingGroup() {
+		return detailingGroup;
+	}
 
-  public DetailingGroup getGroup()
-  {
-	return group;
-  }
+	public void setDetailingGroup(DetailingGroup detailingGroup) {
+		this.detailingGroup = detailingGroup;
+	}
 
-  public void setGroup(DetailingGroup group)
-  {
-	this.group = group;
-  }
+	public DetailingCriteria getDetailingCriteria() {
+		return detailingCriteria;
+	}
 
-  public Map<DetailingCriteria, Boolean> getCriterias()
-  {
-	return criterias;
-  }
+	public void setDetailingCriteria(DetailingCriteria detailingCriteria) {
+		this.detailingCriteria = detailingCriteria;
+	}
 
-  public void setCriterias(Map<DetailingCriteria, Boolean>criterias)
-  {
-	this.criterias = criterias;
-  }
+	public Boolean getChecked() {
+		return checked;
+	}
 
-  public Detailing()
-  {
+	public void setChecked(Boolean checked) {
+		this.checked = checked;
+	}
 
-  }
+	@Override
+	public String toString() {
+		return "Detailing [modelID=" + model + ", detailingGroup=" + detailingGroup + ", detailingCriteria="
+				+ detailingCriteria + ", checked=" + checked + ", id=" + getId() + "]";
+	}
+	
+	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_Detailing")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
+	@Id
+	@Column
+	public int id;
 
-  public Detailing(DetailingGroup group, Map<DetailingCriteria, Boolean> criterias)
-  {
-	this.group = group;
-	this.criterias = criterias;
-  }
+	@Override
+	public int getId() {
+		return id;
+	}
 
-  @Override
-  public String toString()
-  {
-	return " group: " + group + " criterias: " + Arrays.asList(criterias);
-  }
-
-public boolean getCriteria(DetailingCriteria criteria) {
-	return criterias.get(criteria);
-}
-}
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+	}

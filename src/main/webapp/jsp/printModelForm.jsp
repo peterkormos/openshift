@@ -1,5 +1,5 @@
-<%@page import="datatype.Detailing.DetailingCriteria"%>
-<%@page import="datatype.Detailing.DetailingGroup"%>
+<%@page import="datatype.DetailingCriteria"%>
+<%@page import="datatype.DetailingGroup"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 <%@page import="util.*"%>
@@ -38,7 +38,7 @@
 			%>
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.modelID%>">
+					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
 					<img src="../icons/add.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 				</a>
@@ -46,21 +46,21 @@
 
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.modelID%>">
+					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
 					<img src="../icons/delete2.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
 			</div> <%
  	}
  %> <%
- 	List<String> judges = servlet.judgingServletDAO.getJudges(category.categoryCode, model.modelID,
+ 	List<String> judges = servlet.judgingServletDAO.getJudges(category.categoryCode, model.getId(),
  			model.userID);
  	if (!judges.isEmpty()) {
  %><p> <%=language.getString("judge")%>: <%
  	}
  	for (String judge : judges) {
  %><br> <a
-			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.ModelID%>=<%=model.modelID%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
+			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.ModelID%>=<%=model.getId()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
 
 			<%
 				}
@@ -92,7 +92,7 @@
 							</tr>
 							<tr>
 								<td valign="middle"><font><%=user.getUserID()%></font></td>
-								<td valign="middle"><font><%=model.getModelID()%></font></td>
+								<td valign="middle"><font><%=model.getId()%></font></td>
 								<td valign="middle"><font><%=model.getScale()%></font></td>
 								<td valign="middle"><font
 									style="border: 1px solid black; padding: 1mm; font-size: 4mm; white-space: nowrap;"><%=category.categoryCode%></font></td>
@@ -144,7 +144,7 @@
 					<%
 						for (DetailingGroup group : DetailingGroup.values()) {
 					%>
-					<td align="center"><%=model.getDetailingGroup(group).getCriteria(criteria) ? "X" : "&nbsp"%>
+					<td align="center"><%=model.isDetailed(group, criteria) ? "X" : "&nbsp"%>
 					</td>
 					<%
 						}

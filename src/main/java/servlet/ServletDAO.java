@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -32,12 +33,11 @@ import datatype.AwardedModel;
 import datatype.Category;
 import datatype.CategoryGroup;
 import datatype.Detailing;
-import datatype.Detailing.DetailingCriteria;
-import datatype.Detailing.DetailingGroup;
+import datatype.DetailingCriteria;
+import datatype.DetailingGroup;
 import datatype.LoginConsent;
 import datatype.Model;
 import datatype.ModelClass;
-import datatype.ModelWithDimension;
 import datatype.User;
 import exception.EmailNotFoundException;
 
@@ -296,7 +296,7 @@ public class ServletDAO extends HibernateDAO
 	  queryStatement.setInt(1, category.getId());
 	  encodeStringForDB(queryStatement, 2, category.categoryCode);
 	  encodeStringForDB(queryStatement, 3, category.categoryDescription);
-	  queryStatement.setInt(4, category.group.categoryGroupID);
+	  queryStatement.setInt(4, category.group.getId());
 	  queryStatement.setInt(5, category.isMaster() ? 1 : 0);
 	  queryStatement.setString(6, category.getModelClass().name());
 	  queryStatement.setString(7, category.getAgeGroup().name());
@@ -337,7 +337,7 @@ public class ServletDAO extends HibernateDAO
         try
         {
           queryStatement = getDBConnection().prepareStatement("SELECT * FROM MAK_AWARDEDMODELS"
-                  + (model == null ? "" : " WHERE MODEL_ID = " + model.getModelID()));
+                  + (model == null ? "" : " WHERE ID = " + model.getId()));
 
           rs = queryStatement.executeQuery();
 
@@ -378,7 +378,7 @@ public class ServletDAO extends HibernateDAO
 	  final List<AwardedModel> returned = new LinkedList<AwardedModel>();
 	  while (rs.next())
 	  {
-		returned.add(new AwardedModel(getModel(rs.getInt("MODEL_ID")), decodeStringFromDB(rs, "AWARD")));
+		returned.add(new AwardedModel(getModel(rs.getInt("ID")), decodeStringFromDB(rs, "AWARD")));
 	  }
 
 	  return returned;
@@ -403,53 +403,21 @@ public class ServletDAO extends HibernateDAO
 	}
   }
 
-  public List<Category> getCategoryList(final int CATEGORY_group_ID, final String show) throws SQLException
+  public List<Category> getCategoryList(final int categoryGroupId, final String show) throws SQLException
   {
-	PreparedStatement queryStatement = null;
-	ResultSet rs = null;
-
-	try
-	{
-	  queryStatement = getDBConnection().prepareStatement("SELECT * FROM MAK_CATEGORY"
-	      + (CATEGORY_group_ID == 0 ? "" : " WHERE CATEGORY_group_ID = " + CATEGORY_group_ID) + " order by CATEGORY_ID");
-
-	  rs = queryStatement.executeQuery();
-
-	  final List<Category> returned = new LinkedList<Category>();
-	  final List<CategoryGroup> groups = getCategoryGroups();
-	  while (rs.next())
-	  {
-		final Category category = new Category(rs.getInt("CATEGORY_ID"), decodeStringFromDB(rs, "CATEGORY_CODE"),
-		    decodeStringFromDB(rs, "CATEGORY_DESCRIPTION"), getCategoryGroup(rs.getInt("CATEGORY_GROUP_ID"), groups),
-		    rs.getInt("MASTER") == 1, ModelClass.valueOf(rs.getString("MODEL_CLASS")),
-		    AgeGroup.valueOf(rs.getString("ageGroup")));
-
-		if (show == null || category.group.show.equals(show))
-		{
-		  returned.add(category);
+		if (categoryGroupId != 0) {
+			if (show == null) {
+				return get(Category.class, " r.group.id = " + categoryGroupId + " order by id");
+			} else {
+				return get(Category.class, " r.group.id = " + categoryGroupId + " and r.group.show = '" + show + "' order by id");
+			}
 		}
-	  }
 
-	  return returned;
-	}
-	finally
-	{
-	  try
-	  {
-		if (rs != null)
-		{
-		  rs.close();
+		if (show != null) {
+			return get(Category.class, " r.group.show = '" + show + "' order by id");
+		} else {
+			return getAll(Category.class);
 		}
-		if (queryStatement != null)
-		{
-		  queryStatement.close();
-		}
-	  }
-	  catch (final Exception ex)
-	  {
-		logger.fatal("!!! ServletDAO.getCategoryList(): ", ex);
-	  }
-	}
   }
 
   public CategoryGroup getCategoryGroup(final int categoryGroupID, final List<CategoryGroup> groups)
@@ -457,7 +425,7 @@ public class ServletDAO extends HibernateDAO
   {
 	for (final CategoryGroup group : groups)
 	{
-	  if (group.categoryGroupID == categoryGroupID)
+	  if (group.getId() == categoryGroupID)
 	  {
 		return group;
 	  }
@@ -467,45 +435,9 @@ public class ServletDAO extends HibernateDAO
 
   }
 
-  public List<CategoryGroup> getCategoryGroups() throws SQLException
+  public List<CategoryGroup> getCategoryGroups()
   {
-	final List<CategoryGroup> returned = new LinkedList<CategoryGroup>();
-
-	PreparedStatement queryStatement = null;
-	ResultSet rs = null;
-
-	try
-	{
-	  queryStatement = getDBConnection().prepareStatement("SELECT * FROM MAK_CATEGORY_GROUP");
-
-	  rs = queryStatement.executeQuery();
-
-	  while (rs.next())
-	  {
-		returned.add(new CategoryGroup(rs.getInt("CATEGORY_group_ID"), decodeStringFromDB(rs, "MODEL_SHOW"),
-		    decodeStringFromDB(rs, "CATEGORY_GROUP")));
-	  }
-
-	  return returned;
-	}
-	finally
-	{
-	  try
-	  {
-		if (rs != null)
-		{
-		  rs.close();
-		}
-		if (queryStatement != null)
-		{
-		  queryStatement.close();
-		}
-	  }
-	  catch (final Exception ex)
-	  {
-		logger.fatal("!!! ServletDAO.getCategoryGroups(): ", ex);
-	  }
-	}
+	  return getAll(CategoryGroup.class);
   }
 
   public List<String> getShows() throws SQLException
@@ -597,9 +529,9 @@ public class ServletDAO extends HibernateDAO
 
 	try
 	{
-	  queryStatement = getDBConnection().prepareStatement("insert into MAK_AWARDEDMODELS" + " (MODEL_ID, AWARD) values (?,?)");
+	  queryStatement = getDBConnection().prepareStatement("insert into MAK_AWARDEDMODELS" + " (ID, AWARD) values (?,?)");
 
-	  queryStatement.setInt(1, model.modelID);
+	  queryStatement.setInt(1, model.getId());
 
 	  queryStatement.setString(2, model.award);
 
@@ -628,72 +560,8 @@ public class ServletDAO extends HibernateDAO
 
   public void saveModel(final Model model) throws SQLException 
   {
-	PreparedStatement queryStatement = null;
-	final ResultSet rs = null;
-
-	logger.trace("ServletDAO.saveModel(): " + model);
-
-	try
-	{
-		queryStatement = getDBConnection().prepareStatement("insert into MAK_MODEL" + " (" + model.getDBFields() + ")"
-				+ " values " + "(" + model.getDBFieldPlaceholders() + ")");
-
-		int statementCounter = 0;
-	  queryStatement.setInt(++statementCounter, model.modelID);
-
-	  queryStatement.setInt(++statementCounter, model.userID);
-	  queryStatement.setInt(++statementCounter, model.categoryID);
-	  encodeStringForDB(queryStatement, ++statementCounter, model.scale);
-	  encodeStringForDB(queryStatement, ++statementCounter, model.name);
-	  encodeStringForDB(queryStatement, ++statementCounter, model.producer);
-	  encodeStringForDB(queryStatement, ++statementCounter, model.comment);
-
-	  encodeStringForDB(queryStatement, ++statementCounter, model.identification);
-	  encodeStringForDB(queryStatement, ++statementCounter, model.markings);
-	  queryStatement.setInt(++statementCounter, model.gluedToBase ? 1 : 0);
-
-	  for (DetailingGroup group : DetailingGroup.values())
-	  {
-		  for (DetailingCriteria criteria : DetailingCriteria.values())
-		{
-		  queryStatement.setInt(++statementCounter, model.getDetailingGroup(group).getCriteria(criteria) ? 1 : 0);
-		}
-	  }
-	  
-	  statementCounter = saveCustomModelData(model, queryStatement, statementCounter);
-
-	  queryStatement.executeUpdate();
-
-	}
-	finally
-	{
-	  try
-	  {
-		if (rs != null)
-		{
-		  rs.close();
-		}
-		if (queryStatement != null)
-		{
-		  queryStatement.close();
-		}
-	  }
-	  catch (final Exception ex)
-	  {
-		logger.fatal("!!! ServletDAO.saveModel(): ", ex);
-	  }
-	}
+	  save(model);
   }
-
-	private int saveCustomModelData(final Model model, PreparedStatement queryStatement, int statementCounter)
-			throws SQLException {
-		if (ModelWithDimension.class.isInstance(model)) {
-			ModelWithDimension modelWithDimension = ModelWithDimension.class.cast(model);
-			queryStatement.setInt(++statementCounter, modelWithDimension.getWidth());
-			queryStatement.setInt(++statementCounter, modelWithDimension.getLength());
-		}
-		return statementCounter;
-	}
 
   public synchronized int getNextID(final String table, final String column) throws SQLException
   {
@@ -1018,30 +886,18 @@ public class ServletDAO extends HibernateDAO
   {
 	String where = "";
 
-	where = createWhereStatement(request, where, "CATEGORY_ID", "categoryID", false);
-	where = createWhereStatement(request, where, "USER_ID", "userID", false);
-	where = createWhereStatement(request, where, "MODEL_ID", "modelID", false);
-	where = createWhereStatement(request, where, "MODEL_name", "modelname", true);
+	where = createWhereStatement(request, where, "categoryID", "categoryID", false);
+	where = createWhereStatement(request, where, "userID", "userID", false);
+	where = createWhereStatement(request, where, "ID", "modelID", false);
+	where = createWhereStatement(request, where, "name", "modelname", true);
 	where = createWhereStatement(request, where, "markings", "markings", true);
 	where = createWhereStatement(request, where, "producer", "modelproducer", true);
 
 	return getModels(where);
   }
 
-	public int getModelsInCategory(final int userID, final int categoryID) throws SQLException {
-		ResultSet rs = null;
-		try {
-			final PreparedStatement queryStatement = getDBConnection()
-					.prepareStatement("select count(*) from MAK_MODEL where USER_ID = ? AND CATEGORY_ID = ?");
-
-			queryStatement.setInt(1, userID);
-			queryStatement.setInt(2, categoryID);
-			rs = queryStatement.executeQuery();
-			rs.next();
-			return rs.getInt(1);
-		} finally {
-			closeResultSet(rs);
-		}
+	public int getModelsInCategory(final int userID, final int categoryID) {
+		return getModels("userID = " + userID + " and categoryID = " + categoryID).size();
 	}
 
 	public void closeResultSet(ResultSet rs) {
@@ -1056,131 +912,22 @@ public class ServletDAO extends HibernateDAO
 
   public List<Model> getModels(final int userID) throws SQLException
   {
-	return getModels(userID == INVALID_USERID ? "" : "USER_ID = " + userID);
+	return userID == INVALID_USERID ? getAll(Model.class) : getModels("userID = " + userID);
   }
 
   public List<Model> getModelsInCategory(final int categoryID) throws SQLException
   {
-	return getModels("CATEGORY_ID = " + categoryID);
+	return getModels("categoryID = " + categoryID);
   }
 
-  public List<Model> getModels(final String where) throws SQLException
+  public List<Model> getModels(final String where)
   {
-	PreparedStatement queryStatement = null;
-	ResultSet rs = null;
-
-	try
-	{
-	  logger.trace("ServletDAO.getModels(): where: " + where);
-
-	  queryStatement = getDBConnection()
-	      .prepareStatement("SELECT * FROM MAK_MODEL" + (where.length() == 0 ? "" : " where " + where) + " order by MODEL_ID");
-
-	  rs = queryStatement.executeQuery();
-
-	  final List<Model> returned = new LinkedList<Model>();
-
-	  while (rs.next())
-	  {
-		returned.add(getModel(rs));
-	  }
-	  return returned;
-	}
-	finally
-	{
-	  try
-	  {
-		if (rs != null)
-		{
-		  rs.close();
-		}
-		if (queryStatement != null)
-		{
-		  queryStatement.close();
-		}
-	  }
-	  catch (final Exception ex)
-	  {
-		logger.fatal("!!! ServletDAO.getModels(): ", ex);
-	  }
-	}
+	  return get(Model.class, where);
   }
 
-	private Model getModel(ResultSet rs) throws SQLException {
-		Model model = new Model(rs.getInt("model_ID"), rs.getInt("user_ID"), rs.getInt("category_ID"),
-				decodeStringFromDB(rs, "MODEL_scale"), decodeStringFromDB(rs, "MODEL_name"),
-				decodeStringFromDB(rs, "producer"), decodeStringFromDB(rs, "comments"),
-				decodeStringFromDB(rs, "identification"), decodeStringFromDB(rs, "markings"),
-				rs.getInt("gluedToBase") == 1, getDetailing(rs));
-
-		try {
-			return new ModelWithDimension(model, rs.getInt("MODEL_width"), rs.getInt("MODEL_height"));
-		} catch (Exception e) {
-		}
-		return model;
-	}
-
-  public Model getModel(final int modelID) throws SQLException
+  public Model getModel(final int modelID) 
   {
-	PreparedStatement queryStatement = null;
-	ResultSet rs = null;
-
-	try
-	{
-	  logger.trace("ServletDAO.getModel(): modelID: " + modelID);
-
-	  queryStatement = getDBConnection().prepareStatement("SELECT * FROM MAK_MODEL where MODEL_ID=" + modelID);
-
-	  rs = queryStatement.executeQuery();
-	  if (rs.next())
-	  {
-		return getModel(rs);
-	  }
-	  else
-	  {
-		throw new IllegalArgumentException("No model found with modelID: " + modelID);
-	  }
-	}
-	finally
-	{
-	  try
-	  {
-		if (rs != null)
-		{
-		  rs.close();
-		}
-		if (queryStatement != null)
-		{
-		  queryStatement.close();
-		}
-	  }
-	  catch (final Exception ex)
-	  {
-		logger.fatal("!!! ServletDAO.getModel(): ", ex);
-	  }
-	}
-  }
-
-  private Map<DetailingGroup, Detailing> getDetailing(final ResultSet rs) throws SQLException
-  {
-	final Map<DetailingGroup, Detailing> detailing = new HashMap<DetailingGroup, Detailing>();
-
-	for (DetailingGroup group : DetailingGroup.values())
-	{
-	  final Map<DetailingCriteria, Boolean> criterias = new HashMap<DetailingCriteria, Boolean>();
-
-	  criterias.put(DetailingCriteria.externalSurface, rs.getInt(group + "_externalSurface") == 1);
-	  criterias.put(DetailingCriteria.cockpit,rs.getInt(group + "_cockpit") == 1);
-	  criterias.put(DetailingCriteria.engine,rs.getInt(group + "_engine") == 1);
-	  criterias.put(DetailingCriteria.undercarriage,rs.getInt(group + "_undercarriage") == 1);
-	  criterias.put(DetailingCriteria.gearBay,rs.getInt(group + "_gearBay") == 1);
-	  criterias.put(DetailingCriteria.armament,rs.getInt(group + "_armament") == 1);
-	  criterias.put(DetailingCriteria.conversion,rs.getInt(group + "_conversion") == 1);
-	  
-	  detailing.put(group, new Detailing(group, criterias));
-	}
-
-	return detailing;
+	return get(modelID, Model.class);
   }
 
   public Category getCategory(final int categoryID) throws SQLException
@@ -1384,7 +1131,7 @@ public class ServletDAO extends HibernateDAO
 
 	private void createCustomStats(final List<Model> models, final Category category,
 			final List<String[]> tablespaceStatas) {
-		int tablespace = models.stream().map(m -> ModelWithDimension.class.cast(m))
+		int tablespace = models.stream()
 				.mapToInt(m -> (int) m.getWidth() * m.getLength()).sum();
 
 		tablespaceStatas
@@ -1392,15 +1139,15 @@ public class ServletDAO extends HibernateDAO
 						String.valueOf(tablespace) });
 	}
 
-public void deleteModel(final int id) throws SQLException
+public void deleteModel(final Model model) throws SQLException
   {
-	deleteEntry("MAK_MODEL", "model_id", id);
-	deleteEntry("MAK_PICTURES", "model_id", id);
+	delete(model);
+	deleteEntry("MAK_PICTURES", "MODEL_ID", model.getId());
   }
 
   public void deleteAwardedModel(final int id) throws SQLException
   {
-	deleteEntry("MAK_AWARDEDMODELS", "model_id", id);
+	deleteEntry("MAK_AWARDEDMODELS", "ID", id);
   }
 
   public void deleteCategory(final int id) throws SQLException
@@ -1411,7 +1158,7 @@ public void deleteModel(final int id) throws SQLException
 void deleteModels(final int categoryId) throws SQLException {
     for (final Model model : getModelsInCategory(categoryId))
 	{
-	  deleteModel(model.modelID);
+	  deleteModel(model);
 	}
 }
 
@@ -1422,7 +1169,7 @@ void deleteModels(final int categoryId) throws SQLException {
 
   public void deleteUser(final int userID) throws SQLException
   {
-	deleteEntry("MAK_MODEL", "user_id", userID);
+	delete(Model.class, "userID = " + userID);
 
 	deleteEntry("MAK_USERS", "user_id", userID);
   }
@@ -1498,31 +1245,7 @@ void deleteModels(final int categoryId) throws SQLException {
   {
 	logger.trace("ServletDAO.changeUserIDForModel(): oldUserID: " + oldUserID + " newUserID: " + newUserID);
 
-	PreparedStatement queryStatement = null;
-
-	try
-	{
-	  queryStatement = getDBConnection().prepareStatement("update MAK_MODEL set USER_ID=? where USER_ID=?");
-
-	  queryStatement.setInt(1, newUserID);
-	  queryStatement.setInt(2, oldUserID);
-
-	  queryStatement.executeUpdate();
-	}
-	finally
-	{
-	  try
-	  {
-		if (queryStatement != null)
-		{
-		  queryStatement.close();
-		}
-	  }
-	  catch (final Exception ex)
-	  {
-		logger.fatal("!!! ServletDAO.changeUserIDForModel(): oldUserID: " + oldUserID + " newUserID: " + newUserID, ex);
-	  }
-	}
+	update(Model.class, "userID=" + newUserID + " where userID=" + oldUserID);
   }
 
   public void saveCategoryGroup(final CategoryGroup categoryGroup) throws SQLException
@@ -1535,9 +1258,9 @@ void deleteModels(final int categoryId) throws SQLException {
 	  queryStatement = getDBConnection()
 	      .prepareStatement("insert into MAK_CATEGORY_GROUP (CATEGORY_GROUP_ID, MODEL_SHOW, CATEGORY_GROUP) values " + "(?,?,?)");
 
-	  logger.debug("ServletDAO.saveCategoryGroup(): categoryID: " + categoryGroup.categoryGroupID);
+	  logger.debug("ServletDAO.saveCategoryGroup(): categoryID: " + categoryGroup.getId());
 
-	  queryStatement.setInt(1, categoryGroup.categoryGroupID);
+	  queryStatement.setInt(1, categoryGroup.getId());
 	  encodeStringForDB(queryStatement, 2, categoryGroup.show);
 	  encodeStringForDB(queryStatement, 3, categoryGroup.name);
 
@@ -1678,12 +1401,12 @@ void deleteModels(final int categoryId) throws SQLException {
 	PreparedStatement ps = null;
 	try
 	{
-	  ps = getDBConnection().prepareStatement("delete from MAK_PICTURES where MODEL_ID=?");
+	  ps = getDBConnection().prepareStatement("delete from MAK_PICTURES where ID=?");
 	  ps.setInt(1, modelID);
 	  ps.executeUpdate();
 	  ps.close();
 
-	  ps = getDBConnection().prepareStatement("INSERT INTO MAK_PICTURES (MODEL_ID, PHOTO) VALUES (?, ?)");
+	  ps = getDBConnection().prepareStatement("INSERT INTO MAK_PICTURES (ID, PHOTO) VALUES (?, ?)");
 	  ps.setInt(1, modelID);
 	  ps.setBinaryStream(2, stream);
 	  ps.executeUpdate();
@@ -1696,7 +1419,7 @@ void deleteModels(final int categoryId) throws SQLException {
 
   public byte[] loadImage(int modelID) throws SQLException
   {
-	final PreparedStatement ps = getDBConnection().prepareStatement("select PHOTO from MAK_PICTURES where MODEL_ID=?");
+	final PreparedStatement ps = getDBConnection().prepareStatement("select PHOTO from MAK_PICTURES where ID=?");
 	ps.setInt(1, modelID);
 	final ResultSet resultSet = ps.executeQuery();
 
@@ -1725,9 +1448,9 @@ void deleteModels(final int categoryId) throws SQLException {
 	{
 	  try
 	  {
-		final byte[] loadedImage = loadImage(model.modelID);
-		logger.debug("ServletDAO.loadImage(): model.modelID: " + model.modelID + " loadedImage.length: " + loadedImage.length);
-		photos.put(model.modelID, loadedImage);
+		final byte[] loadedImage = loadImage(model.getId());
+		logger.debug("ServletDAO.loadImage(): model.getId(): " + model.getId() + " loadedImage.length: " + loadedImage.length);
+		photos.put(model.getId(), loadedImage);
 	  }
 	  catch (final Exception e)
 	  {
