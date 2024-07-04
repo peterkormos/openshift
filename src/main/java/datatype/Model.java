@@ -66,7 +66,7 @@ public class Model extends Record {
 
     public void setUser(User user) {
         this.user = user;
-        this.userID = this.user.getUserID();
+        this.userID = this.user.getId();
     }
 
     public Category getCategory() {

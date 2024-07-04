@@ -493,11 +493,11 @@ public class RegistrationServlet extends HttpServlet {
 
     private void saveLoginConsentData(HttpServletRequest request, User user) {
         try {
-            servletDAO.deleteLoginConsentData(user.getUserID());
+            servletDAO.deleteLoginConsentData(user.getId());
             
             for (LoginConsentType type : LoginConsent.LoginConsentType.values()) {
                 if (ServletUtil.isCheckedIn(request, "dataUsageConsent" + type.name())) {
-                    LoginConsent lc = new LoginConsent(servletDAO.getNextID(LoginConsent.class), user.getUserID(), type);
+                    LoginConsent lc = new LoginConsent(servletDAO.getNextID(LoginConsent.class), user.getId(), type);
                     servletDAO.save(lc);
                 }
             }
@@ -621,7 +621,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (!users.isEmpty()) {
 			for (final User user1 : users) {
 				ServletUtil.writeResponse(response,
-						printModelsForUser(language, user1.userID, request, true /* allModelsPrinted */));
+						printModelsForUser(language, user1.getId(), request, true /* allModelsPrinted */));
 			}
 		}
 		showPrintDialog(response);
@@ -706,7 +706,7 @@ public class RegistrationServlet extends HttpServlet {
                     logger.error("", e1);
                     return null;
                 }
-            }).collect(Collectors.toMap(User::getUserID, Function.identity()));
+            }).collect(Collectors.toMap(User::getId, Function.identity()));
             
             Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
 				SessionAttribute.Categories.name());
@@ -714,13 +714,13 @@ public class RegistrationServlet extends HttpServlet {
             List<List<Object>> modelsForExcel = getModelsForShow(show, models, categories).stream().map(model -> {
                 ArrayList<Object> returned = new ArrayList<>();
                 Category category = categories.get(model.categoryID);
-                final User modelsUser = userIDs.get(model.userID);
+                final User modelsUser = userIDs.get(model.getId());
    
                 returned.add(StringEscapeUtils.unescapeHtml4(category.group.show));
                 returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.lastName));
                 returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.city));
                 returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.country));
-                returned.add(modelsUser.userID);
+                returned.add(modelsUser.getId());
                 returned.add(model.getId());
                 returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
                 returned.add(StringEscapeUtils.unescapeHtml4(model.name));
@@ -814,7 +814,7 @@ public class RegistrationServlet extends HttpServlet {
         			buff.append(".");
         			servletDAO.registerNewUser(user);
         			for (final ModelClass modelClass : user.getModelClass()) {
-        				servletDAO.saveModelClass(user.userID, modelClass);
+        				servletDAO.saveModelClass(user.getId(), modelClass);
         			}
         		}
 		}
@@ -887,12 +887,12 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		for (final Category category : servletDAO.getCategoryList(show)) {
-			servletDAO.deleteCategory(category.getId());
+			servletDAO.deleteCategory(category);
 		}
 
 		for (final CategoryGroup categoryGroup : servletDAO.getCategoryGroups()) {
 			if (categoryGroup.show.equals(show)) {
-				servletDAO.deleteCategoryGroup(categoryGroup.getId());
+				servletDAO.deleteCategoryGroup(categoryGroup);
 			}
 		}
 
@@ -960,7 +960,7 @@ public class RegistrationServlet extends HttpServlet {
 		final ResourceBundle language = languageUtil.getLanguage(oldUser.language);
 
 		final User newUser = createUser(request, ServletUtil.getRequestAttribute(request, "email"));
-		newUser.userID = oldUser.userID;
+		newUser.setId(oldUser.getId());
 		if (!newUser.isAdminUser() && !newUser.isLocalUser() && (newUser.email.trim().length() == 0
 				|| ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(newUser.email) || newUser.email.indexOf("@") == -1)) {
 			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
@@ -972,47 +972,16 @@ public class RegistrationServlet extends HttpServlet {
 
 		HttpSession session = request.getSession(false);
                 session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
-                session.setAttribute(CommonSessionAttribute.UserID.name(), servletDAO.getUser(oldUser.userID));
+                session.setAttribute(CommonSessionAttribute.UserID.name(), servletDAO.getUser(oldUser.getId()));
 
 		redirectToMainPage(request, response, true);
-	}
-
-	public void newUserIDs(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final User user = getUser(request);
-		final ResourceBundle language = languageUtil.getLanguage(user.language);
-
-		servletDAO.newUserIDs();
-
-		final StringBuilder buff = new StringBuilder();
-		buff.append("<html><body>");
-
-		buff.append("Randomize...<p>");
-		buff.append("<a href='" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
-
-		ServletUtil.writeResponse(response, buff);
-	}
-
-	public void newUserIDsFromOne(final HttpServletRequest request, final HttpServletResponse response)
-			throws Exception {
-		final User user = getUser(request);
-		final ResourceBundle language = languageUtil.getLanguage(user.language);
-
-		servletDAO.newUserIDsFromOne();
-
-		final StringBuilder buff = new StringBuilder();
-		buff.append("<html><body>");
-
-		buff.append("Randomize...<p>");
-		buff.append("<a href='" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
-
-		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void deleteUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
 		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
-		servletDAO.deleteUser(user.userID);
+		servletDAO.deleteUser(user.getId());
 
 		final StringBuilder buff = new StringBuilder();
 		buff.append("<html><body>");
@@ -1030,7 +999,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		message.append("<html><body>\n\r");
 
-		final List<Model> models = servletDAO.getModels(user.userID);
+		final List<Model> models = servletDAO.getModels(user.getId());
 
 		if (!models.isEmpty()) {
 			message.append(language.getString("email.body1"));
@@ -1043,7 +1012,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		List<EmailParameter> modelerParameters = new LinkedList<EmailParameter>( Arrays.asList(//
-				EmailParameter.create(language.getString("userID"), String.valueOf(user.getUserID())), //
+				EmailParameter.create(language.getString("userID"), String.valueOf(user.getId())), //
 				EmailParameter.create(language.getString("name"), user.lastName), //
 				EmailParameter.create(language.getString("year.of.birth"), String.valueOf(user.yearOfBirth)), //
 				EmailParameter.create(language.getString("city"), user.city), //
@@ -1120,7 +1089,7 @@ public class RegistrationServlet extends HttpServlet {
 	    
 		try {
 		    Category modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
-		    servletDAO.deleteCategory(modifyingCategory.getId());
+		    servletDAO.deleteCategory(modifyingCategory);
 		    newCategory.setId(modifyingCategory.getId());
 		} catch (Exception e) {
 		}
@@ -1310,7 +1279,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("<tr>");
 
 			buff.append("<td align='center' >");
-			buff.append(user.userID);
+			buff.append(user.getId());
 			buff.append("</td>");
 
 			buff.append("<td align='center' >");
@@ -1359,7 +1328,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			
 			buff.append("<td align='center' >");
-            buff.append(servletDAO.getLoginConsents(user.getUserID()).stream().map(lc -> lc.getType().name()).collect(Collectors.joining(", ")));
+            buff.append(servletDAO.getLoginConsents(user.getId()).stream().map(lc -> lc.getType().name()).collect(Collectors.joining(", ")));
 			buff.append("</td>");
 			
 			buff.append("</tr>");
@@ -1500,7 +1469,7 @@ public class RegistrationServlet extends HttpServlet {
 		final int modelID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "modelID"));
 		final Model model = servletDAO.getModel(modelID);
 		User user = getUser(request);
-		if (user.isAdminUser() || user.userID == model.userID) {
+		if (user.isAdminUser() || user.getId() == model.getId()) {
 			getModelForm(request, response, Command.modifyModel.name(), "modify", model);
 		}else {
 			redirectToMainPage(request, response);
@@ -1528,7 +1497,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 		createModel(model, request);
 		User user = getUser(request);
-        if(user.isAdminUser() || (!user.isAdminUser() && user.getUserID() == model.getUserID())) {   
+        if(user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getId())) {   
 			deleteModel(request);
 			servletDAO.saveModel(model);
 
@@ -1553,7 +1522,7 @@ public class RegistrationServlet extends HttpServlet {
 		createModel(model, request);
 		
 		final int maxModelsPerCategory = 3;
-		if(servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
+		if(servletDAO.getModelsInCategory(model.getId(), model.getCategoryID()) == maxModelsPerCategory) {
 			writeErrorResponse(response, languageUtil.getLanguage(user.language).getString("models.number.per.category") + ": " + maxModelsPerCategory);
 			return;
 		}
@@ -1673,7 +1642,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = getUser(request);
 		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
-		final List<Model> models = servletDAO.getModels(user.userID);
+		final List<Model> models = servletDAO.getModels(user.getId());
 
 		if (models.isEmpty()) {
 			redirectToMainPage(request, response);
@@ -1792,11 +1761,11 @@ public class RegistrationServlet extends HttpServlet {
 				continue;
 			}
 
-			buff.append("<label><input type='checkbox' name='userID" + i + "' value='" + user.userID
+			buff.append("<label><input type='checkbox' name='userID" + i + "' value='" + user.getId()
 					+ "' onClick='document.input.submit()'/>");
 			buff.append(user.lastName
 					// + " " + user.firstName
-					+ " (" + user.userID + " - " + user.email + " - " + user.yearOfBirth + " - " + user.country + " - "
+					+ " (" + user.getId() + " - " + user.email + " - " + user.yearOfBirth + " - " + user.country + " - "
 					+ user.city + " - " + user.address + " - " + user.telephone + ")</label><br>");
 		}
 
@@ -1827,7 +1796,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		for (final User user : servletDAO.getUsers()) {
 			if (user.isLocalUser()) {
-				servletDAO.deleteUser(user.userID);
+				servletDAO.deleteUser(user.getId());
 			}
 		}
 
@@ -1851,7 +1820,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 
 		User user = getUser(request);
-		if(user.isAdminUser() || (!user.isAdminUser() && user.getUserID() == model.getUserID())) {
+		if(user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getId())) {
 			servletDAO.deleteModel(model);
 			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
 		}
@@ -1933,9 +1902,9 @@ public class RegistrationServlet extends HttpServlet {
 			
 			for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /* show */)) {
 				servletDAO.deleteModels(category.getId());
-				servletDAO.deleteCategory(category.getId());
+				servletDAO.deleteCategory(category);
 			}
-			servletDAO.deleteCategoryGroup(categoryGroupID);
+			servletDAO.deleteCategoryGroup(servletDAO.get(categoryGroupID, CategoryGroup.class));
 		}
 		else {
 			writeErrorResponse(response, "Most m&aacute;r nem lehet t&ouml;r&ouml;lni!");
@@ -1949,7 +1918,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
 			Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
 			servletDAO.deleteModels(categoryID);
-			servletDAO.deleteCategory(categoryID);
+			servletDAO.deleteCategory(servletDAO.getCategory(categoryID));
 		}
 		else {
 			writeErrorResponse(response, "Most m&aacute;r nem lehet t&ouml;r&ouml;lni!");
@@ -1967,12 +1936,12 @@ public class RegistrationServlet extends HttpServlet {
 		Collections.sort(users, new Comparator() {
 			@Override
 			public int compare(Object o1, Object o2) {
-				return Integer.compare(User.class.cast(o1).userID, User.class.cast(o2).userID);
+				return Integer.compare(User.class.cast(o1).getId(), User.class.cast(o2).getId());
 			}
 		});
 
 		for (final User user : users) {
-			printModelsForUser(request, response, language, user.userID, true /* alwaysPageBreak */);
+			printModelsForUser(request, response, language, user.getId(), true /* alwaysPageBreak */);
 		}
 		response.getOutputStream().write("<p>Itt a vege...".getBytes());
 		showPrintDialog(response);
@@ -2020,19 +1989,19 @@ public class RegistrationServlet extends HttpServlet {
 		final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID");
 
 		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
-			printModelsForUser(request, response, languageUtil.getLanguage(user.language), user.userID,
+			printModelsForUser(request, response, languageUtil.getLanguage(user.language), user.getId(),
 					false /* alwaysPageBreak */);
 		} else {
 			final StringBuilder buff = new StringBuilder();
 
-			final List<Model> models = servletDAO.getModels(user.userID);
+			final List<Model> models = servletDAO.getModels(user.getId());
 			int fee = calculateEntryFee(models);
 			for (final Model model : models) {
 				if (model.getId() == Integer.parseInt(modelID)) {
 					final List<Model> subList = new LinkedList<Model>();
 					subList.add(model);
 
-					buff.append(printModels(languageUtil.getLanguage(user.language), servletDAO.getUser(user.userID), subList,
+					buff.append(printModels(languageUtil.getLanguage(user.language), servletDAO.getUser(user.getId()), subList,
 							printBuffer, 1, 3, false, fee, request));
 					break;
 				}
@@ -2122,10 +2091,10 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__CITY__", String.valueOf(user.city))
 							.replaceAll("__COUNTRY__", String.valueOf(user.country))
 
-							.replaceAll("__USER_ID__", String.valueOf(model.userID))
+							.replaceAll("__USER_ID__", String.valueOf(model.getId()))
 							.replaceAll("__MODEL_ID__", String.valueOf(model.getId()))
 							.replaceAll("__YEAR_OF_BIRTH__",
-									String.valueOf(servletDAO.getUser(model.userID).yearOfBirth))
+									String.valueOf(servletDAO.getUser(model.getId()).yearOfBirth))
 							.replaceAll("__MODEL_SCALE__", model.scale)
 							.replaceAll("__CATEGORY_CODE__", servletDAO.getCategory(model.categoryID).categoryCode)
 							.replaceAll("__MODEL_NAME__", model.name)
@@ -2366,7 +2335,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-			final User user = servletDAO.getUser(model.userID);
+			final User user = servletDAO.getUser(model.getId());
 			// Category category = servletDAO.getCategory(model.categoryID);
 
 			final String award = ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim();
@@ -2395,7 +2364,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-			final User user = servletDAO.getUser(model.userID);
+			final User user = servletDAO.getUser(model.getId());
 			final Category category = servletDAO.getCategory(model.categoryID);
 
 			buff.append(buffer.toString().replaceAll("__LASTNAME__", String.valueOf(user.lastName))
@@ -2488,7 +2457,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag);
 
-		return new User(servletDAO.getNextID("USERS", "USER_ID"), password,
+		return new User(password,
 				// ServletUtil.getRequestAttribute(request, "firstname" +
 				// httpParameterPostTag),
 				"-", ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag),
@@ -2656,7 +2625,7 @@ public class RegistrationServlet extends HttpServlet {
 		String message = ServletUtil.getRequestAttribute(request, "message");
 		int emailsSent = 0;
 		for (User user : servletDAO.getUsers())
-			if (!servletDAO.getModels(user.getUserID()).isEmpty())
+			if (!servletDAO.getModels(user.getId()).isEmpty())
 				try {
 					final StringBuilder messageBody = new StringBuilder();
 					final ResourceBundle language = languageUtil.getLanguage(user.language);
@@ -2668,7 +2637,7 @@ public class RegistrationServlet extends HttpServlet {
 					messageBody.append("\n\r<hr>");
 
 					List<EmailParameter> modelerParameters = Arrays.asList(//
-							EmailParameter.create(language.getString("userID"), String.valueOf(user.getUserID())), //
+							EmailParameter.create(language.getString("userID"), String.valueOf(user.getId())), //
 							EmailParameter.create(language.getString("name"), user.lastName) //
 					);
 

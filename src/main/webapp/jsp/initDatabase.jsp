@@ -16,7 +16,6 @@
   final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 
   final User user = new User(languageCode);
-  user.setUserID(servletDAO.getNextID("USERS", "USER_ID"));
   user.setEmail("admin");
   user.setPassword("secret");
   user.setFirstName("Peter");

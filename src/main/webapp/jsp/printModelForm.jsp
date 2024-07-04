@@ -91,7 +91,7 @@
 								<td valign="top"><%=language.getString("category.code")%></td>
 							</tr>
 							<tr>
-								<td valign="middle"><font><%=user.getUserID()%></font></td>
+								<td valign="middle"><font><%=user.getId()%></font></td>
 								<td valign="middle"><font><%=model.getId()%></font></td>
 								<td valign="middle"><font><%=model.getScale()%></font></td>
 								<td valign="middle"><font

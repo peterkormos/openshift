@@ -264,7 +264,7 @@ public class HibernateDAO
 	}
   }
 
-  public void update(Record record) throws Exception
+  public void update(Record record) 
   {
 	Session session = null;
 
