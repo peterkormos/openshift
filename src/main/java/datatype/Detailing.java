@@ -26,9 +26,6 @@ import javax.persistence.Table;
 @Table(name = "MAK_DETAILING")
 public class Detailing extends Record {
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinTable(name = "MAK_MAK_DETAILING")
-	private Model model;
 	@Column
 	@Enumerated(EnumType.STRING)
 	private DetailingGroup detailingGroup;
@@ -42,20 +39,11 @@ public class Detailing extends Record {
 
 	}
 
-	public Detailing(Model model, DetailingGroup detailingGroup, DetailingCriteria detailingCriteria, Boolean checked) {
+	public Detailing(DetailingGroup detailingGroup, DetailingCriteria detailingCriteria, Boolean checked) {
 //		super(id);
-		this.model = model;
 		this.detailingGroup = detailingGroup;
 		this.detailingCriteria = detailingCriteria;
 		this.checked = checked;
-	}
-
-	public Model getModel() {
-		return model;
-	}
-
-	public void setModel(Model model) {
-		this.model = model;
 	}
 
 	public DetailingGroup getDetailingGroup() {
@@ -84,7 +72,7 @@ public class Detailing extends Record {
 
 	@Override
 	public String toString() {
-		return "Detailing [modelID=" + model + ", detailingGroup=" + detailingGroup + ", detailingCriteria="
+		return "Detailing [detailingGroup=" + detailingGroup + ", detailingCriteria="
 				+ detailingCriteria + ", checked=" + checked + ", id=" + getId() + "]";
 	}
 	

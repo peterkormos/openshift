@@ -459,7 +459,7 @@ public class JDBCDAO {
 				for (final Model model : models) {
 					// jelenleg nevezok
 					for (final User user : users) {
-						if (user.getId() == model.getId()) {
+						if (user.getId() == model.getUserID()) {
 							HashSet<Integer> userIDs = modelersPerCountry.get(user.country);
 							if (userIDs == null) {
 								userIDs = new HashSet<Integer>();

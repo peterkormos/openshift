@@ -44,8 +44,7 @@ public class LoginConsent extends Record {
         
     }
     
-    public LoginConsent(int id, int modellerID, LoginConsentType type) {
-        super(id);
+    public LoginConsent(int modellerID, LoginConsentType type) {
         this.modellerID = modellerID;
         this.type = type;
     }

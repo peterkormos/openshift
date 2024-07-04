@@ -22,7 +22,7 @@
         			String action = ServletUtil.getRequestAttribute(request, RegistrationServlet.SessionAttribute.Action.name()); 
         			String submitLabel = ServletUtil.getRequestAttribute(request, RegistrationServlet.SessionAttribute.SubmitLabel.name());
         			
-        			final List<Model> models = servletDAO.getModels(user.userID);
+        			final List<Model> models = servletDAO.getModels(user.getId());
     %>
 
 <!DOCTYPE html>

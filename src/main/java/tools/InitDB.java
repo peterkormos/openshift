@@ -17,8 +17,13 @@ public class InitDB
 	final Connection conn = DriverManager.getConnection(connectionURL);
 
 	final Statement s = conn.createStatement();
-	s.execute(
-	    "create table MAK_MODEL (ID numeric(6) not null, USER_ID numeric(6) not null, CATEGORY_ID numeric(6) not null, MODEL_scale varchar(20) not null, MODEL_name varchar(100) not null, producer varchar(100) not null, comments varchar(1000), identification varchar(100), markings varchar(100), gluedToBase numeric(1), scratch_externalSurface numeric(1), scratch_cockpit numeric(1), scratch_engine numeric(1), scratch_undercarriage numeric(1), scratch_gearBay numeric(1), scratch_armament numeric(1), scratch_conversion numeric(1), resin_externalSurface numeric(1), resin_cockpit numeric(1), resin_engine numeric(1), resin_undercarriage numeric(1), resin_gearBay numeric(1), resin_armament numeric(1), resin_conversion numeric(1), photoEtched_externalSurface numeric(1), photoEtched_cockpit numeric(1), photoEtched_engine numeric(1), photoEtched_undercarriage numeric(1), photoEtched_gearBay numeric(1), photoEtched_armament numeric(1), photoEtched_conversion numeric(1), documentation_externalSurface numeric(1), documentation_cockpit numeric(1), documentation_engine numeric(1), documentation_undercarriage numeric(1), documentation_gearBay numeric(1), documentation_armament numeric(1), documentation_conversion numeric(1))");
+//	s.execute(
+//	    "create table MAK_MODEL ("
+////	    + "ID numeric(6) not null, "
+//	    + "USER_ID numeric(6) not null, CATEGORY_ID numeric(6) not null, MODEL_scale varchar(20) not null, MODEL_name varchar(100) not null, "
+//	    + "producer varchar(100) not null, comments varchar(1000), identification varchar(100), markings varchar(100), gluedToBase numeric(1), "
+////	    + "scratch_externalSurface numeric(1), scratch_cockpit numeric(1), scratch_engine numeric(1), scratch_undercarriage numeric(1), scratch_gearBay numeric(1), scratch_armament numeric(1), scratch_conversion numeric(1), resin_externalSurface numeric(1), resin_cockpit numeric(1), resin_engine numeric(1), resin_undercarriage numeric(1), resin_gearBay numeric(1), resin_armament numeric(1), resin_conversion numeric(1), photoEtched_externalSurface numeric(1), photoEtched_cockpit numeric(1), photoEtched_engine numeric(1), photoEtched_undercarriage numeric(1), photoEtched_gearBay numeric(1), photoEtched_armament numeric(1), photoEtched_conversion numeric(1), documentation_externalSurface numeric(1), documentation_cockpit numeric(1), documentation_engine numeric(1), documentation_undercarriage numeric(1), documentation_gearBay numeric(1), documentation_armament numeric(1), documentation_conversion numeric(1)"
+//	    + ")");
 
 	s.execute("create table MAK_SYSTEM (PARAM_NAME VARCHAR(20) not null, PARAM_VALUE VARCHAR(5000) not null)");
 	s.execute("INSERT INTO MAK_SYSTEM ( PARAM_NAME, PARAM_VALUE ) VALUES ('ONSITEUSE','0')");

@@ -384,7 +384,7 @@ void deleteModels(final int categoryId) throws SQLException {
   {
 	  return get(User.class, "lastName like '%" + lastname + "%'");
   }
-  public void deleteLoginConsentData(int modellerId) throws Exception
+  public void deleteLoginConsentData(int modellerId)
   {
       Session session = null;
       

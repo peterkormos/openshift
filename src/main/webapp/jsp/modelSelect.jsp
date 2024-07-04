@@ -9,7 +9,7 @@
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	User user = servlet.getUser(request);
 
-	for (final Model model : servlet.getServletDAO().getModels(user.userID))
+	for (final Model model : servlet.getServletDAO().getModels(user.getId()))
 	{
 %>
 <label>

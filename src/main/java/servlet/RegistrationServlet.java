@@ -80,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.05.09.";
+	public String VERSION = "2024.07.04.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -496,18 +496,14 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
     private void saveLoginConsentData(HttpServletRequest request, User user) {
-        try {
-            servletDAO.deleteLoginConsentData(user.getId());
-            
-            for (LoginConsentType type : LoginConsent.LoginConsentType.values()) {
-                if (ServletUtil.isCheckedIn(request, "dataUsageConsent" + type.name())) {
-                    LoginConsent lc = new LoginConsent(servletDAO.getNextID(LoginConsent.class), user.getId(), type);
-                    servletDAO.save(lc);
-                }
-            }
-        } catch (Exception e) {
-            logger.error("", e);
-        }
+		servletDAO.deleteLoginConsentData(user.getId());
+
+		for (LoginConsentType type : LoginConsent.LoginConsentType.values()) {
+			if (ServletUtil.isCheckedIn(request, "dataUsageConsent" + type.name())) {
+				LoginConsent lc = new LoginConsent(user.getId(), type);
+				servletDAO.save(lc);
+			}
+		}
     }
 
     private void initHttpSession(final HttpServletRequest request, final User user, String show) throws SQLException {
@@ -718,7 +714,7 @@ public class RegistrationServlet extends HttpServlet {
             List<List<Object>> modelsForExcel = getModelsForShow(show, models, categories).stream().map(model -> {
                 ArrayList<Object> returned = new ArrayList<>();
                 Category category = categories.get(model.categoryID);
-                final User modelsUser = userIDs.get(model.getId());
+                final User modelsUser = userIDs.get(model.getUserID());
    
                 returned.add(StringEscapeUtils.unescapeHtml4(category.group.show));
                 returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.lastName));
@@ -1473,7 +1469,7 @@ public class RegistrationServlet extends HttpServlet {
 		final int modelID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "modelID"));
 		final Model model = servletDAO.getModel(modelID);
 		User user = getUser(request);
-		if (user.isAdminUser() || user.getId() == model.getId()) {
+		if (user.isAdminUser() || user.getId() == model.getUserID()) {
 			getModelForm(request, response, Command.modifyModel.name(), "modify", model);
 		}else {
 			redirectToMainPage(request, response);
@@ -1501,8 +1497,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 		createModel(model, request);
 		User user = getUser(request);
-        if(user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getId())) {   
-			deleteModel(request);
+        if(user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {   
 			servletDAO.save(model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
@@ -1526,7 +1521,7 @@ public class RegistrationServlet extends HttpServlet {
 		createModel(model, request);
 		
 		final int maxModelsPerCategory = 3;
-		if(servletDAO.getModelsInCategory(model.getId(), model.getCategoryID()) == maxModelsPerCategory) {
+		if(servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
 			writeErrorResponse(response, languageUtil.getLanguage(user.language).getString("models.number.per.category") + ": " + maxModelsPerCategory);
 			return;
 		}
@@ -1584,7 +1579,7 @@ public class RegistrationServlet extends HttpServlet {
 				ServletUtil.getOptionalRequestAttribute(request, "identification" + httpParameterPostTag));
 		model.setMarkings(ServletUtil.getOptionalRequestAttribute(request, "markings" + httpParameterPostTag));
 		model.setGluedToBase(ServletUtil.isCheckedIn(request, "gluedToBase" + httpParameterPostTag));
-		model.setDetailing(getDetailing(model, request));
+		model.setDetailing(getDetailing(request));
 
 		return setDimensions(model, request, httpParameterPostTag);
 	}
@@ -1605,14 +1600,14 @@ public class RegistrationServlet extends HttpServlet {
 		return model;
 	}
 
-	private Collection<Detailing> getDetailing(final Model model, final HttpServletRequest request) {
+	private Collection<Detailing> getDetailing(final HttpServletRequest request) {
 		final Collection<Detailing> detailing = new LinkedList<>();
 
 		for (DetailingGroup group : DetailingGroup.values()) {
 			for (DetailingCriteria criteria : DetailingCriteria.values()) {
 				boolean checked = ServletUtil.isCheckedIn(request, "detailing." + group.name() + "." + criteria.name());
 				if (checked) {
-					detailing.add(new Detailing(model, group, criteria, checked));
+					detailing.add(new Detailing(group, criteria, checked));
 				}
 			}
 		}
@@ -1824,7 +1819,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 
 		User user = getUser(request);
-		if(user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getId())) {
+		if(user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
 			servletDAO.deleteModel(model);
 			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
 		}
@@ -2095,7 +2090,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__CITY__", String.valueOf(user.city))
 							.replaceAll("__COUNTRY__", String.valueOf(user.country))
 
-							.replaceAll("__USER_ID__", String.valueOf(model.getId()))
+							.replaceAll("__USER_ID__", String.valueOf(model.getUserID()))
 							.replaceAll("__MODEL_ID__", String.valueOf(model.getId()))
 							.replaceAll("__YEAR_OF_BIRTH__",
 									String.valueOf(servletDAO.getUser(model.getId()).yearOfBirth))
@@ -2339,7 +2334,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-			final User user = servletDAO.getUser(model.getId());
+			final User user = servletDAO.getUser(model.getUserID());
 			// Category category = servletDAO.getCategory(model.categoryID);
 
 			final String award = ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim();

@@ -10,7 +10,7 @@
 
 	User user = servlet.getUser(request);
 	String show = RegistrationServlet.getShowFromSession(session);
-	List<Model> models = servletDAO.getModels(user.userID);
+	List<Model> models = servletDAO.getModels(user.getId());
 	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
 			RegistrationServlet.SessionAttribute.Categories.name());
 

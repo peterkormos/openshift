@@ -138,7 +138,7 @@
 <p></p>
    -->
 <%
-	final List<Model> models = servletDAO.getModels(user.userID);
+	final List<Model> models = servletDAO.getModels(user.getId());
 
   if (servlet.isRegistrationAllowed(show) && !models.isEmpty())
   {
