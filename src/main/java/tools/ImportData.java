@@ -43,28 +43,28 @@ public class ImportData
 	for (User user : users)
 	{
 	  System.out.print(".");
-	  servlet.servletDAO.registerNewUser(user);
+	  servlet.servletDAO.save(user);
 	}
 
 	System.out.println("\nStoring CategoryGroups");
 	for (CategoryGroup categoryGroup : categoryGroups)
 	{
 	  System.out.print(".");
-	  servlet.servletDAO.saveCategoryGroup(categoryGroup);
+	  servlet.servletDAO.save(categoryGroup);
 	}
 
 	System.out.println("\nStoring Categories");
 	for (Category category : categories)
 	{
 	  System.out.print(".");
-	  servlet.servletDAO.saveCategory(category);
+	  servlet.servletDAO.save(category);
 	}
 
 	System.out.println("\nStoring Models");
 	for (Model model : models)
 	{
 	  System.out.print(".");
-	  servlet.servletDAO.saveModel(model);
+	  servlet.servletDAO.save(model);
 	}
 
 	System.out.println("\nDONE.....");

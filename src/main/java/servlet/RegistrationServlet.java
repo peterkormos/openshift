@@ -148,7 +148,7 @@ public class RegistrationServlet extends HttpServlet {
 			DriverManager.registerDriver((Driver) Class.forName(getServerConfigParamter("db.driver")).newInstance());
 
 			if (servletDAO == null) {
-				servletDAO = new ServletDAO(this, getServerConfigParamter("db.url"),
+				servletDAO = new ServletDAO(getServerConfigParamter("db.url"),
 						getServerConfigParamter("db.username"), getServerConfigParamter("db.password"),
 						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml")
 						);
@@ -299,6 +299,7 @@ public class RegistrationServlet extends HttpServlet {
 			if (e instanceof InvocationTargetException) {
 				throwable = ((InvocationTargetException) e).getCause();
 			}
+			addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
 			String message = throwable.getMessage();
 			
@@ -319,8 +320,11 @@ public class RegistrationServlet extends HttpServlet {
                             } catch (MissingRequestParameterException e1) {
                             }
 			}
-
-			addExceptionToHistory(System.currentTimeMillis(), throwable, request);
+			else if(UserNotLoggedInException.class.isInstance(throwable))
+			{
+				redirectToMainPage(request, response, true);
+				return;
+			}
 
 			writeErrorResponse(response, "Error: <b>" + message + "</b>");
 		}
@@ -609,7 +613,7 @@ public class RegistrationServlet extends HttpServlet {
 			model.setUser(user);
 			createModel(model, request, httpParameterPostTag);
 
-			servletDAO.saveModel(model);
+			servletDAO.save(model);
 
 			models.add(model);
 		}
@@ -812,7 +816,7 @@ public class RegistrationServlet extends HttpServlet {
 		    servletDAO.deleteEntries("MAK_USERS");
         		for (final User user : users) {
         			buff.append(".");
-        			servletDAO.registerNewUser(user);
+        			servletDAO.save(user);
         			for (final ModelClass modelClass : user.getModelClass()) {
         				servletDAO.saveModelClass(user.getId(), modelClass);
         			}
@@ -827,7 +831,7 @@ public class RegistrationServlet extends HttpServlet {
 		    servletDAO.deleteEntries("MAK_CATEGORY_GROUP");
 			for (final CategoryGroup categoryGroup : categoryGroups) {
 				buff.append(".");
-				servletDAO.saveCategoryGroup(categoryGroup);
+				servletDAO.save(categoryGroup);
 			}
 
 			buff.append("<p>Storing Categories");
@@ -839,7 +843,7 @@ public class RegistrationServlet extends HttpServlet {
 				if (category.getModelClass() == null) {
 					category.setModelClass(ModelClass.Other);
 				}
-				servletDAO.saveCategory(category);
+				servletDAO.save(category);
 			}
 
 
@@ -850,7 +854,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 			for (final Model model : models) {
 				buff.append(".");
-				servletDAO.saveModel(model);
+				servletDAO.save(model);
 			}
 		}
 
@@ -887,12 +891,12 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		for (final Category category : servletDAO.getCategoryList(show)) {
-			servletDAO.deleteCategory(category);
+			servletDAO.delete(category);
 		}
 
 		for (final CategoryGroup categoryGroup : servletDAO.getCategoryGroups()) {
 			if (categoryGroup.show.equals(show)) {
-				servletDAO.deleteCategoryGroup(categoryGroup);
+				servletDAO.delete(categoryGroup);
 			}
 		}
 
@@ -907,7 +911,7 @@ public class RegistrationServlet extends HttpServlet {
 				// httpParameterPostTag)
 				+ User.LOCAL_USER + System.currentTimeMillis();
 
-		servletDAO.registerNewUser(createUser(request, userName, password, httpParameterPostTag));
+		servletDAO.save(createUser(request, userName, password, httpParameterPostTag));
 
 		final User user = servletDAO.getUser(userName);
 		return user;
@@ -938,7 +942,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		final User user = createUser(request, email);
-		servletDAO.registerNewUser(user);
+		servletDAO.save(user);
 
 		sendEmailWithModels(user, true);
 
@@ -1089,12 +1093,12 @@ public class RegistrationServlet extends HttpServlet {
 	    
 		try {
 		    Category modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
-		    servletDAO.deleteCategory(modifyingCategory);
+		    servletDAO.delete(modifyingCategory);
 		    newCategory.setId(modifyingCategory.getId());
 		} catch (Exception e) {
 		}
 		
-		servletDAO.saveCategory(newCategory);
+		servletDAO.save(newCategory);
 		}		
 		else {
 			writeErrorResponse(response, "Most m&aacute;r nem lehet felvenni!");
@@ -1121,7 +1125,7 @@ public class RegistrationServlet extends HttpServlet {
     	final HttpSession session = request.getSession(false);
         session.setAttribute(SessionAttribute.Show.name(), show);
 
-		servletDAO.saveCategoryGroup(categoryGroup);
+		servletDAO.save(categoryGroup);
 		}
 		else {
 			writeErrorResponse(response, "Most m&aacute;r nem lehet felvenni!");
@@ -1499,7 +1503,7 @@ public class RegistrationServlet extends HttpServlet {
 		User user = getUser(request);
         if(user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getId())) {   
 			deleteModel(request);
-			servletDAO.saveModel(model);
+			servletDAO.save(model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
 			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
@@ -1902,9 +1906,9 @@ public class RegistrationServlet extends HttpServlet {
 			
 			for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /* show */)) {
 				servletDAO.deleteModels(category.getId());
-				servletDAO.deleteCategory(category);
+				servletDAO.delete(category);
 			}
-			servletDAO.deleteCategoryGroup(servletDAO.get(categoryGroupID, CategoryGroup.class));
+			servletDAO.delete(servletDAO.get(categoryGroupID, CategoryGroup.class));
 		}
 		else {
 			writeErrorResponse(response, "Most m&aacute;r nem lehet t&ouml;r&ouml;lni!");
@@ -1918,7 +1922,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
 			Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
 			servletDAO.deleteModels(categoryID);
-			servletDAO.deleteCategory(servletDAO.getCategory(categoryID));
+			servletDAO.delete(servletDAO.getCategory(categoryID));
 		}
 		else {
 			writeErrorResponse(response, "Most m&aacute;r nem lehet t&ouml;r&ouml;lni!");

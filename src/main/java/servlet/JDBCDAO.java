@@ -11,14 +11,19 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
 import datatype.AwardedModel;
+import datatype.Category;
 import datatype.Model;
+import datatype.User;
 import servlet.ServletDAO.SYSTEMPARAMETER;
 
 public class JDBCDAO {
@@ -31,7 +36,7 @@ public class JDBCDAO {
 
 	private ServletDAO servletDAO;
 
-	public JDBCDAO(String dbURL, String dbUserName, String dbPassword, ServletDAO servletDAO) throws SQLException {
+	public JDBCDAO(String dbURL, String dbUserName, String dbPassword, ServletDAO servletDAO)  {
 		this.dbURL = dbURL;
 		this.dbUserName = dbUserName;
 		this.dbPassword = dbPassword;
@@ -48,6 +53,27 @@ public class JDBCDAO {
 		return this.dBConnection;
 	}
 
+	public void closeResultSet(ResultSet rs) {
+		try {
+			if (rs != null) {
+				rs.close();
+			}
+		} catch (final Exception ex) {
+			logger.fatal("", ex);
+		}
+	}
+
+	public static String decodeStringFromDB(final ResultSet rs, final String column) throws SQLException {
+		final String value = rs.getString(column);
+
+		if (value == null) {
+			return "";
+		} else {
+			return rs.getString(column);
+		}
+
+	}
+
 	public String getAward(Model model) throws SQLException {
 		PreparedStatement queryStatement = null;
 		ResultSet rs = null;
@@ -58,7 +84,7 @@ public class JDBCDAO {
 
 			rs = queryStatement.executeQuery();
 
-			return rs.next() ? ServletDAO.decodeStringFromDB(rs, "AWARD") : "-";
+			return rs.next() ? decodeStringFromDB(rs, "AWARD") : "-";
 		} finally {
 			try {
 				if (rs != null) {
@@ -84,8 +110,7 @@ public class JDBCDAO {
 
 			final List<AwardedModel> returned = new LinkedList<AwardedModel>();
 			while (rs.next()) {
-				returned.add(new AwardedModel(servletDAO.getModel(rs.getInt("ID")),
-						ServletDAO.decodeStringFromDB(rs, "AWARD")));
+				returned.add(new AwardedModel(servletDAO.getModel(rs.getInt("ID")), decodeStringFromDB(rs, "AWARD")));
 			}
 
 			return returned;
@@ -115,7 +140,7 @@ public class JDBCDAO {
 			rs = queryStatement.executeQuery();
 
 			while (rs.next()) {
-				returned.add(ServletDAO.decodeStringFromDB(rs, "MODEL_SHOW"));
+				returned.add(decodeStringFromDB(rs, "MODEL_SHOW"));
 			}
 
 			return returned;
@@ -389,5 +414,127 @@ public class JDBCDAO {
 		}
 
 		return photos;
+	}
+
+	public List<String[]> getStatistics(final String show, ResourceBundle language) throws SQLException {
+		final List<String[]> returned = new LinkedList<String[]>();
+		final List<String[]> tablespaceStatas = new LinkedList<String[]>();
+		tablespaceStatas.add(new String[] { "&nbsp", "" });
+		tablespaceStatas.add(new String[] { "Versenymunk&aacute;k helyig&eacute;nye (cm<sup>2</sup>):", "" });
+
+		final PreparedStatement queryStatement = null;
+		final ResultSet rs = null;
+
+		try {
+			// aktiv kategoriak
+			final List<Category> categories = servletDAO.getCategoryList(show);
+
+			returned.add(new String[] { "<b>" + language.getString("show") + "</b>", show });
+//		  returned.add(new String[] { "Kateg&oacute;ri&aacute;k sz&aacute;ma: ", String.valueOf(categories.size()) });
+
+			returned.add(new String[] { "&nbsp", "" });
+			final List<User> users = servletDAO.getUsers();
+			final Map<String, HashSet<Integer>> modelersPerCountry = new HashMap<>();
+			final Map<String, HashSet<Model>> modelsPerCountrySet = new HashMap<>();
+
+			int allModels = 0;
+
+			returned.add(new String[] { language.getString("models.number.per.category") + ": ", "" });
+			returned.add(new String[] { "&nbsp", "" });
+
+			for (final Category category : categories) {
+				if (!category.group.show.equals(show)) {
+					continue;
+				}
+
+				final List<Model> models = servletDAO.getModelsInCategory(category.getId());
+
+				returned.add(
+						new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
+								String.valueOf(models.size()) });
+
+				// benevezett makettek szama
+				allModels += models.size();
+
+				for (final Model model : models) {
+					// jelenleg nevezok
+					for (final User user : users) {
+						if (user.getId() == model.getId()) {
+							HashSet<Integer> userIDs = modelersPerCountry.get(user.country);
+							if (userIDs == null) {
+								userIDs = new HashSet<Integer>();
+								modelersPerCountry.put(user.country, userIDs);
+							}
+							userIDs.add(user.getId());
+
+							HashSet<Model> modelsPerCountry = modelsPerCountrySet.get(user.country);
+							if (modelsPerCountry == null) {
+								modelsPerCountry = new HashSet<Model>();
+								modelsPerCountrySet.put(user.country, modelsPerCountry);
+							}
+							modelsPerCountry.add(model);
+						}
+					}
+				}
+
+				createCustomStats(models, category, tablespaceStatas);
+			}
+
+			returned.add(new String[] { "&nbsp", "" });
+
+			// benevezett makettek szama
+			returned.add(new String[] { language.getString("models.number") + ": ", String.valueOf(allModels) });
+//		  returned.add(new String[] { "Felt&ouml;lt&ouml;tt k&eacute;pek sz&aacute;ma: ", simpleQuery("count(*)", "MAK_PICTURES") });
+
+			returned.add(new String[] { "&nbsp", "" });
+
+			// ossz regisztralt felhasznalo
+			int modelers = 0;
+			for (final String country : modelersPerCountry.keySet()) {
+				modelers += modelersPerCountry.get(country).size();
+			}
+
+			returned.add(new String[] { language.getString("competitors.number") + ": ", String.valueOf(modelers) });
+
+			// jelenleg nevezok
+			for (final String country : modelersPerCountry.keySet().stream().sorted().collect(Collectors.toList())) {
+				returned.add(new String[] {
+						language.getString("competitors.number.per.country") + ": <b>" + country + "</b>",
+						String.valueOf(modelersPerCountry.get(country).size()) });
+			}
+
+			returned.add(new String[] { "&nbsp", "" });
+
+			// nevezett makettek száma országonként
+			for (final String country : modelsPerCountrySet.keySet().stream().sorted().collect(Collectors.toList())) {
+				returned.add(new String[] { "Nevezett makettek száma országonként: <b>" + country + "</b>",
+						String.valueOf(modelsPerCountrySet.get(country).size()) });
+			}
+
+			// helyfoglalás
+			returned.addAll(tablespaceStatas);
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (queryStatement != null) {
+					queryStatement.close();
+				}
+			} catch (final Exception ex) {
+				logger.fatal("!!! ServletDAO.getStatistics(): ", ex);
+			}
+		}
+
+		return returned;
+	}
+
+	private void createCustomStats(final List<Model> models, final Category category,
+			final List<String[]> tablespaceStatas) {
+		int tablespace = models.stream().mapToInt(m -> (int) m.getWidth() * m.getLength()).sum();
+
+		tablespaceStatas
+				.add(new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
+						String.valueOf(tablespace) });
 	}
 }

@@ -13,7 +13,7 @@ public class EncodePasswords
   {
 	DriverManager.registerDriver((Driver) Class.forName(DB_Driver).newInstance());
 
-	ServletDAO servletDAO = new ServletDAO(null, DB_URL, DB_Username, DB_Password, null);
+	ServletDAO servletDAO = new ServletDAO(DB_URL, DB_Username, DB_Password, null);
 
 	for (User user : servletDAO.getUsers())
 	{

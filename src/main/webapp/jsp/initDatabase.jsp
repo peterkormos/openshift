@@ -8,7 +8,7 @@
 <%@page import="java.util.*"%>
 
 <%
-    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
 
   final String languageCode = "ADMIN";
@@ -21,9 +21,9 @@
   user.setFirstName("Peter");
   user.setLastName("Kormos");
 
-  servletDAO.registerNewUser(user);
+  servletDAO.save(user);
 
-  servletDAO.saveCategoryGroup(new CategoryGroup(servletDAO.getNextID("CATEGORY_GROUP", "CATEGORY_group_ID"), "-", "-"));
+  servletDAO.save(new CategoryGroup(servletDAO.getNextID("CATEGORY_GROUP", "CATEGORY_group_ID"), "-", "-"));
 
   response.sendRedirect("../index.jsp");
 %>

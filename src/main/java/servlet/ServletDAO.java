@@ -1,28 +1,16 @@
 package servlet;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,25 +18,18 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import datatype.AgeGroup;
 import datatype.AwardedModel;
 import datatype.Category;
 import datatype.CategoryGroup;
-import datatype.Detailing;
-import datatype.DetailingCriteria;
-import datatype.DetailingGroup;
 import datatype.LoginConsent;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
 import exception.EmailNotFoundException;
-import servlet.ServletDAO.SYSTEMPARAMETER;
 
 public class ServletDAO extends HibernateDAO
 {
   public static Logger logger = Logger.getLogger(ServletDAO.class);
-
-  private final RegistrationServlet registrationServlet;
 
 private JDBCDAO jdbcDAO;
   private static final Map<Integer, String> charEncodeMap;
@@ -130,18 +111,11 @@ private JDBCDAO jdbcDAO;
 
   }
 
-  public ServletDAO(RegistrationServlet registrationServlet, String dbURL, String dbUserName, String dbPassword,
+  public ServletDAO(String dbURL, String dbUserName, String dbPassword,
           URL configFile) 
-      throws SQLException
   {
       super(configFile);
 	this.jdbcDAO = new JDBCDAO(dbURL, dbUserName, dbPassword, this);
-	this.registrationServlet = registrationServlet;
-  }
-
-  private void encodeStringForDB(final PreparedStatement queryStatement, final int column, final String value) throws SQLException
-  {
-	queryStatement.setString(column, encodeString(value));
   }
 
   public static String encodeString(String value)
@@ -181,34 +155,9 @@ private JDBCDAO jdbcDAO;
 	return buff.toString();
   }
 
-  public static String decodeStringFromDB(final ResultSet rs, final String column) throws SQLException
-  {
-	final String value = rs.getString(column);
-
-	if (value == null)
-	{
-	  return "";
-	}
-	else
-	{
-	  return rs.getString(column);
-	}
-
-  }
-
-  public void registerNewUser(final User user) throws SQLException
-  {
-	  save(user);
-  }
-
-	boolean userExists(final String email) throws SQLException, Exception {
+	boolean userExists(final String email) throws Exception {
 		return !get(User.class, "upper(email) = upper('" + email + "')").isEmpty();
 	}
-
-  public void saveCategory(final Category category) throws SQLException, Exception, IOError
-  {
-	  save(category);
-  }
 
   public List<Category> getCategoryList(final String show) throws SQLException
   {
@@ -254,10 +203,6 @@ private JDBCDAO jdbcDAO;
   {
 	  return get(User.class, "enabled=true order by lastName, firstName");
   }
-  public void saveModel(final Model model) throws SQLException 
-  {
-	  save(model);
-  }
 
   public void saveModelClass(int userID, ModelClass modelClass) throws SQLException
   {
@@ -274,7 +219,7 @@ private JDBCDAO jdbcDAO;
 	update(user);
   }
 
-	public User getUser(String email) throws SQLException, EmailNotFoundException {
+	public User getUser(String email) throws EmailNotFoundException {
 		email = email.replace(';', ' ').replace('(', ' ').replace(')', ' ').replace('\'', ' ').replace(';', ' ');
 
 		List<User> users = get(User.class, "upper(email) = upper('" + email + "')");
@@ -352,16 +297,6 @@ private JDBCDAO jdbcDAO;
 		return getModels("userID = " + userID + " and categoryID = " + categoryID).size();
 	}
 
-	public void closeResultSet(ResultSet rs) {
-		try {
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (final Exception ex) {
-			logger.fatal("", ex);
-		}
-	}
-
   public List<Model> getModels(final int userID) throws SQLException
   {
 	return userID == INVALID_USERID ? getAll(Model.class) : getModels("userID = " + userID);
@@ -412,145 +347,6 @@ private JDBCDAO jdbcDAO;
   {
 	  jdbcDAO.deleteEntry(table, null, 0);
   }
-  public List<String[]> getStatistics(final String show, ResourceBundle language) throws SQLException
-  {
-	final List<String[]> returned = new LinkedList<String[]>();
-	final List<String[]> tablespaceStatas = new LinkedList<String[]>();
-	tablespaceStatas.add(new String[] { "&nbsp", "" });
-	tablespaceStatas.add(new String[] { "Versenymunk&aacute;k helyig&eacute;nye (cm<sup>2</sup>):", "" });
-	
-	final PreparedStatement queryStatement = null;
-	final ResultSet rs = null;
-
-	try
-	{
-	  // aktiv kategoriak
-	  final List<Category> categories = getCategoryList(show);
-
-	  returned.add(new String[] { "<b>"+language.getString("show")+"</b>", show });
-//	  returned.add(new String[] { "Kateg&oacute;ri&aacute;k sz&aacute;ma: ", String.valueOf(categories.size()) });
-
-	  returned.add(new String[] { "&nbsp", "" });
-	  final List<User> users = getUsers();
-	  final Map<String, HashSet<Integer>> modelersPerCountry = new HashMap<>();
-	  final Map<String, HashSet<Model>> modelsPerCountrySet = new HashMap<>();
-
-	  int allModels = 0;
-
-	  returned.add(new String[] { language.getString("models.number.per.category")+": ", "" });
-	  returned.add(new String[] { "&nbsp", "" });
-
-	  for (final Category category : categories)
-	  {
-		if (!category.group.show.equals(show))
-		{
-		  continue;
-		}
-
-		final List<Model> models = getModelsInCategory(category.getId());
-
-		returned.add(new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
-		    String.valueOf(models.size()) });
-
-		// benevezett makettek szama
-		allModels += models.size();
-
-		for (final Model model : models)
-		{
-		  // jelenleg nevezok
-		  for (final User user : users)
-		  {
-			if (user.getId() == model.getId())
-			{
-			  HashSet<Integer> userIDs = modelersPerCountry.get(user.country);
-			  if (userIDs == null)
-			  {
-				userIDs = new HashSet<Integer>();
-				modelersPerCountry.put(user.country, userIDs);
-			  }
-			  userIDs.add(user.getId());
-
-			  HashSet<Model> modelsPerCountry = modelsPerCountrySet.get(user.country);
-			  if (modelsPerCountry == null)
-			  {
-				  modelsPerCountry = new HashSet<Model>();
-				  modelsPerCountrySet.put(user.country, modelsPerCountry);
-			  }
-			  modelsPerCountry.add(model);
-			}
-		  }
-		}
-
-		createCustomStats(models, category, tablespaceStatas);
-	  }
-
-	  returned.add(new String[] { "&nbsp", "" });
-
-	  // benevezett makettek szama
-	  returned.add(new String[] { language.getString("models.number")+": ", String.valueOf(allModels) });
-//	  returned.add(new String[] { "Felt&ouml;lt&ouml;tt k&eacute;pek sz&aacute;ma: ", simpleQuery("count(*)", "MAK_PICTURES") });
-
-	  returned.add(new String[] { "&nbsp", "" });
-
-	  // ossz regisztralt felhasznalo
-	  int modelers = 0;
-	  for (final String country : modelersPerCountry.keySet())
-	  {
-		modelers += modelersPerCountry.get(country).size();
-	  }
-
-	  returned.add(new String[] { language.getString("competitors.number")+": ", String.valueOf(modelers) });
-
-	  // jelenleg nevezok
-	  for (final String country : modelersPerCountry.keySet().stream().sorted().collect(Collectors.toList()))
-	  {
-		returned.add(new String[] { language.getString("competitors.number.per.country")+": <b>" + country + "</b>",
-		    String.valueOf(modelersPerCountry.get(country).size()) });
-	  }
-	  
-	  returned.add(new String[] { "&nbsp", "" });
-
-	  // nevezett makettek száma országonként
-	  for (final String country : modelsPerCountrySet.keySet().stream().sorted().collect(Collectors.toList()))
-	  {
-		  returned.add(new String[] { "Nevezett makettek száma országonként: <b>" + country + "</b>",
-				  String.valueOf(modelsPerCountrySet.get(country).size()) });
-	  }
-	  
-	  //helyfoglalás
-	  returned.addAll(tablespaceStatas);
-	}
-	finally
-	{
-	  try
-	  {
-		if (rs != null)
-		{
-		  rs.close();
-		}
-		if (queryStatement != null)
-		{
-		  queryStatement.close();
-		}
-	  }
-	  catch (final Exception ex)
-	  {
-		logger.fatal("!!! ServletDAO.getStatistics(): ", ex);
-	  }
-	}
-
-	return returned;
-  }
-
-	private void createCustomStats(final List<Model> models, final Category category,
-			final List<String[]> tablespaceStatas) {
-		int tablespace = models.stream()
-				.mapToInt(m -> (int) m.getWidth() * m.getLength()).sum();
-
-		tablespaceStatas
-				.add(new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
-						String.valueOf(tablespace) });
-	}
 
 public void deleteModel(final Model model) throws SQLException
   {
@@ -563,10 +359,6 @@ public void deleteModel(final Model model) throws SQLException
 	  jdbcDAO.deleteEntry("MAK_AWARDEDMODELS", "ID", id);
   }
 
-  public void deleteCategory(final Category category) throws SQLException
-  {
-	  delete(category);
-  }
 
 void deleteModels(final int categoryId) throws SQLException {
     for (final Model model : getModelsInCategory(categoryId))
@@ -574,11 +366,6 @@ void deleteModels(final int categoryId) throws SQLException {
 	  deleteModel(model);
 	}
 }
-
-  public void deleteCategoryGroup(final CategoryGroup categoryGroup) throws SQLException
-  {
-	  delete(categoryGroup);
-  }
 
   public void deleteUser(final int userID) throws SQLException
   {
@@ -590,13 +377,9 @@ void deleteModels(final int categoryId) throws SQLException {
   public void modifyUser(final User newUser, final User oldUser) throws SQLException
   {
 	  delete(User.class, "id = " +newUser.getId());
-	registerNewUser(newUser);
+	save(newUser);
   }
 
-  public void saveCategoryGroup(final CategoryGroup categoryGroup) throws SQLException
-  {
-	  save(categoryGroup);
-  }
   public List<User> getSimilarLastNames(final String lastname) throws SQLException
   {
 	  return get(User.class, "lastName like '%" + lastname + "%'");
@@ -656,7 +439,7 @@ void deleteModels(final int categoryId) throws SQLException {
 		return jdbcDAO.getPhotos();
 	}
 
-	public void saveImage(int modelID, InputStream stream) throws SQLException, IOException {
+	public void saveImage(int modelID, InputStream stream) throws IOException, SQLException {
 		jdbcDAO.saveImage(modelID, stream);
 	}
 
@@ -682,6 +465,10 @@ void deleteModels(final int categoryId) throws SQLException {
 
 	public byte[] loadImage(int modelID) throws SQLException {
 		return jdbcDAO.loadImage(modelID);
+	}
+
+	public List<String[]> getStatistics(String show, ResourceBundle language) throws SQLException {
+		return jdbcDAO.getStatistics(show, language);
 	}
 }
 
