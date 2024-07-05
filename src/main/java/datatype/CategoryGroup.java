@@ -56,7 +56,7 @@ public class CategoryGroup extends Record
 	return "CategoryGroup [show=" + show + ", categoryGroupID=" + getId() + ", group=" + name + "]";
   }
 
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_Category")
+	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_CategoryGroup")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column(name = "CATEGORY_GROUP_ID")

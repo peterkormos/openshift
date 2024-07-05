@@ -1076,25 +1076,31 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
-	    final Category newCategory = new Category(
-	            ServletUtil.getRequestAttribute(request, "categorycode"),
-	            ServletUtil.getRequestAttribute(request, "categorydescription"),
+			Category modifyingCategory;
+			try {
+				modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
+			} catch (Exception e) {
+				modifyingCategory = new Category();
+			}
+			
+			modifyingCategory.setCategoryCode(
+	            ServletUtil.getRequestAttribute(request, "categorycode"));
+			modifyingCategory.setCategoryDescription(
+	            ServletUtil.getRequestAttribute(request, "categorydescription"));
+			modifyingCategory.setGroup(
 	            servletDAO.getCategoryGroup(
 	                    Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
-	                    servletDAO.getCategoryGroups()),
-	            ServletUtil.isCheckedIn(request, "master"),
-	            ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")),
+	                    servletDAO.getCategoryGroups()));
+			modifyingCategory.setMaster(
+	            ServletUtil.isCheckedIn(request, "master"));
+			modifyingCategory.setModelClass(
+	            ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")));
+			modifyingCategory.setAgeGroup(
 	            AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup"))
 	            );
 	    
-		try {
-		    Category modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
-		    servletDAO.delete(modifyingCategory);
-		    newCategory.setId(modifyingCategory.getId());
-		} catch (Exception e) {
-		}
-		
-		servletDAO.save(newCategory);
+		System.out.println(modifyingCategory);
+		servletDAO.save(modifyingCategory);
 		}		
 		else {
 			writeErrorResponse(response, "Most m&aacute;r nem lehet felvenni!");
@@ -2093,7 +2099,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__USER_ID__", String.valueOf(model.getUserID()))
 							.replaceAll("__MODEL_ID__", String.valueOf(model.getId()))
 							.replaceAll("__YEAR_OF_BIRTH__",
-									String.valueOf(servletDAO.getUser(model.getId()).yearOfBirth))
+									String.valueOf(servletDAO.getUser(model.getUserID()).yearOfBirth))
 							.replaceAll("__MODEL_SCALE__", model.scale)
 							.replaceAll("__CATEGORY_CODE__", servletDAO.getCategory(model.categoryID).categoryCode)
 							.replaceAll("__MODEL_NAME__", model.name)
@@ -2363,7 +2369,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-			final User user = servletDAO.getUser(model.getId());
+			final User user = servletDAO.getUser(model.getUserID());
 			final Category category = servletDAO.getCategory(model.categoryID);
 
 			buff.append(buffer.toString().replaceAll("__LASTNAME__", String.valueOf(user.lastName))

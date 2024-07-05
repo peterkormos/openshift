@@ -180,22 +180,6 @@ public class HibernateDAO
 	  }
   }
   
-  public <T> void update(Class<T> recordClass, String whereClause)
-  {
-	  Session session = null;
-	  
-	  try
-	  {
-		  session = getHibernateSession();
-		  session.beginTransaction();
-		  session.createQuery("update " + recordClass.getName() + " as r where " + whereClause).executeUpdate();
-	  }
-	  finally
-	  {
-		  closeSession(session);
-	  }
-  }
-  
   public <T> int count(Class<T> recordClass, String whereClause)
   {
 	  Session session = null;

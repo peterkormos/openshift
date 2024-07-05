@@ -207,7 +207,7 @@
 				for (String judge : servlet.judgingServletDAO.getJudges(category.categoryCode, model.getId(),
 									model.userID)) {
 			%> <a
-			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.UserID%>=<%=model.getUserId()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
+			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.UserID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
 
 			<%
 				}
