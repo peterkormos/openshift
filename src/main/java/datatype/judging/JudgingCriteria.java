@@ -29,14 +29,14 @@ public class JudgingCriteria extends Record
 	
   public static final JudgingCriteria getDefault()
   {
-      JudgingCriteria judgingCriteria = new JudgingCriteria(1, "", 10);
+      JudgingCriteria judgingCriteria = new JudgingCriteria(0, 1, "", 10);
       judgingCriteria.setId(judgingCriteria.getCriteriaId());
 	return judgingCriteria;
   }
 
-  public JudgingCriteria(int criteriaId, String description, int maxScore)
+  public JudgingCriteria(final int id, int criteriaId, String description, int maxScore)
   {
-	super();
+	super(id);
 	this.criteriaId = criteriaId;
 	this.description = ServletDAO.encodeString(description);
 	this.maxScore = maxScore;
@@ -79,8 +79,6 @@ public class JudgingCriteria extends Record
   }
 
 
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_JudgingCriteria")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column
 	public int id;

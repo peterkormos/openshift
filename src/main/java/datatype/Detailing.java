@@ -35,12 +35,19 @@ public class Detailing extends Record {
 	@Column
 	private Boolean checked;
 
+	@Deprecated
 	public Detailing() {
 
 	}
+	
+	public Detailing(final int id)
+	  {
+	  	setId(id);
+	}
 
-	public Detailing(DetailingGroup detailingGroup, DetailingCriteria detailingCriteria, Boolean checked) {
-//		super(id);
+
+	public Detailing(final int id, DetailingGroup detailingGroup, DetailingCriteria detailingCriteria, Boolean checked) {
+		this(id);
 		this.detailingGroup = detailingGroup;
 		this.detailingCriteria = detailingCriteria;
 		this.checked = checked;
@@ -76,8 +83,6 @@ public class Detailing extends Record {
 				+ detailingCriteria + ", checked=" + checked + ", id=" + getId() + "]";
 	}
 	
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_Detailing")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column
 	public int id;

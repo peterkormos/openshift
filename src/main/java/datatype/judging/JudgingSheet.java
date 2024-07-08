@@ -26,11 +26,17 @@ public class JudgingSheet extends Record {
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	private List<JudgingCriteria> criterias;
 
+	@Deprecated
 	public JudgingSheet() {
 	}
 
-	public JudgingSheet(String name, List<JudgingCriteria> criterias) {
-		super();
+	public JudgingSheet(final int id)
+	  {
+	  	super(id);
+	}
+
+	public JudgingSheet(final int id, String name, List<JudgingCriteria> criterias) {
+		this(id);
 		this.name = ServletDAO.encodeString(name);
 		this.criterias = criterias;
 	}
@@ -56,8 +62,6 @@ public class JudgingSheet extends Record {
 		return "JudgingSheet [name=" + name + ", criterias=" + criterias + "]";
 	}
 
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_JudgingSheet")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column
 	public int id;

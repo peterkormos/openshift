@@ -182,9 +182,15 @@ public class Model extends Record {
 		return Boolean.TRUE.equals(details.getOrDefault(group, new HashMap<>()).get(criteria));
 	}
 
-    public Model(int userID, int categoryID, String scale, String name, String producer, String comment,
+    public Model(final int id)
+  {
+    	setId(id);
+  }
+    
+    public Model(final int id, int userID, int categoryID, String scale, String name, String producer, String comment,
 	  String identification, String markings, boolean gluedToBase)
   {
+    	this(id);
 	this.userID = userID;
 	this.categoryID = categoryID;
 	this.scale = scale;
@@ -199,7 +205,7 @@ public class Model extends Record {
   
 	public Model(Model model)
   {
-	this.setId(model.getId());
+	this(model.getId());
 	this.userID = model.userID;
 	this.categoryID = model.categoryID;
 	this.scale = model.scale;
@@ -226,8 +232,6 @@ public class Model extends Record {
         return returned;
     }
 
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_Model")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column
 	public int id;

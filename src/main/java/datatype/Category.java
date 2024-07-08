@@ -69,14 +69,14 @@ public class Category extends Record
 	this.categoryDescription = categoryDescription;
   }
 
-  public Category()
-  {
+  @Deprecated
+  public Category() {
+}
 
-  }
-
-  public Category(final String categoryCode, final String categoryDescription, final CategoryGroup group,
+  public Category(final int id, final String categoryCode, final String categoryDescription, final CategoryGroup group,
 	  boolean master, ModelClass modelClass, AgeGroup ageGroup)
   {
+  	super(id);
 	this.categoryCode = categoryCode;
 	this.categoryDescription = categoryDescription;
 	this.group = group;
@@ -86,7 +86,11 @@ public class Category extends Record
 	this.ageGroup = ageGroup;
   }
 
-  public boolean isMaster()
+  public Category(int id) {
+super(id);
+}
+
+public boolean isMaster()
   {
 	return master;
   }
@@ -123,8 +127,6 @@ public class Category extends Record
 	    + ", categoryDescription=" + categoryDescription + ", master=" + master + ", modelClass=" + modelClass + ", ageGroup="
 	    + ageGroup + "]";
   }
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_Category")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column(name = "CATEGORY_ID")
 	public int id;

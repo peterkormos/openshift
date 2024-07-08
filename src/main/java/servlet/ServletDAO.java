@@ -24,6 +24,7 @@ import datatype.CategoryGroup;
 import datatype.LoginConsent;
 import datatype.Model;
 import datatype.ModelClass;
+import datatype.Record;
 import datatype.User;
 import exception.EmailNotFoundException;
 

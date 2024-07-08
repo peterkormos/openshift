@@ -32,15 +32,15 @@ public class JudgingResult extends JudgedModel{
     }
 
 
-    public JudgingResult(JudgingScore result) {
-        super(result);
+    public JudgingResult(final int id, JudgingScore result) {
+        super(id, result);
         
         this.category = result.getCategory();
         this.judge = result.getJudge();
     }
 
-    public JudgingResult(Model model) {
-        super(model);
+    public JudgingResult(final int id, Model model) {
+        super(id, model);
     }
 
     public JudgingResult() {

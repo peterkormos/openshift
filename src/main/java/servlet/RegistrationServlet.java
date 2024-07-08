@@ -500,7 +500,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		for (LoginConsentType type : LoginConsent.LoginConsentType.values()) {
 			if (ServletUtil.isCheckedIn(request, "dataUsageConsent" + type.name())) {
-				LoginConsent lc = new LoginConsent(user.getId(), type);
+				LoginConsent lc = new LoginConsent(servletDAO.getNextID(LoginConsent.class), user.getId(), type);
 				servletDAO.save(lc);
 			}
 		}
@@ -605,7 +605,7 @@ public class RegistrationServlet extends HttpServlet {
 				users.add(user);
 			}
 
-			final Model model = new Model();
+			final Model model = new Model(servletDAO.getNextID(Model.class));
 			model.setUser(user);
 			createModel(model, request, httpParameterPostTag);
 
@@ -1080,7 +1080,7 @@ public class RegistrationServlet extends HttpServlet {
 			try {
 				modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
 			} catch (Exception e) {
-				modifyingCategory = new Category();
+				modifyingCategory = new Category(servletDAO.getNextID(Category.class));
 			}
 			
 			modifyingCategory.setCategoryCode(
@@ -1099,7 +1099,6 @@ public class RegistrationServlet extends HttpServlet {
 	            AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup"))
 	            );
 	    
-		System.out.println(modifyingCategory);
 		servletDAO.save(modifyingCategory);
 		}		
 		else {
@@ -1121,7 +1120,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
 			String show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
-		final CategoryGroup categoryGroup = new CategoryGroup(
+		final CategoryGroup categoryGroup = new CategoryGroup(servletDAO.getNextID(CategoryGroup.class),
 				show, ServletUtil.getRequestAttribute(request, "group"));
 
     	final HttpSession session = request.getSession(false);
@@ -1358,10 +1357,10 @@ public class RegistrationServlet extends HttpServlet {
 		try {
                     category = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
                 } catch (Exception e) {
-                    category = new Category();
+                    category = new Category(servletDAO.getNextID(Category.class));
                     category.setCategoryCode("");
                     category.setCategoryDescription("");
-                    category.setGroup(new CategoryGroup());
+                    category.setGroup(new CategoryGroup(0));
                 }
 
 		final StringBuilder buff = new StringBuilder();
@@ -1522,7 +1521,7 @@ public class RegistrationServlet extends HttpServlet {
 			UserNotLoggedInException, NumberFormatException, MissingRequestParameterException {
 		final User user = getUser(request);
 
-		final Model model = new Model();
+		final Model model = new Model(servletDAO.getNextID(Model.class));
 		model.setUser(user);
 		createModel(model, request);
 		
@@ -1613,7 +1612,7 @@ public class RegistrationServlet extends HttpServlet {
 			for (DetailingCriteria criteria : DetailingCriteria.values()) {
 				boolean checked = ServletUtil.isCheckedIn(request, "detailing." + group.name() + "." + criteria.name());
 				if (checked) {
-					detailing.add(new Detailing(group, criteria, checked));
+					detailing.add(new Detailing(servletDAO.getNextID(Detailing.class), group, criteria, checked));
 				}
 			}
 		}

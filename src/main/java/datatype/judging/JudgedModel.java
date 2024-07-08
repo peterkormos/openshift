@@ -30,14 +30,20 @@ public class JudgedModel extends Record {
         super();
     }
 
-    public JudgedModel(JudgedModel model)
+	public JudgedModel(final int id)
+	  {
+	  	setId(id);
+	}
+
+	public JudgedModel(final int id, JudgedModel model)
     {
         this(model.getId(), model.getModelID(), model.getModellerID(), model.getModelsName());
+        setId(id);
     }
     
-    public JudgedModel(Model model)
+    public JudgedModel(final int id, Model model)
     {
-        this(0, model.getId(), model.getUserID(), model.getName());
+        this(id, model.getId(), model.getUserID(), model.getName());
     }
     
     public void setModel(Model model)
@@ -86,8 +92,6 @@ public class JudgedModel extends Record {
     	this.modellerID = modellerID;
       }
 
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_JudgedModel")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column
 	public int id;

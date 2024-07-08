@@ -39,13 +39,17 @@ public class CategoryGroup extends Record
 	this.name = group;
   }
 
-  public CategoryGroup()
-  {
+  @Deprecated
+  public CategoryGroup() {
+}
 
-  }
+  public CategoryGroup(int id) {
+super(id);
+}
 
-  public CategoryGroup(final String show, final String group)
+  public CategoryGroup(final int id, final String show, final String group)
   {
+  	super(id);
 	this.show = show;
 	this.name = group;
   }
@@ -56,8 +60,6 @@ public class CategoryGroup extends Record
 	return "CategoryGroup [show=" + show + ", categoryGroupID=" + getId() + ", group=" + name + "]";
   }
 
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_CategoryGroup")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column(name = "CATEGORY_GROUP_ID")
 	public int id;

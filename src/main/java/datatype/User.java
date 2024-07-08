@@ -137,9 +137,8 @@ public class User extends Record {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-
-	public User() {
-
+	  @Deprecated
+	  public User() {
 	}
 
 	public User(String language) {
@@ -207,8 +206,6 @@ public class User extends Record {
 		return "CATEGORY".equals(language);
 	}
 
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_User")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column(name = "USER_ID")
 	public int id;

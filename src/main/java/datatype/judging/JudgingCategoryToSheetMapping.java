@@ -24,8 +24,8 @@ public class JudgingCategoryToSheetMapping extends Record{
 	public JudgingCategoryToSheetMapping() {
 	}
 
-	public JudgingCategoryToSheetMapping(int categoryId, JudgingSheet judgingSheet) {
-		super();
+	public JudgingCategoryToSheetMapping(final int id, int categoryId, JudgingSheet judgingSheet) {
+		super(id);
 		this.categoryId = categoryId;
 		this.judgingSheet = judgingSheet;
 	}
@@ -51,8 +51,6 @@ public class JudgingCategoryToSheetMapping extends Record{
 		return "JudgingCategory [categoryId=" + categoryId + ", judgingSheet=" + judgingSheet + "]";
 	}
 	
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_JudgingSheet")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column
 	public int id;

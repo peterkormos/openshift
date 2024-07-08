@@ -39,12 +39,19 @@ public class LoginConsent extends Record {
     @Enumerated(EnumType.STRING)
     protected LoginConsentType type;
 
+    @Deprecated
     public LoginConsent()
     {
         
     }
     
-    public LoginConsent(int modellerID, LoginConsentType type) {
+	public LoginConsent(final int id)
+	  {
+	  	setId(id);
+	}
+
+	public LoginConsent(final int id, int modellerID, LoginConsentType type) {
+		this(id);
         this.modellerID = modellerID;
         this.type = type;
     }
@@ -53,8 +60,6 @@ public class LoginConsent extends Record {
         return type;
     }
 
-	@SequenceGenerator(name = "RecordSeqgen", sequenceName = "S_LoginConsent")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RecordSeqgen")
 	@Id
 	@Column
 	public int id;
