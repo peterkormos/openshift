@@ -233,7 +233,7 @@ public class Model extends Record {
     }
 
 	@Id
-	@Column
+	@Column(name = "MODEL_ID")
 	public int id;
 
 	@Override
