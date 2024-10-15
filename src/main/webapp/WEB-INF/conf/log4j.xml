@@ -23,11 +23,11 @@
   </logger>
 
   <logger name="org.hibernate.type">
-        <level value="TRACE" />
+        <level value="ERROR" />
     <appender-ref ref="ASYNC_RegistrationServlet"/>
   </logger>
   <logger name="org.hibernate.SQL">
-        <level value="TRACE" />
+        <level value="ERROR" />
     <appender-ref ref="ASYNC_RegistrationServlet"/>
   </logger>
     
