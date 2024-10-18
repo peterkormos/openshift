@@ -80,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.07.04.";
+	public String VERSION = "2024.07.18.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1102,12 +1102,16 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.save(modifyingCategory);
 		}		
 		else {
-			writeErrorResponse(response, "Most m&aacute;r nem lehet felvenni!");
+			writeCategoryModificationErrorResponse(response);
 			return;
 		}
 		redirectToMainPage(request, response);
 	}
 
+	private void writeCategoryModificationErrorResponse(final HttpServletResponse response) throws IOException {
+		writeErrorResponse(response, "Most m&aacute;r nem lehet m&oacute;dos&iacute;tani! El&#337;ször az 'El&#337;nevez&eacute;s v&eacute;ge' vagy 'Helysz&iacute;ni m&oacute;d' linkre kell kattintani az admin oldalon.");
+	}
+	
 	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final int userID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "userID"));
 
@@ -1129,7 +1133,7 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.save(categoryGroup);
 		}
 		else {
-			writeErrorResponse(response, "Most m&aacute;r nem lehet felvenni!");
+			writeCategoryModificationErrorResponse(response);
 			return;
 		}
 		redirectToMainPage(request, response);
@@ -1911,7 +1915,7 @@ public class RegistrationServlet extends HttpServlet {
 			servletDAO.delete(servletDAO.get(categoryGroupID, CategoryGroup.class));
 		}
 		else {
-			writeErrorResponse(response, "Most m&aacute;r nem lehet t&ouml;r&ouml;lni!");
+			writeCategoryModificationErrorResponse(response);
 			return;
 		}
 
@@ -1925,7 +1929,7 @@ public class RegistrationServlet extends HttpServlet {
 			servletDAO.delete(servletDAO.getCategory(categoryID));
 		}
 		else {
-			writeErrorResponse(response, "Most m&aacute;r nem lehet t&ouml;r&ouml;lni!");
+			writeCategoryModificationErrorResponse(response);
 			return;
 		}
 
