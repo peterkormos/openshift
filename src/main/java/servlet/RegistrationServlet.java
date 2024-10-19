@@ -80,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.07.18.";
+	public String VERSION = "2024.10.15.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1616,7 +1616,9 @@ public class RegistrationServlet extends HttpServlet {
 			for (DetailingCriteria criteria : DetailingCriteria.values()) {
 				boolean checked = ServletUtil.isCheckedIn(request, "detailing." + group.name() + "." + criteria.name());
 				if (checked) {
-					detailing.add(new Detailing(servletDAO.getNextID(Detailing.class), group, criteria, checked));
+					Detailing newDetailing = new Detailing(servletDAO.getNextID(Detailing.class), group, criteria, checked);
+					servletDAO.save(newDetailing);
+					detailing.add(newDetailing);
 				}
 			}
 		}
