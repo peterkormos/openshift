@@ -80,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.10.15.";
+	public String VERSION = "2024.10.31.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -2467,7 +2467,8 @@ public class RegistrationServlet extends HttpServlet {
 
 		ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag);
 
-		return new User(password,
+		return new User(servletDAO.getNextID(User.class),
+				password,
 				// ServletUtil.getRequestAttribute(request, "firstname" +
 				// httpParameterPostTag),
 				"-", ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag),

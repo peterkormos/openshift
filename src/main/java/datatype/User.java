@@ -142,12 +142,13 @@ public class User extends Record {
 	}
 
 	public User(String language) {
-		this(null, null, null, language, null, null, null, false, null, Calendar.getInstance().get(Calendar.YEAR),
+		this(0, null, null, null, language, null, null, null, false, null, Calendar.getInstance().get(Calendar.YEAR),
 				null);
 	}
 
-	public User(String password, String firstname, String lastname, String language, String address,
+	public User(final int id, String password, String firstname, String lastname, String language, String address,
 			String telephone, String email, boolean enabled, String country, int yearOfBirth, String city) {
+		setId(id);
 		this.password = password;
 		this.firstName = firstname;
 		this.lastName = lastname;
