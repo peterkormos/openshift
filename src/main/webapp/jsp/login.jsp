@@ -106,7 +106,7 @@ if (showIdHttpParameter != null)
 								<%
 								    for (final String show : shows) {
 								%> <label><input type='radio' name='show'
-									onchange="updateMandatoryFieldMark(this);"
+									onchange="checkSubmit(document.getElementById('inputForm')) && updateMandatoryFieldMark(this);"
 									value='<%=StringEncoder.toBase64(show.getBytes())%>'
 									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <span
 									style="color:red"><b> <%=show%></b></span>
