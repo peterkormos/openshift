@@ -181,6 +181,23 @@ public class HibernateDAO
 	  }
   }
   
+  public <T> void deleteAll(Class<T> recordClass)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  session.createQuery("delete from " + recordClass.getName()).executeUpdate();
+		  session.getTransaction().commit();
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
   public <T> int count(Class<T> recordClass, String whereClause)
   {
 	  Session session = null;

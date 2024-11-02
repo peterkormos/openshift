@@ -9,11 +9,11 @@ import javax.persistence.Table;
 @Table(name = "MAK_CATEGORY_GROUP")
 public class CategoryGroup extends Record
 {
-	@Column(name="MODEL_SHOW")
+  @Column(name="MODEL_SHOW")
   public String show;
+  
   @Column(name="CATEGORY_GROUP")
   public String name;
-  @Column(name="CATEGORY_GROUP_ID")
 
   public String getShow()
   {

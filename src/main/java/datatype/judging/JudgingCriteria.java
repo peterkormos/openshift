@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import datatype.Record;
 import servlet.ServletDAO;
+import servlet.ServletUtil;
 
 @Entity
 @Table(name = "mak_judgingcriteria")
@@ -38,7 +39,7 @@ public class JudgingCriteria extends Record
   {
 	super(id);
 	this.criteriaId = criteriaId;
-	this.description = ServletDAO.encodeString(description);
+	this.description = ServletUtil.encodeString(description);
 	this.maxScore = maxScore;
   }
 

@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 
 import servlet.ServletDAO;
+import servlet.ServletUtil;
 import tools.ExcelUtil.Workbook;
 
 public class t {
@@ -19,7 +20,7 @@ public class t {
     	URLEncoder.encode("Kormos P&eacute;ter")
     			);
     	System.out.println(
-ServletDAO.encodeString("ű")
+    			ServletUtil.encodeString("ű")
     			);
     }
 

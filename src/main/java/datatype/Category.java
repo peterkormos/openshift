@@ -2,6 +2,7 @@ package datatype;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,7 +22,7 @@ import javax.persistence.Table;
 @Table(name = "MAK_CATEGORY")
 public class Category extends Record
 {
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "CATEGORY_GROUP_ID")
 //	@JoinTable(name = "MAK_CAT_CATG", joinColumns = {
 //	})

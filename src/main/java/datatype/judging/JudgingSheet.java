@@ -6,15 +6,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import datatype.Record;
-import servlet.ServletDAO;
+import servlet.ServletUtil;
 
 @Entity
 @Table(name = "mak_judgingsheet")
@@ -37,7 +34,7 @@ public class JudgingSheet extends Record {
 
 	public JudgingSheet(final int id, String name, List<JudgingCriteria> criterias) {
 		this(id);
-		this.name = ServletDAO.encodeString(name);
+		this.name = ServletUtil.encodeString(name);
 		this.criterias = criterias;
 	}
 

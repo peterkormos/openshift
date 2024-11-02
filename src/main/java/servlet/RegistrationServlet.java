@@ -386,7 +386,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void directLogin(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
-		loginSuccessful(request, response, servletDAO.getUser(userID), servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show")));
+		loginSuccessful(request, response, servletDAO.getUser(userID), ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show")));
 	}
 
 	public void directPrintModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -437,13 +437,12 @@ public class RegistrationServlet extends HttpServlet {
 
 			final User user = servletDAO.getUser(email);
 
-			final String passwordInRequest = servletDAO
-					.encodeString(ServletUtil.getRequestAttribute(request, "password"));
+			final String passwordInRequest = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "password"));
 
 			String show;
 			
 			try {
-				show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
+				show = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"));
 			} catch (final Exception e) {
 				if(user.isAdminUser() || isOnSiteUse())
 					show = null;
@@ -521,6 +520,7 @@ public class RegistrationServlet extends HttpServlet {
     private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         redirectToMainPage(request, response, false);
     }
+
     private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response, boolean goToParentDir) throws IOException {
         response.sendRedirect((goToParentDir ? "../" : "") + "jsp/"+getMainPageFile(request.getSession(false)));
     }
@@ -789,53 +789,36 @@ public class RegistrationServlet extends HttpServlet {
 
 		final StringBuilder buff = new StringBuilder();
 
-
-		final List<User> users = data.get(0);
-		if(!users.isEmpty())
-		{
-		    buff.append("Storing users");
-		    servletDAO.deleteEntries("MAK_USERS");
-        		for (final User user : users) {
-        			buff.append(".");
-        			servletDAO.save(user);
-        			for (final ModelClass modelClass : user.getModelClass()) {
-        				servletDAO.saveModelClass(user.getId(), modelClass);
-        			}
-        		}
-		}
-
-
 		final List<CategoryGroup> categoryGroups = data.get(1);
 
 		if (!categoryGroups.isEmpty()) {
-		    buff.append("<p>Storing CategoryGroups");
-		    servletDAO.deleteEntries("MAK_CATEGORY_GROUP");
-			for (final CategoryGroup categoryGroup : categoryGroups) {
-				buff.append(".");
-				servletDAO.save(categoryGroup);
+			final List<Model> models = data.get(3);
+			if(!models.isEmpty()) {
+				servletDAO.deleteAll(Model.class);			    
+				buff.append("<p>Storing Models");
+				for (final Model model : models) {
+					buff.append(".");
+					servletDAO.save(model);
+				}
 			}
 
-			buff.append("<p>Storing Categories");
-			servletDAO.deleteEntries("MAK_CATEGORY");
+			servletDAO.deleteAll(Category.class);
+			servletDAO.deleteAll(CategoryGroup.class);
 
 			final List<Category> categories = data.get(2);
+			buff.append("<p>Storing Categories");
 			for (final Category category : categories) {
+				System.out.println("category: " + category);
 				buff.append(".");
 				if (category.getModelClass() == null) {
 					category.setModelClass(ModelClass.Other);
 				}
 				servletDAO.save(category);
 			}
-
-
-			final List<Model> models = data.get(3);
-			if(!models.isEmpty()) {
-			    buff.append("<p>Storing Models");
-			    servletDAO.deleteEntries("MAK_MODEL");			    
-			}
-			for (final Model model : models) {
+			buff.append("<p>Storing CategoryGroups");
+			for (final CategoryGroup categoryGroup : categoryGroups) {
 				buff.append(".");
-				servletDAO.save(model);
+				servletDAO.save(categoryGroup);
 			}
 		}
 
@@ -849,6 +832,20 @@ public class RegistrationServlet extends HttpServlet {
 				photoStream.close();
 				buff.append(".");
 			}
+		}
+
+		final List<User> users = data.get(0);
+		if(!users.isEmpty())
+		{
+		    buff.append("<p>Storing users");
+		    servletDAO.deleteAll(User.class);
+    		for (final User user : users) {
+    			buff.append(".");
+    			servletDAO.save(user);
+    			for (final ModelClass modelClass : user.getModelClass()) {
+    				servletDAO.saveModelClass(user.getId(), modelClass);
+    			}
+    		}
 		}
 
 		buff.append("<p>DONE.....");
@@ -1092,6 +1089,42 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		redirectToMainPage(request, response);
 	}
+	
+	public void encodeCategories(final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		String show = getShowFromSession(request);
+		
+		servletDAO.getCategoryList(show).forEach(category -> {
+			category.setCategoryCode(ServletUtil.encodeString(category.getCategoryCode()));				
+			category.setCategoryDescription(ServletUtil.encodeString(category.getCategoryDescription()));			
+			servletDAO.save(category);
+		});
+		redirectToMainPage(request, response, true);
+	}
+
+	public void encodeCategorGroups(final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		servletDAO.getCategoryGroups().forEach(group -> {
+			group.setGroup(ServletUtil.encodeString(group.getGroup()));				
+			group.setShow(ServletUtil.encodeString(group.getShow()));			
+			servletDAO.save(group);
+		});
+		redirectToMainPage(request, response, true);
+	}
+	
+	public void encodeModels(final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		servletDAO.getAll(Model.class).forEach(model -> {
+			model.setComment(ServletUtil.encodeString(model.getComment()));
+			model.setIdentification(ServletUtil.encodeString(model.getIdentification()));
+			model.setMarkings(ServletUtil.encodeString(model.getMarkings()));
+			model.setName(ServletUtil.encodeString(model.getName()));
+			model.setProducer(ServletUtil.encodeString(model.getProducer()));
+			model.setScale(ServletUtil.encodeString(model.getScale()));
+			servletDAO.save(model);
+		});
+		redirectToMainPage(request, response, true);
+	}
 
 	private void writeCategoryModificationErrorResponse(final HttpServletResponse response) throws IOException {
 		writeErrorResponse(response, "Most m&aacute;r nem lehet m&oacute;dos&iacute;tani! El&#337;ször az 'El&#337;nevez&eacute;s v&eacute;ge' vagy 'Helysz&iacute;ni m&oacute;d' linkre kell kattintani az admin oldalon.");
@@ -1108,7 +1141,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void addCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
-			String show = servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show"));
+			String show = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"));
 		final CategoryGroup categoryGroup = new CategoryGroup(servletDAO.getNextID(CategoryGroup.class),
 				show, ServletUtil.getRequestAttribute(request, "group"));
 
@@ -1524,7 +1557,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
 			final HttpSession session = request.getSession(false);
-			String notice = servletDAO.encodeString(model.name) + " - " + model.scale + " - "
+			String notice = ServletUtil.encodeString(model.name) + " - " + model.scale + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode;
 			setNoticeInSession(session, notice);
 			response.sendRedirect("jsp/modelForm.jsp");
@@ -1792,7 +1825,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void setSystemParameter(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		servletDAO.setSystemParameter(ServletUtil.getRequestAttribute(request, "paramName"),
-				servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "paramValue")));
+				ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "paramValue")));
 		updateSystemSettings();
 	        preRegistrationAllowed.put(getShowFromSession(request), servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
 	            
@@ -2203,11 +2236,10 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void deleteData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		servletDAO.deleteEntries("MAK_CATEGORY_GROUP");
-
-		servletDAO.deleteEntries("MAK_CATEGORY");
-
-		servletDAO.deleteEntries("MAK_MODEL");
+		servletDAO.deleteAll(CategoryGroup.class);
+		servletDAO.deleteAll(Category.class);
+		servletDAO.deleteAll(Model.class);
+//		servletDAO.deleteAll(User.class);
 
 		servletDAO.deleteEntries("MAK_AWARDEDMODELS");
 
@@ -2421,8 +2453,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private User createUser(final HttpServletRequest request, final String email, final String httpParameterPostTag)
 			throws Exception {
-		final String passwordInRequest = servletDAO
-				.encodeString(ServletUtil.getRequestAttribute(request, "password" + httpParameterPostTag));
+		final String passwordInRequest = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "password" + httpParameterPostTag));
 
 		return createUser(request, email, StringEncoder.encode(passwordInRequest), httpParameterPostTag);
 	}

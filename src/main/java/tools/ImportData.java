@@ -21,13 +21,13 @@ public class ImportData
 	//    servlet.init(baseDir, DB_Driver, DB_URL, DB_Username, DB_Password, null,
 	//        false, null);
 
-	servlet.servletDAO.deleteEntries("MAK_CATEGORY_GROUP");
+	servlet.servletDAO.deleteAll(CategoryGroup.class);
 
-	servlet.servletDAO.deleteEntries("MAK_CATEGORY");
+	servlet.servletDAO.deleteAll(Category.class);
 
-	servlet.servletDAO.deleteEntries("MAK_MODEL");
+	servlet.servletDAO.deleteAll(Model.class);
 
-	servlet.servletDAO.deleteEntries("MAK_USERS");
+	servlet.servletDAO.deleteAll(User.class);
 
 	XMLDecoder d = new XMLDecoder(new GZIPInputStream(new FileInputStream(dataFile)));
 

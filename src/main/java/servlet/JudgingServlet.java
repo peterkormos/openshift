@@ -434,7 +434,7 @@ public final class JudgingServlet extends HttpServlet {
 	    else
 	    	judgingResult.setCriterias(getCriteriaList(judgingResult.getCategory()));
 
-	    String judgeInRequestAttribute = ServletDAO.encodeString(ServletUtil.getOptionalRequestAttribute(request,
+	    String judgeInRequestAttribute = ServletUtil.encodeString(ServletUtil.getOptionalRequestAttribute(request,
                 RequestParameter.Judge.name()));
         if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute)) {
         	judgingResult.setJudge(judgeInRequestAttribute);
@@ -534,7 +534,7 @@ public final class JudgingServlet extends HttpServlet {
 
 	private void login(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, MissingRequestParameterException {
-		String judge = ServletDAO.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
+		String judge = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
 		setSessionAttribute(request, SessionAttribute.Judge, judge);
 		String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.name());
 		setSessionAttribute(request, CommonSessionAttribute.Language,
@@ -598,7 +598,7 @@ public final class JudgingServlet extends HttpServlet {
     
     private void saveJudging(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
-        final String judge = ServletDAO.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
+        final String judge = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
         final String modelsName = ServletUtil.getRequestAttribute(request, RequestParameter.ModelsName.name());
         final int modelId = Integer.parseInt(ServletUtil.getRequestAttribute(request, RequestParameter.ModelID.name()));
         final int modellerId = Integer
