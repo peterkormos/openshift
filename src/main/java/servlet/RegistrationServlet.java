@@ -2221,14 +2221,16 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private static String getStartPage(HttpServletRequest request) {
-            final HttpSession session = request.getSession(false);
-            String showId = null;
-            if(session != null)
-                showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
-            if(showId == null)
-                showId = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
-	    return "jsp/index.jsp" + (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId) ? "?showId=" + showId : "");
-    }
+		final HttpSession session = request.getSession(false);
+		String showId = null;
+		if (session != null)
+			showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
+		if (showId == null)
+			showId = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+
+		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp"
+				+ (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId) ? "?showId=" + showId : "");
+	}
 
     private void updateSystemSettings() throws SQLException {
 		onSiteUse = servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.ONSITEUSE);
