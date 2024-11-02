@@ -200,10 +200,9 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 
 <tr bgcolor='F6F4F0'>
 	<td>
-		<b><%=language.getString("models.space")%>:</b>
+		<%=language.getString("models.space")%>:
 	</td>
 	<td>
-	<b>
 	<%=language.getString("models.width")%>:
 		<%
 		String modelWidth = model == null ? "" : String.valueOf(model.getWidth());
@@ -214,7 +213,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 			<jsp:param name="maxlength" value="3" />
 			<jsp:param name="size" value="10" />
 		</jsp:include>
-
+<br>
 <%=language.getString("models.length")%>:
 		<%
 		String modelHeight = model == null ? "" : String.valueOf(model.getLength());
@@ -225,7 +224,6 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 			<jsp:param name="maxlength" value="3" />
 			<jsp:param name="size" value="10" />
 		</jsp:include>
-		</b>
 	</td>
 </tr>
 
