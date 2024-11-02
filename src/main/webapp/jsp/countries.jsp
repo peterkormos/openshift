@@ -10,7 +10,7 @@
 	ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 %>
 
-<select  name='<%= request.getParameter("selectName") %>' id="country">
+<select  name='<%= request.getParameter("selectName") %>' id="country" onchange="updateMandatoryFieldMark(this);">
 <option value='<%= request.getParameter("defaultSelectedValue") %>'><%= request.getParameter("defaultSelectedLabel") %></option>
 	<optgroup label="<%= language.getString("highlighted.country") %>">
 <option value='Hungary'>Magyarorsz&aacute;g</option>

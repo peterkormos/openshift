@@ -106,7 +106,7 @@ if (showIdHttpParameter != null)
 								<%
 								    for (final String show : shows) {
 								%> <label><input type='radio' name='show'
-									onchange="checkSubmit(document.getElementById('inputForm')) && updateMandatoryFieldMark(this);"
+									onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));"
 									value='<%=StringEncoder.toBase64(show.getBytes())%>'
 									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <span
 									style="color:red"><b> <%=show%></b></span>
@@ -142,7 +142,7 @@ if (showIdHttpParameter != null)
 									id="dataUsageConsent<%=lc.name() %>"
 									name="dataUsageConsent<%=lc.name() %>"
 									<%= lc.isMandatory() ? "required='required'" : "" %> 
-									onchange="checkSubmit(document.getElementById('inputForm')) && updateMandatoryFieldMark(this);">
+									onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));">
 									<%= language.getString("login.consent." + lc.name()) %> 
 		<%
 		    if (lc.isMandatory()) {

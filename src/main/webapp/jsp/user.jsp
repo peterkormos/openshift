@@ -34,7 +34,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script type="text/javascript" src="findUser.js"></script>
-
+	<script type="text/javascript" src="util.js"></script>
 <script type="text/javascript">
 // <!--
 
@@ -119,22 +119,22 @@ if(!directRegister)
 %>
     <tr bgcolor='F6F4F0'> 
       <td><%= language.getString("email") %>: </td>
-      <td><input autocomplete="fuckoffchrome" name="email" type="text" value="<%= user == null ? "" : user.email %>"> <font color="#FF0000" size="+3">&#8226;</font>  
+      <td><input autocomplete="fuckoffchrome" name="email" type="text" value="<%= user == null ? "" : user.email %>" onchange="updateMandatoryFieldMark(this);"> <font color="#FF0000" size="+3">&#8226;</font>  
         </td>
     </tr>
     <tr > 
       <td><%= language.getString("email.again") %>: </td>
-      <td><input autocomplete="fuckoffchrome" name="email2" type="text" value="<%= user == null ? "" : user.email %>"> <font color="#FF0000" size="+3">&#8226;</font>  
+      <td><input autocomplete="fuckoffchrome" name="email2" type="text" value="<%= user == null ? "" : user.email %>" onchange="updateMandatoryFieldMark(this);"> <font color="#FF0000" size="+3">&#8226;</font>  
         </td>
     </tr>
     <tr bgcolor='F6F4F0'> 
       <td width="32%"><strong><%= language.getString("password") %>: </strong></td>
-      <td width="68%"><input autocomplete="fuckoffchrome" name="password" type="password" > 
+      <td width="68%"><input autocomplete="fuckoffchrome" name="password" type="password" onchange="updateMandatoryFieldMark(this);"> 
         <font color="#FF0000" size="+3">&#8226;</font>  </td>
     </tr>
     <tr > 
       <td><strong><%= language.getString("password.again") %>: </strong></td>
-      <td><input autocomplete="fuckoffchrome" name="password2" type="password" > <font color="#FF0000" size="+3">&#8226;</font>  
+      <td><input autocomplete="fuckoffchrome" name="password2" type="password" onchange="updateMandatoryFieldMark(this);"> <font color="#FF0000" size="+3">&#8226;</font>  
         </td>
     </tr>
 <%
@@ -144,7 +144,8 @@ if(!directRegister)
       <td> <%= language.getString("name") %>: </td>
       <td>
       <div id='fullnames'>
-      <input autocomplete="fuckoffchrome" name="fullname" type="text" value="<%= user == null ? "" : user.lastName %>" id="fullnameID"  onChange="sendRequest();"> 
+      <input autocomplete="fuckoffchrome" name="fullname" type="text" value="<%= user == null ? "" : user.lastName %>" id="fullnameID" 
+      onChange="sendRequest(); updateMandatoryFieldMark(this);"> 
       	<font color="#FF0000" size="+3">&#8226;</font>  
 <%
 if(directRegister)
@@ -227,7 +228,7 @@ if(directRegister)
     </tr>
     <tr  bgcolor='F6F4F0'> 
       <td><%= language.getString("city") %>: </td>
-      <td><input autocomplete="fuckoffchrome" name="city" type="text" value="<%= user == null ? "" : user.city %>">
+      <td><input autocomplete="fuckoffchrome" name="city" type="text" value="<%= user == null ? "" : user.city %>" onchange="updateMandatoryFieldMark(this);">
       <font color="#FF0000" size="+3">&#8226;</font>
       </td>
     </tr>
