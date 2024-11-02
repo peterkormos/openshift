@@ -173,6 +173,7 @@ public class HibernateDAO
 		  session = getHibernateSession();
 		  session.beginTransaction();
 		  session.createQuery("delete from " + recordClass.getName() + " where " + setWhereClause).executeUpdate();
+		  session.getTransaction().commit();
 	  }
 	  finally
 	  {
