@@ -80,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.10.31.";
+	public String VERSION = "2024.11.02.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -385,33 +385,18 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void directLogin(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final Enumeration parameters = request.getParameterNames();
-		while (parameters.hasMoreElements()) {
-			final String param = (String) parameters.nextElement();
-
-			if (param.startsWith("userID")) {
-				final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, param));
-				loginSuccessful(request, response, servletDAO.getUser(userID), servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show")));
-				return;
-			}
-		}
+		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
+		loginSuccessful(request, response, servletDAO.getUser(userID), servletDAO.encodeString(ServletUtil.getRequestAttribute(request, "show")));
 	}
 
 	public void directPrintModels(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		final Enumeration parameters = request.getParameterNames();
-		while (parameters.hasMoreElements()) {
-			final String param = (String) parameters.nextElement();
-
-			if (param.startsWith("userID")) {
-				final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, param));
-
-				printModelsForUser(request, response, languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, "language")),
-						userID, true/* alwaysPageBreak */);
-				showPrintDialog(response);
-				return;
-			}
-		}
+		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
+	
+		printModelsForUser(request, response, languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, "language")),
+				userID, true/* alwaysPageBreak */);
+		showPrintDialog(response);
+		return;
 	}
 	
 	public void getModelInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1771,7 +1756,7 @@ public class RegistrationServlet extends HttpServlet {
 				continue;
 			}
 
-			buff.append("<label><input type='checkbox' name='userID" + i + "' value='" + user.getId()
+			buff.append("<label><input type='radio' name='userID' value='" + user.getId()
 					+ "' onClick='document.input.submit()'/>");
 			buff.append(user.lastName
 					// + " " + user.firstName
@@ -1787,19 +1772,9 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void deleteUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final Enumeration parameters = request.getParameterNames();
-		while (parameters.hasMoreElements()) {
-			final String param = (String) parameters.nextElement();
-
-			if (param.startsWith("userID")) {
-				final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, param));
-
+		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
 				servletDAO.deleteUser(userID);
-			}
-		}
-
 		redirectToMainPage(request, response);
-
 	}
 
 	public void deletedirectUsers(final HttpServletRequest request, final HttpServletResponse response)
