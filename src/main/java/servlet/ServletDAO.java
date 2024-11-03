@@ -1,16 +1,15 @@
 package servlet;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +23,6 @@ import datatype.CategoryGroup;
 import datatype.LoginConsent;
 import datatype.Model;
 import datatype.ModelClass;
-import datatype.Record;
 import datatype.User;
 import exception.EmailNotFoundException;
 
@@ -182,7 +180,12 @@ private JDBCDAO jdbcDAO;
 	where = createWhereStatement(request, where, "markings", "markings", true);
 	where = createWhereStatement(request, where, "producer", "modelproducer", true);
 
-	return getModels(where);
+	List<Model> models = getModels(where);
+    if(ServletUtil.isCheckedIn(request, "filterToOversized")) {
+	  models = models.stream().filter(Model::isOversized).collect(Collectors.toList());
+    }
+
+	return models;
   }
 
 	public int getModelsInCategory(final int userID, final int categoryID) {
@@ -201,7 +204,7 @@ private JDBCDAO jdbcDAO;
 
   public List<Model> getModels(final String where)
   {
-	  return get(Model.class, where);
+	  return where.isEmpty() ?  getAll(Model.class) : get(Model.class, where);
   }
 
   public Model getModel(final int modelID) 

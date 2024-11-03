@@ -148,7 +148,7 @@
 
 	<%
 		for (final Model model : models) {
-			if(filterToOversized && model.isOversized()) {
+			if(filterToOversized && !model.isOversized()) {
 				continue;
 			}
 			
