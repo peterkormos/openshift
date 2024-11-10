@@ -35,7 +35,7 @@ private JDBCDAO jdbcDAO;
 
   public enum SYSTEMPARAMETER
   {
-	REGISTRATION, ONSITEUSE, SYSTEMMESSAGE
+	REGISTRATION, ONSITEUSE, SYSTEMMESSAGE, MaxModelsPerCategory
   };
  
   public ServletDAO(String dbURL, String dbUserName, String dbPassword,

@@ -80,7 +80,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.11.03.";
+	public String VERSION = "2024.11.10.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1547,9 +1547,9 @@ public class RegistrationServlet extends HttpServlet {
 		model.setUser(user);
 		createModel(model, request);
 		
-		final int maxModelsPerCategory = 3;
+		final int maxModelsPerCategory = Integer.parseInt(servletDAO.getSystemParameter(ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory));
 		if(servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
-			writeErrorResponse(response, languageUtil.getLanguage(user.language).getString("models.number.per.category") + ": " + maxModelsPerCategory);
+			writeErrorResponse(response, "Maximum " + languageUtil.getLanguage(user.language).getString("models.number.per.category") + ": " + maxModelsPerCategory + "!");
 			return;
 		}
 

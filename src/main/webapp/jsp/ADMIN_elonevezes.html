@@ -3,8 +3,7 @@
 
 <form accept-charset="UTF-8" name="input" id="input4" action="../RegistrationServlet" method="post">
 	<input type="hidden" id="command4" name="command" value=""> <input
-		type="hidden" id="paramName" name="paramName" value=""> <input
-		type="hidden" id="paramValue" name="paramValue" value=""> <a
+		type="hidden" id="paramName" name="paramName" value=""> <a
 		href="#"
 		onClick="document.getElementById('paramName').value='ONSITEUSE';document.getElementById('paramValue').value='0';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Internetes
 		m&oacute;d</a> - <a href="#"
@@ -13,5 +12,11 @@
 		onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='0';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">El&ouml;nevez&eacute;s
 		v&eacute;ge</a> - <a href="#"
 		onClick="document.getElementById('paramName').value='ONSITEUSE';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Helysz&iacute;ni
-		m&oacute;d</a>
+		m&oacute;d</a> 
+		
+		- 
+		<a href="#"
+		onClick="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">MaxModelsPerCategory: </a>
+		<input
+		type="text" id="paramValue" name="paramValue" value="">
 </form>
