@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -72,6 +73,7 @@ import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
+import servlet.ServletDAO.SYSTEMPARAMETER;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import tools.InitDB;
@@ -80,7 +82,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.11.10.";
+	public String VERSION = "2024.11.12.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -91,7 +93,7 @@ public class RegistrationServlet extends HttpServlet {
 	StringBuilder presentationBuffer;
 	StringBuilder printCardBuffer;
 
-	public static Map<String, Boolean> preRegistrationAllowed = new HashMap<String, Boolean>();
+	public static Map<String, EnumMap<SYSTEMPARAMETER, String>> systemParameters = new HashMap<>();
 	private boolean onSiteUse;
 	private String systemMessage = "";
 
@@ -172,14 +174,18 @@ public class RegistrationServlet extends HttpServlet {
                 new InitDB();
             } catch (Exception e) {
             }
-		            try {
-						for(String show : servletDAO.getShows())
-						    preRegistrationAllowed.put(show, servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+            try {
+				for(String show : servletDAO.getShows()) {
+					EnumMap<SYSTEMPARAMETER, String> enumMap = new EnumMap<>(SYSTEMPARAMETER.class);
+					systemParameters.put(show, enumMap);
+					enumMap.put(ServletDAO.SYSTEMPARAMETER.REGISTRATION,
+					String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION)));
+					updateSystemSettings(show);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		            
-			updateSystemSettings();
 
 			System.out.println("OK.....");
 		} catch (final Exception e) {
@@ -877,6 +883,8 @@ public class RegistrationServlet extends HttpServlet {
 				servletDAO.delete(categoryGroup);
 			}
 		}
+		
+		systemParameters.remove(show);
 
 		redirectToMainPage(request, response);
 	}
@@ -1547,7 +1555,8 @@ public class RegistrationServlet extends HttpServlet {
 		model.setUser(user);
 		createModel(model, request);
 		
-		final int maxModelsPerCategory = Integer.parseInt(servletDAO.getSystemParameter(ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory));
+		
+		final int maxModelsPerCategory = Integer.parseInt(getSystemParameter(request, ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory));
 		if(servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
 			writeErrorResponse(response, "Maximum " + languageUtil.getLanguage(user.language).getString("models.number.per.category") + ": " + maxModelsPerCategory + "!");
 			return;
@@ -1567,7 +1576,18 @@ public class RegistrationServlet extends HttpServlet {
 			redirectToMainPage(request, response);
 		}
 	}
-
+	
+	private static String getSystemParameter(String show, SYSTEMPARAMETER parameter)
+	{
+		String value = systemParameters.get(show).get(parameter);
+		return value == null ? servletDAO.getSystemParameter(parameter)  : value;
+	}
+	
+	private static String getSystemParameter(HttpServletRequest request, SYSTEMPARAMETER parameter)
+	{
+		return getSystemParameter(getShowFromSession(request), parameter);
+	}
+	
 	private void setEmailSentNoticeInSession(final HttpServletRequest request, final User user)
 			throws UserNotLoggedInException {
 		ResourceBundle language = getLanguageForCurrentUser(request);
@@ -1824,11 +1844,17 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void setSystemParameter(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		servletDAO.setSystemParameter(ServletUtil.getRequestAttribute(request, "paramName"),
-				ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "paramValue")));
-		updateSystemSettings();
-	        preRegistrationAllowed.put(getShowFromSession(request), servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION));
-	            
+		String show = getShowFromSession(request);
+
+		String paramName = ServletUtil.getRequestAttribute(request, "paramName");
+		String paramValue = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "paramValue"));
+		
+		servletDAO.setSystemParameter(paramName, paramValue);
+		
+		systemParameters.get(show).put(ServletDAO.SYSTEMPARAMETER.valueOf(paramName),
+				paramValue);
+		updateSystemSettings(show);
+
 		redirectToMainPage(request, response);
 	}
 
@@ -2232,9 +2258,9 @@ public class RegistrationServlet extends HttpServlet {
 				+ (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId) ? "?showId=" + showId : "");
 	}
 
-    private void updateSystemSettings() throws SQLException {
-		onSiteUse = servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.ONSITEUSE);
-		systemMessage = servletDAO.getSystemParameter(ServletDAO.SYSTEMPARAMETER.SYSTEMMESSAGE);
+    private void updateSystemSettings(String show) throws SQLException {
+		onSiteUse = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SYSTEMPARAMETER.ONSITEUSE));
+		systemMessage = getSystemParameter(show, ServletDAO.SYSTEMPARAMETER.SYSTEMMESSAGE);
 	}
 
 	public void deleteData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2615,7 +2641,7 @@ public class RegistrationServlet extends HttpServlet {
     public static boolean isPreRegistrationAllowed(String show) {
         if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(show))
             return true;
-        Boolean allowed = preRegistrationAllowed.get(show);
+        Boolean allowed = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SYSTEMPARAMETER.REGISTRATION));
         return allowed == null ? false : allowed;
     }
 
