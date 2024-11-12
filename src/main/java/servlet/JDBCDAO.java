@@ -201,11 +201,11 @@ public class JDBCDAO {
 			if (rs.next()) {
 				return rs.getString("PARAM_VALUE");
 			} else {
-				return "-";
+				return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 			}
 		} catch (final Exception ex) {
 			logger.fatal("!!! ServletDAO.getSystemParameter(): parameterName: " + parameter, ex);
-			return "-";
+			return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 		} finally {
 			try {
 				if (rs != null) {

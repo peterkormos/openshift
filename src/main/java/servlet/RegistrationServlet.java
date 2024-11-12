@@ -82,7 +82,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.11.12.";
+	public String VERSION = "2024.11.12.a";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -180,6 +180,10 @@ public class RegistrationServlet extends HttpServlet {
 					systemParameters.put(show, enumMap);
 					enumMap.put(ServletDAO.SYSTEMPARAMETER.REGISTRATION,
 					String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION)));
+					enumMap.put(ServletDAO.SYSTEMPARAMETER.ONSITEUSE,
+							String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.ONSITEUSE)));
+					enumMap.put(ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory,
+							String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory)));
 					updateSystemSettings(show);
 				}
 			} catch (Exception e) {
@@ -479,8 +483,15 @@ public class RegistrationServlet extends HttpServlet {
 				+ show);
 		
 		saveLoginConsentData(request, user);
-
+		
 		initHttpSession(request, user, show);
+		
+		System.out.println(systemParameters);
+		
+		EnumMap<SYSTEMPARAMETER, String> enumMap = systemParameters.get(show);
+		if(enumMap == null) {
+			systemParameters.put(show, new EnumMap(SYSTEMPARAMETER.class));
+		}
 
 		redirectToMainPage(request, response);
 	}
@@ -1556,7 +1567,7 @@ public class RegistrationServlet extends HttpServlet {
 		createModel(model, request);
 		
 		
-		final int maxModelsPerCategory = Integer.parseInt(getSystemParameter(request, ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory));
+		final int maxModelsPerCategory = getMaxModelsPerCategory(request);
 		if(servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
 			writeErrorResponse(response, "Maximum " + languageUtil.getLanguage(user.language).getString("models.number.per.category") + ": " + maxModelsPerCategory + "!");
 			return;
@@ -1576,9 +1587,21 @@ public class RegistrationServlet extends HttpServlet {
 			redirectToMainPage(request, response);
 		}
 	}
+
+	private int getMaxModelsPerCategory(final HttpServletRequest request) {
+		try {
+			return Integer.parseInt(getSystemParameter(request, ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory));
+		} catch (Exception e) {
+			return 3;
+		}
+	}
 	
 	private static String getSystemParameter(String show, SYSTEMPARAMETER parameter)
 	{
+		if(show == null) {
+			return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+		}
+		
 		String value = systemParameters.get(show).get(parameter);
 		return value == null ? servletDAO.getSystemParameter(parameter)  : value;
 	}
@@ -1844,16 +1867,17 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void setSystemParameter(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		String show = getShowFromSession(request);
 
 		String paramName = ServletUtil.getRequestAttribute(request, "paramName");
 		String paramValue = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "paramValue"));
 		
 		servletDAO.setSystemParameter(paramName, paramValue);
 		
-		systemParameters.get(show).put(ServletDAO.SYSTEMPARAMETER.valueOf(paramName),
-				paramValue);
-		updateSystemSettings(show);
+		String show = getShowFromSession(request);
+		if (show != null) {
+			systemParameters.get(show).put(ServletDAO.SYSTEMPARAMETER.valueOf(paramName), paramValue);
+			updateSystemSettings(show);
+		}
 
 		redirectToMainPage(request, response);
 	}
