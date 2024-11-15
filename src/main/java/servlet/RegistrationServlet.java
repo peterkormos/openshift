@@ -187,7 +187,7 @@ public class RegistrationServlet extends HttpServlet {
 					enumMap.put(ServletDAO.SYSTEMPARAMETER.ONSITEUSE,
 							String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.ONSITEUSE)));
 					enumMap.put(ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory,
-							String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory)));
+							String.valueOf(servletDAO.getSystemParameter(ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory)));
 					updateSystemSettings(show);
 				}
 			} catch (Exception e) {
