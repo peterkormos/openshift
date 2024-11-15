@@ -63,6 +63,10 @@ function checkDeleteUserRequest()
 
 		<table style="border: 0px; width: 100%">
 			<tr>
+				<td rowspan="2" >
+				<img style="height: 25mm" src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/-1">
+				</td>
+
 <form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">
   <input type="hidden" id="command"  name="command" value="">
 <%
@@ -116,7 +120,7 @@ function checkDeleteUserRequest()
 </form>
 			</tr>
 <tr>
-				<td colspan="5" style="width: 100%; white-space: nowrap">
+				<td colspan="6" style="width: 100%; white-space: nowrap">
 <FONT COLOR='#ff0000'>
 	<b>
 		<%=servlet.getSystemMessage()%>

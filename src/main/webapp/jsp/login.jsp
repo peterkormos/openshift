@@ -103,6 +103,7 @@ if (showIdHttpParameter != null)
 						<tr bgcolor='F6F4F0'>
 							<td><%=language.getString("show")%>:</td>
 							<td>
+									<img style="height: 25mm" src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/-1">
 								<%
 								    for (final String show : shows) {
 								%> <label><input type='radio' name='show'
