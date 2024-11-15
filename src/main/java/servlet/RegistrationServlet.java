@@ -5,6 +5,7 @@ import java.beans.XMLEncoder;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOError;
 import java.io.IOException;
@@ -12,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -41,6 +44,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
@@ -82,7 +86,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.11.12.a";
+	public String VERSION = "2024.11.15";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -335,6 +339,8 @@ public class RegistrationServlet extends HttpServlet {
 				redirectToMainPage(request, response, true);
 				return;
 			}
+			else
+				checkHTTP(request);
 
 			writeErrorResponse(response, "Error: <b>" + message + "</b>");
 		}
@@ -347,7 +353,6 @@ public class RegistrationServlet extends HttpServlet {
 		if (pathInfo.indexOf('/') > -1) {
 			final String[] splitText = pathInfo.split("/");
 			final String command = splitText[0];
-
 			if (Command.LOADIMAGE.name().equals(command)) {
 				response.setContentType("image/jpeg");
 
@@ -895,6 +900,8 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 		
+		servletDAO.deleteEntry("MAK_PICTURES", "ID", logoID);
+
 		systemParameters.remove(show);
 
 		redirectToMainPage(request, response);
@@ -1734,6 +1741,7 @@ public class RegistrationServlet extends HttpServlet {
 		ServletUtil.writeResponse(response, buff);
 	}
 
+	public static final int logoID = -1;
 	public void inputForLogoUpload(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
@@ -1742,7 +1750,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append(
 				"<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='post'  enctype='multipart/form-data'>");
-		buff.append("<input type='hidden' name='modelID' value='-1'/>");
+		buff.append("<input type='hidden' name='modelID' value='"+logoID+"'/>");
 		buff.append("<p><input type='file' name='imageFile' />");
 
 		buff.append("<p><input type='submit' value='" + language.getString("save") + "'>");
@@ -2172,7 +2180,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, "."))
 							.replaceAll("__FEE__", String.valueOf(fee))
-							.replaceAll("__LOGO_URL__", getServletURL(request)+"/"+Command.LOADIMAGE.name()+"/-1")
+							.replaceAll("__LOGO_URL__", getServletURL(request)+"/"+Command.LOADIMAGE.name()+"/"+logoID)
 
 					// "<font color='#006600'>Alapra ragasztva</font>"
 					// :
@@ -2679,10 +2687,13 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	private void loadImage(int modelID, OutputStream o) throws SQLException, IOException {
-		final byte[] loadImage = servletDAO.loadImage(modelID);
-
-		o.write(loadImage);
+	private void loadImage(int id, OutputStream o) throws SQLException, IOException, URISyntaxException {
+		try {
+			final byte[] loadImage = servletDAO.loadImage(id);
+			o.write(loadImage);
+		} catch (Exception e) {
+			Files.copy(new File(RegistrationServlet.class.getResource("/1px.jpg").toURI()).toPath(), o);
+		}
 		o.flush();
 		o.close();
 	}

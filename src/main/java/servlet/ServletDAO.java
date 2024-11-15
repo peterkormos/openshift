@@ -243,10 +243,14 @@ private JDBCDAO jdbcDAO;
 	  jdbcDAO.deleteEntry(table, null, 0);
   }
 
+	public void deleteEntry(final String table, final String idField, final int id) throws SQLException {
+		jdbcDAO.deleteEntry(table, idField, id);
+	}
+	
 public void deleteModel(final Model model) throws SQLException
   {
 	delete(model);
-	jdbcDAO.deleteEntry("MAK_PICTURES", "MODEL_ID", model.getId());
+	jdbcDAO.deleteEntry("MAK_PICTURES", "ID", model.getId());
   }
 
   public void deleteAwardedModel(final int id) throws SQLException

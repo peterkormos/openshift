@@ -379,16 +379,16 @@ public class JDBCDAO {
 		}
 	}
 
-	public byte[] loadImage(int modelID) throws SQLException {
+	public byte[] loadImage(int id) throws SQLException {
 		final PreparedStatement ps = getDBConnection().prepareStatement("select PHOTO from MAK_PICTURES where ID=?");
-		ps.setInt(1, modelID);
+		ps.setInt(1, id);
 		final ResultSet resultSet = ps.executeQuery();
 
 		if (!resultSet.next()) {
 			resultSet.close();
 			ps.close();
 
-			throw new IllegalStateException("Image not found. modelID: " + modelID);
+			throw new IllegalStateException("Image not found. ID: " + id);
 		}
 
 		final Blob blob = resultSet.getBlob(1);
@@ -507,7 +507,7 @@ public class JDBCDAO {
 
 			// nevezett makettek száma országonként
 			for (final String country : modelsPerCountrySet.keySet().stream().sorted().collect(Collectors.toList())) {
-				returned.add(new String[] { "Nevezett makettek száma országonként: <b>" + country + "</b>",
+				returned.add(new String[] { "Nevezett makettek sz&aacute;ma orsz&aacute;gonk&eacute;nt: <b>" + country + "</b>",
 						String.valueOf(modelsPerCountrySet.get(country).size()) });
 			}
 

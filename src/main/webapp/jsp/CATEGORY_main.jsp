@@ -40,6 +40,7 @@
 		}
 	}
 	%>
+Logo: <img style="height: 25mm" src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/-1">
 	<form accept-charset="UTF-8" name="input" id="input"
 		action="../RegistrationServlet" method="post">
 		<input type="hidden" id="command" name="command" value=""> 
@@ -70,7 +71,7 @@
 			onClick="document.getElementById('command').value='inputForPrint';this.parentNode.submit();">
 			nevez&eacute;si lapjainak nyomtat&aacute;sa </a> - <a href="#"
 			onClick="document.getElementById('command').value='inputForModifyModel';this.parentNode.submit();">Makett
-			&aacute;tsorol&aacute;sa. Sorsz&aacute;m:</a> <input type="text"
+			&aacute;tsorol&aacute;sa. Makett sorsz&aacute;ma:</a> <input type="number"
 			name="modelID"
 			onchange="document.getElementById('command').value='inputForModifyModel'">
 	</form>
@@ -83,16 +84,15 @@
 	</script>
 	</p>
 
-	Rendszer&#252;zenet:
+	<form accept-charset="UTF-8" name="input"
 	<FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
 	<p>
-	<form accept-charset="UTF-8" name="input"
 		action="../RegistrationServlet" method="post">
 		<input type="hidden" name="command" value="setSystemParameter">
 		<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
 		<textarea name="paramValue" cols="100" rows="5"></textarea>
 		<input name="setSystemParameter" type="submit"
-			value="Rendszer&#252;zenet">
+			value="Rendszer&#252;zenet be&aacute;ll&iacute;t&aacute;sa">
 	</form>
 
 	<form accept-charset="UTF-8" name="input" id="input3"
