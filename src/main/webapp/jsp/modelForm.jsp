@@ -77,6 +77,22 @@ function checkMandatoryElement(element)
 	<input class="main" type='submit' value='<%= language.getString("proceed.to.main") %>'>
 </form>
 
+<%
+if(servlet.isOnSiteUse())
+{
+%>
+	<a href='../helyi.html'> Helyi bel&eacute;p&eacute;si oldal bet&ouml;lt&eacute;se...</a>
+	<p>
+
+	Egy makett nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa: 
+	<jsp:include page="modelSelect.jsp">
+	  <jsp:param name="action" value="printMyModels"/>
+	  <jsp:param name="submitLabel" value='<%=language.getString("print.models")%>'/>
+	</jsp:include>
+<%
+}
+%>
+
 <form name='input' id='input' action='../RegistrationServlet' method='POST' accept-charset="UTF-8" onkeypress="return event.keyCode != 13;"
 onsubmit="return checkMandatory(this);"
 >
