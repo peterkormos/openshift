@@ -621,7 +621,7 @@ public class RegistrationServlet extends HttpServlet {
 			models.add(model);
 		}
 
-		if (user != null && user.email != null) {
+		if (user != null && user.email != null && !isOnSiteUse())
 			sendEmailWithModels(user, true);
 		}
 
@@ -948,7 +948,8 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = createUser(request, email);
 		servletDAO.save(user);
 
-		sendEmailWithModels(user, true);
+		if(!isOnSiteUse())
+			sendEmailWithModels(user, true);
 
 		ServletUtil.writeResponse(response, getEmailWasSentResponse(language, request));
 	}
@@ -1589,8 +1590,10 @@ public class RegistrationServlet extends HttpServlet {
 			setNoticeInSession(session, notice);
 			response.sendRedirect("jsp/modelForm.jsp");
 		} else {
-			sendEmailWithModels(user, false /* insertUserDetails */);
-			setEmailSentNoticeInSession(request, user);
+			if(!isOnSiteUse()) {
+				sendEmailWithModels(user, false /* insertUserDetails */);
+				setEmailSentNoticeInSession(request, user);
+			}
 			redirectToMainPage(request, response);
 		}
 	}
@@ -2250,9 +2253,11 @@ public class RegistrationServlet extends HttpServlet {
 	public void sendEmail(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
 
-		sendEmailWithModels(user, false);
-		setEmailSentNoticeInSession(request, user);
-
+		if(!isOnSiteUse()) {
+			sendEmailWithModels(user, false);
+			setEmailSentNoticeInSession(request, user);
+		}
+		
 		redirectToMainPage(request, response);
 	}
 
