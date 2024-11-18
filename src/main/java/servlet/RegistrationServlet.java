@@ -357,10 +357,13 @@ public class RegistrationServlet extends HttpServlet {
 				response.setContentType("image/jpeg");
 
 				final String params = splitText[1];
-				final int modelId = Integer.parseInt(params.substring(params.indexOf("=") + 1));
 				try {
+					final int modelId = Integer.parseInt(params.substring(params.indexOf("=") + 1));
 					loadImage(modelId, response.getOutputStream());
-				} catch (final Exception e) {
+				} catch (final NumberFormatException ne) {
+						loadImage(getLogoIDForShow(params), response.getOutputStream());
+				}
+				catch (final Exception e) {
 				    response.setContentType("text/html");
 				    writeErrorResponse(response, e.getMessage());
 				}
@@ -372,7 +375,19 @@ public class RegistrationServlet extends HttpServlet {
 			handleRequest(request, response, pathInfo);
 			return pathInfo;
 		}
+	}
 
+
+	public int getLogoIDForShow(String show) throws SQLException {
+		List<String> shows = servletDAO.getShows();
+		System.out.println("getLogoIDForShow( " + show + " " + shows);
+		for (int i = 0; i < shows.size(); i++) {
+			if (shows.get(i).equals(show)) {
+				return -1 - i;
+			}
+		}
+		
+		return -1;
 	}
 
 	private void handleRequest(HttpServletRequest request, HttpServletResponse response, String command)
@@ -490,8 +505,6 @@ public class RegistrationServlet extends HttpServlet {
 		saveLoginConsentData(request, user);
 		
 		initHttpSession(request, user, show);
-		
-		System.out.println(systemParameters);
 		
 		EnumMap<SYSTEMPARAMETER, String> enumMap = systemParameters.get(show);
 		if(enumMap == null) {
@@ -785,7 +798,6 @@ public class RegistrationServlet extends HttpServlet {
 	private void processUploadedFile(final HttpServletRequest request, final HttpServletResponse response,
 			FileItem item, Map<String, String> parameters) throws IOException, SQLException, Exception {
 		if ("imageFile".equals(item.getFieldName())) {
-			final int modelID = Integer.parseInt(parameters.get("modelID"));
 
 			final BufferedImage originalImage = ImageUtil.load(item.getInputStream());
 			final BufferedImage resizedImage = ImageUtil.resize(originalImage, 800);
@@ -794,6 +806,12 @@ public class RegistrationServlet extends HttpServlet {
 
 			ImageUtil.save(resizedImage, output);
 
+			int modelID;
+			try {
+				modelID = Integer.parseInt(parameters.get("modelID"));
+			} catch (NumberFormatException e) {
+				modelID = getLogoIDForShow(getShowFromSession(request));
+			}
 			servletDAO.saveImage(modelID, new ByteArrayInputStream(output.toByteArray()));
 
 			redirectToMainPage(request, response);
@@ -830,7 +848,6 @@ public class RegistrationServlet extends HttpServlet {
 			final List<Category> categories = data.get(2);
 			buff.append("<p>Storing Categories");
 			for (final Category category : categories) {
-				System.out.println("category: " + category);
 				buff.append(".");
 				if (category.getModelClass() == null) {
 					category.setModelClass(ModelClass.Other);
@@ -900,11 +917,11 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 		
-		servletDAO.deleteEntry("MAK_PICTURES", "ID", logoID);
+		servletDAO.deleteEntry("MAK_PICTURES", "ID", getLogoIDForShow(show));
 
 		systemParameters.remove(show);
 
-		redirectToMainPage(request, response);
+		redirectToMainPage(request, response, true);
 	}
 
 	private User directRegisterUser(final HttpServletRequest request, final ResourceBundle language,
@@ -1744,7 +1761,6 @@ public class RegistrationServlet extends HttpServlet {
 		ServletUtil.writeResponse(response, buff);
 	}
 
-	public static final int logoID = -1;
 	public void inputForLogoUpload(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
@@ -1753,7 +1769,6 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append(
 				"<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='post'  enctype='multipart/form-data'>");
-		buff.append("<input type='hidden' name='modelID' value='"+logoID+"'/>");
 		buff.append("<p><input type='file' name='imageFile' />");
 
 		buff.append("<p><input type='submit' value='" + language.getString("save") + "'>");
@@ -2158,6 +2173,7 @@ public class RegistrationServlet extends HttpServlet {
 				+ (pageBreak ? "style='page-break-after: always;' " : "") + "border='0' >");
 
 		int ModelCount = 0;
+		String logoURL = getServletURL(request)+"/"+Command.LOADIMAGE.name()+"/"+getLogoIDForShow(getShowFromSession(request));
 		for (int row = 0; row < rows; row++) {
 			buff.append("<tr valign='bottom'>");
 			for (int col = 0; col < cols; col++) {
@@ -2188,7 +2204,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, "."))
 							.replaceAll("__FEE__", String.valueOf(fee))
-							.replaceAll("__LOGO_URL__", getServletURL(request)+"/"+Command.LOADIMAGE.name()+"/"+logoID)
+							.replaceAll("__LOGO_URL__", logoURL)
 
 					// "<font color='#006600'>Alapra ragasztva</font>"
 					// :

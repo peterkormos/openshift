@@ -40,7 +40,7 @@
 		}
 	}
 	%>
-Logo: <img style="height: 25mm" src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/-1">
+<img style="height: 25mm" src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
 	<form accept-charset="UTF-8" name="input" id="input"
 		action="../RegistrationServlet" method="post">
 		<input type="hidden" id="command" name="command" value=""> 
@@ -84,9 +84,9 @@ Logo: <img style="height: 25mm" src="../RegistrationServlet/<%=RegistrationServl
 	</script>
 	</p>
 
-	<form accept-charset="UTF-8" name="input"
 	<FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
 	<p>
+	<form accept-charset="UTF-8" name="input"
 		action="../RegistrationServlet" method="post">
 		<input type="hidden" name="command" value="setSystemParameter">
 		<input type="hidden" name="paramName" value="SYSTEMMESSAGE">

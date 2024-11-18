@@ -103,10 +103,11 @@ if (showIdHttpParameter != null)
 						<tr bgcolor='F6F4F0'>
 							<td><%=language.getString("show")%>:</td>
 							<td>
-									<img style="height: 25mm" src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/-1">
 								<%
 								    for (final String show : shows) {
-								%> <label><input type='radio' name='show'
+								%> <label>
+									<img style="height: 25mm; vertical-align: middle;" src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
+								<input type='radio' name='show'
 									onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));"
 									value='<%=StringEncoder.toBase64(show.getBytes())%>'
 									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <span
