@@ -86,7 +86,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.11.15";
+	public String VERSION = "2024.11.18.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -621,7 +621,7 @@ public class RegistrationServlet extends HttpServlet {
 			models.add(model);
 		}
 
-		if (user != null && user.email != null && !isOnSiteUse())
+		if (user != null && user.email != null && !isOnSiteUse()) {
 			sendEmailWithModels(user, true);
 		}
 
@@ -1836,10 +1836,15 @@ public class RegistrationServlet extends HttpServlet {
 
 		// buff.append("<input name='deleteUsers' type='submit' value='"
 		// + submitLabel + "'><p>");
+		User loggedInUser = null;
+		try {
+			loggedInUser = getUser(request);
+		} catch (UserNotLoggedInException e) {
+		}
 		for (int i = 0; i < users.size(); i++) {
 			final User user = users.get(i);
 			
-			if(!getUser(request).isSuperAdminUser() && user.isAdminUser()) {
+			if(loggedInUser != null && !loggedInUser.isSuperAdminUser() && user.isAdminUser()) {
 				continue;
 			}
 
