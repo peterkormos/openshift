@@ -380,7 +380,6 @@ public class RegistrationServlet extends HttpServlet {
 
 	public int getLogoIDForShow(String show) throws SQLException {
 		List<String> shows = servletDAO.getShows();
-		System.out.println("getLogoIDForShow( " + show + " " + shows);
 		for (int i = 0; i < shows.size(); i++) {
 			if (shows.get(i).equals(show)) {
 				return -1 - i;
@@ -1615,7 +1614,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	private int getMaxModelsPerCategory(final HttpServletRequest request) {
+	public int getMaxModelsPerCategory(final HttpServletRequest request) {
 		try {
 			return Integer.parseInt(getSystemParameter(request, ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory));
 		} catch (Exception e) {

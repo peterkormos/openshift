@@ -1,3 +1,10 @@
+<%@page import="servlet.*"%>
+
+<%
+
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+%>
+
 	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
 
 
@@ -16,7 +23,7 @@
 		
 		- 
 		<a href="#"
-		onClick="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Max. makettek kateg&oacute;ri&aacute;nk&eacute;nt: </a>
+		onClick="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Max. makettek kateg&oacute;ri&aacute;nk&eacute;nt (<%=servlet.getMaxModelsPerCategory(request)%>): </a>
 		<input
 		type="number" id="paramValue" name="paramValue" value="" 
 onchange="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">

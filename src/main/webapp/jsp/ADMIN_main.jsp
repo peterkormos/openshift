@@ -12,20 +12,10 @@
 <script src="jquery.min.js"></script>
 </head>
 
-<div id="COMMON_ADMIN"></div>
-<script>
-	$(function() {
-		$("#COMMON_ADMIN").load("CATEGORY_main.jsp");
-	});
-</script>
-<p></p>
+<jsp:include page="CATEGORY_main.jsp" />
 
-<div id="ADMIN_egyeb"></div>
-<script>
-	$(function() {
-		$("#ADMIN_egyeb").load("ADMIN_egyeb.html");
-	});
-</script>
+<p></p>
+<jsp:include page="ADMIN_egyeb.html" />
 <p></p>
 
 	<p></p>
@@ -53,14 +43,6 @@
 
 </form>
 	<p></p>
-
-	<div id="ADMIN_verseny_eredmenyek"></div>
-	<script>
-		$(function() {
-			$("#ADMIN_verseny_eredmenyek")
-					.load("ADMIN_verseny_eredmenyek.html");
-		});
-	</script>
-
+<jsp:include page="ADMIN_verseny_eredmenyek.html" />
 </body>
 </html>

@@ -76,12 +76,8 @@
 			onchange="document.getElementById('command').value='inputForModifyModel'">
 	</form>
 
-	<div id="ADMIN_elonevezes"></div>
-	<script>
-		$(function() {
-			$("#ADMIN_elonevezes").load("ADMIN_elonevezes.html");
-		});
-	</script>
+<jsp:include page="ADMIN_elonevezes.jsp" />
+
 	</p>
 
 	<FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
@@ -99,32 +95,14 @@
 		action="../RegistrationServlet" method="post">
 		<input type="hidden" id="command3" name="command">
 
-		<div id="ADMIN_nyomtatas"></div><script>
-			$(function() {
-				$("#ADMIN_nyomtatas").load("ADMIN_nyomtatas.html");
-			});
-		</script>
+<jsp:include page="ADMIN_nyomtatas.html" />
+
 <p></p>
-		<div id="ADMIN_kategoria"></div>
-		<script>
-			$(function() {
-				$("#ADMIN_kategoria").load("ADMIN_kategoria.html");
-			});
-		</script>
+<jsp:include page="ADMIN_kategoria.html" />
 		<p></p>
 	</form>
 
-	<div id="ADMIN_adatkezeles"></div>
-	<script>
-		$(function() {
-			$("#ADMIN_adatkezeles").load("ADMIN_adatkezeles.html");
-		});
-	</script>
+<jsp:include page="ADMIN_adatkezeles.html" />
 	<p></p>
 
-	<div id="ADMIN_lekerdezes"></div>
-	<script>
-		$(function() {
-			$("#ADMIN_lekerdezes").load("ADMIN_lekerdezes.html");
-		});
-	</script>
+<jsp:include page="ADMIN_lekerdezes.html" />
