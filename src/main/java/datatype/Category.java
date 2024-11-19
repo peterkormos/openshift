@@ -22,10 +22,8 @@ import javax.persistence.Table;
 @Table(name = "MAK_CATEGORY")
 public class Category extends Record
 {
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinColumn(name = "CATEGORY_GROUP_ID")
-//	@JoinTable(name = "MAK_CAT_CATG", joinColumns = {
-//	})
   public CategoryGroup group;
   @Column(name = "CATEGORY_CODE")
   public String categoryCode;

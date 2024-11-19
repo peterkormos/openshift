@@ -45,8 +45,8 @@
 		action="../RegistrationServlet" method="post">
 		<input type="hidden" id="command" name="command" value=""> 
 		<input type="hidden" name="language" value="HU">
-		Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT> - <a href="#"
-			onClick="document.getElementById('command').value='inputForLogoUpload';this.parentNode.submit();">Versenyhez
+		Verseny: <FONT COLOR='#ff0000'><b><%=show%></b></FONT> - 
+<a href="../RegistrationServlet/inputForLogoUpload">Versenyhez
 			log&oacute; felt&ouml;lt&eacute;s</a> 
 <%
 	if(user.isSuperAdminUser()) {
@@ -59,50 +59,44 @@
 	}
 %>
 			- 			
-			<a
-			href="#"
-			onClick="document.getElementById('command').value='logout';this.parentNode.submit();">Kijelentkez&eacute;s</a>
+<a href="../RegistrationServlet/logout">Kijelentkez&eacute;s</a>
 		<hr>
 		<p></p>
 		<strong><font size="+2"><u>1 makettez&#337;...</u> </font></strong>
-		<a href="#"
-			onClick="document.getElementById('command').value='inputForLoginUser';this.parentNode.submit();">nev&eacute;ben
-			bel&eacute;p&eacute;s</a> - <a href="#"
-			onClick="document.getElementById('command').value='inputForPrint';this.parentNode.submit();">
-			nevez&eacute;si lapjainak nyomtat&aacute;sa </a> - <a href="#"
-			onClick="document.getElementById('command').value='inputForModifyModel';this.parentNode.submit();">Makett
+<a href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
+			bel&eacute;p&eacute;s</a> - 
+			<a href="../RegistrationServlet/inputForPrint">
+			nevez&eacute;si lapjainak nyomtat&aacute;sa </a> - 
+			<a href="../RegistrationServlet/inputForPrint">
+			<a href="#"
+-			onClick="document.getElementById('command').value='inputForModifyModel';this.parentNode.submit();">Makett
 			&aacute;tsorol&aacute;sa. Makett sorsz&aacute;ma:</a> <input type="number"
 			name="modelID"
 			onchange="document.getElementById('command').value='inputForModifyModel'">
 	</form>
 
-<jsp:include page="ADMIN_elonevezes.jsp" />
+<p>
+	<jsp:include page="ADMIN_elonevezes.jsp" />
+</p>
 
-	</p>
-
-	<FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT>
-	<p>
-	<form accept-charset="UTF-8" name="input"
+<form accept-charset="UTF-8" name="input"
 		action="../RegistrationServlet" method="post">
 		<input type="hidden" name="command" value="setSystemParameter">
 		<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
-		<textarea name="paramValue" cols="100" rows="5"></textarea>
+		<textarea name="paramValue" cols="100" rows="3"><%=servlet.getSystemMessage()%></textarea>
 		<input name="setSystemParameter" type="submit"
 			value="Rendszer&#252;zenet be&aacute;ll&iacute;t&aacute;sa">
 	</form>
 
-	<form accept-charset="UTF-8" name="input" id="input3"
-		action="../RegistrationServlet" method="post">
-		<input type="hidden" id="command3" name="command">
-
-<jsp:include page="ADMIN_nyomtatas.html" />
-
-<p></p>
-<jsp:include page="ADMIN_kategoria.html" />
-		<p></p>
-	</form>
-
-<jsp:include page="ADMIN_adatkezeles.html" />
-	<p></p>
-
-<jsp:include page="ADMIN_lekerdezes.html" />
+<p>
+	<jsp:include page="ADMIN_nyomtatas.html" />
+</p>
+<p>
+	<jsp:include page="ADMIN_kategoria.html" />
+</p>
+<p>
+	<jsp:include page="ADMIN_adatkezeles.html" />
+</p>
+<p>
+	<jsp:include page="ADMIN_lekerdezes.html" />
+</p>

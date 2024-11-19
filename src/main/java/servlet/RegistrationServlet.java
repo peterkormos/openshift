@@ -77,7 +77,7 @@ import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
-import servlet.ServletDAO.SYSTEMPARAMETER;
+import servlet.ServletDAO.SystemParameter;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import tools.InitDB;
@@ -97,7 +97,7 @@ public class RegistrationServlet extends HttpServlet {
 	StringBuilder presentationBuffer;
 	StringBuilder printCardBuffer;
 
-	public static Map<String, EnumMap<SYSTEMPARAMETER, String>> systemParameters = new HashMap<>();
+	public static Map<String, EnumMap<SystemParameter, String>> systemParameters = new HashMap<>();
 	private boolean onSiteUse;
 	private String systemMessage = "";
 
@@ -180,14 +180,14 @@ public class RegistrationServlet extends HttpServlet {
             }
             try {
 				for(String show : servletDAO.getShows()) {
-					EnumMap<SYSTEMPARAMETER, String> enumMap = new EnumMap<>(SYSTEMPARAMETER.class);
+					EnumMap<SystemParameter, String> enumMap = new EnumMap<>(SystemParameter.class);
 					systemParameters.put(show, enumMap);
-					enumMap.put(ServletDAO.SYSTEMPARAMETER.REGISTRATION,
-					String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.REGISTRATION)));
-					enumMap.put(ServletDAO.SYSTEMPARAMETER.ONSITEUSE,
-							String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SYSTEMPARAMETER.ONSITEUSE)));
-					enumMap.put(ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory,
-							String.valueOf(servletDAO.getSystemParameter(ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory)));
+					enumMap.put(ServletDAO.SystemParameter.REGISTRATION,
+					String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SystemParameter.REGISTRATION)));
+					enumMap.put(ServletDAO.SystemParameter.ONSITEUSE,
+							String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SystemParameter.ONSITEUSE)));
+					enumMap.put(ServletDAO.SystemParameter.MaxModelsPerCategory,
+							String.valueOf(servletDAO.getSystemParameter(ServletDAO.SystemParameter.MaxModelsPerCategory)));
 					updateSystemSettings(show);
 				}
 			} catch (Exception e) {
@@ -372,7 +372,7 @@ public class RegistrationServlet extends HttpServlet {
                             throw new IllegalArgumentException("Unrecognized path: " + pathInfo);
 			return command;
 		} else {
-			handleRequest(request, response, pathInfo);
+			handleRequest(request, response, pathInfo.split("&")[0]);
 			return pathInfo;
 		}
 	}
@@ -505,9 +505,9 @@ public class RegistrationServlet extends HttpServlet {
 		
 		initHttpSession(request, user, show);
 		
-		EnumMap<SYSTEMPARAMETER, String> enumMap = systemParameters.get(show);
+		EnumMap<SystemParameter, String> enumMap = systemParameters.get(show);
 		if(enumMap == null) {
-			systemParameters.put(show, new EnumMap(SYSTEMPARAMETER.class));
+			systemParameters.put(show, new EnumMap(SystemParameter.class));
 		}
 
 		redirectToMainPage(request, response);
@@ -851,6 +851,7 @@ public class RegistrationServlet extends HttpServlet {
 				if (category.getModelClass() == null) {
 					category.setModelClass(ModelClass.Other);
 				}
+				servletDAO.save(category.getGroup());
 				servletDAO.save(category);
 			}
 			buff.append("<p>Storing CategoryGroups");
@@ -1130,7 +1131,7 @@ public class RegistrationServlet extends HttpServlet {
 			writeCategoryModificationErrorResponse(response);
 			return;
 		}
-		redirectToMainPage(request, response);
+		redirectToMainPage(request, response, true);
 	}
 	
 	public void encodeCategories(final HttpServletRequest request, final HttpServletResponse response)
@@ -1436,8 +1437,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</head>");
 		buff.append("<body>");
 
-		buff.append("<form accept-charset=\"UTF-8\" name='input' action='./RegistrationServlet' method='POST'>");
-		buff.append("<input type='hidden' name='command' value='addCategory'>");
+		buff.append("<form accept-charset=\"UTF-8\" name='input' action='./addCategory' method='POST'>");
 		if(category.getId() != 0)
 		    buff.append("<input type='hidden' name='categoryID' value='" + category.getId() +"'>");
 		buff.append("<table border='0'>");
@@ -1616,13 +1616,13 @@ public class RegistrationServlet extends HttpServlet {
 
 	public int getMaxModelsPerCategory(final HttpServletRequest request) {
 		try {
-			return Integer.parseInt(getSystemParameter(request, ServletDAO.SYSTEMPARAMETER.MaxModelsPerCategory));
+			return Integer.parseInt(getSystemParameter(request, ServletDAO.SystemParameter.MaxModelsPerCategory));
 		} catch (Exception e) {
 			return 3;
 		}
 	}
 	
-	private static String getSystemParameter(String show, SYSTEMPARAMETER parameter)
+	private static String getSystemParameter(String show, SystemParameter parameter)
 	{
 		if(show == null) {
 			return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
@@ -1632,7 +1632,7 @@ public class RegistrationServlet extends HttpServlet {
 		return value == null ? servletDAO.getSystemParameter(parameter)  : value;
 	}
 	
-	private static String getSystemParameter(HttpServletRequest request, SYSTEMPARAMETER parameter)
+	private static String getSystemParameter(HttpServletRequest request, SystemParameter parameter)
 	{
 		return getSystemParameter(getShowFromSession(request), parameter);
 	}
@@ -1810,23 +1810,30 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void inputForDeleteUsers(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		final String language = getUser(request).language;
+		final String language = getLanguage(request);
 
 		selectUser(request, response, "deleteUsers", languageUtil.getLanguage(language).getString("delete"), language);
 	}
 
 	public void inputForLoginUser(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		final String language = ServletUtil.getRequestAttribute(request, "language");
+		final String language = getLanguage(request);
 		request.getSession(true).setAttribute(SessionAttribute.Show.name(), servletDAO.getShows().get(0));
-		
 		
 		selectUser(request, response, "directLogin", languageUtil.getLanguage(language).getString("login"), language);
 	}
 
 	public void inputForPrint(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final String language = ServletUtil.getRequestAttribute(request, "language");
+		final String language = getLanguage(request);
 		selectUser(request, response, "directPrintModels", languageUtil.getLanguage(language).getString("print.models"), language);
+	}
+	
+	private String getLanguage(final HttpServletRequest request) throws MissingRequestParameterException {
+		try {
+			return getUser(request).getLanguage();
+		} catch (UserNotLoggedInException e) {
+			return ServletUtil.getRequestAttribute(request, "language");
+		}
 	}
 
 	private void selectUser(final HttpServletRequest request, final HttpServletResponse response, final String command,
@@ -1838,7 +1845,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<html>" + "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /></head>"
 				+ "<body>");
 
-		buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put' >");
+		buff.append("<form accept-charset='UTF-8' name='input' action='../RegistrationServlet' method='put' >");
 		buff.append("<input type='hidden' name='command' value='" + command + "'>");
 		if (show != null) {
 			buff.append("<input type='hidden' name='show' value='" + StringEncoder.toBase64(show.getBytes()) + "'>");
@@ -1891,7 +1898,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 
-		redirectToMainPage(request, response);
+		redirectToMainPage(request, response, true);
 
 	}
 
@@ -1905,7 +1912,8 @@ public class RegistrationServlet extends HttpServlet {
 		
 		String show = getShowFromSession(request);
 		if (show != null) {
-			systemParameters.get(show).put(ServletDAO.SYSTEMPARAMETER.valueOf(paramName), paramValue);
+			SystemParameter param = ServletDAO.SystemParameter.valueOf(paramName);
+			systemParameters.get(show).put(param, param.isBooleanValue() ? String.valueOf(ServletDAO.getYesNoSystemParameter(paramValue)): paramValue);
 			updateSystemSettings(show);
 		}
 
@@ -1955,8 +1963,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append("<html><body>");
 
-		buff.append("<form accept-charset='UTF-8' name='input' action='./RegistrationServlet' method='put'>");
-		buff.append("<input type='hidden' name='command' value='"+command+"'>");
+		buff.append("<form accept-charset='UTF-8' name='input' action='./"+command+"' method='put'>");
 
 		getHTMLCodeForCategorySelect(buff, language.getString("select"), "", false, language, request);
 
@@ -1973,8 +1980,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append("<html><body>");
 
-		buff.append("<form name='input' action='RegistrationServlet' method='put'>");
-		buff.append("<input type='hidden' name='command' value='deleteCategoryGroup'>");
+		buff.append("<form name='input' action='./deleteCategoryGroup' method='put'>");
 
 		final String show = getShowFromSession(request);
 
@@ -2009,7 +2015,7 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 
-		redirectToMainPage(request, response);
+		redirectToMainPage(request, response, true);
 	}
 
 	public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2023,7 +2029,7 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 
-		redirectToMainPage(request, response);
+		redirectToMainPage(request, response, true);
 	}
 
 	public void printAllModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2299,7 +2305,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (isOnSiteUse()) {
 			response.sendRedirect("helyi.html");
 		} else {
-		        response.sendRedirect(startPage);
+		        response.sendRedirect("../" + startPage);
 		}
 	}
 
@@ -2316,8 +2322,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
     private void updateSystemSettings(String show) throws SQLException {
-		onSiteUse = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SYSTEMPARAMETER.ONSITEUSE));
-		systemMessage = getSystemParameter(show, ServletDAO.SYSTEMPARAMETER.SYSTEMMESSAGE);
+		onSiteUse = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.ONSITEUSE));
+		systemMessage = getSystemParameter(show, ServletDAO.SystemParameter.SYSTEMMESSAGE);
 	}
 
 	public void deleteData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2698,7 +2704,7 @@ public class RegistrationServlet extends HttpServlet {
     public static boolean isPreRegistrationAllowed(String show) {
         if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(show))
             return true;
-        Boolean allowed = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SYSTEMPARAMETER.REGISTRATION));
+        Boolean allowed = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.REGISTRATION));
         return allowed == null ? false : allowed;
     }
 

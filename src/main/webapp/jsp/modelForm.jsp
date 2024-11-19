@@ -81,7 +81,7 @@ function checkMandatoryElement(element)
 if(servlet.isOnSiteUse())
 {
 %>
-	<a href='../helyi.html'> Helyi bel&eacute;p&eacute;si oldal bet&ouml;lt&eacute;se...</a>
+	<a href='../helyi.html'>Helyi bel&eacute;p&eacute;si oldal bet&ouml;lt&eacute;se...</a>
 	<p>
 
 	Egy makett nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa: 

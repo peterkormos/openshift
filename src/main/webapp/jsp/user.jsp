@@ -9,7 +9,10 @@
 <%
     //input parameters	
  	boolean directRegister = Boolean.parseBoolean(request.getParameter("directRegister"));
- 	String action = request.getParameter("action");
+	if(directRegister)
+		session.removeAttribute(CommonSessionAttribute.UserID.name());
+
+	String action = request.getParameter("action");
  		
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
  		

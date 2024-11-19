@@ -24,7 +24,7 @@ import datatype.AwardedModel;
 import datatype.Category;
 import datatype.Model;
 import datatype.User;
-import servlet.ServletDAO.SYSTEMPARAMETER;
+import servlet.ServletDAO.SystemParameter;
 
 public class JDBCDAO {
 	public static Logger logger = Logger.getLogger(JDBCDAO.class);
@@ -188,7 +188,7 @@ public class JDBCDAO {
 		}
 	}
 
-	public String getSystemParameter(final SYSTEMPARAMETER parameter) {
+	public String getSystemParameter(final SystemParameter parameter) {
 		PreparedStatement queryStatement = null;
 		ResultSet rs = null;
 

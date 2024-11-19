@@ -53,7 +53,7 @@ super(id);
   @Override
   public String toString()
   {
-	return "CategoryGroup [show=" + show + ", categoryGroupID=" + getId() + ", group=" + name + "]";
+	return "CategoryGroup [id=" + getId() + ", show=" + show + ", group=" + name + "]";
   }
 
 	@Id

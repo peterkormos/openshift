@@ -1,27 +1,24 @@
 <em><strong>Lek&eacute;rdez&eacute;sek...</strong></em>
 <br>
-<form accept-charset="UTF-8" name="input" id="input1"
-	action="../RegistrationServlet" method="post">
-	<input type="hidden" id="command1" name="command" value=""> <input
-		type="hidden" name="withDetailing" value="false"> <a
-		href="../RegistrationServlet/exportExcel"><strong>&Ouml;sszes
-			benevezett makett Excelbe</strong></a> - <a href="#"
-		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
-		benevezett makett list&aacute;z&aacute;sa</a> - <a
-		href="../RegistrationServlet/statistics?language=HU"><strong>Statisztika
-			k&eacute;sz&iacute;t&eacute;se</strong></a> - <a href="customQuery.jsp">Egyedi
-		lek&eacute;rdez&eacute;sek</a> -
-	<!-- 		
+<a href="../RegistrationServlet/exportExcel"><strong>&Ouml;sszes
+		benevezett makett Excelbe</strong></a>
+-
+<a href="listAllModels.jsp"> &Ouml;sszes benevezett makett
+	list&aacute;z&aacute;sa</a>
+-
+<a href="../RegistrationServlet/statistics?language=HU"><strong>Statisztika
+		k&eacute;sz&iacute;t&eacute;se</strong></a>
+-
+<a href="customQuery.jsp">Egyedi lek&eacute;rdez&eacute;sek</a>
+-
+<!-- 		
 	<input type="hidden" name="withDetailing" value="true">
 		<a href="#"
 		onClick="document.getElementById('input1').action='listAllModels.jsp';this.parentNode.submit();">&Ouml;sszes
 		benevezett makett list&aacute;z&aacute;sa (r&eacute;szletes)</a> - 
  -->
-	<a href="#"
-		onClick="document.getElementById('input1').action='../RegistrationServlet';document.getElementById('command1').value='listUsers';this.parentNode.submit();">&Ouml;sszes
-		felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a>
-
-</form>
+<a href="../RegistrationServlet/listUsers">&Ouml;sszes
+	felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a>
 <!--  
 <form accept-charset="UTF-8" name="input"  id="input1a" action="../RegistrationServlet" method="post">
 	<input

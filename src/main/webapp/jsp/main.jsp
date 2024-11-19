@@ -188,7 +188,7 @@
 if(servlet.isOnSiteUse())
 {
 %>
-	<a href='../helyi.html'> helyi.html bet&ouml;lt&eacute;se...</a>
+	<a href='../helyi.html'>Helyi bel&eacute;p&eacute;si oldal bet&ouml;lt&eacute;se...</a>
 	<p>
 	<form name='input' action='../RegistrationServlet' method='put' accept-charset="UTF-8">
 	<input type='hidden' name='command' value='printMyModels'>

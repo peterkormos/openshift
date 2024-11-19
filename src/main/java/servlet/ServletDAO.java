@@ -33,9 +33,24 @@ public class ServletDAO extends HibernateDAO
 private JDBCDAO jdbcDAO;
   public final static int INVALID_USERID = -1;
 
-  public enum SYSTEMPARAMETER
+  public enum SystemParameter
   {
-	REGISTRATION, ONSITEUSE, SYSTEMMESSAGE, MaxModelsPerCategory
+	REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory;
+
+	private boolean booleanValue;
+	
+	SystemParameter()
+	{
+	}
+	
+	SystemParameter(boolean booleanValue)
+	{
+		this.booleanValue = booleanValue;
+	}
+
+	public boolean isBooleanValue() {
+		return booleanValue;
+	}
   };
  
   public ServletDAO(String dbURL, String dbUserName, String dbPassword,
@@ -127,18 +142,20 @@ private JDBCDAO jdbcDAO;
 		return user;
 	}
 
-  public boolean getYesNoSystemParameter(final SYSTEMPARAMETER parameter) 
+  public boolean getYesNoSystemParameter(final SystemParameter parameter) 
   {
 	final String value = jdbcDAO.getSystemParameter(parameter);
-	if ("-".equals(value))
-	{
-	  return false;
-	}
-	else
-	{
-	  return Integer.parseInt(value) == 1;
-	}
+	return getYesNoSystemParameter(value);
   }
+
+	public static boolean getYesNoSystemParameter(final String value) {
+		if ("-".equals(value)) {
+			return false;
+		} else {
+			return Integer.parseInt(value) == 1;
+		}
+	}
+
   String createWhereStatement(final HttpServletRequest request, String where, final String sQLfield, final String httpParameter,
       final boolean stringParameter)
   {
@@ -354,7 +371,7 @@ void deleteModels(final int categoryId) throws SQLException {
 		jdbcDAO.setSystemParameter(parameterName, parameterValue);
 	}
 
-	public String getSystemParameter(final SYSTEMPARAMETER parameter) {
+	public String getSystemParameter(final SystemParameter parameter) {
 		return jdbcDAO.getSystemParameter(parameter);
 	}
 
