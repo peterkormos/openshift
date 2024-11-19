@@ -86,7 +86,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.11.18.";
+	public String VERSION = "2024.11.19.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -336,7 +336,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 			else if(UserNotLoggedInException.class.isInstance(throwable))
 			{
-				redirectToMainPage(request, response, true);
+				redirectToMainPage(request, response);
 				return;
 			}
 			else
@@ -552,10 +552,7 @@ public class RegistrationServlet extends HttpServlet {
     }
 
     private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        redirectToMainPage(request, response, false);
-    }
-
-    private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response, boolean goToParentDir) throws IOException {
+    	boolean goToParentDir = request.getPathInfo() != null;
         response.sendRedirect((goToParentDir ? "../" : "") + "jsp/"+getMainPageFile(request.getSession(false)));
     }
     
@@ -657,7 +654,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final User user = directRegisterUser(request, language, "");
 		initHttpSession(request, user,  StringEncoder.toBase64(servletDAO.getShows().get(0).getBytes()));
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 	}
 
 	public void exportData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -921,7 +918,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		systemParameters.remove(show);
 
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 	}
 
 	private User directRegisterUser(final HttpServletRequest request, final ResourceBundle language,
@@ -1000,7 +997,7 @@ public class RegistrationServlet extends HttpServlet {
                 session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
                 session.setAttribute(CommonSessionAttribute.UserID.name(), servletDAO.getUser(oldUser.getId()));
 
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 	}
 
 	public void deleteUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1131,7 +1128,7 @@ public class RegistrationServlet extends HttpServlet {
 			writeCategoryModificationErrorResponse(response);
 			return;
 		}
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 	}
 	
 	public void encodeCategories(final HttpServletRequest request, final HttpServletResponse response)
@@ -1143,7 +1140,7 @@ public class RegistrationServlet extends HttpServlet {
 			category.setCategoryDescription(ServletUtil.encodeString(category.getCategoryDescription()));			
 			servletDAO.save(category);
 		});
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 	}
 
 	public void encodeCategorGroups(final HttpServletRequest request, final HttpServletResponse response)
@@ -1153,7 +1150,7 @@ public class RegistrationServlet extends HttpServlet {
 			group.setShow(ServletUtil.encodeString(group.getShow()));			
 			servletDAO.save(group);
 		});
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 	}
 	
 	public void encodeModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -1167,7 +1164,7 @@ public class RegistrationServlet extends HttpServlet {
 			model.setScale(ServletUtil.encodeString(model.getScale()));
 			servletDAO.save(model);
 		});
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 	}
 
 	private void writeCategoryModificationErrorResponse(final HttpServletResponse response) throws IOException {
@@ -1898,7 +1895,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 
 	}
 
@@ -2015,7 +2012,7 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 	}
 
 	public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2029,7 +2026,7 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 
-		redirectToMainPage(request, response, true);
+		redirectToMainPage(request, response);
 	}
 
 	public void printAllModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
