@@ -2652,7 +2652,8 @@ public class RegistrationServlet extends HttpServlet {
 			session.setAttribute(SessionAttribute.Model.name(), model);
 		}
 
-		response.sendRedirect("jsp/modelForm.jsp");
+		boolean goToParentDir = request.getPathInfo() != null;
+		response.sendRedirect((goToParentDir ? "../" : "") + "jsp/modelForm.jsp");
 	}
 
 	private void getHTMLCodeForCategorySelect(final StringBuilder buff, final String selectedLabel,

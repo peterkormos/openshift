@@ -75,8 +75,7 @@ function checkDeleteUserRequest()
 %> 
 				<td style="width: 40px; vertical-align:top;">
 						<div class="tooltip">
-	<a href="#"
-					onClick="document.getElementById('command').value='inputForAddModel';document.getElementById('input').submit();">
+<a href="../RegistrationServlet/inputForAddModel">
 							<img src="../icons/add.png" height="30" align="center" /> <span
 								class="tooltiptext"> <%=language.getString("add")%></span>
 				</a></div>
@@ -87,7 +86,7 @@ function checkDeleteUserRequest()
 
 				<td style="width: 40px; vertical-align:top;">
   <div class="tooltip">
-  <a href="#" onClick="document.getElementById('command').value='sendEmail';document.getElementById('input').submit();">
+<a href="../RegistrationServlet/sendEmail">
   <img src="../icons/email.png" height="30" align="center" /> <span
 								class="tooltiptext"> <%=language.getString("send.email")%></span>
 						</a></div>
@@ -104,7 +103,7 @@ function checkDeleteUserRequest()
 				<td style="width: 40px; text-align: right; vertical-align:top;"
 				>
   <div class="tooltip">
-  <a href="#" onClick="document.getElementById('command').value='logout';document.getElementById('input').submit();">
+  <a href="../RegistrationServlet/logout">
   <img src="../icons/exit.png" height="30" align="center" /> <span
 								class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
 						</a></div>
