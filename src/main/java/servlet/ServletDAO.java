@@ -125,7 +125,7 @@ private JDBCDAO jdbcDAO;
   }
 
 	public User getUser(String email) throws EmailNotFoundException {
-		email = email.replace(';', ' ').replace('(', ' ').replace(')', ' ').replace('\'', ' ').replace(';', ' ');
+		email = ServletUtil.sanitizeUserInput(email);
 
 		List<User> users = get(User.class, "upper(email) = upper('" + email + "')");
 		if (users.isEmpty()) {

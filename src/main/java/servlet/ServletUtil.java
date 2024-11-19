@@ -223,6 +223,10 @@ public class ServletUtil {
 	public static boolean isCheckedIn(final HttpServletRequest request, final String parameter) {
 			return "on".equalsIgnoreCase(getOptionalRequestAttribute(request, parameter));
 	}
+	
+	public static String sanitizeUserInput(String text) {
+		return text.replace(';', ' ').replace('(', ' ').replace(')', ' ').replace('\'', ' ').replace(';', ' ');
+	}
 
   public static String encodeString(String value)
   {

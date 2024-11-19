@@ -929,10 +929,10 @@ public class RegistrationServlet extends HttpServlet {
 				// httpParameterPostTag)
 				+ User.LOCAL_USER + System.currentTimeMillis();
 
-		servletDAO.save(createUser(request, userName, password, httpParameterPostTag));
+		User user = createUser(request, userName, password, httpParameterPostTag);
+		servletDAO.save(user);
 
-		final User user = servletDAO.getUser(userName);
-		return user;
+		return servletDAO.getUser(user.getEmail());
 	}
 
 	public void register(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2300,7 +2300,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		if (isOnSiteUse()) {
-			response.sendRedirect("helyi.html");
+			response.sendRedirect("../helyi.html");
 		} else {
 		        response.sendRedirect("../" + startPage);
 		}
@@ -2568,7 +2568,7 @@ public class RegistrationServlet extends HttpServlet {
 				"-", ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag),
 				ServletUtil.getRequestAttribute(request, "language"),
 				ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag),
-				ServletUtil.getOptionalRequestAttribute(request, "telephone" + httpParameterPostTag), email, true,
+				ServletUtil.getOptionalRequestAttribute(request, "telephone" + httpParameterPostTag), ServletUtil.sanitizeUserInput(email), true,
 				ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag),
 				Integer.parseInt(ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag)),
 				ServletUtil.getOptionalRequestAttribute(request, "city" + httpParameterPostTag));
