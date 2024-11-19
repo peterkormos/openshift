@@ -46,8 +46,16 @@ function checkMandatory(form)
 */
 	returned = checkMandatoryElement(form.categoryID) && returned;
 
+<%
+if(!servlet.isOnSiteUse())
+{
+%>
+
 	returned = checkMandatoryElement(form.modelWidth) && returned;
 	returned = checkMandatoryElement(form.modelHeight) && returned;
+<%
+}
+%>
 
 	return returned; 
 }
@@ -225,7 +233,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 		%> <jsp:include page="textInput.jsp">
 			<jsp:param name="name" value="modelWidth" />
 			<jsp:param name="value" value="<%=modelWidth%>" />
-			<jsp:param name="mandatory" value="true" />
+			<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse()%>" />
 			<jsp:param name="maxlength" value="3" />
 			<jsp:param name="size" value="10" />
 		</jsp:include>
@@ -236,7 +244,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 %> <jsp:include page="textInput.jsp">
 			<jsp:param name="name" value="modelHeight" />
 			<jsp:param name="value" value="<%=modelHeight%>" />
-			<jsp:param name="mandatory" value="true" />
+			<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse()%>" />
 			<jsp:param name="maxlength" value="3" />
 			<jsp:param name="size" value="10" />
 		</jsp:include>
