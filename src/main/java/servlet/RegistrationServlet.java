@@ -1101,7 +1101,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
+		if(getUser(request).isAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request))) {
 			Category modifyingCategory;
 			try {
 				modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
@@ -1171,7 +1171,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void writeCategoryModificationErrorResponse(final HttpServletResponse response) throws IOException {
-		writeErrorResponse(response, "Most m&aacute;r nem lehet m&oacute;dos&iacute;tani! El&#337;ször az 'El&#337;nevez&eacute;s v&eacute;ge' vagy 'Helysz&iacute;ni m&oacute;d' linkre kell kattintani az admin oldalon.");
+		writeErrorResponse(response, "Most m&aacute;r nem lehet m&oacute;dos&iacute;tani! El&#337;sz&ouml;r az 'El&#337;nevez&eacute;s v&eacute;ge' vagy 'Helysz&iacute;ni m&oacute;d' linkre kell kattintani az admin oldalon.");
 	}
 	
 	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1184,8 +1184,8 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void addCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
-			String show = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"));
+		String show = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"));
+		if(getUser(request).isAdminUser() && !isPreRegistrationAllowed(show)) {
 		final CategoryGroup categoryGroup = new CategoryGroup(servletDAO.getNextID(CategoryGroup.class),
 				show, ServletUtil.getRequestAttribute(request, "group"));
 
@@ -2001,7 +2001,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		if(getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
+		if(getUser(request).isAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request))) {
 			Integer categoryGroupID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID"));
 			
 			for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /* show */)) {
@@ -2019,7 +2019,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		if (getUser(request).isAdminUser() && !isRegistrationAllowed(getShowFromSession(request))) {
+		if (getUser(request).isAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request))) {
 			Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
 			servletDAO.deleteModels(categoryID);
 			servletDAO.delete(servletDAO.getCategory(categoryID));
