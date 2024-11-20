@@ -86,7 +86,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.11.19.";
+	public String VERSION = "2024.11.20.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -120,22 +120,6 @@ public class RegistrationServlet extends HttpServlet {
 	    LOADIMAGE, addModel, modifyModel
 	};
 	
-	public static enum MainPageType {
-	    Old("main.jsp"), //
-	    New("main_v2.jsp");
-	    
-	    private String fileName;
-	    
-	    MainPageType(String fileName)
-	    {
-	        this.fileName = fileName;
-	    }
-
-            public String getFileName() {
-                return fileName;
-            }
-	}
-
 	public RegistrationServlet() throws Exception {
 		instance = this;
 	}
@@ -532,7 +516,7 @@ public class RegistrationServlet extends HttpServlet {
         session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, "showId"));
 
         if (user.language.length() != 2) // admin user
-            session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + MainPageType.Old.getFileName());
+            session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + getDefaultMainPageFile());
         else
             session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
         
@@ -560,8 +544,8 @@ public class RegistrationServlet extends HttpServlet {
         return session!= null ?  (String) session.getAttribute(SessionAttribute.MainPageFile.name()) : getDefaultMainPageFile();
     }
     
-    private String getDefaultMainPageFile() {
-        return MainPageType.New.getFileName();
+    public static String getDefaultMainPageFile() {
+        return "main.jsp";
     }
 
 	public void sql(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

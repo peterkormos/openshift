@@ -7,13 +7,9 @@
 <jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
 
 <%
-    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	ServletDAO servletDAO = RegistrationServlet.getServletDAO();
-	
 	User user = null;
-	
 	try
-	{
+	{	
 		user = RegistrationServlet.getUser(request);
 	}
 	catch(Exception ex)
@@ -21,7 +17,10 @@
 		out.print(ex.getMessage());
 		return;
 	}
-
+	
+    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	ServletDAO servletDAO = RegistrationServlet.getServletDAO();
+	
 	ResourceBundle language = languageUtil.getLanguage(user.language);
 
 	String show = RegistrationServlet.getShowFromSession(session);
@@ -31,183 +30,135 @@
 	}
 %>
 <html>
-<head>	
-	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-	<meta http-equiv="Pragma" content="no-cache">
-	<meta http-equiv="Expires" content="0">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="base.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+// <!--
+
+function checkDeleteUserRequest()
+{
+	confirmed = confirm('<%=language.getString("delete.confirm")%>'); 
 	
-	<link href="base.css" rel="stylesheet" type="text/css">
-	
-	<script type="text/javascript">
-	// <!--
-	
-	function checkDeleteUserRequest()
+	if(confirmed)
 	{
-		confirmed = confirm('<%=language.getString("delete.confirm")%>'); 
-		
-		if(confirmed)
-		{
-			document.getElementById('command').value='deleteUser';
-			document.getElementById('input').submit();
-		}
+		document.getElementById('command').value='deleteUser';
+		document.getElementById('input').submit();
 	}
-	
-	function showModal(location)
-	{
-		document.getElementById('iframeID').src = location;
-	
-		var modal = document.getElementById('modalDiv');
-		modal.style.display = "block";
-	
-		// Get the <span> element that closes the modal
-	//	document.getElementsByClassName("close")[0]
-		var span = 
-		modal.getElementsByClassName("close")[0]
-		.onclick = function() {
-		  modal.style.display = "none";
-		}
-	
-		// When the user clicks anywhere outside of the modal, close it
-		window.onclick = function(event) {
-		  if (event.target == modal) {
-			modal.style.display = "none";
-		  }
-		}
-	}
-	
-	//-->
-	</script>
+}
+
+//-->
+</script>
+
 </head>
 <body>
 
 <div class="header"></div>
 
-<p>
-<FONT COLOR='#ff0000'><b><%=language.getString("show")%>: <%=show%>
-<p>
-<p>
-<%=servlet.getSystemMessage()%>
-</b></FONT>
-<p>
+		<table style="border: 0px; width: 100%">
+			<tr>
+				<td rowspan="2" >
+				<img style="height: 25mm" src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/-1">
+				</td>
+
+<form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">
+  <input type="hidden" id="command"  name="command" value="">
 <%
-    if (!servlet.isPreRegistrationAllowed(show))
+    if (servlet.isRegistrationAllowed(show))
+  {
+%> 
+				<td style="width: 40px; vertical-align:top;">
+						<div class="tooltip">
+<a href="../RegistrationServlet/inputForAddModel">
+							<img src="../icons/add.png" height="30" align="center" /> <span
+								class="tooltiptext"> <%=language.getString("add")%></span>
+				</a></div>
+				</td>
+<%
+    }
+%>
+
+				<td style="width: 40px; vertical-align:top;">
+  <div class="tooltip">
+<a href="../RegistrationServlet/sendEmail">
+  <img src="../icons/email.png" height="30" align="center" /> <span
+								class="tooltiptext"> <%=language.getString("send.email")%></span>
+						</a></div>
+				</td>
+
+				<td style="width: 100%; white-space: nowrap">
+<FONT COLOR='#ff0000'>
+	<b>
+		<%=show%>
+	</b>
+</FONT>
+				</td>
+
+				<td style="width: 40px; text-align: right; vertical-align:top;"
+				>
+  <div class="tooltip">
+  <a href="../RegistrationServlet/logout">
+  <img src="../icons/exit.png" height="30" align="center" /> <span
+								class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
+						</a></div>
+				</td>
+
+				<td style="width: 40px; text-align: right; vertical-align:top;">
+  <div class="tooltip">
+  <a href="#" onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
+  <img src="../icons/modify2.png" height="30" align="center" /><span
+								class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
+						</a></div>
+				</td>
+</form>
+			</tr>
+<tr>
+				<td colspan="6" style="width: 100%; white-space: nowrap">
+<FONT COLOR='#ff0000'>
+	<b>
+		<%=servlet.getSystemMessage()%>
+	</b>
+</FONT>
+				</td>
+</tr>
+		</table>
+<p></p>
+
+<%
+	if (!(servlet.isPreRegistrationAllowed(show) || servlet.isOnSiteUse()))
 	{
 %> 
 		<strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong> 
 <%
-    }
-%>
+	}
+ %>
 
-<p></p>
-<form action="setNewDesign.jsp">
-	<input type="hidden" name="fileName" value="<%= RegistrationServlet.MainPageType.New.getFileName()%>">
-	<input class="main" type='submit' value='New design'>
-</form>
-<p></p>
 
 <jsp:include page="notices.jsp" />
 
 <p></p>
-
-<div id="modalDiv" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-	<iframe id="iframeID" style="border:none;width: 100%;height: 100%;"></iframe>
-  </div>
-</div>
-
-<form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put" accept-charset="UTF-8">
-  <input type="hidden" id="command"  name="command" value="">
-
-<%
-    if (servlet.isRegistrationAllowed(show))
-  {
-%>
-  <a href="#" onClick="document.getElementById('command').value='inputForAddModel';this.parentNode.submit();">
-  <img src="../icons/add.png" height="30" align="center"> <%=language.getString("add")%></a>
-<p></p>
-<%
-    }
-%>
 								    <!--
-  <a href="#" onClick="document.getElementById('command').value='inputForPhotoUpload';this.parentNode.submit();">
+  <a href="#" onClick="document.getElementById('command').value='inputForPhotoUpload';document.getElementById('input').submit();">
   <img src="../icons/photo.png" height="30" align="center">language.getString("photo")to")%>
   </a>
  
 <p></p>
    -->
-<%
-	final List<Model> models = servletDAO.getModels(user.getId());
-
-  if (servlet.isRegistrationAllowed(show) && !models.isEmpty())
-  {
-%>
-  <a href="#" onClick="showModal('selectModel.jsp?<%= RegistrationServlet.SessionAttribute.Action.name()%>=inputForModifyModel&<%=RegistrationServlet.SessionAttribute.SubmitLabel.name()%>=modify');">
-  <img src="../icons/modify.png" height="30" align="center"> <%=language.getString("modify.model")%></a>
-
-<p></p>
-   
-  <a href="#" onClick="showModal('selectModel.jsp?<%=RegistrationServlet.SessionAttribute.Action.name()%>=deleteModel&<%=RegistrationServlet.SessionAttribute.SubmitLabel.name()%>=delete');">
-  <img src="../icons/delete2.png" height="30" align="center"> <%=language.getString("delete")%></a>
-
-<p></p>
-<%
-}
-%>
 
 <%-- 
-  <a href="#" onClick="document.getElementById('command').value='listMyModels';this.parentNode.submit();">
+  <a href="#" onClick="document.getElementById('command').value='listMyModels';document.getElementById('input').submit();">
   <img src="../icons/list.png" height="30" align="center"> <%=language.getString("list.models")%></a>
 
 <p></p>
  --%>
 
-  <a href="#" onClick="document.getElementById('command').value='sendEmail';this.parentNode.submit();">
-  <img src="../icons/email.png" height="30" align="center"> <%=language.getString("send.email")%></a>
-
-<p></p>
-    
-  <a href="#" onClick="document.getElementById('command').value='logout';this.parentNode.submit();">
-  <img src="../icons/exit.png" height="30" align="center"> <%=language.getString("logout")%></a>
-
-<p></p>
-   
-  <a href="#" onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';this.parentNode.submit();">
-  <img src="../icons/modify2.png" height="30" align="center"> <%=language.getString("modify.user")%></a>
-
-<p></p>
-
-<hr>
-	<a href="#" onClick="checkDeleteUserRequest();" style="{color: rgb(255,0,0);font-weight:bold}">
-  <img src="../icons/delete.png" height="30" align="center"> <%=language.getString("delete.user")%></a>
-
-</form>
-<hr>
-<%
-if(servlet.isOnSiteUse())
-{
-%>
-	<a href='../helyi.html'>Helyi bel&eacute;p&eacute;si oldal bet&ouml;lt&eacute;se...</a>
-	<p>
-	<form name='input' action='../RegistrationServlet' method='put' accept-charset="UTF-8">
-	<input type='hidden' name='command' value='printMyModels'>
-	&Ouml;sszes makett nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa: 
-	<input name='printMyModels' type='submit' value='<%=language.getString("print.models")%>'>
-	</form>
-	<p><hr>
-	Egy makett nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa: 
-	<jsp:include page="modelSelect.jsp">
-	  <jsp:param name="action" value="printMyModels"/>
-	  <jsp:param name="submitLabel" value='<%=language.getString("print.models")%>'/>
-	</jsp:include>
-
-<%
-}
-%>
-
-<%=language.getString("list.models")%>
-<p>
+<jsp:include page="ADMIN_helyi.jsp"/>
 
 <jsp:include page="listMyModels.jsp"/>
 
