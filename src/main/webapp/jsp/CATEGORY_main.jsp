@@ -93,7 +93,6 @@ if (show == null) {
 	</tr>
 </table>
 
-<hr>
 <p></p>
 <strong><font size="+2"><u>1 makettez&#337;...</u> </font></strong>
 <a href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
