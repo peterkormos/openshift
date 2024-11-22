@@ -51,8 +51,7 @@ if (show == null) {
 				<img style="vertical-align: middle; height: 25mm"
 					src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
 
-				<a
-					href="../RegistrationServlet/inputForLogoUpload">Versenyhez
+				<a href="../RegistrationServlet/inputForLogoUpload">Versenyhez
 					log&oacute; felt&ouml;lt&eacute;s</a>
 			</div>
 		</td>
@@ -89,47 +88,50 @@ if (show == null) {
 	</tr>
 
 	<tr>
-		<td style="width: 100%; text-align: left; vertical-align: top;"><FONT COLOR='#ff0000'><b><%=show%></b></FONT></td>
+		<td style="width: 100%; text-align: left; vertical-align: top;"><FONT
+			COLOR='#ff0000'><b><%=show%></b></FONT></td>
 	</tr>
 </table>
 
 <p></p>
-<strong><font size="+2"><u>1 makettez&#337;...</u> </font></strong>
-<a href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
-	bel&eacute;p&eacute;s</a>
--
-<a href="../RegistrationServlet/inputForPrint"> nevez&eacute;si
-	lapjainak nyomtat&aacute;sa </a>
--
-<a href="../RegistrationServlet/inputForPrint"> <a href="#"
-	-			onClick="document.getElementById('command').value='inputForModifyModel';this.parentNode.submit();">Makett
-		&aacute;tsorol&aacute;sa. Makett sorsz&aacute;ma:</a> <input type="number"
-	name="modelID"
-	onchange="document.getElementById('command').value='inputForModifyModel'">
-	</form>
 
-	<p>
-		<jsp:include page="ADMIN_elonevezes.jsp" />
-	</p>
+<table style="box-shadow: none" border="0">
+	<tr>
+		<th>1 makettez&#337;...</th>
+		<td><a href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
+				bel&eacute;p&eacute;s</a> - <a
+			href="../RegistrationServlet/inputForPrint"> nevez&eacute;si
+				lapjainak nyomtat&aacute;sa </a> - <a
+			href="../RegistrationServlet/inputForPrint"> <a href="#"
+				-			onClick="document.getElementById('command').value='inputForModifyModel';this.parentNode.submit();">Makett
+					&aacute;tsorol&aacute;sa. Makett sorsz&aacute;ma:</a> <input
+				type="number" name="modelID"
+				onchange="document.getElementById('command').value='inputForModifyModel'">
+		</a></td>
+	</tr>
+</table>
+<p>
+	<jsp:include page="ADMIN_elonevezes.jsp" />
+</p>
 
-	<form accept-charset="UTF-8" name="input"
-		action="../RegistrationServlet" method="post">
-		<input type="hidden" name="command" value="setSystemParameter">
-		<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
-		<textarea name="paramValue" cols="100" rows="3"><%=servlet.getSystemMessage()%></textarea>
-		<input name="setSystemParameter" type="submit"
-			value="Rendszer&#252;zenet be&aacute;ll&iacute;t&aacute;sa">
-	</form>
+<form accept-charset="UTF-8" name="input"
+	action="../RegistrationServlet" method="post">
+	<input type="hidden" name="command" value="setSystemParameter">
+	<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
+	<textarea name="paramValue" cols="100" rows="3"><%=servlet.getSystemMessage()%></textarea>
+	<input name="setSystemParameter" type="submit"
+		value="Rendszer&#252;zenet be&aacute;ll&iacute;t&aacute;sa">
+</form>
 
-	<p>
-		<jsp:include page="ADMIN_nyomtatas.html" />
-	</p>
-	<p>
-		<jsp:include page="ADMIN_kategoria.html" />
-	</p>
-	<p>
-		<jsp:include page="ADMIN_lekerdezes.html" />
-	</p>
-	<p>
-		<jsp:include page="ADMIN_adatkezeles.html" />
-	</p>
+<p>
+	<jsp:include page="ADMIN_nyomtatas.html" />
+</p>
+<p>
+	<jsp:include page="ADMIN_kategoria.html" />
+</p>
+<p>
+	<jsp:include page="ADMIN_lekerdezes.html" />
+</p>
+<p>
+	<jsp:include page="ADMIN_adatkezeles.html" />
+</p>
