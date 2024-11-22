@@ -3,6 +3,11 @@
 <%
 
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	String show = RegistrationServlet.getShowFromSession(session);
+	if (show == null)
+	{
+	  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+	}
 %>
 
 	<em><strong>El&otilde;nevez&eacute;s...</strong></em>
@@ -12,12 +17,16 @@
 	<input type="hidden" id="command4" name="command" value=""> <input
 		type="hidden" id="paramName" name="paramName" value=""> <a
 		href="#"
+		class='<%= !servlet.isOnSiteUse()  ? "flash OK" :  ""%> %>'
 		onClick="document.getElementById('paramName').value='ONSITEUSE';document.getElementById('paramValue').value='0';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Internetes
 		m&oacute;d</a> - <a href="#"
+		class='<%= servlet.isPreRegistrationAllowed(show)  ? "flash OK" :  ""%> %>'
 		onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">El&ouml;nevez&eacute;s
 		kezd&eacute;se</a> - <a href="#"
+		class='<%= !servlet.isPreRegistrationAllowed(show)  ? "flash OK" :  ""%> %>'
 		onClick="document.getElementById('paramName').value='REGISTRATION';document.getElementById('paramValue').value='0';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">El&ouml;nevez&eacute;s
 		v&eacute;ge</a> - <a href="#"
+		class='<%= servlet.isOnSiteUse()  ? "flash OK" :  ""%> %>'
 		onClick="document.getElementById('paramName').value='ONSITEUSE';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Helysz&iacute;ni
 		m&oacute;d</a> 
 		

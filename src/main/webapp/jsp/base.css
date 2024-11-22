@@ -92,7 +92,7 @@ a:active {
 }
 
 .flash.OK {
-	padding-left: 20px;
+	padding-left: 40px;
 	background: url(../icons/true.png) 8px 8px no-repeat;
 	background-color: #dfffdf;
 	border: 1px solid;
