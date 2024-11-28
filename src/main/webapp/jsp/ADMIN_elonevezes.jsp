@@ -29,11 +29,10 @@ if (show == null) {
 					onClick="document.getElementById('paramName').value='ONSITEUSE';document.getElementById('paramValue').value='1';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Helysz&iacute;ni
 					m&oacute;d</a> - <a href="#"
 					onClick="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Max.
-					makettek kateg&oacute;ri&aacute;nk&eacute;nt (<%=servlet.getMaxModelsPerCategory(request)%>):
-				</a> <input
-		onClick="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Max. makettek kateg&oacute;ri&aacute;nk&eacute;nt: </a>
-		type="number" id="paramValue" name="paramValue" size="2" value="<%=servlet.getMaxModelsPerCategory(request)%>" 
-					onchange="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">
+					makettek kateg&oacute;ri&aacute;nk&eacute;nt: </a> <input
+					onClick="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();"
+					type="number" id="paramValue" name="paramValue" size="2"
+					value="<%=servlet.getMaxModelsPerCategory(request)%>">
 			</form>
 		</td>
 	</tr>
