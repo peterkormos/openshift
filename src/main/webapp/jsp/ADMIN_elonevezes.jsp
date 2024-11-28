@@ -30,7 +30,9 @@ if (show == null) {
 					m&oacute;d</a> - <a href="#"
 					onClick="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Max.
 					makettek kateg&oacute;ri&aacute;nk&eacute;nt (<%=servlet.getMaxModelsPerCategory(request)%>):
-				</a> <input type="number" id="paramValue" name="paramValue" value=""
+				</a> <input
+		onClick="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">Max. makettek kateg&oacute;ri&aacute;nk&eacute;nt: </a>
+		type="number" id="paramValue" name="paramValue" size="2" value="<%=servlet.getMaxModelsPerCategory(request)%>" 
 					onchange="document.getElementById('paramName').value='MaxModelsPerCategory';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">
 			</form>
 		</td>
