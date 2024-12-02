@@ -49,10 +49,10 @@
 
         <property name="hbm2ddl.auto">update</property>
 
-        <mapping class="datatype.judging.JudgingScore" />
-        <mapping class="datatype.judging.JudgingCriteria" />
-        <mapping class="datatype.judging.JudgingSheet" />
         <mapping class="datatype.judging.JudgingCategoryToSheetMapping" />
+        <mapping class="datatype.judging.JudgingCriteria" />
+        <mapping class="datatype.judging.JudgingScore" />
+        <mapping class="datatype.judging.JudgingSheet" />
         <mapping class="datatype.User" />
         <mapping class="datatype.LoginConsent" />
         <mapping class="datatype.Model" />

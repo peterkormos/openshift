@@ -66,6 +66,7 @@ public class DumpJudgingSheetsToFile {
 		e.write(Serialization.serialize(data));
 		e.close();
 
+		System.out.println("OK.....");
 	}
 
 }

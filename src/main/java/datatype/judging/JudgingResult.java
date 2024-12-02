@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import datatype.Model;
+import datatype.Model; 
 
 public class JudgingResult extends JudgedModel{
     private String category;
@@ -32,15 +32,15 @@ public class JudgingResult extends JudgedModel{
     }
 
 
-    public JudgingResult(final int id, JudgingScore result) {
-        super(id, result);
+    public JudgingResult(JudgingScore result) {
+        super(0 /*id*/, result);
         
         this.category = result.getCategory();
         this.judge = result.getJudge();
     }
 
-    public JudgingResult(final int id, Model model) {
-        super(id, model);
+    public JudgingResult(Model model) {
+        super(0 /*id*/, model);
     }
 
     public JudgingResult() {

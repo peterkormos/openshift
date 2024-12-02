@@ -54,7 +54,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet {
-	public static final String VERSION = "2022.03.29.";
+	public static final String VERSION = "2024.12.02.";
 
 	public enum RequestParameter {
         Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, 
@@ -422,7 +422,7 @@ public final class JudgingServlet extends HttpServlet {
 				model = servletDAO.getModel(Integer.parseInt(modelId));
 		}
 
-	    JudgingResult judgingResult = model != null ? new JudgingResult(dao.getNextID(JudgingResult.class), model) : new JudgingResult();
+	    JudgingResult judgingResult = model != null ? new JudgingResult(model) : new JudgingResult();
 		
 	    String modellerID = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.ModellerID.name());
 		if(!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerID))
@@ -521,7 +521,7 @@ public final class JudgingServlet extends HttpServlet {
 
             JudgingResult judgingResult = scoresByCategory.get(key);
             if (judgingResult == null) {
-                judgingResult = new JudgingResult(dao.getNextID(JudgingResult.class), score);
+                judgingResult = new JudgingResult(score);
                 judgingResult.setCriterias(getCriteriaList(judgingResult.getCategory()));
                 scoresByCategory.put(key, judgingResult);
             }
