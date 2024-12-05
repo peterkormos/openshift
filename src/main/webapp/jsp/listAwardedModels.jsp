@@ -8,8 +8,6 @@
     RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
 
-  User user = servlet.getUser(request);
-
   final int rows = Integer.parseInt(ServletUtil.getRequestAttribute(request, "rows"));
 
   final List<Model> models = new LinkedList<Model>();

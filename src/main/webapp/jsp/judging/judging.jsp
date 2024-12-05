@@ -77,15 +77,20 @@ boolean isNormalUser = !"admin".equals(judge);
 		<%
 		}
 		%>
-
-		<%
-		if (judge != null && !isNormalUser) {
-		%>
-		<jsp:include page="judging_admin.jsp" />
-		<%
-		}
-		%>
 	
+	<p>
+		<a href="../ADMIN_verseny_eredmenyek.html">Egyszer&#369;s&iacute;tett
+			eredm&eacute;nyfelvitel</a>
+	</p>
+
+	<%
+	if (judge != null && !isNormalUser) {
+	%>
+	<jsp:include page="judging_admin.jsp" />
+	<%
+	}
+	%>
+
 	<p>
 		<img src="../../RegistrationServlet">
 </body>

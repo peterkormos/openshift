@@ -42,7 +42,5 @@
 		ment&eacute;se</a>
 
 </form>
-	<p></p>
-<jsp:include page="ADMIN_verseny_eredmenyek.html" />
 </body>
 </html>

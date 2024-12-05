@@ -11,12 +11,13 @@
     {
       %>
       <input type='radio' name='modelID' value='<%= model.getId()%>'/>
-      <%= model.getId()%>  -  
+      <%= model.id%>  - 
       <%= model.scale%>  - 
       <%= model.name%>  -
       <%= RegistrationServlet.servletDAO.getUser(
           model.userID).getFullName()%>  -
-      <br>
+      <%= model.award%>
+            <br>
 <%
 }
 %>

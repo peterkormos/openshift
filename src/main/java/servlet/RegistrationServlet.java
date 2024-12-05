@@ -2387,7 +2387,12 @@ public class RegistrationServlet extends HttpServlet {
 	public void getawardedModelsPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
-		final String languageCode = getUser(request).language;
+		String languageCode;
+		try {
+			languageCode = getUser(request).language;
+		} catch (UserNotLoggedInException e) {
+			languageCode = "HU";
+		}
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		buff.append(awardedModelsBuffer.toString().replaceAll("__ADDNEWROW__", language.getString("add.new.row"))

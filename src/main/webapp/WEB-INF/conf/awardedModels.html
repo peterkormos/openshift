@@ -1,9 +1,15 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="base.css" media="screen">
+<script type="text/javascript" src="util.js"></script>
 <script type="text/javascript">
 // <!--
 
 function sendRequest(model)
 {
-	var url = "RegistrationServlet?command=getModelInfo&";
+	var url = "../RegistrationServlet?command=getModelInfo&";
 	var req = false;
 
 	if (window.XMLHttpRequest) 
@@ -68,8 +74,8 @@ function addRow()
 
 //-->
 </script>
-
-<form name="input" id="input" method="put" action="RegistrationServlet">
+</head>
+<form name="input" id="input" method="put" action="../RegistrationServlet">
     <input type="hidden" name="language" value="__LANGUAGE__" >
     <input type="hidden" name="rows" value="0" >
     <input type='hidden' name='command' value='-'>
@@ -109,10 +115,11 @@ function addRow()
     <input type="button" name="newRow" value="__ADDNEWROW__" onClick="addRow()">
   </p>
   <p> 
-    <input type="submit" name="listAwardedModels" value="__SELECT__" onClick="document.getElementById('input').action='jsp/listAwardedModels.jsp'">
+    <input type="submit" name="listAwardedModels" value="__SELECT__" onClick="document.getElementById('input').action='../jsp/listAwardedModels.jsp'">
     <input type="submit" name="printAwardedModels" value="__PRINT__" onClick="document.input.command.value='printAwardedModels'">
     <input type="submit" name="getPresentationPage" value="__PRESENTATION__" onClick="document.input.command.value='getPresentationPage'">
     <input type="submit" name="addAwardedModels" value="__SAVE__" onClick="document.input.command.value='addAwardedModels'">
   </p>
   </form>
 <p>&nbsp;</p>
+</html>
