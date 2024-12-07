@@ -4,7 +4,7 @@
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 
-<%@include file="util.jsp"%>
+<%@include file="../util.jsp"%>
 
 <%
 highlightStart = 0xEAEAEA;
@@ -42,7 +42,7 @@ List<AwardedModel> awardedModels = RegistrationServlet.servletDAO.getAwardedMode
 			<td align="center"><%=category.categoryCode%> - <%=category.categoryDescription%></td>
 			<td align="center"><%=awardedModel.name%></td>
 			<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.userID).getFullName()%></td>
-			<td align="center"><%=awardedModel.award%></td>
+			<td align="center"><%=awardedModel.getAward()%></td>
 		</tr>
 		<%
 		}

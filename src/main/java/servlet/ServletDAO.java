@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -361,6 +362,10 @@ void deleteModels(final int categoryId) throws SQLException {
 
 	public List<AwardedModel> getAwardedModels() throws SQLException {
 		return jdbcDAO.getAwardedModels();
+	}
+
+	public Map<Integer, List<AwardedModel>> getAwardedModelsMap() throws SQLException {
+		return getAwardedModels().stream().collect(Collectors.groupingBy(AwardedModel::getCategoryID));
 	}
 
 	public String getAward(Model model) throws SQLException {

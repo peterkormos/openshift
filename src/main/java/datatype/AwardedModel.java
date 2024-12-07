@@ -2,25 +2,29 @@ package datatype;
 
 import java.io.Serializable;
 
-public class AwardedModel  extends Model
-{
-  public String award;
+public class AwardedModel extends Model {
+	private String award;
 
-  public AwardedModel(Model model, String award)
-  {
-	  super(model);
-	this.award = award;
-  }
+	public AwardedModel(Model model, String award) {
+		super(model);
+		this.setAward(award);
+	}
 
-  public AwardedModel()
-  {
+	public AwardedModel() {
 
-  }
+	}
 
-  @Override
-  public String toString()
-  {
-	return " award: " + award + " model: " + super.toString();
-  }
+	@Override
+	public String toString() {
+		return " award: " + getAward() + " model: " + super.toString();
+	}
+
+	public String getAward() {
+		return award;
+	}
+
+	public void setAward(String award) {
+		this.award = award;
+	}
 
 }

@@ -17,6 +17,8 @@
 	final ResourceBundle language = (ResourceBundle) session
 			.getAttribute(CommonSessionAttribute.Language.name());
 
+	String actionPathPrefix = ServletUtil.getOptionalAttribute(request, "actionPathPrefix").orElse("");
+	
 	boolean insertAwards = Boolean
 			.parseBoolean(ServletUtil.getRequestAttribute(request, "insertAwards", false));
 	boolean withDetailing = Boolean
@@ -170,16 +172,16 @@
 %>
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
-					<img src="../icons/add.png" height="30" align="center" /> <span
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
+					<img src="<%=actionPathPrefix%>../icons/add.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 				</a>
 			</div>
 
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
-					<img src="../icons/delete2.png" height="30" align="center" /> <span
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
+					<img src="<%=actionPathPrefix%>../icons/delete2.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
 			</div>
@@ -207,7 +209,7 @@
 				for (String judge : servlet.judgingServletDAO.getJudges(category.categoryCode, model.getId(),
 									model.userID)) {
 			%> <a
-			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.UserID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
+			href="<%=actionPathPrefix%>../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.UserID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
 
 			<%
 				}
@@ -335,16 +337,16 @@
 %>
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
-					<img src="../icons/add.png" height="30" align="center" /> <span
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
+					<img src="<%=actionPathPrefix%>../icons/add.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 				</a>
 			</div>
 
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
-					<img src="../icons/delete2.png" height="30" align="center" /> <span
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
+					<img src="<%=actionPathPrefix%>../icons/delete2.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
 			</div>

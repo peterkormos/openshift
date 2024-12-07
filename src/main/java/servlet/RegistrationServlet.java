@@ -86,7 +86,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.11.22.";
+	public String VERSION = "2024.12.07.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -537,13 +537,25 @@ public class RegistrationServlet extends HttpServlet {
 
     private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
     	boolean goToParentDir = request.getPathInfo() != null;
-        response.sendRedirect((goToParentDir ? "../" : "") + "jsp/"+getMainPageFile(request.getSession(false)));
+        response.sendRedirect((goToParentDir ? "../" : "") + getMainPageFile(request));
     }
     
-    private String getMainPageFile(HttpSession session) {
-        return session!= null ?  (String) session.getAttribute(SessionAttribute.MainPageFile.name()) : getDefaultMainPageFile();
-    }
-    
+	private String getMainPageFile(final HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		String mainPageFile = (String) session.getAttribute(SessionAttribute.MainPageFile.name());
+		
+		if(session == null) 
+		{
+			return getDefaultMainPageFile();
+		}
+		
+		if (mainPageFile == null) {
+			return  request.getRequestURI();
+		}
+		
+		return "jsp/" + mainPageFile;
+	}
+
     public static String getDefaultMainPageFile() {
         return "main.jsp";
     }
@@ -1922,7 +1934,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		servletDAO.deleteAwardedModel(Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID")));
 
-		redirectToMainPage(request, response);
+		response.sendRedirect("jsp/judging/deleteAwardedModel.jsp");
 	}
 
 	public void inputForDeleteCategory(final HttpServletRequest request, final HttpServletResponse response)
@@ -2169,7 +2181,7 @@ public class RegistrationServlet extends HttpServlet {
 				ModelCount++;
 
 				if (model != null) {
-					String print = printBuffer.toString().replaceAll("__LASTNAME__", String.valueOf(user.lastName))
+					String print = printBuffer.toString().replaceAll("__FULLNAME__", String.valueOf(user.lastName))
 							// .replaceAll("__FIRSTNAME__",
 							// String.valueOf(user.firstName))
 							.replaceAll("__YEAROFBIRTH__", String.valueOf(user.yearOfBirth))
@@ -2387,23 +2399,25 @@ public class RegistrationServlet extends HttpServlet {
 	public void getawardedModelsPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
+		String languageCode  = getLanguageCodeWithDefault(request);
+		final ResourceBundle language = languageUtil.getLanguage(languageCode);
+
+		buff.append(awardedModelsBuffer.toString().replaceAll("__ADDNEWROW__", language.getString("add.new.row"))
+				.replaceAll("__SAVE__", language.getString("save"))
+
+				.replaceAll("__MODELID__", language.getString("modelID"))
+				.replaceAll("__AWARD__", language.getString("award")).replaceAll("__LANGUAGE__", languageCode));
+		ServletUtil.writeResponse(response, buff);
+	}
+
+	private String getLanguageCodeWithDefault(final HttpServletRequest request) {
 		String languageCode;
 		try {
 			languageCode = getUser(request).language;
 		} catch (UserNotLoggedInException e) {
 			languageCode = "HU";
 		}
-		final ResourceBundle language = languageUtil.getLanguage(languageCode);
-
-		buff.append(awardedModelsBuffer.toString().replaceAll("__ADDNEWROW__", language.getString("add.new.row"))
-				.replaceAll("__SELECT__", language.getString("list.models"))
-				.replaceAll("__PRINT__", language.getString("print.models"))
-				.replaceAll("__PRESENTATION__", language.getString("presentation"))
-				.replaceAll("__SAVE__", language.getString("save"))
-
-				.replaceAll("__MODELID__", language.getString("modelID"))
-				.replaceAll("__AWARD__", language.getString("award")).replaceAll("__LANGUAGE__", languageCode));
-		ServletUtil.writeResponse(response, buff);
+		return languageCode;
 	}
 
 	public void printAwardedModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -2436,42 +2450,31 @@ public class RegistrationServlet extends HttpServlet {
 
 			servletDAO.saveAwardedModel(new AwardedModel(model, award));
 		}
-
-		redirectToMainPage(request, response);
+		
+		response.sendRedirect(request.getRequestURI()+ "/getawardedModelsPage");
 	}
 
 	private void printAwardedModels(final HttpServletRequest request, final HttpServletResponse response,
 			final StringBuilder buffer) throws Exception, IOException {
-		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
-		final ResourceBundle language = languageUtil.getLanguage(languageCode);
-
-		final int rows = Integer.parseInt(ServletUtil.getRequestAttribute(request, "rows"));
+		final ResourceBundle language = languageUtil.getLanguage(getLanguageCodeWithDefault(request));
 
 		final StringBuilder buff = new StringBuilder();
-		for (int i = 1; i <= rows; i++) {
-			final String httpParameterPostTag = String.valueOf(i);
+		RegistrationServlet.servletDAO.getAwardedModels().forEach(am -> {
+			User user;
+			try {
+				user = servletDAO.getUser(am.getUserID());
+				final Category category = servletDAO.getCategory(am.getCategoryID());
 
-			final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID" + httpParameterPostTag)
-					.trim();
-			if (modelID.length() == 0 || ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.endsWith(modelID)) {
-				continue;
+				buff.append(buffer.toString().replaceAll("__FULLNAME__", String.valueOf(user.getFullName()))
+						.replaceAll("__CATEGORY_CODE__", String.valueOf(category.categoryCode))
+						.replaceAll("__MODEL_NAME__", String.valueOf(am.name))
+						.replaceAll("__MODEL_ID__", String.valueOf(am.getId()))
+
+						.replaceAll("__AWARD__", am.getAward()));
+			} catch (SQLException e) {
+				logger.error("", e);
 			}
-
-			final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-			final User user = servletDAO.getUser(model.getUserID());
-			final Category category = servletDAO.getCategory(model.categoryID);
-
-			buff.append(buffer.toString().replaceAll("__LASTNAME__", String.valueOf(user.lastName))
-					// .replaceAll("__FIRSTNAME__",
-					// String.valueOf(user.firstName))
-					.replaceAll("__CATEGORY_CODE__", String.valueOf(category.categoryCode))
-					.replaceAll("__CATEGORY_CODE__", String.valueOf(category.categoryCode))
-					.replaceAll("__MODEL_NAME__", String.valueOf(model.name))
-					.replaceAll("__MODEL_ID__", String.valueOf(model.getId()))
-
-					.replaceAll("__AWARD__",
-							ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim()));
-		}
+		});
 
 		ServletUtil.writeResponse(response, buff);
 	}

@@ -170,7 +170,7 @@ public class JDBCDAO {
 
 			queryStatement.setInt(1, model.getId());
 
-			queryStatement.setString(2, model.award);
+			queryStatement.setString(2, model.getAward());
 
 			queryStatement.executeUpdate();
 
