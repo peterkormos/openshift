@@ -33,11 +33,14 @@ language = languageUtil.getLanguage(languageCode);
 			<td><a href="deleteAwardedModel.jsp">t&ouml;rl&eacute;se</a></td>
 		</tr>
 		<tr>
+			<td><a href="listAwardedModels.jsp">D&iacute;jazott makettek
+					adatainak mod&oacute;s&iacute;t&aacute;sa<br>(RegServlet admin
+					belepes utan !)
+			</a></td>
 			<td><a href="simpleAwardedModels.jsp">Egyszer&#369;
 					eredm&eacute;nylista</a></td>
-			<td><a href="listAwardedModels.jsp">Mod&oacute;s&iacute;that&oacute; (RegServlet admin belepes utan !)
-					egyszer&#369; eredm&eacute;nylista</a></td>
-			<td><a href="awardedModels.jsp">Bontott eredm&eacute;nylista</a></td>
+			<td><a href="awardedModels.jsp">Kateg&oacute;ri&aacute;kra
+					bontott eredm&eacute;nylista</a></td>
 		</tr>
 		</tr>
 		<tr>
