@@ -26,21 +26,22 @@ if (language == null) {
 <p>
 	<a
 		href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgingSheets.name()%>">
-		<img src="../../icons/add.png" height="30" align="center"> <%=language.getString("list.models")%>
-		- minden egyes pontoz&oacute;lap
+		<img src="../../icons/list.png" height="30" align="center"> <%=language.getString("list.models")%>
+		- pontoz&oacute;lapok
 	</a>
 <p>
-<p>
-	<a
-		href="../../JudgingServlet/<%=JudgingServlet.RequestType.JoinCategoryWithForm.name()%>">
-		<img src="../../icons/list.png" height="30" align="center">
-		Pontoz&oacute;lap - kateg&oacute;ria &ouml;sszerendel&eacute;se
-	</a>
 <p>
 	<a
 		href="../../JudgingServlet/<%=JudgingServlet.RequestType.ListJudgings.name()%>">
 		<img src="../../icons/list.png" height="30" align="center">
-		Minden egyes zs&#369;ripont list&aacute;z&aacute;sa
+		<%=language.getString("list.models")%>
+		- zs&#369;ripontok krit&eacute;riumonk&eacute;nt
+	</a>
+<p>
+	<a
+		href="../../JudgingServlet/<%=JudgingServlet.RequestType.JoinCategoryWithForm.name()%>">
+		<img src="../../icons/add.png" height="30" align="center">
+		Pontoz&oacute;lap - kateg&oacute;ria &ouml;sszerendel&eacute;se
 	</a>
 <p>
 	<a

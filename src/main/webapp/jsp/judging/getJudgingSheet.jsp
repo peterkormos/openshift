@@ -86,6 +86,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 					value="<%=JudgingServlet.RequestParameter.Category.name()%>" />
 				<jsp:param name="value"
 					value='<%=category == null ? "" : category%>' />
+				<jsp:param name="size" value='5' />
 				<jsp:param name="caption"
 					value='<%=language.getString("category.code")%>' />
 			</jsp:include> <jsp:include page="fillableFormField.jsp">
