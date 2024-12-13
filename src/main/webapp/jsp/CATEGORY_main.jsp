@@ -97,7 +97,7 @@ if (show == null) {
 
 <table style="box-shadow: none" border="0">
 	<tr>
-		<th>1 makettez&#337;...</th>
+		<th style="background:none">1 makettez&#337;...</th>
 		<td><a href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
 				bel&eacute;p&eacute;s</a> - <a
 			href="../RegistrationServlet/inputForPrint"> nevez&eacute;si

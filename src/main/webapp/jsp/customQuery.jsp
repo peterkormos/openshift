@@ -8,6 +8,9 @@
 %>
 
 <html>
+<head>
+<link rel="stylesheet" href="base.css" media="screen" />
+</head>
 <body>
 	<form name='input' action='listSelectedModels.jsp' method='put'>
 		<table border='0'>

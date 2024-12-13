@@ -10,7 +10,7 @@ if (show == null) {
 
 <table style="box-shadow: none" border="0">
 	<tr>
-		<th>El&otilde;nevez&eacute;s:</th>
+		<th style="background:none">El&otilde;nevez&eacute;s:</th>
 		<td>
 			<form accept-charset="UTF-8" name="input" id="input4"
 				action="../RegistrationServlet" method="post">
