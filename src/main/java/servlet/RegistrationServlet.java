@@ -86,7 +86,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2024.12.07.";
+	public String VERSION = "2024.12.28.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -561,13 +561,15 @@ public class RegistrationServlet extends HttpServlet {
     }
 
 	public void sql(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final StringBuilder buff = servletDAO.execute(ServletUtil.getRequestAttribute(request, "sql"));
-
-		if (buff == null) {
-			redirectToMainPage(request, response);
-		} else {
-			ServletUtil.writeResponse(response, buff);
+		User user = getUser(request);
+		if(user.isAdminUser()) {
+			final StringBuilder buff = servletDAO.execute(ServletUtil.getRequestAttribute(request, "sql"));
+			if (buff != null) {
+				ServletUtil.writeResponse(response, buff);
+			}
 		}
+
+		redirectToMainPage(request, response);
 	}
 
 	public void reminder(final HttpServletRequest request,
@@ -1848,33 +1850,33 @@ public class RegistrationServlet extends HttpServlet {
 		final List<User> users = servletDAO.getUsers();
 		buff.append("<input type='hidden' name='rows' value='" + users.size() + "'>");
 
-		// buff.append("<input name='deleteUsers' type='submit' value='"
-		// + submitLabel + "'><p>");
-		User loggedInUser = null;
 		try {
-			loggedInUser = getUser(request);
-		} catch (UserNotLoggedInException e) {
-		}
-		for (int i = 0; i < users.size(); i++) {
-			final User user = users.get(i);
-			
-			if(loggedInUser != null && !loggedInUser.isSuperAdminUser() && user.isAdminUser()) {
-				continue;
+			User loggedInUser = getUser(request);
+			for (int i = 0; i < users.size(); i++) {
+				final User user = users.get(i);
+
+				// admin felhasználókat csak a super admin láthassa
+				if (user.isAdminUser() && !loggedInUser.isSuperAdminUser()) {
+					continue;
+				}
+
+				buff.append("<label><input type='radio' name='userID' value='" + user.getId()
+						+ "' onClick='document.input.submit()'/>");
+				buff.append(user.lastName + " (" + user.getId()
+						+ (loggedInUser.isSuperAdminUser()
+								? " - " + user.email + " - " + user.yearOfBirth + " - " + user.country + " - "
+										+ user.city + " - " + user.address + " - " + user.telephone
+								: "")
+						+ ")</label><br>");
 			}
 
-			buff.append("<label><input type='radio' name='userID' value='" + user.getId()
-					+ "' onClick='document.input.submit()'/>");
-			buff.append(user.lastName
-					// + " " + user.firstName
-					+ " (" + user.getId() + " - " + user.email + " - " + user.yearOfBirth + " - " + user.country + " - "
-					+ user.city + " - " + user.address + " - " + user.telephone + ")</label><br>");
+			buff.append("</form></body></html>");
+
+			ServletUtil.writeResponse(response, buff);
+		} catch (UserNotLoggedInException e) {
+			redirectToMainPage(request, response);
+			return;
 		}
-
-		// buff.append("<p><input name='deleteUsers' type='submit' value='"
-		// + submitLabel + "'>");
-		buff.append("</form></body></html>");
-
-		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void deleteUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

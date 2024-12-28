@@ -130,7 +130,7 @@ if (show == null) {
 	<jsp:include page="ADMIN_kategoria.html" />
 </p>
 <p>
-	<jsp:include page="ADMIN_lekerdezes.html" />
+	<jsp:include page="ADMIN_lekerdezes.jsp" />
 </p>
 <p>
 	<jsp:include page="ADMIN_adatkezeles.html" />

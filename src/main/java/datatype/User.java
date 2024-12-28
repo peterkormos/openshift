@@ -19,6 +19,7 @@ import servlet.ServletUtil;
 @Entity
 @Table(name = "MAK_USERS")
 public class User extends Record {
+	public static enum AdminLanguages { ADMIN, CATEGORY};
 	
 	private static final long serialVersionUID = -8059689879773108457l;
 	@Column(name = "USER_PASSWORD")
@@ -202,11 +203,11 @@ public class User extends Record {
 	}
 
 	public boolean isSuperAdminUser() {
-		return "ADMIN".equals(language);
+		return AdminLanguages.ADMIN.name().equals(language);
 	}
 
 	public boolean isCategoryAdminUser() {
-		return "CATEGORY".equals(language);
+		return AdminLanguages.CATEGORY.name().equals(language);
 	}
 
 	@Id

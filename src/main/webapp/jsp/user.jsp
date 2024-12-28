@@ -197,7 +197,7 @@ if(directRegister)
       		languageCode = "HU";      	
       }
       else
-      	languageCode = user.language.length() > 2 ? "HU" : user.language;
+      	languageCode = user.language;
       %>
 
  <jsp:include page="language.jsp">
