@@ -1096,7 +1096,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		if(getUser(request).isAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request))) {
+		User user = getUser(request);
+		if(user.isSuperAdminUser() || (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
 			Category modifyingCategory;
 			try {
 				modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
@@ -1180,7 +1181,8 @@ public class RegistrationServlet extends HttpServlet {
 	public void addCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		String show = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"));
-		if(getUser(request).isAdminUser() && !isPreRegistrationAllowed(show)) {
+		User user = getUser(request);
+		if(user.isSuperAdminUser() || (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
 		final CategoryGroup categoryGroup = new CategoryGroup(servletDAO.getNextID(CategoryGroup.class),
 				show, ServletUtil.getRequestAttribute(request, "group"));
 
@@ -1623,7 +1625,8 @@ public class RegistrationServlet extends HttpServlet {
 			return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 		}
 		
-		String value = systemParameters.get(show).get(parameter);
+		EnumMap<SystemParameter, String> enumMap = systemParameters.get(show);
+		String value = enumMap != null ? enumMap.get(parameter) : null;
 		return value == null ? servletDAO.getSystemParameter(parameter)  : value;
 	}
 	
@@ -1996,7 +1999,8 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		if(getUser(request).isAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request))) {
+		User user = getUser(request);
+		if(user.isSuperAdminUser() || (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
 			Integer categoryGroupID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID"));
 			
 			for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /* show */)) {
@@ -2014,7 +2018,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		if (getUser(request).isAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request))) {
+		User user = getUser(request);
+		if(user.isSuperAdminUser() || (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
 			Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
 			servletDAO.deleteModels(categoryID);
 			servletDAO.delete(servletDAO.getCategory(categoryID));
