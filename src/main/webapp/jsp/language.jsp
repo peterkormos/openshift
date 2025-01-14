@@ -16,11 +16,6 @@ try {
 } catch (Exception ex) {
 }
 
-if (user == null || !user.isAdminUser()) {
-	response.sendRedirect("index.jsp");
-	return;
-}
-
 String parameterName = ServletUtil.getOptionalRequestAttribute(request, "parameterName");
 if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameterName))
 	parameterName = "language";
@@ -33,7 +28,7 @@ if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameterName))
 	<option value="<%=request.getParameter("selectValue")%>" selected><%=request.getParameter("selectLabel")%></option>
 	<option value="">-------</option>
 	<%
-	if (user.isSuperAdminUser()) {
+	if (user != null && user.isSuperAdminUser()) {
 	%>
 
 	<option value="<%=User.AdminLanguages.ADMIN%>"><%=User.AdminLanguages.ADMIN%></option>
