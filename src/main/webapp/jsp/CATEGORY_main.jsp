@@ -124,7 +124,7 @@ if (show == null) {
 </form>
 
 <p>
-	<jsp:include page="ADMIN_nyomtatas.html" />
+	<jsp:include page="ADMIN_nyomtatas.jsp" />
 </p>
 <p>
 	<jsp:include page="ADMIN_kategoria.html" />

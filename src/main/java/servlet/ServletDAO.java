@@ -36,7 +36,7 @@ private JDBCDAO jdbcDAO;
 
   public enum SystemParameter
   {
-	REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory;
+	REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory, PrintLanguage;
 
 	private boolean booleanValue;
 	
@@ -380,6 +380,11 @@ void deleteModels(final int categoryId) throws SQLException {
 		return jdbcDAO.getSystemParameter(parameter);
 	}
 
+	public String getSystemParameterWithDefault(final SystemParameter parameter, String defaultValue) {
+		String systemParameter = getSystemParameter(parameter);
+		return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemParameter) ? defaultValue : systemParameter;
+	}
+
 	public void saveAwardedModel(final AwardedModel model) throws SQLException {
 		jdbcDAO.saveAwardedModel(model);
 	}
@@ -390,6 +395,25 @@ void deleteModels(final int categoryId) throws SQLException {
 
 	public List<String[]> getStatistics(String show, ResourceBundle language) throws SQLException {
 		return jdbcDAO.getStatistics(show, language);
+	}
+
+	public List<User> getUsersWithModel() {
+	      Session session = null;
+	      
+	      try
+	      {
+	          session = getHibernateSession();
+	          
+	          session.beginTransaction();
+
+	          Query query = session.createQuery("select u from Model m, User u where m.userID = u.id");
+	          
+	        return new LinkedList<User>(query.list());
+	      }
+	      finally
+	      {
+	          closeSession(session);
+	      }
 	}
 }
 
