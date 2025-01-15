@@ -127,11 +127,11 @@ if (show == null) {
 	<jsp:include page="ADMIN_nyomtatas.jsp" />
 </p>
 <p>
-	<jsp:include page="ADMIN_kategoria.html" />
+	<jsp:include page="ADMIN_kategoria.jsp" />
 </p>
 <p>
 	<jsp:include page="ADMIN_lekerdezes.jsp" />
 </p>
 <p>
-	<jsp:include page="ADMIN_adatkezeles.html" />
+	<jsp:include page="ADMIN_adatkezeles.jsp" />
 </p>

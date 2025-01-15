@@ -17,7 +17,7 @@ if (show == null) {
 				<input type="hidden" id="command6" name="command" value="">
 				<input type="hidden" id="paramName6" name="paramName" value="">
 				<input type="hidden" id="paramValue6" name="paramValue" value="">
-		Nyelv megad&aacute;sa: 
+				Nyelv megad&aacute;sa:
 				<%
 				for (RegistrationServlet.PrintLanguages pl : RegistrationServlet.PrintLanguages.values()) {
 				%>
@@ -28,10 +28,10 @@ if (show == null) {
 				<%
 					}
 					%>
-			<a
-			href="../RegistrationServlet/printAllModels?printPreRegisteredModels=true">
-				Nevez&eacute;si lapok nyomtat&aacute;sa (El&ouml;nevezettek) </a> <!--
-			</form> 
+				<a
+					href="../RegistrationServlet/printAllModels?printPreRegisteredModels=true">
+					Nevez&eacute;si lapok nyomtat&aacute;sa (El&ouml;nevezettek) </a>
+			</form> <!--
 -
 <a
 	href="../RegistrationServlet/printAllModels?printPreRegisteredModels=false">

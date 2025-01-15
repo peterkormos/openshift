@@ -225,7 +225,8 @@ public class ServletUtil {
 	}
 	
 	public static String sanitizeUserInput(String text) {
-		return text.replace(';', ' ').replace('(', ' ').replace(')', ' ').replace('\'', ' ').replace(';', ' ');
+//		return text.replace(';', ' ').replace('(', ' ').replace(')', ' ').replace('\'', ' ').replace(';', ' ');
+		return text;
 	}
 
   public static String encodeString(String value)

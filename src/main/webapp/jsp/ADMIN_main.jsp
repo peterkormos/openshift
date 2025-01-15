@@ -15,7 +15,7 @@
 <jsp:include page="CATEGORY_main.jsp" />
 
 <p></p>
-<jsp:include page="ADMIN_egyeb.html" />
+<jsp:include page="ADMIN_egyeb.jsp" />
 <p></p>
 
 	<p></p>

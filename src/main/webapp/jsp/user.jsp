@@ -8,7 +8,7 @@
 
 <%
     //input parameters	
- 	boolean directRegister = Boolean.parseBoolean(request.getParameter("directRegister"));
+ 	boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestAttribute(request, "directRegister"));
 	if(directRegister)
 		session.removeAttribute(CommonSessionAttribute.UserID.name());
 

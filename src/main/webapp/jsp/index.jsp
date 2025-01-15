@@ -30,7 +30,7 @@
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?directRegister=false&amp;action=register&amp;language=HU">Regisztr&aacute;ci&oacute;</a></td>
+								href="user.jsp?action=register&amp;language=HU">Regisztr&aacute;ci&oacute;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -43,7 +43,7 @@
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?directRegister=false&amp;action=register&amp;language=EN">Registration
+								href="user.jsp?action=register&amp;language=EN">Registration
 									for new users</a></td>
 							<td>
 								<div align="center">-</div>
@@ -58,7 +58,7 @@
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?directRegister=false&amp;action=register&amp;language=SK">Nov&aacute;
+								href="user.jsp?action=register&amp;language=SK">Nov&aacute;
 									registr&aacute;cia</a></td>
 							<td>
 								<div align="center">-</div>
@@ -73,7 +73,7 @@
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?directRegister=false&amp;action=register&amp;language=CZ">Nov&aacute;
+								href="user.jsp?action=register&amp;language=CZ">Nov&aacute;
 									registrace</a></td>
 							<td>
 								<div align="center">-</div>
@@ -88,7 +88,7 @@
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?directRegister=false&amp;action=register&amp;language=PL">Zarejestruj si&#281;</a></td>
+								href="user.jsp?action=register&amp;language=PL">Zarejestruj si&#281;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -104,7 +104,7 @@
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?directRegister=false&amp;action=register&amp;language=IT">Registrazione</a></td>
+								href="user.jsp?action=register&amp;language=IT">Registrazione</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -117,7 +117,7 @@
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?directRegister=false&amp;action=register&amp;language=DE">Registration</a></td>
+								href="user.jsp?action=register&amp;language=DE">Registration</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -130,7 +130,7 @@
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?directRegister=false&amp;action=register&amp;language=RU">&#1056;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1103;
+								href="user.jsp?action=register&amp;language=RU">&#1056;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1103;
 &#1085;&#1086;&#1074;&#1086;&#1075;&#1086; &#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1077;&#1083;&#1103;</a></td>
 							<td>
 								<div align="center">-</div>

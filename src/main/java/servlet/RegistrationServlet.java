@@ -621,7 +621,10 @@ public class RegistrationServlet extends HttpServlet {
 			ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag)).equals((
 			ServletUtil.getRequestAttribute(request, "lastname" + String.valueOf(i - 1))))) {
 
-				user = directRegisterUser(request, language, httpParameterPostTag);
+				user = directRegisterUser(request, language, httpParameterPostTag, 
+						ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag)
+						+ User.LOCAL_USER + System.currentTimeMillis(),
+						ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE /*password*/);
 				users.add(user);
 			}
 
@@ -666,8 +669,12 @@ public class RegistrationServlet extends HttpServlet {
 		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
-		final User user = directRegisterUser(request, language, "");
-		initHttpSession(request, user,  StringEncoder.toBase64(servletDAO.getShows().get(0).getBytes()));
+		String email = User.AdminLanguages.CATEGORY.name().equals(languageCode)
+				? ServletUtil.getRequestAttribute(request, "fullname")
+				: ServletUtil.getRequestAttribute(request, "fullname") + User.LOCAL_USER + System.currentTimeMillis();
+		final User user = directRegisterUser(request, language, "" /*httpParameterPostTag*/, email,
+				StringEncoder.encode(ServletUtil.getOptionalRequestAttribute(request, "password")));
+		initHttpSession(request, user, StringEncoder.toBase64(servletDAO.getShows().get(0).getBytes()));
 		redirectToMainPage(request, response);
 	}
 
@@ -936,14 +943,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private User directRegisterUser(final HttpServletRequest request, final ResourceBundle language,
-			final String httpParameterPostTag) throws Exception {
-		final String password = "-";
-		final String userName = ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag)
-				// + ServletUtil.getRequestAttribute(request, "firstname" +
-				// httpParameterPostTag)
-				+ User.LOCAL_USER + System.currentTimeMillis();
-
-		User user = createUser(request, userName, password, httpParameterPostTag);
+			final String httpParameterPostTag, final String email, final String password) throws Exception {
+		User user = createUser(request, email, password, httpParameterPostTag);
 		servletDAO.save(user);
 
 		return servletDAO.getUser(user.getEmail());
@@ -2555,7 +2556,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		final String passwordInRequest = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "password" + httpParameterPostTag));
 
-		return createUser(request, email, StringEncoder.encode(passwordInRequest), httpParameterPostTag);
+		return createUser(request, ServletUtil.sanitizeUserInput(email), StringEncoder.encode(passwordInRequest), httpParameterPostTag);
 	}
 
 	private User createUser(final HttpServletRequest request, final String email, final String password,
@@ -2580,7 +2581,7 @@ public class RegistrationServlet extends HttpServlet {
 				"-", ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag),
 				ServletUtil.getRequestAttribute(request, "language"),
 				ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag),
-				ServletUtil.getOptionalRequestAttribute(request, "telephone" + httpParameterPostTag), ServletUtil.sanitizeUserInput(email), true,
+				ServletUtil.getOptionalRequestAttribute(request, "telephone" + httpParameterPostTag), email, true,
 				ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag),
 				Integer.parseInt(ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag)),
 				ServletUtil.getOptionalRequestAttribute(request, "city" + httpParameterPostTag));
