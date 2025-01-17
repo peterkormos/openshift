@@ -261,6 +261,10 @@ private JDBCDAO jdbcDAO;
 	  jdbcDAO.deleteEntry(table, null, 0);
   }
 
+	public void deleteEntries(final String table, final String whereClause) throws SQLException {
+		jdbcDAO.deleteEntries(table, whereClause);
+	}
+	
 	public void deleteEntry(final String table, final String idField, final int id) throws SQLException {
 		jdbcDAO.deleteEntry(table, idField, id);
 	}

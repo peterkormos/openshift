@@ -253,16 +253,16 @@ public class JDBCDAO {
 	}
 
 	public void deleteEntry(final String table, final String idField, final int id) throws SQLException {
+		deleteEntries(table, (idField == null ? "" : " where " + idField + " = " + id));
+	}
+	
+	public void deleteEntries(final String table, final String whereClause) throws SQLException {
 		PreparedStatement queryStatement = null;
 		final ResultSet rs = null;
 
 		try {
 			queryStatement = getDBConnection()
-					.prepareStatement("delete from " + table + (idField == null ? "" : " where " + idField + " = ?"));
-
-			if (idField != null) {
-				queryStatement.setInt(1, id);
-			}
+					.prepareStatement("delete from " + table + (whereClause == null ? "" : " where " + whereClause ));
 
 			queryStatement.executeUpdate();
 

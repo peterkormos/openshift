@@ -881,7 +881,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (data.size() >= 5) {
 			buff.append("<p>Storing Photos");
-			servletDAO.deleteEntries("MAK_PICTURES");
+			servletDAO.deleteEntries("MAK_PICTURES", " where ID > 0");
 			final Map<Integer, byte[]> photos = (Map<Integer, byte[]>) data.get(4);
 			for (final Entry<Integer, byte[]> photoEntries : photos.entrySet()) {
 				final ByteArrayInputStream photoStream = new ByteArrayInputStream(photoEntries.getValue());
