@@ -1,3 +1,5 @@
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -11,7 +13,7 @@
 </head>
 
 <%
-	String showId = request.getParameter("showId");
+	String showId = request.getParameter(RequestParameter.ShowId.getParameterName());
  %>
  
 <body style="font-family: sans-serif;">
@@ -25,7 +27,7 @@
 					<tbody>
 						<tr>
 							<td><img src="../icons/hu.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=HU">Bejelentkez&eacute;s</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "=" +showId+"&" %>language=HU">Bejelentkez&eacute;s</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -38,7 +40,7 @@
 						</tr>
 						<tr>
 							<td><img src="../icons/gb.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=EN">Login</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=EN">Login</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -52,7 +54,7 @@
 						</tr>
 						<tr>
 							<td><img src="../icons/sk.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=SK">Prihl&aacute;senie
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=SK">Prihl&aacute;senie
 									sa</a></td>
 							<td>
 								<div align="center">-</div>
@@ -68,7 +70,7 @@
 						</tr>
 						<tr>
 							<td><img src="../icons/cz.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=CZ">Prihl&aacute;&#353;en&iacute;</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=CZ">Prihl&aacute;&#353;en&iacute;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -83,7 +85,7 @@
 						</tr>
 						<tr>
 							<td><img src="../icons/pl.png"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=PL">Zaloguj si&#281;</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=PL">Zaloguj si&#281;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -99,7 +101,7 @@
 							<img src="../icons/it.png">
 <!-- 							<img src="../icons/new.png">  -->
 							</td>
-							<td><a href="login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=IT">Accedere</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=IT">Accedere</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -112,7 +114,7 @@
 						</tr>
 						<tr>
 							<td><img src="../icons/de.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=DE">Anmelden</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=DE">Anmelden</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -125,7 +127,7 @@
 						</tr>
 						<tr>
 							<td><img src="../icons/ru.png"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : "showId="+showId+"&" %>language=RU">&#1051;&#1086;&#1075;&#1080;&#1085;</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=RU">&#1051;&#1086;&#1075;&#1080;&#1085;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>

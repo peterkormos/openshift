@@ -1,3 +1,4 @@
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="datatype.LoginConsent.LoginConsentType"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
@@ -15,7 +16,7 @@ ServletDAO servletDAO = servlet.getServletDAO();
 final String languageCode = ServletUtil.getRequestAttribute(request, "language");
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 
-String showIdHttpParameter = request.getParameter("showId");
+String showIdHttpParameter = request.getParameter(RequestParameter.ShowId.getParameterName());
 final List<String> shows = servletDAO.getShows();
 
 if (showIdHttpParameter != null)
@@ -84,7 +85,7 @@ if (showIdHttpParameter != null)
 		<%
 		    if (showIdHttpParameter != null) {
 		%>
-		<input type="hidden" name="showId" value="<%=showIdHttpParameter%>">
+		<input type="hidden" name="<%=RequestParameter.ShowId.getParameterName()%>" value="<%=showIdHttpParameter%>">
 		<%
 		    }
 		%>

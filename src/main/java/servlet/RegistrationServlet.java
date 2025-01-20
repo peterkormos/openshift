@@ -86,7 +86,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.01.11.";
+	public String VERSION = "2025.01.20.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -113,6 +113,24 @@ public class RegistrationServlet extends HttpServlet {
 
 	public static enum SessionAttribute {
 	    Notices, Action, SubmitLabel, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId, Model, Categories
+	}
+	
+	public static enum RequestParameter {
+		ShowId;
+		
+		private RequestParameter() {
+			parameterName = name();
+		}
+
+		private RequestParameter(final String parameterName) {
+			this.parameterName = parameterName;
+		}
+		
+		private String parameterName;
+		
+		public String getParameterName() {
+			return parameterName;
+		}
 	}
 
 	public static enum Command {
@@ -519,7 +537,7 @@ public class RegistrationServlet extends HttpServlet {
         session.setAttribute(CommonSessionAttribute.UserID.name(), user);
         ResourceBundle language = languageUtil.getLanguage(user.language);
 		session.setAttribute(CommonSessionAttribute.Language.name(), language);
-        session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, "showId"));
+        session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ShowId.getParameterName()));
 
         if (user.language.length() != 2) // admin user
             session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + getDefaultMainPageFile());
@@ -881,7 +899,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (data.size() >= 5) {
 			buff.append("<p>Storing Photos");
-			servletDAO.deleteEntries("MAK_PICTURES", " where ID > 0");
+			servletDAO.deleteEntries("MAK_PICTURES", "ID > 0");
 			final Map<Integer, byte[]> photos = (Map<Integer, byte[]>) data.get(4);
 			for (final Entry<Integer, byte[]> photoEntries : photos.entrySet()) {
 				final ByteArrayInputStream photoStream = new ByteArrayInputStream(photoEntries.getValue());
@@ -2332,7 +2350,9 @@ public class RegistrationServlet extends HttpServlet {
 			showId = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 
 		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp"
-				+ (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId) ? "?showId=" + showId : "");
+				+ (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)
+						? "?" + RequestParameter.ShowId.getParameterName() + "=" + showId
+						: "");
 	}
 
     private void updateSystemSettings(String show) throws SQLException {
@@ -2366,7 +2386,7 @@ public class RegistrationServlet extends HttpServlet {
 		String show = getShowFromSession(request);
 		if (show == null) {
 		    List<String> shows = servletDAO.getShows();
-		    String showId = ServletUtil.getOptionalRequestAttribute(request, "showId");
+		    String showId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ShowId.getParameterName());
 		    if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)) {
                         shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showId)-1)));
 		    }
