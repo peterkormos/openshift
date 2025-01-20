@@ -2,7 +2,7 @@
 
 <form action="../RegistrationServlet" method="get">
 <input name="command" value="login" type="hidden">
-<input name="language" value="HU" type="hidden">
+<input name="<%=RequestParameter.Language.getParameterName()%>" value="HU" type="hidden">
 email: <input name="email">
 <br>
 password: <input name="password">

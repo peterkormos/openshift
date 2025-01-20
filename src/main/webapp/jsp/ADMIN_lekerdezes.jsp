@@ -1,3 +1,4 @@
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="java.util.*"%>
 
 <%@page import="datatype.*"%>
