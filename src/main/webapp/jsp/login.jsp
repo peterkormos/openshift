@@ -131,7 +131,7 @@ if (showIdHttpParameter != null)
 								onchange="updateMandatoryFieldMark(this);">
 								<font color='#FF0000' size='+3'>&#8226;</font>
 								<p>
-									<a href="reminder.jsp?language=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
+									<a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
 									</td>
 						</tr>
 						<tr>

@@ -26,7 +26,7 @@ if (user == null || !user.isAdminUser()) {
 		<th style="background: none">Lek&eacute;rdez&eacute;sek:</th>
 		<td><a href="../RegistrationServlet/exportExcel"><strong>&Ouml;sszes
 					benevezett makett Excelbe</strong></a></td>
-		<td><a href="../RegistrationServlet/statistics?language=HU"><strong>Statisztika
+		<td><a href="../RegistrationServlet/statistics?<%= RequestParameter.Language.getParameterName()%>=HU"><strong>Statisztika
 					k&eacute;sz&iacute;t&eacute;se</strong></a></td>
 		<td><a href="listAllModels.jsp"> &Ouml;sszes benevezett
 				makett list&aacute;z&aacute;sa</a> - <a href="customQuery.jsp">Egyedi

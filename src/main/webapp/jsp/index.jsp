@@ -27,117 +27,117 @@
 					<tbody>
 						<tr>
 							<td><img src="../icons/hu.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "=" +showId+"&" %>language=HU">Bejelentkez&eacute;s</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "=" +showId+"&"%><%= RequestParameter.Language.getParameterName() %>=HU">Bejelentkez&eacute;s</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?action=register&amp;language=HU">Regisztr&aacute;ci&oacute;</a></td>
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=HU">Regisztr&aacute;ci&oacute;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?language=HU">Elfelejtette jelszav&aacute;t</a></td>
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=HU">Elfelejtette jelszav&aacute;t</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/gb.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=EN">Login</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&"%><%= RequestParameter.Language.getParameterName() %>=EN">Login</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?action=register&amp;language=EN">Registration
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=EN">Registration
 									for new users</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?language=EN">Forgot Password</a></td>
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=EN">Forgot Password</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/sk.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=SK">Prihl&aacute;senie
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" + RequestParameter.Language.getParameterName() %>=SK">Prihl&aacute;senie
 									sa</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?action=register&amp;language=SK">Nov&aacute;
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=SK">Nov&aacute;
 									registr&aacute;cia</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?language=SK">Zabudli ste
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=SK">Zabudli ste
 									heslo?</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/cz.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=CZ">Prihl&aacute;&#353;en&iacute;</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" + RequestParameter.Language.getParameterName() %>=CZ">Prihl&aacute;&#353;en&iacute;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?action=register&amp;language=CZ">Nov&aacute;
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=CZ">Nov&aacute;
 									registrace</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?language=CZ">Zapomneli
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=CZ">Zapomneli
 									jste heslo?</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/pl.png"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=PL">Zaloguj si&#281;</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" + RequestParameter.Language.getParameterName() %>=PL">Zaloguj si&#281;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?action=register&amp;language=PL">Zarejestruj si&#281;</a></td>
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=PL">Zarejestruj si&#281;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?language=PL">Nie pami&#281;tam has&#322;a</a></td>
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=PL">Nie pami&#281;tam has&#322;a</a></td>
 						</tr>
 						<tr>
 							<td>
 							<img src="../icons/it.png">
 <!-- 							<img src="../icons/new.png">  -->
 							</td>
-							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=IT">Accedere</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" + RequestParameter.Language.getParameterName() %>=IT">Accedere</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?action=register&amp;language=IT">Registrazione</a></td>
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=IT">Registrazione</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?language=IT">Password dimenticato</a></td>
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=IT">Password dimenticato</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/de.gif"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=DE">Anmelden</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" + RequestParameter.Language.getParameterName() %>=DE">Anmelden</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?action=register&amp;language=DE">Registration</a></td>
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=DE">Registration</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?language=DE">Passwort vergessen</a></td>
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=DE">Passwort vergessen</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/ru.png"></td>
-							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" %>language=RU">&#1051;&#1086;&#1075;&#1080;&#1085;</a></td>
+							<td><a href="login.jsp?<%=showId == null ? "" : RequestParameter.ShowId.getParameterName() + "="+showId+"&" + RequestParameter.Language.getParameterName() %>=RU">&#1051;&#1086;&#1075;&#1080;&#1085;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?action=register&amp;language=RU">&#1056;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1103;
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=RU">&#1056;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1103;
 &#1085;&#1086;&#1074;&#1086;&#1075;&#1086; &#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1077;&#1083;&#1103;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?language=RU">&#1047;&#1072;&#1073;&#1099;&#1083;&#1080; &#1087;&#1072;&#1088;&#1086;&#1083;&#1100;</a></td>
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=RU">&#1047;&#1072;&#1073;&#1099;&#1083;&#1080; &#1087;&#1072;&#1088;&#1086;&#1083;&#1100;</a></td>
 						</tr>
 					</tbody>
 				</table>

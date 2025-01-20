@@ -116,7 +116,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 	
 	public static enum RequestParameter {
-		ShowId, Language;
+		ShowId, Language("language");
 		
 		private RequestParameter() {
 			parameterName = name();
