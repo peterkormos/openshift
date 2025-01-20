@@ -2,6 +2,7 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="util.*"%>
 
 <jsp:useBean id="languageUtil" class="util.LanguageUtil"
@@ -72,7 +73,7 @@ if (show == null) {
 			<form accept-charset="UTF-8" name="input" id="input"
 				action="../RegistrationServlet" method="post">
 				<input type="hidden" id="command" name="command" value=""> <input
-					type="hidden" name="language" value="HU">
+					type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="HU">
 				<div class="tooltip">
 					<a href="#"
 						onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">

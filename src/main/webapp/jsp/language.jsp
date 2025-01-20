@@ -1,3 +1,4 @@
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="java.util.*"%>
 
 <%@page import="datatype.*"%>
@@ -18,7 +19,7 @@ try {
 
 String parameterName = ServletUtil.getOptionalRequestAttribute(request, "parameterName");
 if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameterName))
-	parameterName = "language";
+	parameterName = RequestParameter.Language.getParameterName();
 %>
 
 <select name="<%=parameterName%>"

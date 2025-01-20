@@ -1,3 +1,4 @@
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 
@@ -39,7 +40,7 @@ if (show == null) {
 <form accept-charset="UTF-8" name="input" id="input6"
 	action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="directRegister"> <input
-		type="hidden" name="language" value="<%=User.AdminLanguages.CATEGORY.name()%>"> 
+		type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="<%=User.AdminLanguages.CATEGORY.name()%>"> 
 		<input type="hidden" name="country" value="HU">
 		<input type="hidden" name="city" value="<%=show%>">
 		<input type="hidden" name="yearofbirth" value="2025">

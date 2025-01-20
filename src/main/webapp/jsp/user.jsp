@@ -1,6 +1,7 @@
 <%@page import="util.CommonSessionAttribute"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 
 <%@page import="java.util.*"%>
 
@@ -25,7 +26,7 @@
 	}
 	catch(Exception e)
 	{
-		languageCode = ServletUtil.getRequestAttribute(request, "language");
+		languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
 	}	
 
 	ResourceBundle language = languageUtil.getLanguage(languageCode);

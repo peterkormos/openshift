@@ -116,7 +116,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 	
 	public static enum RequestParameter {
-		ShowId;
+		ShowId, Language;
 		
 		private RequestParameter() {
 			parameterName = name();
@@ -329,8 +329,7 @@ public class RegistrationServlet extends HttpServlet {
                             message = emailNotFoundException.getMessage();
                             
                             try {
-                                String languageCode = ServletUtil.getRequestAttribute(request, "language");
-                                final ResourceBundle language = languageUtil.getLanguage(languageCode);
+                                final ResourceBundle language = getLanguageFromRequest(request);
                                 
                                 message = String.format(language.getString("email.not.found"), emailNotFoundException.getEmail());
                                 
@@ -430,7 +429,7 @@ public class RegistrationServlet extends HttpServlet {
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
 	
 		  StringBuilder printBuffer = getPrintBuffer(request);
-		printModelsForUser(request, response, languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, "language")),
+		printModelsForUser(request, response, getLanguageFromRequest(request),
 				userID, true/* alwaysPageBreak */, printBuffer);
 		showPrintDialog(response);
 		return;
@@ -470,7 +469,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String email = ServletUtil.getRequestAttribute(request, "email");
-		final ResourceBundle language = languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, "language"));
+		final ResourceBundle language = getLanguageFromRequest(request);
 
 			final User user = servletDAO.getUser(email);
 
@@ -503,6 +502,11 @@ public class RegistrationServlet extends HttpServlet {
 				loginSuccessful(request, response, user, show);
 			}
 		}
+
+	public ResourceBundle getLanguageFromRequest(final HttpServletRequest request)
+			throws MissingRequestParameterException {
+		return languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName()));
+	}
 
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user, final String show)
 			throws IOException, SQLException {
@@ -619,8 +623,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
-		final ResourceBundle language = languageUtil.getLanguage(languageCode);
+        final ResourceBundle language = getLanguageFromRequest(request);
 
 		final int rows = Integer.parseInt(ServletUtil.getRequestAttribute(request, "rows"));
 
@@ -684,7 +687,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void directRegister(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		// set language library
-		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
+		final String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		String email = User.AdminLanguages.CATEGORY.name().equals(languageCode)
@@ -970,8 +973,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void register(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String email = ServletUtil.getRequestAttribute(request, "email");
-		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
-		final ResourceBundle language = languageUtil.getLanguage(languageCode);
+        final ResourceBundle language = getLanguageFromRequest(request);
 
 		if (email.trim().length() == 0 || ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(email) || email.indexOf("@") == -1 || email.indexOf(".") == -1) {
 			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
@@ -1865,7 +1867,7 @@ public class RegistrationServlet extends HttpServlet {
 		try {
 			return getUser(request).getLanguage();
 		} catch (UserNotLoggedInException e) {
-			return ServletUtil.getRequestAttribute(request, "language");
+			return ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
 		}
 	}
 
@@ -2382,7 +2384,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final StringBuilder buff = new StringBuilder();
 
-		ResourceBundle language = languageUtil.getLanguage(ServletUtil.getOptionalRequestAttribute(request, "language"));
+		ResourceBundle language = languageUtil.getLanguage(ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Language.getParameterName()));
 		String show = getShowFromSession(request);
 		if (show == null) {
 		    List<String> shows = servletDAO.getShows();
@@ -2523,7 +2525,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void getbatchAddModelPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
-		final String languageCode = ServletUtil.getRequestAttribute(request, "language");
+		final String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		final StringBuilder categoriesBuff = new StringBuilder();
@@ -2582,7 +2584,7 @@ public class RegistrationServlet extends HttpServlet {
 	private User createUser(final HttpServletRequest request, final String email, final String password,
 			final String httpParameterPostTag) throws Exception {
 		// check if all data is sent
-		ServletUtil.getRequestAttribute(request, "language");
+		ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
 
 		// ServletUtil.getRequestAttribute(request, "firstname" +
 		// httpParameterPostTag);
@@ -2599,7 +2601,7 @@ public class RegistrationServlet extends HttpServlet {
 				// ServletUtil.getRequestAttribute(request, "firstname" +
 				// httpParameterPostTag),
 				"-", ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag),
-				ServletUtil.getRequestAttribute(request, "language"),
+				ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName()),
 				ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag),
 				ServletUtil.getOptionalRequestAttribute(request, "telephone" + httpParameterPostTag), email, true,
 				ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag),

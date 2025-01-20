@@ -13,7 +13,7 @@
     RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 ServletDAO servletDAO = servlet.getServletDAO();
 
-final String languageCode = ServletUtil.getRequestAttribute(request, "language");
+final String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 String showIdHttpParameter = request.getParameter(RequestParameter.ShowId.getParameterName());
@@ -81,7 +81,7 @@ if (showIdHttpParameter != null)
 		action="../RegistrationServlet" method="post" accept-charset="UTF-8">
 
 		<input type="hidden" name="command" value="login"> <input
-			type="hidden" name="language" value="<%=languageCode%>">
+			type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="<%=languageCode%>">
 		<%
 		    if (showIdHttpParameter != null) {
 		%>

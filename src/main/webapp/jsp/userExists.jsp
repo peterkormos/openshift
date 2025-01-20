@@ -1,3 +1,4 @@
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 
@@ -7,7 +8,7 @@
 
 <%
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	final String languageCode = ServletUtil.getRequestAttribute(request, "language");
+	final String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
 	ResourceBundle language = languageUtil.getLanguage(languageCode);
 %>
 
