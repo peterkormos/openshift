@@ -29,17 +29,25 @@ language = languageUtil.getLanguage(languageCode);
 	<table style="box-shadow: none; border-collapse: collapse;" border="1">
 		<tr>
 			<td>D&iacute;jazott makettek:</td>
-			<td><a href="../../RegistrationServlet/getawardedModelsPage">megad&aacute;sa</a></td>
-			<td><a href="deleteAwardedModel.jsp">t&ouml;rl&eacute;se</a></td>
+			<td><a href="../../RegistrationServlet/getawardedModelsPage">
+					<img src="../../icons/add.png" height="30" align="center"> <%=language.getString("judging.type.form")%>
+					megad&aacute;sa
+			</a></td>
+			<td><a href="deleteAwardedModel.jsp"> <img
+					src="../../icons/delete2.png" height="30" align="center"> <%=language.getString("judging.type.form")%>
+					t&ouml;rl&eacute;se
+			</a></td>
 		</tr>
 		<tr>
-			<td><a href="listAwardedModels.jsp">D&iacute;jazott makettek
-					adatainak mod&oacute;s&iacute;t&aacute;sa<br>(RegServlet admin
-					belepes utan !)
-			</a></td>
-			<td><a href="simpleAwardedModels.jsp">Egyszer&#369;
+			<td><a href="listAwardedModels.jsp"><img
+					src="../../icons/modify.png" height="30" align="center">
+					D&iacute;jazott makettek adatainak mod&oacute;s&iacute;t&aacute;sa<br>(RegServlet
+					admin belepes utan !) </a></td>
+			<td><a href="simpleAwardedModels.jsp"><img
+					src="../../icons/list.png" height="30" align="center">Egyszer&#369;
 					eredm&eacute;nylista</a></td>
-			<td><a href="awardedModels.jsp">Kateg&oacute;ri&aacute;kra
+			<td><a href="awardedModels.jsp"><img
+					src="../../icons/list.png" height="30" align="center">Kateg&oacute;ri&aacute;kra
 					bontott eredm&eacute;nylista</a></td>
 		</tr>
 		</tr>
