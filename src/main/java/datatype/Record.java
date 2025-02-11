@@ -11,6 +11,8 @@ import javax.persistence.SequenceGenerator;
 
 @MappedSuperclass
 public abstract class Record implements Comparable<Record>, Serializable {
+	private static final long serialVersionUID = 981936459982533762L;
+
 	public Record() {
 
 	}
