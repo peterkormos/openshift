@@ -30,7 +30,7 @@ public class InitDB
 	s.execute("INSERT INTO MAK_SYSTEM ( PARAM_NAME, PARAM_VALUE ) VALUES ('REGISTRATION','1')");
 	s.execute("INSERT INTO MAK_SYSTEM ( PARAM_NAME, PARAM_VALUE ) VALUES ('SYSTEMMESSAGE','-')");
 
-	s.execute("CREATE TABLE MAK_PICTURES (MODEL_ID numeric(6) not null,PHOTO  BLOB not null)");
+	s.execute("CREATE TABLE MAK_PICTURES (ID numeric(6) not null,PHOTO  BLOB not null)");
 
 	s.execute("create table mak_awardedmodels(AWARD varchar(100),ID numeric(6))");
 
