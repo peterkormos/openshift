@@ -58,6 +58,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import datatype.AgeGroup;
 import datatype.AwardedModel;
@@ -86,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.01.20.";
+	public String VERSION = "2025.02.11.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -493,7 +496,7 @@ public class RegistrationServlet extends HttpServlet {
 					!StringEncoder.encode(passwordInRequest).equals(user.password) || // 
 					(user.isCategoryAdminUser() && !user.getEmail().equals(show))) {
 				logger.info("login(): Authentication failed. email: " + email + " user.password: [" + user.password
-						+ "] HTTP password: [" + ServletUtil.getRequestAttribute(request, "password")
+						+ "] HTTP password: [" + StringEncoder.encode(passwordInRequest)
 						+ "] user.enabled: " + user.enabled);
 
 				writeErrorResponse(response, language.getString("authentication.failed") + " "
@@ -831,6 +834,7 @@ public class RegistrationServlet extends HttpServlet {
 				processUploadedFile(request, response, item, parameters);
 			}
 		}
+		redirectToMainPage(request, response);
 	}
 
 	private void processUploadedFile(final HttpServletRequest request, final HttpServletResponse response,
@@ -856,7 +860,38 @@ public class RegistrationServlet extends HttpServlet {
 		} else if ("zipFile".equals(item.getFieldName())) {
 			final StringBuilder buff = importZip(request, item.getInputStream());
 			ServletUtil.writeResponse(response, buff);
+		} else if ("categoryFile".equals(item.getFieldName())) {
+			org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(item.getInputStream());
+			Sheet s = wb.getSheetAt(0);
+
+			for (int i = 0; i < s.getLastRowNum(); i++) {
+				Row row = s.getRow(i);
+				String categoryCode = row.getCell(0).getStringCellValue();
+				if (categoryCode.length() == 0 || !categoryCode.matches(".*\\d")) {
+					continue;
+				}
+				String categoryDescriptionHu = row.getCell(1).getStringCellValue();
+				String categoryDescriptionEn = row.getCell(2).getStringCellValue();
+
+				String categoryDescription = categoryDescriptionHu;
+				if (!categoryDescriptionEn.isEmpty()) {
+					categoryDescription += " / " + categoryDescriptionEn;
+				}
+
+				Category modifyingCategory;
+				modifyingCategory = new Category(servletDAO.getNextID(Category.class));
+
+				modifyingCategory.setCategoryCode(ServletUtil.encodeString(categoryCode));
+				modifyingCategory.setCategoryDescription(ServletUtil.encodeString(categoryDescription));
+				modifyingCategory.setGroup(servletDAO.getCategoryGroups().get(0));
+				modifyingCategory.setMaster(false);
+				modifyingCategory.setModelClass(ModelClass.Other);
+				modifyingCategory.setAgeGroup(AgeGroup.ALL);
+
+				servletDAO.save(modifyingCategory);
+			}
 		}
+		
 	}
 
 	private StringBuilder importZip(final HttpServletRequest request, final InputStream stream)
@@ -1143,9 +1178,9 @@ public class RegistrationServlet extends HttpServlet {
 			}
 			
 			modifyingCategory.setCategoryCode(
-	            ServletUtil.getRequestAttribute(request, "categorycode"));
+					ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "categorycode")));
 			modifyingCategory.setCategoryDescription(
-	            ServletUtil.getRequestAttribute(request, "categorydescription"));
+					ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "categorydescription")));
 			modifyingCategory.setGroup(
 	            servletDAO.getCategoryGroup(
 	                    Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
@@ -1282,6 +1317,10 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("Korcsoport");
 		buff.append("</th>");
 
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append("");
+		buff.append("</th>");
+
 		buff.append("</tr>");
 
 		for (final Category category : categories) {
@@ -1309,6 +1348,10 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("</td>");
 			buff.append("<td align='center' >");
 			buff.append(category.getAgeGroup().name());
+			buff.append("</td>");
+			buff.append("<td align='center' style='white-space: nowrap'>");
+			buff.append("<a href='inputForAddCategory?categoryID="+category.getId()+"'>"+language.getString("modify")+"</a>");
+			buff.append(" <a href='deleteCategory?categoryID="+category.getId()+"'>"+language.getString("delete")+"</a>");
 			buff.append("</td>");
 			buff.append("</tr>");
 		}
