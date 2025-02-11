@@ -834,7 +834,6 @@ public class RegistrationServlet extends HttpServlet {
 				processUploadedFile(request, response, item, parameters);
 			}
 		}
-		redirectToMainPage(request, response);
 	}
 
 	private void processUploadedFile(final HttpServletRequest request, final HttpServletResponse response,
@@ -855,11 +854,10 @@ public class RegistrationServlet extends HttpServlet {
 				modelID = getLogoIDForShow(getShowFromSession(request));
 			}
 			servletDAO.saveImage(modelID, new ByteArrayInputStream(output.toByteArray()));
-
-			redirectToMainPage(request, response);
 		} else if ("zipFile".equals(item.getFieldName())) {
 			final StringBuilder buff = importZip(request, item.getInputStream());
 			ServletUtil.writeResponse(response, buff);
+			return;
 		} else if ("categoryFile".equals(item.getFieldName())) {
 			org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(item.getInputStream());
 			Sheet s = wb.getSheetAt(0);
@@ -891,7 +889,8 @@ public class RegistrationServlet extends HttpServlet {
 				servletDAO.save(modifyingCategory);
 			}
 		}
-		
+
+		redirectToMainPage(request, response);
 	}
 
 	private StringBuilder importZip(final HttpServletRequest request, final InputStream stream)
