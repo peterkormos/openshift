@@ -862,6 +862,7 @@ public class RegistrationServlet extends HttpServlet {
 			org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(item.getInputStream());
 			Sheet s = wb.getSheetAt(0);
 
+			CategoryGroup categoryGroup = servletDAO.getCategoryGroups().get(0);
 			for (int i = 0; i < s.getLastRowNum(); i++) {
 				Row row = s.getRow(i);
 				String categoryCode = row.getCell(0).getStringCellValue();
@@ -881,10 +882,10 @@ public class RegistrationServlet extends HttpServlet {
 
 				modifyingCategory.setCategoryCode(ServletUtil.encodeString(categoryCode));
 				modifyingCategory.setCategoryDescription(ServletUtil.encodeString(categoryDescription));
-				modifyingCategory.setGroup(servletDAO.getCategoryGroups().get(0));
+				modifyingCategory.setGroup(categoryGroup);
 				modifyingCategory.setMaster(false);
 				modifyingCategory.setModelClass(ModelClass.Other);
-				modifyingCategory.setAgeGroup(AgeGroup.ALL);
+				modifyingCategory.setAgeGroup(AgeGroup.ADULT);
 
 				servletDAO.save(modifyingCategory);
 			}
