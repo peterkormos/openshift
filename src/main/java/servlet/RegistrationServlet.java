@@ -1351,7 +1351,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("</td>");
 			buff.append("<td align='center' style='white-space: nowrap'>");
 			buff.append("<a href='inputForAddCategory?categoryID="+category.getId()+"'>"+language.getString("modify")+"</a>");
-			buff.append(" <a href='deleteCategory?categoryID="+category.getId()+"'>"+language.getString("delete")+"</a>");
+			buff.append(" / <a href='deleteCategory?categoryID="+category.getId()+"'>"+language.getString("delete")+"</a>");
 			buff.append("</td>");
 			buff.append("</tr>");
 		}
@@ -2022,43 +2022,12 @@ public class RegistrationServlet extends HttpServlet {
 		response.sendRedirect("jsp/judging/deleteAwardedModel.jsp");
 	}
 
-	public void inputForDeleteCategory(final HttpServletRequest request, final HttpServletResponse response)
-	        throws Exception {
-	    final ResourceBundle language = getLanguageForCurrentUser(request);
-	    inputForModifyCategory(request, response,"deleteCategory",language.getString("delete"));
-	}
-	
-	public void inputForModifyCategory(final HttpServletRequest request, final HttpServletResponse response)
-	        throws Exception {
-	    final ResourceBundle language = getLanguageForCurrentUser(request);
-	    inputForModifyCategory(request, response,"inputForAddCategory",language.getString("modify"));
-	}
-	
-	private void inputForModifyCategory(final HttpServletRequest request, final HttpServletResponse response, String command, String commandLabel)
-			throws Exception {
-		final StringBuilder buff = new StringBuilder();
-		final ResourceBundle language = getLanguageForCurrentUser(request);
-
-		buff.append("<html><body>");
-
-		buff.append("<form accept-charset='UTF-8' name='input' action='./"+command+"' method='put'>");
-
-		getHTMLCodeForCategorySelect(buff, language.getString("select"), "", false, language, request);
-
-		buff.append("<p><input name='"+command+"' type='submit' value='" + commandLabel + "'>");
-		buff.append("</form></body></html>");
-
-		ServletUtil.writeResponse(response, buff);
-	}
-
 	public void inputForDeleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
 		final ResourceBundle language = getLanguageForCurrentUser(request);
 
-		buff.append("<html><body>");
-
-		buff.append("<form name='input' action='./deleteCategoryGroup' method='put'>");
+		buff.append("<html><body><table border=1>");
 
 		final String show = getShowFromSession(request);
 
@@ -2067,12 +2036,17 @@ public class RegistrationServlet extends HttpServlet {
 				continue;
 			}
 
-			buff.append("<label><input type='radio' name='categoryGroupID' value='" + group.getId() + "'/>");
-			buff.append(group.show + " - " + group.name + "</label><br>");
+			buff.append("<tr>");
+			buff.append("<td style='white-space: nowrap'>");
+			buff.append(group.show + " - " + group.name);
+			buff.append("</td>");
+			buff.append("<td style='white-space: nowrap'>");
+			buff.append(" <a href='deleteCategoryGroup?categoryGroupID="+group.getId()+"'>"+language.getString("delete")+"</a>");
+			buff.append("</td>");
+			buff.append("</tr>");
 		}
 
-		buff.append("<p><input name='deleteCategoryGroup' type='submit' value='" + language.getString("delete") + "'>");
-		buff.append("</form></body></html>");
+		buff.append("</table></body></html>");
 
 		ServletUtil.writeResponse(response, buff);
 	}
@@ -2729,44 +2703,6 @@ public class RegistrationServlet extends HttpServlet {
 
 		boolean goToParentDir = request.getPathInfo() != null;
 		response.sendRedirect((goToParentDir ? "../" : "") + "jsp/modelForm.jsp");
-	}
-
-	private void getHTMLCodeForCategorySelect(final StringBuilder buff, final String selectedLabel,
-			final String selectedValue, final boolean mandatory, final ResourceBundle language,
-			final HttpServletRequest request) throws Exception {
-		final String show = getShowFromSession(request);
-
-		buff.append("<div id='categories'>");
-		buff.append("<select name='categoryID'>");
-
-		buff.append("<option value='" + selectedValue + "'>" + selectedLabel + "</option>");
-
-		for (final CategoryGroup group : servletDAO.getCategoryGroups()) {
-			if (show != null && !group.show.equals(show)) {
-				continue;
-			}
-
-			buff.append("<optgroup label='" + group.show + " - " + group.name + "'>");
-
-			for (final Category category : servletDAO.getCategoryList(show)) {
-				if (category.group.getId() != group.getId()) {
-					continue;
-				}
-
-				buff.append("<option value='" + category.getId() + "'>");
-				buff.append(category.categoryCode + " - " + category.categoryDescription);
-				buff.append("</option>");
-
-			}
-
-			buff.append("</optgroup>");
-		}
-		buff.append("</select>");
-
-		if (mandatory) {
-			buff.append("<font color='#FF0000' size='+3'>&#8226;</font> ");
-		}
-		buff.append("</div>");
 	}
 
 	public void getVersion(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

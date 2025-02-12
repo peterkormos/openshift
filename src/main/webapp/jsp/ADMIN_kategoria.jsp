@@ -12,9 +12,9 @@
 		<th style="background:none">Kateg&oacute;ria</th>
 		<td><a href="../RegistrationServlet/inputForAddCategory">&uacute;j
 				hozz&aacute;ad&aacute;sa</a></td>
-		<td><a href="../RegistrationServlet/inputForModifyCategory">
+		<td><a href="../RegistrationServlet/listCategories">
 				m&oacute;dos&iacute;t&aacute;s</a></td>
-		<td><a href="../RegistrationServlet/inputForDeleteCategory">t&ouml;rl&eacute;se</a></td>
+		<td><a href="../RegistrationServlet/listCategories">t&ouml;rl&eacute;se</a></td>
 		<td><a href="../RegistrationServlet/listCategories">list&aacute;z&aacute;sa</a></td>
 	</tr>
 
