@@ -22,6 +22,8 @@
 	if(model == null && RegistrationServlet.Command.modifyModel.name().equals(action) ) {
 		response.sendRedirect("main.jsp");
 	}
+
+	String logoURL = "../RegistrationServlet/"+RegistrationServlet.Command.LOADIMAGE.name()+"/"+servlet.getLogoIDForShow(servlet.getShowFromSession(request));
 %>
 
 <html>
@@ -72,6 +74,13 @@ function checkMandatoryElement(element)
 	return true; 
 }
 
+function updateGluedToBaseImg(element)
+{
+	var gluedToBaseImgElement = document.getElementById('gluedToBaseImg');
+	gluedToBaseImgElement.style='visibility: visible';
+	gluedToBaseImgElement.src= element.value == 'on' ? '../icons/glued.jpg' : '../icons/notglued.jpg';
+}
+
 //-->
 </script>
 
@@ -119,6 +128,9 @@ String scale = model == null ? "" : model.scale;
   <jsp:param name="frequentlyUsed" value='<%=language.getString("frequently.used")%>'/>
 </jsp:include>
 </td>
+<td rowspan="3">
+<img style="height: 25mm" src='<%=logoURL%>'> 
+</td>
 </tr>
 
 	<!--	models.name-->
@@ -163,17 +175,19 @@ String modelproducer = model == null ? "" : model.producer;
 <%=language.getString("glued.to.base")%>: 
 </td>
 
-<td>
+<td style="vertical-align: top;" colspan="2">
 <label><%=language.getString("yes")%>
  <input style="zoom: 2;" name='gluedToBase' type='radio' value='on' <%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%> 
-onchange="updateMandatoryFieldMark(this.parentNode);"
+onchange="updateMandatoryFieldMark(this.parentNode);updateGluedToBaseImg(this);"
  ></label>
 <br>
 <label><%=language.getString("no")%>
  <input style="zoom: 2;" name='gluedToBase' type='radio' value='off' <%=(model == null || model.gluedToBase ? "": "checked='checked'")%> 
-onchange="updateMandatoryFieldMark(this.parentNode);"
+onchange="updateMandatoryFieldMark(this.parentNode);updateGluedToBaseImg(this);"
  ></label>
- <font color='#FF0000' size='+3'>&#8226;</font> </td>
+ <font color='#FF0000' size='+3'>&#8226;</font> 
+ <img id='gluedToBaseImg' src='../icons/glued.jpg' style='float: float: middle; visibility: hidden;'>
+ </td>
 </tr>
 
 	<!--	category-->
@@ -182,7 +196,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 <%= language.getString("category") %>:
 </td>
 
-<td>
+<td colspan="2">
 <%
 	final Category category = model == null ? null : servletDAO.getCategory(model.categoryID);
 
@@ -212,7 +226,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 	<td>
 		<%=language.getString("models.space")%>:
 	</td>
-	<td>
+	<td colspan="2">
 	<%=language.getString("models.width")%>:
 		<%
 		String modelWidth = model == null ? "" : String.valueOf(model.getWidth());
@@ -240,7 +254,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 <!--	submit-->
 <tr>
 <td></td>
-<td>
+<td colspan="2">
 <input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
 
 <%
@@ -259,7 +273,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);"
 <td>
 <%=language.getString("models.markings")%>: 
 </td>
-<td>
+<td colspan="2">
 <%
 String markingsLabel =  model == null ? language.getString("select") : model.markings;
 String markingsLabelValue = model == null ? "-" : model.markings;
@@ -277,7 +291,7 @@ String markingsLabelValue = model == null ? "-" : model.markings;
 <td>
 <%=language.getString("models.identification")%>: 
 </td>
-<td>
+<td colspan="2">
 <%
 String modelidentification = model == null ? "" : model.identification;
 %>
@@ -296,7 +310,7 @@ String modelidentification = model == null ? "" : model.identification;
 <%=language.getString("models.detailing")%>: 
 </td>
 
-<td><table cellpadding='5' style='border-collapse: collapse' border='1'>
+<td colspan="2"><table cellpadding='5' style='border-collapse: collapse' border='1'>
 <tr>
 <td>&nbsp;</td>
 <%
@@ -340,7 +354,7 @@ for (DetailingGroup group : DetailingGroup.values())
 	<!--	submit -->
 <tr>
 <td></td>
-<td><input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
+<td colspan="2"><input name='<%= action %>' type='submit' value='<%= language.getString(submitLabel) %>'>
 
 <%
 	if (action == RegistrationServlet.Command.addModel.name())
