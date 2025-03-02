@@ -186,7 +186,7 @@ onchange="updateMandatoryFieldMark(this.parentNode);updateGluedToBaseImg(this);"
 onchange="updateMandatoryFieldMark(this.parentNode);updateGluedToBaseImg(this);"
  ></label>
  <font color='#FF0000' size='+3'>&#8226;</font> 
- <img id='gluedToBaseImg' src='../icons/glued.jpg' style='float: float: middle; visibility: hidden;'>
+ <img id='gluedToBaseImg' src='../icons/<%=(model != null && model.gluedToBase ? "glued.jpg": "notglued.jpg")%>' style='float: float: middle; <%=model == null ? "visibility: hidden;" : ""%>'>
  </td>
 </tr>
 
