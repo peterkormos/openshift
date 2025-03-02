@@ -62,7 +62,7 @@ private JDBCDAO jdbcDAO;
   }
 
 	boolean userExists(final String email) throws Exception {
-		return !get(User.class, "upper(email) = upper('" + email + "')").isEmpty();
+		return !getList(User.class, "upper(email) = upper('" + email + "')").isEmpty();
 	}
 
   public List<Category> getCategoryList(final String show) throws SQLException
@@ -73,19 +73,24 @@ private JDBCDAO jdbcDAO;
   {
 		if (categoryGroupId != 0) {
 			if (show == null) {
-				return get(Category.class, " r.group.id = " + categoryGroupId + " order by id");
+				return getList(Category.class, " r.group.id = " + categoryGroupId + " order by id");
 			} else {
-				return get(Category.class, " r.group.id = " + categoryGroupId + " and r.group.show = '" + show + "' order by id");
+				return getList(Category.class, " r.group.id = " + categoryGroupId + " and r.group.show = '" + show + "' order by id");
 			}
 		}
 
 		if (show != null) {
-			return get(Category.class, " r.group.show = '" + show + "' order by id");
+			return getList(Category.class, " r.group.show = '" + show + "' order by id");
 		} else {
 			return getAll(Category.class);
 		}
   }
 
+  public CategoryGroup getCategoryGroup(final String name)
+  {
+	  return get(CategoryGroup.class, " r.name = '" + name + "'");
+  }
+  
   public CategoryGroup getCategoryGroup(final int categoryGroupID, final List<CategoryGroup> groups)
       throws SQLException
   {
@@ -107,7 +112,7 @@ private JDBCDAO jdbcDAO;
   }
   public List<User> getUsers() throws SQLException
   {
-	  return get(User.class, "enabled=true order by lastName, firstName");
+	  return getList(User.class, "enabled=true order by lastName, firstName");
   }
 
   public void saveModelClass(int userID, ModelClass modelClass) throws SQLException
@@ -128,7 +133,7 @@ private JDBCDAO jdbcDAO;
 	public User getUser(String email) throws EmailNotFoundException {
 		email = ServletUtil.sanitizeUserInput(email);
 
-		List<User> users = get(User.class, "upper(email) = upper('" + email + "')");
+		List<User> users = getList(User.class, "upper(email) = upper('" + email + "')");
 		if (users.isEmpty()) {
 			throw new EmailNotFoundException(email);
 		}
@@ -222,7 +227,7 @@ private JDBCDAO jdbcDAO;
 
   public List<Model> getModels(final String where)
   {
-	  return where.isEmpty() ?  getAll(Model.class) : get(Model.class, where);
+	  return where.isEmpty() ?  getAll(Model.class) : getList(Model.class, where);
   }
 
   public Model getModel(final int modelID) 
@@ -232,30 +237,14 @@ private JDBCDAO jdbcDAO;
 
   public Category getCategory(final int categoryID) throws SQLException
   {
-	for (final Category category : getCategoryList(null))
-	{
-	  if (category.getId() == categoryID)
-	  {
-		return category;
-	  }
-	}
-
-	throw new IllegalArgumentException("Unknown categoryID: " + categoryID);
+	return get(Category.class, " r.id = " + categoryID);
   }
 
-  public Category getCategory(final String categoryCode) throws SQLException
+  public Category getCategory(final String categoryCode)
   {
-	for (final Category category : getCategoryList(null))
-	{
-	  if (category.categoryCode.equals(categoryCode))
-	  {
-		return category;
-	  }
-	}
-
-	throw new IllegalArgumentException("Unknown categoryCode: " + categoryCode);
+	return get(Category.class, " r.categoryCode = '" + categoryCode + "'");
   }
-
+  
   public void deleteEntries(final String table) throws SQLException
   {
 	  jdbcDAO.deleteEntry(table, null, 0);
@@ -303,7 +292,7 @@ void deleteModels(final int categoryId) throws SQLException {
 
   public List<User> getSimilarLastNames(final String lastname) throws SQLException
   {
-	  return get(User.class, "lastName like '%" + lastname + "%'");
+	  return getList(User.class, "lastName like '%" + lastname + "%'");
   }
   public void deleteLoginConsentData(int modellerId)
   {

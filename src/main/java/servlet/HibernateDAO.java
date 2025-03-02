@@ -138,7 +138,7 @@ public class HibernateDAO
 	}
   }
 
-  public <T> List<T> get(Class<T> recordClass, String whereClause)
+  public <T> List<T> getList(Class<T> recordClass, String whereClause)
   {
 	  Session session = null;
 	  
@@ -150,6 +150,32 @@ public class HibernateDAO
 		  
 		  List<T> returned = (List<T>) session.createQuery("From " + recordClass.getName() + " as r where " + whereClause)
 				  .list();
+		  
+		  if (returned == null)
+		  {
+			  throw new IllegalArgumentException("No record is found with whereClause: " + whereClause);
+		  }
+		  
+		  return returned;
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public <T> T get(Class<T> recordClass, String whereClause)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  
+		  session.beginTransaction();
+		  
+		  T returned = (T) session.createQuery("From " + recordClass.getName() + " as r where " + whereClause)
+				  .uniqueResult();
 		  
 		  if (returned == null)
 		  {

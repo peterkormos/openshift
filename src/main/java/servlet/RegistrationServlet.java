@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.02.23.";
+	public String VERSION = "2025.03.02.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -809,6 +809,36 @@ public class RegistrationServlet extends HttpServlet {
             u.writeTo(response.getOutputStream());
         }
 
+        
+        public void exportCategoryExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        	final String show = getShowFromSession(request);
+        	
+        	response.setContentType("application/vnd.ms-excel");
+        	
+        	List<List<Object>> modelsForExcel = servletDAO.getCategoryList(show).stream().map(category -> {
+        		ArrayList<Object> returned = new ArrayList<>();
+        		returned.add(StringEscapeUtils.unescapeHtml4(category.getGroup().getGroup()));
+        		returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
+        		returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
+        		returned.add(category.isMaster());
+        		returned.add(category.getModelClass().name());
+        		returned.add(category.getAgeGroup().name());
+        		return returned;
+        		
+        	}).collect(Collectors.toList());
+        	ResourceBundle language = getLanguageForCurrentUser(request);
+        	Workbook u = ExcelUtil.generateExcelTableWithHeaders("model", Arrays.asList(
+        			"Group",
+        			StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
+        			StringEscapeUtils.unescapeHtml4(language.getString("category.description")),
+        			"isMaster",
+        			"ModelClass",
+        			"AgeGroup"
+        			), modelsForExcel);
+        	
+        	u.writeTo(response.getOutputStream());
+        }
+        
 		public static List<Model> getModelsForShow(final String show, final List<Model> models,
 				Map<Integer, Category> categories) {
 			return models.stream().filter(model -> {
@@ -839,59 +869,96 @@ public class RegistrationServlet extends HttpServlet {
 	private void processUploadedFile(final HttpServletRequest request, final HttpServletResponse response,
 			FileItem item, Map<String, String> parameters) throws IOException, SQLException, Exception {
 		if ("imageFile".equals(item.getFieldName())) {
-
-			final BufferedImage originalImage = ImageUtil.load(item.getInputStream());
-			final BufferedImage resizedImage = ImageUtil.resize(originalImage, 800);
-
-			final ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-			ImageUtil.save(resizedImage, output);
-
-			int modelID;
-			try {
-				modelID = Integer.parseInt(parameters.get("modelID"));
-			} catch (NumberFormatException e) {
-				modelID = getLogoIDForShow(getShowFromSession(request));
-			}
-			servletDAO.saveImage(modelID, new ByteArrayInputStream(output.toByteArray()));
+			processUploadedImageFile(request, item, parameters);
 		} else if ("zipFile".equals(item.getFieldName())) {
 			final StringBuilder buff = importZip(request, item.getInputStream());
 			ServletUtil.writeResponse(response, buff);
 			return;
 		} else if ("categoryFile".equals(item.getFieldName())) {
-			org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(item.getInputStream());
-			Sheet s = wb.getSheetAt(0);
-
-			CategoryGroup categoryGroup = servletDAO.getCategoryGroups().get(0);
-			for (int i = 0; i < s.getLastRowNum(); i++) {
-				Row row = s.getRow(i);
-				String categoryCode = row.getCell(0).getStringCellValue();
-				if (categoryCode.length() == 0 || !categoryCode.matches(".*\\d")) {
-					continue;
-				}
-				String categoryDescriptionHu = row.getCell(1).getStringCellValue();
-				String categoryDescriptionEn = row.getCell(2).getStringCellValue();
-
-				String categoryDescription = categoryDescriptionHu;
-				if (!categoryDescriptionEn.isEmpty()) {
-					categoryDescription += " / " + categoryDescriptionEn;
-				}
-
-				Category modifyingCategory;
-				modifyingCategory = new Category(servletDAO.getNextID(Category.class));
-
-				modifyingCategory.setCategoryCode(ServletUtil.encodeString(categoryCode));
-				modifyingCategory.setCategoryDescription(ServletUtil.encodeString(categoryDescription));
-				modifyingCategory.setGroup(categoryGroup);
-				modifyingCategory.setMaster(false);
-				modifyingCategory.setModelClass(ModelClass.Other);
-				modifyingCategory.setAgeGroup(AgeGroup.ADULT);
-
-				servletDAO.save(modifyingCategory);
-			}
+			final StringBuilder buff = processUploadedCategoryExcel(request, item);
+			ServletUtil.writeResponse(response, buff);
+			return;
 		}
 
 		redirectToMainPage(request, response);
+	}
+
+	private void processUploadedImageFile(final HttpServletRequest request, FileItem item,
+			Map<String, String> parameters) throws IOException, SQLException {
+		final BufferedImage originalImage = ImageUtil.load(item.getInputStream());
+		final BufferedImage resizedImage = ImageUtil.resize(originalImage, 800);
+
+		final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+		ImageUtil.save(resizedImage, output);
+
+		int modelID;
+		try {
+			modelID = Integer.parseInt(parameters.get("modelID"));
+		} catch (NumberFormatException e) {
+			modelID = getLogoIDForShow(getShowFromSession(request));
+		}
+		servletDAO.saveImage(modelID, new ByteArrayInputStream(output.toByteArray()));
+	}
+
+	private StringBuilder processUploadedCategoryExcel(final HttpServletRequest request, final FileItem item) throws IOException {
+		final StringBuilder buff = new StringBuilder();
+		
+		org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(item.getInputStream());
+		Sheet s = wb.getSheetAt(0);
+
+		//skip first (header) row...
+		buff.append("<p>Storing Categories: ");
+		for (int i = 1; i < s.getLastRowNum(); i++) {
+			Row row = s.getRow(i);
+			
+			// 1. column
+			String categoryGroupName = ServletUtil.encodeString(row.getCell(0).getStringCellValue());
+			if (categoryGroupName.length() == 0) {
+				continue;
+			}
+
+			CategoryGroup categoryGroup;
+			try {
+				categoryGroup = servletDAO.getCategoryGroup(categoryGroupName);
+			} catch (IllegalArgumentException e) {
+				categoryGroup = saveCategoryGroup(getShowFromSession(request), categoryGroupName);
+			}
+
+			// 2. column
+			String categoryCode = row.getCell(1).getStringCellValue();
+
+			// 3. column
+			String categoryDescription = ServletUtil.encodeString(row.getCell(2).getStringCellValue());
+
+			// 4. column
+			boolean master = row.getCell(3).getBooleanCellValue();
+			
+			// 5. column
+			ModelClass modelClass = ModelClass.valueOf(row.getCell(4).getStringCellValue());
+			
+			// 6. column
+			AgeGroup ageGroup = AgeGroup.valueOf(row.getCell(5).getStringCellValue());
+			
+			try {
+				servletDAO.getCategory(categoryCode);
+				continue;				
+			} catch (Exception e) {
+				Category newCategory = new Category(servletDAO.getNextID(Category.class));
+				
+				newCategory.setCategoryCode(categoryCode);
+				newCategory.setCategoryDescription(categoryDescription);
+				newCategory.setGroup(categoryGroup);
+				newCategory.setMaster(master);
+				newCategory.setModelClass(modelClass);
+				newCategory.setAgeGroup(ageGroup);
+				
+				servletDAO.save(newCategory);
+				buff.append(".");
+			}
+		}
+		
+		return buff;
 	}
 
 	private StringBuilder importZip(final HttpServletRequest request, final InputStream stream)
@@ -1255,19 +1322,22 @@ public class RegistrationServlet extends HttpServlet {
 		String show = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"));
 		User user = getUser(request);
 		if(user.isSuperAdminUser() || (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
-		final CategoryGroup categoryGroup = new CategoryGroup(servletDAO.getNextID(CategoryGroup.class),
-				show, ServletUtil.getRequestAttribute(request, "group"));
-
     	final HttpSession session = request.getSession(false);
         session.setAttribute(SessionAttribute.Show.name(), show);
-
-		servletDAO.save(categoryGroup);
+        saveCategoryGroup(show, ServletUtil.getRequestAttribute(request, "group"));
 		}
 		else {
 			writeCategoryModificationErrorResponse(response);
 			return;
 		}
 		redirectToMainPage(request, response);
+	}
+
+	private CategoryGroup saveCategoryGroup(final String show, final String groupName) {
+		final CategoryGroup categoryGroup = new CategoryGroup(servletDAO.getNextID(CategoryGroup.class),
+        		show, groupName);
+		servletDAO.save(categoryGroup);
+		return categoryGroup;
 	}
 
 	public void listUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
