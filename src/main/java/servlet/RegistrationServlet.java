@@ -908,21 +908,24 @@ public class RegistrationServlet extends HttpServlet {
 		Sheet s = wb.getSheetAt(0);
 
 		//skip first (header) row...
-		buff.append("<p>Storing Categories: ");
-		for (int i = 1; i < s.getLastRowNum(); i++) {
+		buff.append(s.getLastRowNum() + " sor feldolgozása.<p>");
+		for (int i = 1; i < s.getLastRowNum()+1; i++) {
 			Row row = s.getRow(i);
 			
 			// 1. column
 			String categoryGroupName = ServletUtil.encodeString(row.getCell(0).getStringCellValue());
 			if (categoryGroupName.length() == 0) {
+				buff.append("Üres "+(i+1)+". sor<p>");
 				continue;
 			}
 
 			CategoryGroup categoryGroup;
 			try {
 				categoryGroup = servletDAO.getCategoryGroup(categoryGroupName);
+//				buff.append(categoryGroupName + " már létezik.<p>");
 			} catch (IllegalArgumentException e) {
 				categoryGroup = saveCategoryGroup(getShowFromSession(request), categoryGroupName);
+				buff.append(categoryGroupName + " mentése.<br>");
 			}
 
 			// 2. column
@@ -942,6 +945,7 @@ public class RegistrationServlet extends HttpServlet {
 			
 			try {
 				servletDAO.getCategory(categoryCode);
+//				buff.append(categoryCode + " már létezik.<p>");
 				continue;				
 			} catch (Exception e) {
 				Category newCategory = new Category(servletDAO.getNextID(Category.class));
@@ -954,7 +958,7 @@ public class RegistrationServlet extends HttpServlet {
 				newCategory.setAgeGroup(ageGroup);
 				
 				servletDAO.save(newCategory);
-				buff.append(".");
+				buff.append(categoryCode + " mentése.<br>");
 			}
 		}
 		
