@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.03.02.";
+	public String VERSION = "2025.03.04.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -915,7 +915,7 @@ public class RegistrationServlet extends HttpServlet {
 			// 1. column
 			String categoryGroupName = ServletUtil.encodeString(row.getCell(0).getStringCellValue());
 			if (categoryGroupName.length() == 0) {
-				buff.append("Üres "+(i+1)+". sor<p>");
+				buff.append("Üres categoryGroupName "+(i+1)+". sor<p>");
 				continue;
 			}
 
@@ -930,18 +930,28 @@ public class RegistrationServlet extends HttpServlet {
 
 			// 2. column
 			String categoryCode = row.getCell(1).getStringCellValue();
+			if (categoryCode.length() == 0) {
+				buff.append("Üres categoryCode "+(i+1)+". sor<p>");
+				continue;
+			}
 
 			// 3. column
 			String categoryDescription = ServletUtil.encodeString(row.getCell(2).getStringCellValue());
+			if (categoryDescription.length() == 0) {
+				buff.append("Üres categoryDescription "+(i+1)+". sor<p>");
+				continue;
+			}
 
 			// 4. column
 			boolean master = row.getCell(3).getBooleanCellValue();
 			
 			// 5. column
-			ModelClass modelClass = ModelClass.valueOf(row.getCell(4).getStringCellValue());
+			String stringCellValue = row.getCell(4).getStringCellValue();
+			ModelClass modelClass = stringCellValue.length() == 0 ? ModelClass.Other : ModelClass.valueOf(stringCellValue);
 			
 			// 6. column
-			AgeGroup ageGroup = AgeGroup.valueOf(row.getCell(5).getStringCellValue());
+			stringCellValue = row.getCell(5).getStringCellValue();
+			AgeGroup ageGroup = stringCellValue.length() == 0 ? AgeGroup.ALL : AgeGroup.valueOf(stringCellValue);
 			
 			try {
 				servletDAO.getCategory(categoryCode);
