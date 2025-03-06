@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.03.04.";
+	public String VERSION = "2025.03.06.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -681,7 +681,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public String getPrintLanguage(final HttpServletRequest request) {
-		return getSystemParameter(getShowFromSession(request), SystemParameter.PrintLanguage);
+		String printLanguage = getSystemParameter(getShowFromSession(request), SystemParameter.PrintLanguage);
+		return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(printLanguage) ? PrintLanguages.Hu.name() : printLanguage;
 	}
 
 	private void showPrintDialog(final HttpServletResponse response) throws IOException {
@@ -698,7 +699,7 @@ public class RegistrationServlet extends HttpServlet {
 				: ServletUtil.getRequestAttribute(request, "fullname") + User.LOCAL_USER + System.currentTimeMillis();
 		final User user = directRegisterUser(request, language, "" /*httpParameterPostTag*/, email,
 				StringEncoder.encode(ServletUtil.getOptionalRequestAttribute(request, "password")));
-		initHttpSession(request, user, StringEncoder.toBase64(servletDAO.getShows().get(0).getBytes()));
+		initHttpSession(request, user, servletDAO.getShows().get(0));
 		redirectToMainPage(request, response);
 	}
 
@@ -2018,7 +2019,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<input type='hidden' name='rows' value='" + users.size() + "'>");
 
 		try {
-			User loggedInUser = getUser(request);
+			User loggedInUser = isOnSiteUse() ? new User("HU") : getUser(request);
 			for (int i = 0; i < users.size(); i++) {
 				final User user = users.get(i);
 
