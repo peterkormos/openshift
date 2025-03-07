@@ -986,19 +986,17 @@ public class RegistrationServlet extends HttpServlet {
 
 		final List<CategoryGroup> categoryGroups = data.get(1);
 
+		deleteModelsForShow(getShowFromSession(request));
+		
 		if (!categoryGroups.isEmpty()) {
 			final List<Model> models = data.get(3);
 			if(!models.isEmpty()) {
-				servletDAO.deleteAll(Model.class);			    
 				buff.append("<p>Storing Models");
 				for (final Model model : models) {
 					buff.append(".");
 					servletDAO.save(model);
 				}
 			}
-
-			servletDAO.deleteAll(Category.class);
-			servletDAO.deleteAll(CategoryGroup.class);
 
 			final List<Category> categories = data.get(2);
 			buff.append("<p>Storing Categories");
@@ -1049,33 +1047,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteDataForShow(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		final String show = getShowFromSession(request);
-
-		for (final AwardedModel awardedModel : servletDAO.getAwardedModels()) {
-			if (servletDAO.getCategory(awardedModel.categoryID).group.show.equals(show)) {
-				servletDAO.deleteAwardedModel(awardedModel.getId());
-			}
-		}
-
-		for (final Model model : servletDAO.getModels(servletDAO.INVALID_USERID)) {
-			if (servletDAO.getCategory(model.categoryID).group.show.equals(show)) {
-				servletDAO.deleteModel(model);
-			}
-		}
-
-		for (final Category category : servletDAO.getCategoryList(show)) {
-			servletDAO.delete(category);
-		}
-
-		for (final CategoryGroup categoryGroup : servletDAO.getCategoryGroups()) {
-			if (categoryGroup.show.equals(show)) {
-				servletDAO.delete(categoryGroup);
-			}
-		}
-		
-		servletDAO.deleteEntry("MAK_PICTURES", "ID", getLogoIDForShow(show));
-
-		systemParameters.remove(show);
+		deleteDataForShow(request);
 
 		redirectToMainPage(request, response);
 	}
@@ -2464,16 +2436,31 @@ public class RegistrationServlet extends HttpServlet {
 		systemMessage = getSystemParameter(show, ServletDAO.SystemParameter.SYSTEMMESSAGE);
 	}
 
-	public void deleteData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		servletDAO.deleteAll(CategoryGroup.class);
-		servletDAO.deleteAll(Category.class);
-		servletDAO.deleteAll(Model.class);
-//		servletDAO.deleteAll(User.class);
+	private void deleteDataForShow(final HttpServletRequest request) throws SQLException {
+		final String show = getShowFromSession(request);
 
+		for (final AwardedModel awardedModel : servletDAO.getAwardedModels()) {
+			if (servletDAO.getCategory(awardedModel.categoryID).group.show.equals(show)) {
+				servletDAO.deleteAwardedModel(awardedModel.getId());
+			}
+		}
 		servletDAO.deleteEntries("MAK_AWARDEDMODELS");
 
-		redirectToMainPage(request, response);
+		deleteModelsForShow(show);
 
+		servletDAO.deleteEntry("MAK_PICTURES", "ID", getLogoIDForShow(show));
+
+		systemParameters.remove(show);
+	}
+
+	private void deleteModelsForShow(final String show) {
+		servletDAO.getCategoryGroups(show).forEach(categoryGroup -> {
+			servletDAO.getCategoryList(categoryGroup.getId(), show).forEach(category -> {
+				servletDAO.delete(Model.class, "categoryID = " + category.getId());
+				servletDAO.delete(category);
+			});
+		});
+		servletDAO.delete(CategoryGroup.class, "show = '" + show + "'");
 	}
 
 	public void initDB(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

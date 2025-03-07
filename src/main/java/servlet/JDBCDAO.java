@@ -253,7 +253,7 @@ public class JDBCDAO {
 	}
 
 	public void deleteEntry(final String table, final String idField, final int id) throws SQLException {
-		deleteEntries(table, (idField == null ? "" : idField + " = " + id));
+		deleteEntries(table, (idField == null ? null : idField + " = " + id));
 	}
 	
 	public void deleteEntries(final String table, final String whereClause) throws SQLException {

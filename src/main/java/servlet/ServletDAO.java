@@ -69,7 +69,7 @@ private JDBCDAO jdbcDAO;
   {
 	return getCategoryList(0, show);
   }
-  public List<Category> getCategoryList(final int categoryGroupId, final String show) throws SQLException
+  public List<Category> getCategoryList(final int categoryGroupId, final String show) 
   {
 		if (categoryGroupId != 0) {
 			if (show == null) {
@@ -110,6 +110,11 @@ private JDBCDAO jdbcDAO;
   {
 	  return getAll(CategoryGroup.class);
   }
+
+	public List<CategoryGroup> getCategoryGroups(final String show) {
+		return getList(CategoryGroup.class, " r.show = '" + show + "' order by id");
+	}
+
   public List<User> getUsers() throws SQLException
   {
 	  return getList(User.class, "enabled=true order by lastName, firstName");
