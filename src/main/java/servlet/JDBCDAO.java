@@ -449,7 +449,7 @@ public class JDBCDAO {
 				final List<Model> models = servletDAO.getModelsInCategory(category.getId());
 
 				returned.add(
-						new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
+						new String[] { "<b>" + category.categoryCode + "</b> - " + category.categoryDescription,
 								String.valueOf(models.size()) });
 
 				// benevezett makettek szama
@@ -533,7 +533,7 @@ public class JDBCDAO {
 		int tablespace = models.stream().mapToInt(m -> (int) m.getWidth() * m.getLength()).sum();
 
 		tablespaceStatas
-				.add(new String[] { "<b>" + category.categoryCode + " - " + category.categoryDescription + "</b>",
+				.add(new String[] { "<b>" + category.categoryCode + "</b> - " + category.categoryDescription,
 						String.valueOf(tablespace) });
 	}
 }
