@@ -73,7 +73,8 @@ if (show == null) {
 			<form accept-charset="UTF-8" name="input" id="input"
 				action="../RegistrationServlet" method="post">
 				<input type="hidden" id="command" name="command" value=""> <input
-					type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="HU">
+					type="hidden"
+					name="<%=RequestParameter.Language.getParameterName()%>" value="HU">
 				<div class="tooltip">
 					<a href="#"
 						onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
@@ -98,17 +99,23 @@ if (show == null) {
 
 <table style="box-shadow: none" border="0">
 	<tr>
-		<th style="background:none">1 makettez&#337;...</th>
-		<td><a href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
-				bel&eacute;p&eacute;s</a> - <a
-			href="../RegistrationServlet/inputForPrint"> nevez&eacute;si
-				lapjainak nyomtat&aacute;sa </a> - <a
-			href="../RegistrationServlet/inputForPrint"> <a href="#"
-				-			onClick="document.getElementById('command').value='inputForModifyModel';this.parentNode.submit();">Makett
-					&aacute;tsorol&aacute;sa. Makett sorsz&aacute;ma:</a> <input
-				type="number" name="modelID"
-				onchange="document.getElementById('command').value='inputForModifyModel'">
-		</a></td>
+		<th style="background: none">1 makettez&#337;...</th>
+		<td>
+			<form accept-charset="UTF-8" name="input" id="inputAtsorolas"
+				action="../RegistrationServlet" method="post">
+				<input type="hidden" name="command" id="commandAtsorolas"> <a
+					href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
+					bel&eacute;p&eacute;s</a> - <a
+					href="../RegistrationServlet/inputForPrint"> nevez&eacute;si
+					lapjainak nyomtat&aacute;sa </a> - <a
+					href="../RegistrationServlet/inputForPrint"> <a href="#"
+					-			onClick="document.getElementById('commandAtsorolas').value='inputForModifyModel';document.getElementById('inputAtsorolas').submit();">Makett
+						&aacute;tsorol&aacute;sa. </a> <input
+					placeholder="Makett sorsz&aacute;ma" type="number" name="modelID"
+					onchange="document.getElementById('commandAtsorolas').value='inputForModifyModel'">
+				</a>
+			</form>
+		</td>
 	</tr>
 </table>
 <p>
