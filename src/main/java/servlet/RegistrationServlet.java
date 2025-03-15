@@ -2483,51 +2483,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void statistics(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
-		final StringBuilder buff = new StringBuilder();
-
-		ResourceBundle language = languageUtil.getLanguage(ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Language.getParameterName()));
-		String show = getShowFromSession(request);
-		if (show == null) {
-		    List<String> shows = servletDAO.getShows();
-		    String showId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ShowId.getParameterName());
-		    if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)) {
-                        shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showId)-1)));
-		    }
-		    
-                    for(String currentShow : shows)
-		    {
-		        statistics(buff, currentShow,language);
-		        buff.append("<p>");
-		    }
-		}
-		else
-		    statistics(buff, show,language);
-		
-
-		ServletUtil.writeResponse(response, buff);
-	}
-
-	private void statistics(final StringBuilder buff, String show, ResourceBundle language) throws SQLException {
-		buff.append("<table style='border-collapse: collapse' border='1'>");
-
-		boolean highlight = false;
-
-		for (final String[] stat : servletDAO.getStatistics(show,language)) {
-			if (highlight)
-				buff.append("  <tr bgcolor='eaeaea' >\n");
-			else
-				buff.append("  <tr>\n");
-			highlight = !highlight;
-
-			buff.append("<td>");
-			buff.append(stat[0]);
-			buff.append("</td><td align='center'>");
-			buff.append(stat[1]);
-			buff.append("</td></tr>");
-		}
-
-		buff.append("</table>");
+		response.sendRedirect((request.getPathInfo() != null ? "../" : "") + "jsp/statistics.jsp");
 	}
 
 	public void exceptionHistory(final HttpServletRequest request, final HttpServletResponse response)

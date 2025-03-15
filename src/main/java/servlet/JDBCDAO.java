@@ -429,7 +429,6 @@ public class JDBCDAO {
 			// aktiv kategoriak
 			final List<Category> categories = servletDAO.getCategoryList(show);
 
-			returned.add(new String[] { "<b>" + language.getString("show") + "</b>", show });
 //		  returned.add(new String[] { "Kateg&oacute;ri&aacute;k sz&aacute;ma: ", String.valueOf(categories.size()) });
 
 			returned.add(new String[] { "&nbsp", "" });
