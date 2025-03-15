@@ -9,8 +9,6 @@
 <%@include file="util.jsp"%>
 
 <%
-	highlightStart = 0xEAEAEA;
-
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ServletDAO servletDAO = servlet.getServletDAO();
 

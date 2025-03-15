@@ -7,8 +7,6 @@
 <%@include file="../util.jsp"%>
 
 <%
-  highlightStart = 0xEAEAEA;
-
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
 %>
 

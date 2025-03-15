@@ -12,7 +12,6 @@
 <%
 	int maxlength = JudgingScore.MAX_COMMENT_LENGTH;
 	String unjudgedCriteriaStyle = "background-color: lightgrey;";
-	highlightStart = 0xEAEAEA;
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
 
 	JudgingResult judgingResult = (JudgingResult) session

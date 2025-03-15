@@ -7,7 +7,6 @@
 <%@include file="../util.jsp"%>
 
 <%
-highlightStart = 0xEAEAEA;
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 List<AwardedModel> awardedModels = RegistrationServlet.servletDAO.getAwardedModels();
 %>

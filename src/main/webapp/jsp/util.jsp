@@ -1,6 +1,6 @@
 <%!
   boolean highlightFlag;
-  long highlightStart;
+  long highlightStart = 0xEAEAEA;
 
   public final String highlight()
   {
