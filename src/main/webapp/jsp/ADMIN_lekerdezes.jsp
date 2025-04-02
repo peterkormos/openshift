@@ -29,7 +29,9 @@ if (user == null || !user.isAdminUser()) {
 					benevezett makett Excelbe</strong></a></td>
 		<td><a href="../RegistrationServlet/exportCategoryExcel"><strong>&Ouml;sszes
 					kateg&oacute;ria Excelbe</strong></a></td>
-		<td><a href="../RegistrationServlet/statistics?<%= RequestParameter.Language.getParameterName()%>=HU"><strong>Statisztika
+		<td><a href="statistics.jsp?<%= RequestParameter.Language.getParameterName()%>=HU"><strong>Statisztika
+					k&eacute;sz&iacute;t&eacute;se</strong></a></td>
+		<td><a href="statistics.jsp?<%= RequestParameter.Language.getParameterName()%>=HU&shortStatistics=true"><strong>Egyszer&#369; statisztika
 					k&eacute;sz&iacute;t&eacute;se</strong></a></td>
 		<td><a href="listAllModels.jsp"> &Ouml;sszes benevezett
 				makett list&aacute;z&aacute;sa</a> - <a href="customQuery.jsp">Egyedi

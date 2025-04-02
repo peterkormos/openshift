@@ -433,7 +433,6 @@ public class JDBCDAO {
 
 //		  returned.add(new String[] { "Kateg&oacute;ri&aacute;k sz&aacute;ma: ", String.valueOf(categories.size()) });
 
-			returned.add(new String[] { "&nbsp", "" });
 			final List<User> users = servletDAO.getUsers();
 			final Map<String, HashSet<Integer>> modelersPerCountry = new HashMap<>();
 			final Map<String, HashSet<Model>> modelsPerCountrySet = new HashMap<>();
@@ -441,6 +440,7 @@ public class JDBCDAO {
 			int allModels = 0;
 
 			if(detailedStatistics) {
+				returned.add(new String[] { "&nbsp", "" });
 				returned.add(new String[] { language.getString("models.number.per.category") + ": ", "" });
 				returned.add(new String[] { "&nbsp", "" });				
 			}
