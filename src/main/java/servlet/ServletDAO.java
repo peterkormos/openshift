@@ -391,8 +391,8 @@ void deleteModels(final int categoryId) throws SQLException {
 		return jdbcDAO.loadImage(modelID);
 	}
 
-	public List<String[]> getStatistics(String show, ResourceBundle language) throws SQLException {
-		return jdbcDAO.getStatistics(show, language);
+	public List<String[]> getStatistics(String show, ResourceBundle language, boolean detailedStatistics) throws SQLException {
+		return jdbcDAO.getStatistics(show, language, detailedStatistics);
 	}
 
 	public List<User> getUsersWithModel() {

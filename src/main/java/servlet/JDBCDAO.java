@@ -416,11 +416,13 @@ public class JDBCDAO {
 		return photos;
 	}
 
-	public List<String[]> getStatistics(final String show, ResourceBundle language) throws SQLException {
+	public List<String[]> getStatistics(final String show, ResourceBundle language, boolean detailedStatistics) throws SQLException {
 		final List<String[]> returned = new LinkedList<String[]>();
 		final List<String[]> tablespaceStatas = new LinkedList<String[]>();
-		tablespaceStatas.add(new String[] { "&nbsp", "" });
-		tablespaceStatas.add(new String[] { "Versenymunk&aacute;k helyig&eacute;nye (cm<sup>2</sup>):", "" });
+		if (detailedStatistics) {
+			tablespaceStatas.add(new String[] { "&nbsp", "" });
+			tablespaceStatas.add(new String[] { "Versenymunk&aacute;k helyig&eacute;nye (cm<sup>2</sup>):", "" });
+		}
 
 		final PreparedStatement queryStatement = null;
 		final ResultSet rs = null;
@@ -438,8 +440,10 @@ public class JDBCDAO {
 
 			int allModels = 0;
 
-			returned.add(new String[] { language.getString("models.number.per.category") + ": ", "" });
-			returned.add(new String[] { "&nbsp", "" });
+			if(detailedStatistics) {
+				returned.add(new String[] { language.getString("models.number.per.category") + ": ", "" });
+				returned.add(new String[] { "&nbsp", "" });				
+			}
 
 			for (final Category category : categories) {
 				if (!category.group.show.equals(show)) {
@@ -448,9 +452,11 @@ public class JDBCDAO {
 
 				final List<Model> models = servletDAO.getModelsInCategory(category.getId());
 
-				returned.add(
+				if(detailedStatistics) {
+					returned.add(
 						new String[] { "<b>" + category.categoryCode + "</b> - " + category.categoryDescription,
 								String.valueOf(models.size()) });
+				}
 
 				// benevezett makettek szama
 				allModels += models.size();
@@ -476,7 +482,9 @@ public class JDBCDAO {
 					}
 				}
 
-				createCustomStats(models, category, tablespaceStatas);
+				if(detailedStatistics) {
+					createCustomStats(models, category, tablespaceStatas);
+				}
 			}
 
 			returned.add(new String[] { "&nbsp", "" });
@@ -511,7 +519,9 @@ public class JDBCDAO {
 			}
 
 			// helyfoglalás
-			returned.addAll(tablespaceStatas);
+			if(detailedStatistics) {
+				returned.addAll(tablespaceStatas);
+			}
 		} finally {
 			try {
 				if (rs != null) {

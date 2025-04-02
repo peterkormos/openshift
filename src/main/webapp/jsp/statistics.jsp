@@ -18,6 +18,8 @@ ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 
 ResourceBundle language = languageUtil
 		.getLanguage(ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Language.getParameterName()));
+boolean shortStatistics = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, "shortStatistics"));
+
 String show = RegistrationServlet.getShowFromSession(request);
 List<String> shows = show == null ? servletDAO.getShows() : Arrays.asList(new String[] { show });
 String showId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ShowId.getParameterName());
@@ -44,7 +46,7 @@ if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)) {
 				<br> <%=currentShow%></th>
 		</tr>
 		<%
-		for (final String[] stat : servletDAO.getStatistics(currentShow, language)) {
+		for (final String[] stat : servletDAO.getStatistics(currentShow, language, !shortStatistics)) {
 		%>
 		<tr bgcolor="<%=highlight()%>">
 			<td><%=stat[0]%></td>
