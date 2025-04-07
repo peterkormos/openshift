@@ -28,6 +28,8 @@
 	boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
 	boolean forJudges = Boolean.parseBoolean(
 			ServletUtil.getRequestAttribute(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
+
+	boolean firstModel = Boolean.parseBoolean(request.getParameter("firstModel"));
 %>
 
 <table style="border: 1px solid black">
@@ -39,7 +41,9 @@
 			<div class="tooltip">
 				<a
 					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
-					<img src="../icons/add.png" height="30" align="center" /> <span
+					<img src="../icons/add.png" height="30" align="center" 
+											<%= firstModel ? "class='pulseBtn'" : ""%>
+					/> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 				</a>
 			</div>
@@ -47,7 +51,9 @@
 			<div class="tooltip">
 				<a
 					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
-					<img src="../icons/delete2.png" height="30" align="center" /> <span
+					<img src="../icons/delete2.png" height="30" align="center" 
+											<%= firstModel ? "class='pulseBtn'" : ""%>
+					/> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
 			</div> <%

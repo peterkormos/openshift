@@ -25,6 +25,11 @@ String show = RegistrationServlet.getShowFromSession(session);
 if (show == null) {
 	show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 }
+
+	List<Model> models = servletDAO.getModels(user.getId());
+	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
+			RegistrationServlet.SessionAttribute.Categories.name());
+	models = RegistrationServlet.getModelsForShow(show, models, categories);
 %>
 <html>
 <head>
@@ -86,6 +91,8 @@ function checkDeleteUserRequest()
 				<td style="width: 40px; vertical-align: top;">
 					<div class="tooltip">
 						<a href="../RegistrationServlet/inputForAddModel"> <img
+						<%= models.isEmpty() ? "class='pulseBtn'" : ""%>
+						
 							src="../icons/add.png" height="30" align="center" /> <span
 							class="tooltiptext"> <%=language.getString("add")%></span>
 						</a>

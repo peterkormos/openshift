@@ -5,23 +5,26 @@
 <%@page import="util.*"%>
 
 <%
-	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	ServletDAO servletDAO = servlet.getServletDAO();
+RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+ServletDAO servletDAO = servlet.getServletDAO();
 
-	User user = servlet.getUser(request);
-	String show = RegistrationServlet.getShowFromSession(session);
-	List<Model> models = servletDAO.getModels(user.getId());
-	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
-			RegistrationServlet.SessionAttribute.Categories.name());
+User user = servlet.getUser(request);
+String show = RegistrationServlet.getShowFromSession(session);
+List<Model> models = servletDAO.getModels(user.getId());
+Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
+		RegistrationServlet.SessionAttribute.Categories.name());
 
-	models = RegistrationServlet.getModelsForShow(show, models, categories);
-	
-	for(Model model : models) {
-		session.setAttribute(RegistrationServlet.SessionAttribute.Model.name(), model);
+models = RegistrationServlet.getModelsForShow(show, models, categories);
+
+for (Model model : models) {
+	session.setAttribute(RegistrationServlet.SessionAttribute.Model.name(), model);
 %>
-<jsp:include page="printModelForm.jsp" />
+<jsp:include page="printModelForm.jsp">
+	<jsp:param name="firstModel" value="<%=models.size() == 1%>" />
+</jsp:include>
 <p>
 	<%
-		session.removeAttribute(RegistrationServlet.SessionAttribute.Model.name());
-		};
+	session.removeAttribute(RegistrationServlet.SessionAttribute.Model.name());
+	}
+	;
 	%>

@@ -221,3 +221,23 @@ tr.strikeout td:before {                     /* Create a new element that       
   left: 0; top: 50%; width: 100%;            /* �with the top across the middle */
   border-bottom: 1px solid #000;             /* �and with a border on the top   */
 }
+
+.pulseBtn {
+-moz-animation: pulse 2s infinite;
+-webkit-animation: pulse 2s infinite;
+animation-name: pulse;
+animation-duration: 2s;
+animation-iteration-count: 3;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(88, 120, 243, 1);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(88, 120, 243, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 50px rgba(88, 120, 243, 0);
+    }
+}
