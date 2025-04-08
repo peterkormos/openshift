@@ -20,7 +20,7 @@
 <input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>" placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
 <%= mandatory ?  "required='required'" : "" %>
 onchange="updateMandatoryFieldMark(this);"
-size="40">
+size="60">
 
 <datalist id="modelproducer">
     <option></option>
