@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.03.06.";
+	public String VERSION = "2025.04.11.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1088,10 +1088,10 @@ public class RegistrationServlet extends HttpServlet {
 
 		if(!isOnSiteUse())
 			sendEmailWithModels(user, true);
-
-		ServletUtil.writeResponse(response, getEmailWasSentResponse(language, request));
+		
+		redirectToMainPage(request, response);
 	}
-
+	
 	private StringBuilder getEmailWasSentResponse(final ResourceBundle language, HttpServletRequest request) {
 		final StringBuilder buff = new StringBuilder();
 		buff.append("<html><body>");
@@ -1126,21 +1126,11 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
-		final ResourceBundle language = languageUtil.getLanguage(user.language);
-
 		servletDAO.deleteUser(user.getId());
-
-		final StringBuilder buff = new StringBuilder();
-		buff.append("<html><body>");
-
-		buff.append("<a href='" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
-
-		ServletUtil.writeResponse(response, buff);
-
+		response.sendRedirect(getStartPage(request));
 	}
 
-	private void sendEmailWithModels(final User user, final boolean insertUserDetails)
-			throws SQLException, MessagingException, MissingServletConfigException, IOException {
+	private void sendEmailWithModels(final User user, final boolean insertUserDetails) {
 		final StringBuilder message = new StringBuilder();
 		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
@@ -1211,14 +1201,17 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	private void sendEmail(final String to, final String subject, final StringBuilder message)
-			throws MessagingException, MissingServletConfigException, IOException {
+	private void sendEmail(final String to, final String subject, final StringBuilder message) {
 		if (to.trim().length() == 0 || to.equals("-") || to.indexOf("@") == -1) {
 			return;
 		}
 		if (!isOnSiteUse())
-		    emailUtil.sendEmail(getServerConfigParamter("email.from"),
-					to, subject, message.toString());
+			try {
+				emailUtil.sendEmail(getServerConfigParamter("email.from"),
+						to, subject, message.toString());
+			} catch (Exception e) {
+				logger.error("", e);
+			}
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

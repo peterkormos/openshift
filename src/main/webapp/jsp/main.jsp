@@ -41,23 +41,6 @@ if (show == null) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="base.css" rel="stylesheet" type="text/css">
-
-<script type="text/javascript">
-// <!--
-
-function checkDeleteUserRequest()
-{
-	confirmed = confirm('<%=language.getString("delete.confirm")%>
-	');
-
-		if (confirmed) {
-			document.getElementById('command').value = 'deleteUser';
-			document.getElementById('input').submit();
-		}
-	}
-//-->
-</script>
-
 </head>
 <body>
 
@@ -88,13 +71,14 @@ function checkDeleteUserRequest()
 				<%
 				if (servlet.isRegistrationAllowed(show)) {
 				%>
-				<td style="width: 40px; vertical-align: top;">
+				<td style="white-space: nowrap; vertical-align: top;">
 					<div class="tooltip">
-						<a href="../RegistrationServlet/inputForAddModel"> <img
+						<a href="../RegistrationServlet/inputForAddModel"
 						<%= models.isEmpty() ? "class='pulseBtn'" : ""%>
-						
+						> <img
 							src="../icons/add.png" height="30" align="center" /> <span
 							class="tooltiptext"> <%=language.getString("add")%></span>
+							 <%=language.getString("add")%>
 						</a>
 					</div>
 				</td>
@@ -102,11 +86,12 @@ function checkDeleteUserRequest()
 				}
 				%>
 
-				<td style="width: 40px; vertical-align: top;">
+				<td style="white-space: nowrap; vertical-align: top;">
 					<div class="tooltip">
 						<a href="../RegistrationServlet/sendEmail"> <img
 							src="../icons/email.png" height="30" align="center" /> <span
 							class="tooltiptext"> <%=language.getString("send.email")%></span>
+							 <%=language.getString("send.email")%>
 						</a>
 					</div>
 				</td>

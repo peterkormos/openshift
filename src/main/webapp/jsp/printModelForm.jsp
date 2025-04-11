@@ -40,21 +40,23 @@
 			%>
 			<div class="tooltip">
 				<a
+											<%= firstModel ? "class='pulseBtn'" : ""%>
 					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
 					<img src="../icons/add.png" height="30" align="center" 
-											<%= firstModel ? "class='pulseBtn'" : ""%>
 					/> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
+					 <%=language.getString("modify")%>
 				</a>
 			</div>
 
 			<div class="tooltip">
 				<a
+											<%= firstModel ? "class='pulseBtn'" : ""%>
 					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
 					<img src="../icons/delete2.png" height="30" align="center" 
-											<%= firstModel ? "class='pulseBtn'" : ""%>
 					/> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
+					 <%=language.getString("delete")%>
 				</a>
 			</div> <%
  	}

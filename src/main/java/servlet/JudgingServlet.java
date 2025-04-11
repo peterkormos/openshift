@@ -365,7 +365,7 @@ public final class JudgingServlet extends HttpServlet {
 				.map(judgingCategory -> {
 					try {
 						return servletDAO.getCategory(judgingCategory.getCategoryId()).getCategoryCode();
-					} catch (SQLException e) {
+					} catch (Exception e) {
 						return e.getMessage();
 					}
 				}).collect(Collectors.toList());

@@ -38,8 +38,6 @@ session.setAttribute(CommonSessionAttribute.Language.name(), language);
 <script type="text/javascript" src="findUser.js"></script>
 <script type="text/javascript" src="util.js"></script>
 <script type="text/javascript">
-// <!--
-
 function checkDeleteUserRequest()
 {
 	confirmed = confirm('<%=language.getString("delete.confirm")%>'); 
@@ -57,7 +55,7 @@ function checkDeleteUserRequest()
 	
 	        if (password1 == '' || password2 == '' || password1 != password2)
 	        {  
-				document.getElementById('noticeDiv').innerHTlanguage.getString("passwords.not.same")t.same") %>';
+	        	document.getElementById('noticeDiv').innerHTML = '<%= language.getString("passwords.not.same") %>';
 				document.getElementById('noticeDiv').className ="flash ERROR";
 				return false; 
 	        } 
@@ -72,7 +70,7 @@ function checkDeleteUserRequest()
 	
 	        if (email1 == '' || email2 == '' || email1 != email2)
 	        {  
-				document.getElementById('noticeDiv').innerHTlanguage.getString("emails.not.same")t.same") %>';
+	        	document.getElementById('noticeDiv').innerHTML = '<%= language.getString("emails.not.same") %>';
 				document.getElementById('noticeDiv').className ="flash ERROR";
 				return false; 
 	        } 
@@ -84,13 +82,12 @@ function checkDeleteUserRequest()
 
 	    function checkName(form) {
 			if(form.fullname.value.split(' ').length == 1) {
-				document.getElementById('noticeDiv').innerHTlanguage.getString("name.too.short").short") %>
-	';
-			document.getElementById('noticeDiv').className = "flash ERROR";
-			return false;
-		} else {
-			return checkOK();
-		}
+				document.getElementById('noticeDiv').innerHTML = '<%= language.getString("name.too.short") %>';
+				document.getElementById('noticeDiv').className = "flash ERROR";
+				return false;
+			} else {
+				return checkOK();
+			}
 	}
 
 	function checkOK() {
@@ -98,15 +95,13 @@ function checkDeleteUserRequest()
 		document.getElementById('noticeDiv').className = "";
 		return true;
 	}
-//-->
 </script>
+<link rel="stylesheet" href="base.css" media="screen" type="text/css"/>
 </head>
 
-<link rel="stylesheet" href="base.css" media="screen" />
 
 <body>
 
-	<link href="css/base.css" rel="stylesheet" type="text/css" />
 	<div class="header"></div>
 
 	<form autocomplete="fuckoffchrome" name="input" id="input"
@@ -114,7 +109,9 @@ function checkDeleteUserRequest()
 		accept-charset="UTF-8"
 		onSubmit="return checkEmail(this) && checkPassword(this) && checkName(this)">
 		<input type="hidden" id="command" name="command" value="">
-  <p><font color="#FF0000" size="+3">&#8226;</font> <%= language.getString("mandatory.fields") %></p>
+		<p>
+			<font color="#FF0000" size="+3">&#8226;</font>
+			<%=language.getString("mandatory.fields")%></p>
 		<table width="47%" border="0">
 
 			<%

@@ -220,7 +220,7 @@ private JDBCDAO jdbcDAO;
 		return getModels("userID = " + userID + " and categoryID = " + categoryID).size();
 	}
 
-  public List<Model> getModels(final int userID) throws SQLException
+  public List<Model> getModels(final int userID)
   {
 	return userID == INVALID_USERID ? getAll(Model.class) : getModels("userID = " + userID);
   }
@@ -240,7 +240,7 @@ private JDBCDAO jdbcDAO;
 	return get(modelID, Model.class);
   }
 
-  public Category getCategory(final int categoryID) throws SQLException
+  public Category getCategory(final int categoryID)
   {
 	return get(Category.class, " r.id = " + categoryID);
   }
