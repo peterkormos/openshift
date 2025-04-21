@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.04.11.";
+	public String VERSION = "2025.04.18.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -285,6 +285,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			final long startTime = System.currentTimeMillis();
+//			debugRequest(request);
 
 			if (request.getCharacterEncoding() == null) {
 				request.setCharacterEncoding("UTF-8");
@@ -352,6 +353,16 @@ public class RegistrationServlet extends HttpServlet {
 
 			writeErrorResponse(response, "Error: <b>" + message + "</b>");
 		}
+	}
+
+	private void debugRequest(HttpServletRequest request) {
+		System.out.println("ContextPath: " + request.getContextPath());
+		System.out.println("PathInfo: " + request.getPathInfo());
+		System.out.println("RemoteAddr: " + request.getRemoteAddr());
+		System.out.println("RemoteHost: " + request.getRemoteHost());
+		System.out.println("RequestURI: " + request.getRequestURI());
+		System.out.println("ServletPath: " + request.getServletPath());
+		System.out.println("RequestURL: " + request.getRequestURL());
 	}
 
 	private LanguageUtil languageUtil = new LanguageUtil();
@@ -986,9 +997,9 @@ public class RegistrationServlet extends HttpServlet {
 
 		final List<CategoryGroup> categoryGroups = data.get(1);
 
-		deleteModelsForShow(getShowFromSession(request));
-		
 		if (!categoryGroups.isEmpty()) {
+			deleteModelsForShow(getShowFromSession(request));
+			
 			final List<Model> models = data.get(3);
 			if(!models.isEmpty()) {
 				buff.append("<p>Storing Models");
@@ -1149,7 +1160,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		List<EmailParameter> modelerParameters = new LinkedList<EmailParameter>( Arrays.asList(//
-				EmailParameter.create(language.getString("userID"), String.valueOf(user.getId())), //
+				EmailParameter.create(language.getString("userID"), "<br><span style='font-size:22pt'>"+user.getId()+"</span>"), //
 				EmailParameter.create(language.getString("name"), user.lastName), //
 				EmailParameter.create(language.getString("year.of.birth"), String.valueOf(user.yearOfBirth)), //
 				EmailParameter.create(language.getString("city"), user.city), //
