@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.04.18.";
+	public String VERSION = "2025.04.21.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1719,7 +1719,7 @@ public class RegistrationServlet extends HttpServlet {
 		return languageUtil.getLanguage(getUser(request).language);
 	}
 
-	public void addModel(final HttpServletRequest request, final HttpServletResponse response)
+	public synchronized void addModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws SQLException, IOException, MessagingException, MissingServletConfigException,
 			UserNotLoggedInException, NumberFormatException, MissingRequestParameterException {
 		final User user = getUser(request);
