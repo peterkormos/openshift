@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.04.21.";
+	public String VERSION = "2025.04.22.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -529,14 +529,21 @@ public class RegistrationServlet extends HttpServlet {
 		
 		saveLoginConsentData(request, user);
 		
-		initHttpSession(request, user, show);
+		HttpSession session = initHttpSession(request, user, show);
 		
 		EnumMap<SystemParameter, String> enumMap = systemParameters.get(show);
 		if(enumMap == null) {
 			systemParameters.put(show, new EnumMap(SystemParameter.class));
 		}
 
-		redirectToMainPage(request, response);
+		List<Model> models = servletDAO.getModels(user.getId());
+		session.setAttribute(SessionAttribute.Models.name(), models);
+        if(models.isEmpty()) {
+        	inputForAddModel(request, response);		
+        }
+        else {
+        	redirectToMainPage(request, response);
+        }
 	}
 
     private void saveLoginConsentData(HttpServletRequest request, User user) {
@@ -550,7 +557,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
     }
 
-    private void initHttpSession(final HttpServletRequest request, final User user, String show) throws SQLException {
+    private HttpSession initHttpSession(final HttpServletRequest request, final User user, String show) throws SQLException {
         final HttpSession session = request.getSession(true);
         session.setAttribute(CommonSessionAttribute.UserID.name(), user);
         ResourceBundle language = languageUtil.getLanguage(user.language);
@@ -574,11 +581,15 @@ public class RegistrationServlet extends HttpServlet {
         if(user.getFullName().split(" ").length == 1) {
         	setNoticeInSession(session, new MainPageNotice(MainPageNotice.NoticeType.Error, "<a href='user.jsp?action=modifyUser'>(" + user.getFullName() + ") " + language.getString("name.too.short") + "</a>"));
         }
+        
+        return session;
     }
 
     private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
     	boolean goToParentDir = request.getPathInfo() != null;
-        response.sendRedirect((goToParentDir ? "../" : "") + getMainPageFile(request));
+        String redirectUrl = (goToParentDir ? "../" : "") + getMainPageFile(request);
+        System.out.println("redirectUrl: " + redirectUrl);
+		response.sendRedirect(redirectUrl);
     }
     
 	private String getMainPageFile(final HttpServletRequest request) {
@@ -591,7 +602,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		
 		if (mainPageFile == null) {
-			return  request.getRequestURI();
+			return request.getRequestURI();
 		}
 		
 		return "jsp/" + mainPageFile;
@@ -1100,7 +1111,7 @@ public class RegistrationServlet extends HttpServlet {
 		if(!isOnSiteUse())
 			sendEmailWithModels(user, true);
 		
-		redirectToMainPage(request, response);
+		inputForAddModel(request, response);
 	}
 	
 	private StringBuilder getEmailWasSentResponse(final ResourceBundle language, HttpServletRequest request) {
@@ -1684,8 +1695,8 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response)
-			throws Exception {
+	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response) throws IOException
+			{
 	    
 		if (isRegistrationAllowed(getShowFromSession(request))) {
 			getModelForm(request, response, Command.addModel.name(), "save.and.add.new.model", null);
@@ -2724,7 +2735,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void getModelForm(final HttpServletRequest request, final HttpServletResponse response, final String action,
-			final String submitLabel, final Model model) throws Exception {
+			final String submitLabel, final Model model) throws IOException  {
 		final HttpSession session = request.getSession(true);
 
 		session.setAttribute(SessionAttribute.Action.name(), action);

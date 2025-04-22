@@ -89,8 +89,40 @@ if(!servlet.isOnSiteUse())
 
 	<form
 		action="<%=(String) session.getAttribute(RegistrationServlet.SessionAttribute.MainPageFile.name())%>">
-		<input class="main" type='submit'
-			value='<%=language.getString("proceed.to.main")%>'>
+		<table style="border: 0px; box-shadow: none; width: 100%">
+			<tr>
+				<td>
+					<input class="main" type='submit' value='<%=language.getString("proceed.to.main")%>'>
+				</td>
+				<td style="width: 100%; white-space: nowrap">
+					<FONT
+						COLOR='#ff0000'> <b> <%=servlet.getSystemMessage()%>
+						</b>
+					</FONT>
+				</td>
+
+				<td style="width: 100%; white-space: nowrap"></td>
+
+				<td style="width: 40px; text-align: right; vertical-align: top;">
+					<div class="tooltip">
+						<a href="../RegistrationServlet/logout"> <img
+							src="../icons/exit.png" height="30" align="center" /> <span
+							class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
+						</a>
+					</div>
+				</td>
+
+				<td style="width: 40px; text-align: right; vertical-align: top;">
+					<div class="tooltip">
+						<a href="#"
+							onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
+							<img src="../icons/modify2.png" height="30" align="center" /><span
+							class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
+						</a>
+					</div>
+				</td>
+			</tr>
+		</table>		
 	</form>
 
 	<jsp:include page="ADMIN_helyi.jsp" />
@@ -99,7 +131,7 @@ if(!servlet.isOnSiteUse())
 		method='POST' accept-charset="UTF-8"
 		onkeypress="return event.keyCode != 13;"
 		onsubmit="return checkMandatory(this);">
-		<input type='hidden' name='command' value='<%=action%>'>
+		<input type='hidden' name='command' id='command' value='<%=action%>'>
 
 		<!-- modelID for modify...-->
 		<%
@@ -348,6 +380,8 @@ String modelidentification = model == null ? "" : model.identification;
 		</table>
 
 	</form>
+	<hr>
+	<jsp:include page="listMyModels.jsp" />
 </body>
 </html>
 
