@@ -538,7 +538,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		List<Model> models = servletDAO.getModels(user.getId());
 		session.setAttribute(SessionAttribute.Models.name(), models);
-        if(models.isEmpty()) {
+        if(models.isEmpty() && !user.isAdminUser()) {
         	inputForAddModel(request, response);		
         }
         else {
