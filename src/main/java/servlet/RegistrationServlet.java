@@ -588,7 +588,6 @@ public class RegistrationServlet extends HttpServlet {
     private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
     	boolean goToParentDir = request.getPathInfo() != null;
         String redirectUrl = (goToParentDir ? "../" : "") + getMainPageFile(request);
-        System.out.println("redirectUrl: " + redirectUrl);
 		response.sendRedirect(redirectUrl);
     }
     
