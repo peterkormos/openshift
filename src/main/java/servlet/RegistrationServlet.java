@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.04.22.";
+	public String VERSION = "2025.04.23.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1967,7 +1967,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void inputForLoginUser(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final String language = getLanguage(request);
-		request.getSession(true).setAttribute(SessionAttribute.Show.name(), servletDAO.getShows().get(0));
+		request.getSession(true).setAttribute(SessionAttribute.Show.name(), getShowFromSession(request));
 		
 		selectUser(request, response, "directLogin", languageUtil.getLanguage(language).getString("login"), language);
 	}
