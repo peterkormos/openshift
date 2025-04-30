@@ -36,7 +36,7 @@ private JDBCDAO jdbcDAO;
 
   public enum SystemParameter
   {
-	REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory, PrintLanguage;
+	REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory, PrintLanguage, MaxModelsPerPage;
 
 	private boolean booleanValue;
 	

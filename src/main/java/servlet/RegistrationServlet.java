@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -44,7 +45,6 @@ import java.util.zip.GZIPOutputStream;
 import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
@@ -824,6 +824,23 @@ public class RegistrationServlet extends HttpServlet {
 						StringEscapeUtils.unescapeHtml4(language.getString("category.description"))),
 				modelsForExcel);
 
+		u.writeTo(response.getOutputStream());
+	}
+	
+	public void exportStatistics(final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		final String show = getShowFromSession(request);
+		ResourceBundle language = getLanguageFromRequest(request);
+		Workbook u = ExcelUtil.generateExcelTableWithHeaders("statistics",
+				Arrays.asList("A", "B"),
+				servletDAO.getStatistics(show, language, true /*detailedStatisticsSiteUse*/).stream()
+				.map(pair -> {
+					return Arrays.asList((Object)StringEscapeUtils.unescapeHtml3(pair[0]).replaceAll("<[^>]*>", ""), (Object)pair[1]);
+				}).collect(Collectors.toList())
+				
+				);
+
+		response.setContentType("application/vnd.ms-excel");
 		u.writeTo(response.getOutputStream());
 	}
 
@@ -2281,7 +2298,8 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = servletDAO.getUser(userID);
 		int modelsRemainingToPrint = models.size();
 		int fee = calculateEntryFee(models);
-		int modelsOnPage = 3;
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.MaxModelsPerPage.name());
+		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
 		while (!models.isEmpty()) {
 			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
 			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
