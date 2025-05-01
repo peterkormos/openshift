@@ -420,7 +420,7 @@ public class JDBCDAO {
 		final List<String[]> returned = new LinkedList<String[]>();
 		final List<String[]> tablespaceStatas = new LinkedList<String[]>();
 		if (detailedStatistics) {
-			tablespaceStatas.add(new String[] { "&nbsp", "" });
+			tablespaceStatas.add(new String[] { "&nbsp;", "" });
 			tablespaceStatas.add(new String[] { "Versenymunk&aacute;k helyig&eacute;nye (cm<sup>2</sup>):", "" });
 		}
 
@@ -440,9 +440,9 @@ public class JDBCDAO {
 			int allModels = 0;
 
 			if(detailedStatistics) {
-				returned.add(new String[] { "&nbsp", "" });
+				returned.add(new String[] { "&nbsp;", "" });
 				returned.add(new String[] { language.getString("models.number.per.category") + ": ", "" });
-				returned.add(new String[] { "&nbsp", "" });				
+				returned.add(new String[] { "&nbsp;", "" });				
 			}
 
 			for (final Category category : categories) {
@@ -487,13 +487,13 @@ public class JDBCDAO {
 				}
 			}
 
-			returned.add(new String[] { "&nbsp", "" });
+			returned.add(new String[] { "&nbsp;", "" });
 
 			// benevezett makettek szama
 			returned.add(new String[] { language.getString("models.number") + ": ", String.valueOf(allModels) });
 //		  returned.add(new String[] { "Felt&ouml;lt&ouml;tt k&eacute;pek sz&aacute;ma: ", simpleQuery("count(*)", "MAK_PICTURES") });
 
-			returned.add(new String[] { "&nbsp", "" });
+			returned.add(new String[] { "&nbsp;", "" });
 
 			// ossz regisztralt felhasznalo
 			int modelers = 0;
@@ -510,7 +510,7 @@ public class JDBCDAO {
 						String.valueOf(modelersPerCountry.get(country).size()) });
 			}
 
-			returned.add(new String[] { "&nbsp", "" });
+			returned.add(new String[] { "&nbsp;", "" });
 
 			// nevezett makettek száma országonként
 			for (final String country : modelsPerCountrySet.keySet().stream().sorted().collect(Collectors.toList())) {

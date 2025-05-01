@@ -31,6 +31,8 @@ if (user == null || !user.isAdminUser()) {
 					kateg&oacute;ria Excelbe</strong></a></td>
 		<td><a href="statistics.jsp?<%= RequestParameter.Language.getParameterName()%>=HU"><strong>Statisztika
 					k&eacute;sz&iacute;t&eacute;se</strong></a></td>
+		<td><a href="../RegistrationServlet/exportStatistics?<%= RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
+					Statisztika Excelbe</strong></a></td>
 		<td><a href="statistics.jsp?<%= RequestParameter.Language.getParameterName()%>=HU&shortStatistics=true"><strong>Egyszer&#369; statisztika
 					k&eacute;sz&iacute;t&eacute;se</strong></a></td>
 		<td><a href="listAllModels.jsp"> &Ouml;sszes benevezett

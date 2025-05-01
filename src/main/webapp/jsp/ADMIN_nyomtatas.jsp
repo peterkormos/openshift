@@ -28,9 +28,17 @@ if (show == null) {
 				<%
 					}
 					%>
+
 				<a
 					href="../RegistrationServlet/printAllModels?printPreRegisteredModels=true">
-					Nevez&eacute;si lapok nyomtat&aacute;sa (El&ouml;nevezettek) </a>
+					- <a href="#"
+					onClick="document.getElementById('paramName6').value='<%=ServletDAO.SystemParameter.MaxModelsPerPage.name()%>';document.getElementById('command6').value='printAllModels';document.getElementById('input6').submit();">
+						Nevez&eacute;si lapok nyomtat&aacute;sa (El&ouml;nevezettek) </a> Max.
+					makettek oldalank&eacute;nt: <input
+					onClick="document.getElementById('paramName6').value='<%=ServletDAO.SystemParameter.MaxModelsPerPage.name()%>';document.getElementById('paramValue6').value=this.value;document.getElementById('command6').value='printAllModels';"
+					type="number" id="paramValue"
+					name="<%=ServletDAO.SystemParameter.MaxModelsPerPage.name()%>"
+					size="2" value="3">
 			</form> <!--
 -
 <a

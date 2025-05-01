@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -44,7 +45,6 @@ import java.util.zip.GZIPOutputStream;
 import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
@@ -108,19 +108,18 @@ public class RegistrationServlet extends HttpServlet {
 	private static RegistrationServlet instance;
 
 	private Properties servletConfig = new Properties();
-	
-	private EmailUtil emailUtil;
-	
-    public static JudgingServletDAO judgingServletDAO;
 
+	private EmailUtil emailUtil;
+
+	public static JudgingServletDAO judgingServletDAO;
 
 	public static enum SessionAttribute {
-	    Notices, Action, SubmitLabel, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId, Model, Categories
+		Notices, Action, SubmitLabel, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId, Model, Categories
 	}
-	
+
 	public static enum RequestParameter {
 		ShowId, Language("language");
-		
+
 		private RequestParameter() {
 			parameterName = name();
 		}
@@ -128,22 +127,22 @@ public class RegistrationServlet extends HttpServlet {
 		private RequestParameter(final String parameterName) {
 			this.parameterName = parameterName;
 		}
-		
+
 		private String parameterName;
-		
+
 		public String getParameterName() {
 			return parameterName;
 		}
 	}
 
 	public static enum Command {
-	    LOADIMAGE, addModel, modifyModel
+		LOADIMAGE, addModel, modifyModel
 	};
-	
+
 	public static enum PrintLanguages {
 		Hu, En
 	};
-	
+
 	public RegistrationServlet() throws Exception {
 		instance = this;
 	}
@@ -162,13 +161,13 @@ public class RegistrationServlet extends HttpServlet {
 			DriverManager.registerDriver((Driver) Class.forName(getServerConfigParamter("db.driver")).newInstance());
 
 			if (servletDAO == null) {
-				servletDAO = new ServletDAO(getServerConfigParamter("db.url"),
-						getServerConfigParamter("db.username"), getServerConfigParamter("db.password"),
-						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml")
-						);
-	            judgingServletDAO = new JudgingServletDAO(config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
+				servletDAO = new ServletDAO(getServerConfigParamter("db.url"), getServerConfigParamter("db.username"),
+						getServerConfigParamter("db.password"),
+						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
+				judgingServletDAO = new JudgingServletDAO(
+						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
 			}
-			
+
 			emailUtil = new EmailUtil();
 
 			printCardBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/printCard.html"));
@@ -182,27 +181,26 @@ public class RegistrationServlet extends HttpServlet {
 					config.getServletContext().getResourceAsStream("/WEB-INF/conf/presentation.html"));
 
 			try {
-                new InitDB();
-            } catch (Exception e) {
-            }
-            try {
-				for(String show : servletDAO.getShows()) {
+				new InitDB();
+			} catch (Exception e) {
+			}
+			try {
+				for (String show : servletDAO.getShows()) {
 					EnumMap<SystemParameter, String> enumMap = new EnumMap<>(SystemParameter.class);
 					systemParameters.put(show, enumMap);
-					enumMap.put(ServletDAO.SystemParameter.REGISTRATION,
-					String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SystemParameter.REGISTRATION)));
+					enumMap.put(ServletDAO.SystemParameter.REGISTRATION, String
+							.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SystemParameter.REGISTRATION)));
 					enumMap.put(ServletDAO.SystemParameter.ONSITEUSE,
 							String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SystemParameter.ONSITEUSE)));
-					enumMap.put(ServletDAO.SystemParameter.MaxModelsPerCategory,
-							String.valueOf(servletDAO.getSystemParameter(ServletDAO.SystemParameter.MaxModelsPerCategory)));
-					enumMap.put(ServletDAO.SystemParameter.PrintLanguage,
-							servletDAO.getSystemParameterWithDefault(ServletDAO.SystemParameter.PrintLanguage, PrintLanguages.Hu.name()));
+					enumMap.put(ServletDAO.SystemParameter.MaxModelsPerCategory, String
+							.valueOf(servletDAO.getSystemParameter(ServletDAO.SystemParameter.MaxModelsPerCategory)));
+					enumMap.put(ServletDAO.SystemParameter.PrintLanguage, servletDAO.getSystemParameterWithDefault(
+							ServletDAO.SystemParameter.PrintLanguage, PrintLanguages.Hu.name()));
 					updateSystemSettings(show);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		            
 
 			System.out.println("OK.....");
 		} catch (final Exception e) {
@@ -326,29 +324,25 @@ public class RegistrationServlet extends HttpServlet {
 			addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
 			String message = throwable.getMessage();
-			
-			if(EmailNotFoundException.class.isInstance(throwable))
-			{
-			    EmailNotFoundException emailNotFoundException = EmailNotFoundException.class.cast(throwable);
-                            message = emailNotFoundException.getMessage();
-                            
-                            try {
-                                final ResourceBundle language = getLanguageFromRequest(request);
-                                
-                                message = String.format(language.getString("email.not.found"), emailNotFoundException.getEmail());
-                                
-                                writeErrorResponse(response, message);
-                                return;
-                                
-                            } catch (MissingRequestParameterException e1) {
-                            }
-			}
-			else if(UserNotLoggedInException.class.isInstance(throwable))
-			{
+
+			if (EmailNotFoundException.class.isInstance(throwable)) {
+				EmailNotFoundException emailNotFoundException = EmailNotFoundException.class.cast(throwable);
+				message = emailNotFoundException.getMessage();
+
+				try {
+					final ResourceBundle language = getLanguageFromRequest(request);
+
+					message = String.format(language.getString("email.not.found"), emailNotFoundException.getEmail());
+
+					writeErrorResponse(response, message);
+					return;
+
+				} catch (MissingRequestParameterException e1) {
+				}
+			} else if (UserNotLoggedInException.class.isInstance(throwable)) {
 				redirectToMainPage(request, response);
 				return;
-			}
-			else
+			} else
 				checkHTTP(request);
 
 			writeErrorResponse(response, "Error: <b>" + message + "</b>");
@@ -367,7 +361,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private LanguageUtil languageUtil = new LanguageUtil();
 
-    private String processRestful(HttpServletRequest request, HttpServletResponse response, String pathInfo)
+	private String processRestful(HttpServletRequest request, HttpServletResponse response, String pathInfo)
 			throws Exception {
 		if (pathInfo.indexOf('/') > -1) {
 			final String[] splitText = pathInfo.split("/");
@@ -380,22 +374,19 @@ public class RegistrationServlet extends HttpServlet {
 					final int modelId = Integer.parseInt(params.substring(params.indexOf("=") + 1));
 					loadImage(modelId, response.getOutputStream());
 				} catch (final NumberFormatException ne) {
-						loadImage(getLogoIDForShow(params), response.getOutputStream());
+					loadImage(getLogoIDForShow(params), response.getOutputStream());
+				} catch (final Exception e) {
+					response.setContentType("text/html");
+					writeErrorResponse(response, e.getMessage());
 				}
-				catch (final Exception e) {
-				    response.setContentType("text/html");
-				    writeErrorResponse(response, e.getMessage());
-				}
-			}
-			else
-                            throw new IllegalArgumentException("Unrecognized path: " + pathInfo);
+			} else
+				throw new IllegalArgumentException("Unrecognized path: " + pathInfo);
 			return command;
 		} else {
 			handleRequest(request, response, pathInfo.split("&")[0]);
 			return pathInfo;
 		}
 	}
-
 
 	public int getLogoIDForShow(String show) throws SQLException {
 		List<String> shows = servletDAO.getShows();
@@ -404,7 +395,7 @@ public class RegistrationServlet extends HttpServlet {
 				return -1 - i;
 			}
 		}
-		
+
 		return -1;
 	}
 
@@ -434,21 +425,21 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void directLogin(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
-		loginSuccessful(request, response, servletDAO.getUser(userID), 
+		loginSuccessful(request, response, servletDAO.getUser(userID),
 				StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"))));
 	}
 
 	public void directPrintModels(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
-	
-		  StringBuilder printBuffer = getPrintBuffer(request);
-		printModelsForUser(request, response, getLanguageFromRequest(request),
-				userID, true/* alwaysPageBreak */, printBuffer);
+
+		StringBuilder printBuffer = getPrintBuffer(request);
+		printModelsForUser(request, response, getLanguageFromRequest(request), userID, true/* alwaysPageBreak */,
+				printBuffer);
 		showPrintDialog(response);
 		return;
 	}
-	
+
 	public void getModelInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String modelID = ServletUtil.getRequestAttribute(request, "modelID");
 
@@ -485,61 +476,67 @@ public class RegistrationServlet extends HttpServlet {
 		final String email = ServletUtil.getRequestAttribute(request, "email");
 		final ResourceBundle language = getLanguageFromRequest(request);
 
-			final User user = servletDAO.getUser(email);
+		final User user = servletDAO.getUser(email);
 
-			final String passwordInRequest = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "password"));
+		final String passwordInRequest = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "password"));
 
-			String show;
-			
-			try {
-				show = StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show")));
-			} catch (final Exception e) {
-				if(user.isAdminUser() || isOnSiteUse())
-					show = null;
-				else
-				{
-					writeErrorResponse(response, languageUtil.getLanguage(user.language).getString("select.show"));
-					return;
-				}
-			}
-			
-			if (!user.enabled || // 
-					!StringEncoder.encode(passwordInRequest).equals(user.password) || // 
-					(user.isCategoryAdminUser() && !user.getEmail().equals(show))) {
-				logger.info("login(): Authentication failed. email: " + email + " user.password: [" + user.password
-						+ "] HTTP password: [" + StringEncoder.encode(passwordInRequest)
-						+ "] user.enabled: " + user.enabled);
+		String show;
 
-				writeErrorResponse(response, language.getString("authentication.failed") + " "
-						+ language.getString("email") + ": [" + email + "]");
-			} else {
-				loginSuccessful(request, response, user, show);
+		try {
+			show = StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show")));
+		} catch (final Exception e) {
+			if (user.isAdminUser() || isOnSiteUse())
+				show = null;
+			else {
+				writeErrorResponse(response, languageUtil.getLanguage(user.language).getString("select.show"));
+				return;
 			}
 		}
+
+		if (!user.enabled || //
+				!StringEncoder.encode(passwordInRequest).equals(user.password) || //
+				(user.isCategoryAdminUser() && !user.getEmail().equals(show))) {
+			logger.info("login(): Authentication failed. email: " + email + " user.password: [" + user.password
+					+ "] HTTP password: [" + StringEncoder.encode(passwordInRequest) + "] user.enabled: "
+					+ user.enabled);
+
+			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
+					+ ": [" + email + "]");
+		} else {
+			loginSuccessful(request, response, user, show);
+		}
+	}
 
 	public ResourceBundle getLanguageFromRequest(final HttpServletRequest request)
 			throws MissingRequestParameterException {
-		return languageUtil.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName()));
+		return languageUtil
+				.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName()));
 	}
 
-	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user, final String show)
-			throws IOException, SQLException {
+	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user,
+			final String show) throws IOException, SQLException {
 		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
 				+ show);
-		
+
 		saveLoginConsentData(request, user);
-		
-		initHttpSession(request, user, show);
-		
+
+		HttpSession session = initHttpSession(request, user, show);
+
 		EnumMap<SystemParameter, String> enumMap = systemParameters.get(show);
-		if(enumMap == null) {
+		if (enumMap == null) {
 			systemParameters.put(show, new EnumMap(SystemParameter.class));
 		}
 
-		redirectToMainPage(request, response);
+		List<Model> models = servletDAO.getModels(user.getId());
+		if (models.isEmpty() && !user.isAdminUser()) {
+			session.setAttribute(SessionAttribute.Models.name(), models);
+			inputForAddModel(request, response);
+		} else {
+			redirectToMainPage(request, response);
+		}
 	}
 
-    private void saveLoginConsentData(HttpServletRequest request, User user) {
+	private void saveLoginConsentData(HttpServletRequest request, User user) {
 		servletDAO.deleteLoginConsentData(user.getId());
 
 		for (LoginConsentType type : LoginConsent.LoginConsentType.values()) {
@@ -548,62 +545,69 @@ public class RegistrationServlet extends HttpServlet {
 				servletDAO.save(lc);
 			}
 		}
-    }
+	}
 
-    private void initHttpSession(final HttpServletRequest request, final User user, String show) throws SQLException {
-        final HttpSession session = request.getSession(true);
-        session.setAttribute(CommonSessionAttribute.UserID.name(), user);
-        ResourceBundle language = languageUtil.getLanguage(user.language);
+	private HttpSession initHttpSession(final HttpServletRequest request, final User user, String show)
+			throws SQLException {
+		final HttpSession session = request.getSession(true);
+		session.setAttribute(CommonSessionAttribute.UserID.name(), user);
+		ResourceBundle language = languageUtil.getLanguage(user.language);
 		session.setAttribute(CommonSessionAttribute.Language.name(), language);
-        session.setAttribute(SessionAttribute.ShowId.name(), ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ShowId.getParameterName()));
+		session.setAttribute(SessionAttribute.ShowId.name(),
+				ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ShowId.getParameterName()));
 
-        if (user.language.length() != 2) // admin user
-            session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + getDefaultMainPageFile());
-        else
-            session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
-        
-        if (show != null) {
-            session.setAttribute(SessionAttribute.Show.name(), show);
-            
-            Map<Integer, Category> categories = servletDAO.getCategoryList(show).stream()
-                    .collect(Collectors.toMap(category -> category.getId(), Function.identity()));
-            session.setAttribute(SessionAttribute.Categories.name(), categories);
+		if (user.language.length() != 2) // admin user
+			session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + getDefaultMainPageFile());
+		else
+			session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
 
-        }
-        
-        if(user.getFullName().split(" ").length == 1) {
-        	setNoticeInSession(session, new MainPageNotice(MainPageNotice.NoticeType.Error, "<a href='user.jsp?action=modifyUser'>(" + user.getFullName() + ") " + language.getString("name.too.short") + "</a>"));
-        }
-    }
+		if (show != null) {
+			session.setAttribute(SessionAttribute.Show.name(), show);
 
-    private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-    	boolean goToParentDir = request.getPathInfo() != null;
-        response.sendRedirect((goToParentDir ? "../" : "") + getMainPageFile(request));
-    }
-    
+			Map<Integer, Category> categories = servletDAO.getCategoryList(show).stream()
+					.collect(Collectors.toMap(category -> category.getId(), Function.identity()));
+			session.setAttribute(SessionAttribute.Categories.name(), categories);
+
+		}
+
+		if (user.getFullName().split(" ").length == 1) {
+			setNoticeInSession(session,
+					new MainPageNotice(MainPageNotice.NoticeType.Error, "<a href='user.jsp?action=modifyUser'>("
+							+ user.getFullName() + ") " + language.getString("name.too.short") + "</a>"));
+		}
+
+		return session;
+	}
+
+	private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response)
+			throws IOException {
+		boolean goToParentDir = request.getPathInfo() != null;
+		String redirectUrl = (goToParentDir ? "../" : "") + getMainPageFile(request);
+		response.sendRedirect(redirectUrl);
+	}
+
 	private String getMainPageFile(final HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
 		String mainPageFile = (String) session.getAttribute(SessionAttribute.MainPageFile.name());
-		
-		if(session == null) 
-		{
+
+		if (session == null) {
 			return getDefaultMainPageFile();
 		}
-		
+
 		if (mainPageFile == null) {
-			return  request.getRequestURI();
+			return request.getRequestURI();
 		}
-		
+
 		return "jsp/" + mainPageFile;
 	}
 
-    public static String getDefaultMainPageFile() {
-        return "main.jsp";
-    }
+	public static String getDefaultMainPageFile() {
+		return "main.jsp";
+	}
 
 	public void sql(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		User user = getUser(request);
-		if(user.isAdminUser()) {
+		if (user.isAdminUser()) {
 			final StringBuilder buff = servletDAO.execute(ServletUtil.getRequestAttribute(request, "sql"));
 			if (buff != null) {
 				ServletUtil.writeResponse(response, buff);
@@ -637,7 +641,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final ResourceBundle language = getLanguageFromRequest(request);
+		final ResourceBundle language = getLanguageFromRequest(request);
 
 		final int rows = Integer.parseInt(ServletUtil.getRequestAttribute(request, "rows"));
 
@@ -652,14 +656,13 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			// register model for new user...
-			if (i == 1 || !(
-			ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag)).equals((
-			ServletUtil.getRequestAttribute(request, "lastname" + String.valueOf(i - 1))))) {
+			if (i == 1 || !(ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag))
+					.equals((ServletUtil.getRequestAttribute(request, "lastname" + String.valueOf(i - 1))))) {
 
-				user = directRegisterUser(request, language, httpParameterPostTag, 
-						ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag)
-						+ User.LOCAL_USER + System.currentTimeMillis(),
-						ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE /*password*/);
+				user = directRegisterUser(request, language, httpParameterPostTag,
+						ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag) + User.LOCAL_USER
+								+ System.currentTimeMillis(),
+						ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE /* password */);
 				users.add(user);
 			}
 
@@ -687,8 +690,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private StringBuilder getPrintBuffer(final HttpServletRequest request) throws FileNotFoundException, IOException {
-		return loadFile(RegistrationServlet.class.getResourceAsStream("/print"
-				+ getPrintLanguage(request) + ".html"));
+		return loadFile(RegistrationServlet.class.getResourceAsStream("/print" + getPrintLanguage(request) + ".html"));
 	}
 
 	public String getPrintLanguage(final HttpServletRequest request) {
@@ -702,13 +704,14 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void directRegister(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		// set language library
-		final String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
+		final String languageCode = ServletUtil.getRequestAttribute(request,
+				RequestParameter.Language.getParameterName());
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		String email = User.AdminLanguages.CATEGORY.name().equals(languageCode)
 				? ServletUtil.getRequestAttribute(request, "fullname")
 				: ServletUtil.getRequestAttribute(request, "fullname") + User.LOCAL_USER + System.currentTimeMillis();
-		final User user = directRegisterUser(request, language, "" /*httpParameterPostTag*/, email,
+		final User user = directRegisterUser(request, language, "" /* httpParameterPostTag */, email,
 				StringEncoder.encode(ServletUtil.getOptionalRequestAttribute(request, "password")));
 		initHttpSession(request, user, servletDAO.getShows().get(0));
 		redirectToMainPage(request, response);
@@ -765,102 +768,119 @@ public class RegistrationServlet extends HttpServlet {
 		e.close();
 	}
 
-        public void exportExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-            final String show = getShowFromSession(request);
-    
-            response.setContentType("application/vnd.ms-excel");
-    
-            ResourceBundle language = getLanguageForCurrentUser(request);
-            final List<Model> models = servletDAO.getModels(ServletDAO.INVALID_USERID);
-            Map<Integer, User> userIDs = models.stream().mapToInt(Model::getUserID).distinct().mapToObj(userID -> {
-                try {
-                    return servletDAO.getUser(userID);
-                } catch (SQLException e1) {
-                    logger.error("", e1);
-                    return null;
-                }
-            }).collect(Collectors.toMap(User::getId, Function.identity()));
-            
-            Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
-				SessionAttribute.Categories.name());
-    
-            List<List<Object>> modelsForExcel = getModelsForShow(show, models, categories).stream().map(model -> {
-                ArrayList<Object> returned = new ArrayList<>();
-                Category category = categories.get(model.categoryID);
-                final User modelsUser = userIDs.get(model.getUserID());
-   
-                returned.add(StringEscapeUtils.unescapeHtml4(category.group.show));
-                returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.lastName));
-                returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.city));
-                returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.country));
-                returned.add(modelsUser.getId());
-                returned.add(model.getId());
-                returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
-                returned.add(StringEscapeUtils.unescapeHtml4(model.name));
-                returned.add(StringEscapeUtils.unescapeHtml4(model.scale));
-                returned.add(StringEscapeUtils.unescapeHtml4(model.identification));
-                returned.add(StringEscapeUtils.unescapeHtml4(model.markings));
-                returned.add(StringEscapeUtils.unescapeHtml4(model.producer));
-                returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
-                return returned;
-    
-            }).collect(Collectors.toList());
-            Workbook u = ExcelUtil.generateExcelTableWithHeaders("model", Arrays.asList(
-                    StringEscapeUtils.unescapeHtml4(language.getString("show")), StringEscapeUtils.unescapeHtml4(language.getString("name")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("city")), StringEscapeUtils.unescapeHtml4(language.getString("country")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("userID")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("modelID")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("models.name")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("scale")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("models.identification")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("models.markings")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("models.producer")),
-                    StringEscapeUtils.unescapeHtml4(language.getString("category.description"))), modelsForExcel);
-    
-            u.writeTo(response.getOutputStream());
-        }
+	public void exportExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		final String show = getShowFromSession(request);
 
-        
-        public void exportCategoryExcel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        	final String show = getShowFromSession(request);
-        	
-        	response.setContentType("application/vnd.ms-excel");
-        	
-        	List<List<Object>> modelsForExcel = servletDAO.getCategoryList(show).stream().map(category -> {
-        		ArrayList<Object> returned = new ArrayList<>();
-        		returned.add(StringEscapeUtils.unescapeHtml4(category.getGroup().getGroup()));
-        		returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
-        		returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
-        		returned.add(category.isMaster());
-        		returned.add(category.getModelClass().name());
-        		returned.add(category.getAgeGroup().name());
-        		return returned;
-        		
-        	}).collect(Collectors.toList());
-        	ResourceBundle language = getLanguageForCurrentUser(request);
-        	Workbook u = ExcelUtil.generateExcelTableWithHeaders("model", Arrays.asList(
-        			"Group",
-        			StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
-        			StringEscapeUtils.unescapeHtml4(language.getString("category.description")),
-        			"isMaster",
-        			"ModelClass",
-        			"AgeGroup"
-        			), modelsForExcel);
-        	
-        	u.writeTo(response.getOutputStream());
-        }
-        
-		public static List<Model> getModelsForShow(final String show, final List<Model> models,
-				Map<Integer, Category> categories) {
-			return models.stream().filter(model -> {
-                Category category = categories.get(model.categoryID);
-                if(category == null)
-                	return false;
-				return show == null || category.group.show.equals(show);
-            }).collect(Collectors.toList());
-		}
+		response.setContentType("application/vnd.ms-excel");
+
+		ResourceBundle language = getLanguageForCurrentUser(request);
+		final List<Model> models = servletDAO.getModels(ServletDAO.INVALID_USERID);
+		Map<Integer, User> userIDs = models.stream().mapToInt(Model::getUserID).distinct().mapToObj(userID -> {
+			try {
+				return servletDAO.getUser(userID);
+			} catch (SQLException e1) {
+				logger.error("", e1);
+				return null;
+			}
+		}).collect(Collectors.toMap(User::getId, Function.identity()));
+
+		Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
+				SessionAttribute.Categories.name());
+
+		List<List<Object>> modelsForExcel = getModelsForShow(show, models, categories).stream().map(model -> {
+			ArrayList<Object> returned = new ArrayList<>();
+			Category category = categories.get(model.categoryID);
+			final User modelsUser = userIDs.get(model.getUserID());
+
+			returned.add(StringEscapeUtils.unescapeHtml4(category.group.show));
+			returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.lastName));
+			returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.city));
+			returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.country));
+			returned.add(modelsUser.getId());
+			returned.add(model.getId());
+			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
+			returned.add(StringEscapeUtils.unescapeHtml4(model.name));
+			returned.add(StringEscapeUtils.unescapeHtml4(model.scale));
+			returned.add(StringEscapeUtils.unescapeHtml4(model.identification));
+			returned.add(StringEscapeUtils.unescapeHtml4(model.markings));
+			returned.add(StringEscapeUtils.unescapeHtml4(model.producer));
+			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
+			return returned;
+
+		}).collect(Collectors.toList());
+		Workbook u = ExcelUtil.generateExcelTableWithHeaders("model",
+				Arrays.asList(StringEscapeUtils.unescapeHtml4(language.getString("show")),
+						StringEscapeUtils.unescapeHtml4(language.getString("name")),
+						StringEscapeUtils.unescapeHtml4(language.getString("city")),
+						StringEscapeUtils.unescapeHtml4(language.getString("country")),
+						StringEscapeUtils.unescapeHtml4(language.getString("userID")),
+						StringEscapeUtils.unescapeHtml4(language.getString("modelID")),
+						StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
+						StringEscapeUtils.unescapeHtml4(language.getString("models.name")),
+						StringEscapeUtils.unescapeHtml4(language.getString("scale")),
+						StringEscapeUtils.unescapeHtml4(language.getString("models.identification")),
+						StringEscapeUtils.unescapeHtml4(language.getString("models.markings")),
+						StringEscapeUtils.unescapeHtml4(language.getString("models.producer")),
+						StringEscapeUtils.unescapeHtml4(language.getString("category.description"))),
+				modelsForExcel);
+
+		u.writeTo(response.getOutputStream());
+	}
 	
+	public void exportStatistics(final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		final String show = getShowFromSession(request);
+		ResourceBundle language = getLanguageFromRequest(request);
+		Workbook u = ExcelUtil.generateExcelTableWithHeaders("statistics",
+				Arrays.asList("A", "B"),
+				servletDAO.getStatistics(show, language, true /*detailedStatisticsSiteUse*/).stream()
+				.map(pair -> {
+					return Arrays.asList((Object)StringEscapeUtils.unescapeHtml3(pair[0]).replaceAll("<[^>]*>", ""), (Object)pair[1]);
+				}).collect(Collectors.toList())
+				
+				);
+
+		response.setContentType("application/vnd.ms-excel");
+		u.writeTo(response.getOutputStream());
+	}
+
+	public void exportCategoryExcel(final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		final String show = getShowFromSession(request);
+
+		response.setContentType("application/vnd.ms-excel");
+
+		List<List<Object>> modelsForExcel = servletDAO.getCategoryList(show).stream().map(category -> {
+			ArrayList<Object> returned = new ArrayList<>();
+			returned.add(StringEscapeUtils.unescapeHtml4(category.getGroup().getGroup()));
+			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
+			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
+			returned.add(category.isMaster());
+			returned.add(category.getModelClass().name());
+			returned.add(category.getAgeGroup().name());
+			return returned;
+
+		}).collect(Collectors.toList());
+		ResourceBundle language = getLanguageForCurrentUser(request);
+		Workbook u = ExcelUtil.generateExcelTableWithHeaders("model",
+				Arrays.asList("Group", StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
+						StringEscapeUtils.unescapeHtml4(language.getString("category.description")), "isMaster",
+						"ModelClass", "AgeGroup"),
+				modelsForExcel);
+
+		u.writeTo(response.getOutputStream());
+	}
+
+	public static List<Model> getModelsForShow(final String show, final List<Model> models,
+			Map<Integer, Category> categories) {
+		return models.stream().filter(model -> {
+			Category category = categories.get(model.categoryID);
+			if (category == null)
+				return false;
+			return show == null || category.group.show.equals(show);
+		}).collect(Collectors.toList());
+	}
+
 	public void importData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final DiskFileItemFactory factory = new DiskFileItemFactory();
 		final ServletFileUpload upload = new ServletFileUpload(factory);
@@ -913,21 +933,22 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.saveImage(modelID, new ByteArrayInputStream(output.toByteArray()));
 	}
 
-	private StringBuilder processUploadedCategoryExcel(final HttpServletRequest request, final FileItem item) throws IOException {
+	private StringBuilder processUploadedCategoryExcel(final HttpServletRequest request, final FileItem item)
+			throws IOException {
 		final StringBuilder buff = new StringBuilder();
-		
+
 		org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(item.getInputStream());
 		Sheet s = wb.getSheetAt(0);
 
-		//skip first (header) row...
+		// skip first (header) row...
 		buff.append(s.getLastRowNum() + " sor feldolgozása.<p>");
-		for (int i = 1; i < s.getLastRowNum()+1; i++) {
+		for (int i = 1; i < s.getLastRowNum() + 1; i++) {
 			Row row = s.getRow(i);
-			
+
 			// 1. column
 			String categoryGroupName = ServletUtil.encodeString(row.getCell(0).getStringCellValue());
 			if (categoryGroupName.length() == 0) {
-				buff.append("Üres categoryGroupName "+(i+1)+". sor<p>");
+				buff.append("Üres categoryGroupName " + (i + 1) + ". sor<p>");
 				continue;
 			}
 
@@ -943,47 +964,48 @@ public class RegistrationServlet extends HttpServlet {
 			// 2. column
 			String categoryCode = row.getCell(1).getStringCellValue();
 			if (categoryCode.length() == 0) {
-				buff.append("Üres categoryCode "+(i+1)+". sor<p>");
+				buff.append("Üres categoryCode " + (i + 1) + ". sor<p>");
 				continue;
 			}
 
 			// 3. column
 			String categoryDescription = ServletUtil.encodeString(row.getCell(2).getStringCellValue());
 			if (categoryDescription.length() == 0) {
-				buff.append("Üres categoryDescription "+(i+1)+". sor<p>");
+				buff.append("Üres categoryDescription " + (i + 1) + ". sor<p>");
 				continue;
 			}
 
 			// 4. column
 			boolean master = row.getCell(3).getBooleanCellValue();
-			
+
 			// 5. column
 			String stringCellValue = row.getCell(4).getStringCellValue();
-			ModelClass modelClass = stringCellValue.length() == 0 ? ModelClass.Other : ModelClass.valueOf(stringCellValue);
-			
+			ModelClass modelClass = stringCellValue.length() == 0 ? ModelClass.Other
+					: ModelClass.valueOf(stringCellValue);
+
 			// 6. column
 			stringCellValue = row.getCell(5).getStringCellValue();
 			AgeGroup ageGroup = stringCellValue.length() == 0 ? AgeGroup.ALL : AgeGroup.valueOf(stringCellValue);
-			
+
 			try {
 				servletDAO.getCategory(categoryCode);
 //				buff.append(categoryCode + " már létezik.<p>");
-				continue;				
+				continue;
 			} catch (Exception e) {
 				Category newCategory = new Category(servletDAO.getNextID(Category.class));
-				
+
 				newCategory.setCategoryCode(categoryCode);
 				newCategory.setCategoryDescription(categoryDescription);
 				newCategory.setGroup(categoryGroup);
 				newCategory.setMaster(master);
 				newCategory.setModelClass(modelClass);
 				newCategory.setAgeGroup(ageGroup);
-				
+
 				servletDAO.save(newCategory);
 				buff.append(categoryCode + " mentése.<br>");
 			}
 		}
-		
+
 		return buff;
 	}
 
@@ -999,7 +1021,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (!categoryGroups.isEmpty()) {
 			deleteModelsForShow(getShowFromSession(request));
-			
+
 			final List<Model> models = data.get(3);
 			if (!models.isEmpty()) {
 				buff.append("<p>Storing Models");
@@ -1050,17 +1072,16 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		final List<User> users = data.get(0);
-		if(!users.isEmpty())
-		{
-		    buff.append("<p>Storing users");
-		    servletDAO.deleteAll(User.class);
-    		for (final User user : users) {
-    			buff.append(".");
-    			servletDAO.save(user);
-    			for (final ModelClass modelClass : user.getModelClass()) {
-    				servletDAO.saveModelClass(user.getId(), modelClass);
-    			}
-    		}
+		if (!users.isEmpty()) {
+			buff.append("<p>Storing users");
+			servletDAO.deleteAll(User.class);
+			for (final User user : users) {
+				buff.append(".");
+				servletDAO.save(user);
+				for (final ModelClass modelClass : user.getModelClass()) {
+					servletDAO.saveModelClass(user.getId(), modelClass);
+				}
+			}
 		}
 
 		buff.append("<p>DONE.....");
@@ -1084,9 +1105,10 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void register(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String email = ServletUtil.getRequestAttribute(request, "email");
-        final ResourceBundle language = getLanguageFromRequest(request);
+		final ResourceBundle language = getLanguageFromRequest(request);
 
-		if (email.trim().length() == 0 || ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(email) || email.indexOf("@") == -1 || email.indexOf(".") == -1) {
+		if (email.trim().length() == 0 || ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(email)
+				|| email.indexOf("@") == -1 || email.indexOf(".") == -1) {
 			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
 					+ ": [" + email + "]");
 			return;
@@ -1108,19 +1130,20 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = createUser(request, email);
 		servletDAO.save(user);
 
-		if(!isOnSiteUse())
+		if (!isOnSiteUse())
 			sendEmailWithModels(user, true);
-		
-		redirectToMainPage(request, response);
+
+		inputForAddModel(request, response);
 	}
-	
+
 	private StringBuilder getEmailWasSentResponse(final ResourceBundle language, HttpServletRequest request) {
 		final StringBuilder buff = new StringBuilder();
 		buff.append("<html><body>");
 
 		buff.append(language.getString("email.was.sent"));
 		buff.append("<p>");
-		buff.append("<a href='../" + getStartPage(request) + "'>" + language.getString("proceed.to.login") + "</a></body></html>");
+		buff.append("<a href='../" + getStartPage(request) + "'>" + language.getString("proceed.to.login")
+				+ "</a></body></html>");
 		return buff;
 	}
 
@@ -1140,8 +1163,8 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.modifyUser(newUser, oldUser);
 
 		HttpSession session = request.getSession(false);
-                session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
-                session.setAttribute(CommonSessionAttribute.UserID.name(), servletDAO.getUser(oldUser.getId()));
+		session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
+		session.setAttribute(CommonSessionAttribute.UserID.name(), servletDAO.getUser(oldUser.getId()));
 
 		redirectToMainPage(request, response);
 	}
@@ -1170,8 +1193,9 @@ public class RegistrationServlet extends HttpServlet {
 			message.append("\n\r<hr>");
 		}
 
-		List<EmailParameter> modelerParameters = new LinkedList<EmailParameter>( Arrays.asList(//
-				EmailParameter.create(language.getString("userID"), "<br><span style='font-size:22pt'>"+user.getId()+"</span>"), //
+		List<EmailParameter> modelerParameters = new LinkedList<EmailParameter>(Arrays.asList(//
+				EmailParameter.create(language.getString("userID"),
+						"<br><span style='font-size:22pt'>" + user.getId() + "</span>"), //
 				EmailParameter.create(language.getString("name"), user.lastName), //
 				EmailParameter.create(language.getString("year.of.birth"), String.valueOf(user.yearOfBirth)), //
 				EmailParameter.create(language.getString("city"), user.city), //
@@ -1229,8 +1253,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		if (!isOnSiteUse())
 			try {
-				emailUtil.sendEmail(getServerConfigParamter("email.from"),
-						to, subject, message.toString());
+				emailUtil.sendEmail(getServerConfigParamter("email.from"), to, subject, message.toString());
 			} catch (Exception e) {
 				logger.error("", e);
 			}
@@ -1238,46 +1261,42 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		User user = getUser(request);
-		if(user.isSuperAdminUser() || (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
+		if (user.isSuperAdminUser()
+				|| (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
 			Category modifyingCategory;
 			try {
-				modifyingCategory = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
+				modifyingCategory = servletDAO
+						.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
 			} catch (Exception e) {
 				modifyingCategory = new Category(servletDAO.getNextID(Category.class));
 			}
-			
+
 			modifyingCategory.setCategoryCode(
 					ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "categorycode")));
 			modifyingCategory.setCategoryDescription(
 					ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "categorydescription")));
-			modifyingCategory.setGroup(
-	            servletDAO.getCategoryGroup(
-	                    Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
-	                    servletDAO.getCategoryGroups()));
-			modifyingCategory.setMaster(
-	            ServletUtil.isCheckedIn(request, "master"));
-			modifyingCategory.setModelClass(
-	            ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")));
-			modifyingCategory.setAgeGroup(
-	            AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup"))
-	            );
-	    
-		servletDAO.save(modifyingCategory);
-		}		
-		else {
+			modifyingCategory.setGroup(servletDAO.getCategoryGroup(
+					Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
+					servletDAO.getCategoryGroups()));
+			modifyingCategory.setMaster(ServletUtil.isCheckedIn(request, "master"));
+			modifyingCategory.setModelClass(ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")));
+			modifyingCategory.setAgeGroup(AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup")));
+
+			servletDAO.save(modifyingCategory);
+		} else {
 			writeCategoryModificationErrorResponse(response);
 			return;
 		}
 		redirectToMainPage(request, response);
 	}
-	
+
 	public void encodeCategories(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		String show = getShowFromSession(request);
-		
+
 		servletDAO.getCategoryList(show).forEach(category -> {
-			category.setCategoryCode(ServletUtil.encodeString(category.getCategoryCode()));				
-			category.setCategoryDescription(ServletUtil.encodeString(category.getCategoryDescription()));			
+			category.setCategoryCode(ServletUtil.encodeString(category.getCategoryCode()));
+			category.setCategoryDescription(ServletUtil.encodeString(category.getCategoryDescription()));
 			servletDAO.save(category);
 		});
 		redirectToMainPage(request, response);
@@ -1286,15 +1305,14 @@ public class RegistrationServlet extends HttpServlet {
 	public void encodeCategorGroups(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		servletDAO.getCategoryGroups().forEach(group -> {
-			group.setGroup(ServletUtil.encodeString(group.getGroup()));				
-			group.setShow(ServletUtil.encodeString(group.getShow()));			
+			group.setGroup(ServletUtil.encodeString(group.getGroup()));
+			group.setShow(ServletUtil.encodeString(group.getShow()));
 			servletDAO.save(group);
 		});
 		redirectToMainPage(request, response);
 	}
-	
-	public void encodeModels(final HttpServletRequest request, final HttpServletResponse response)
-			throws Exception {
+
+	public void encodeModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		servletDAO.getAll(Model.class).forEach(model -> {
 			model.setComment(ServletUtil.encodeString(model.getComment()));
 			model.setIdentification(ServletUtil.encodeString(model.getIdentification()));
@@ -1308,9 +1326,10 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void writeCategoryModificationErrorResponse(final HttpServletResponse response) throws IOException {
-		writeErrorResponse(response, "Most m&aacute;r nem lehet m&oacute;dos&iacute;tani! El&#337;sz&ouml;r az 'El&#337;nevez&eacute;s v&eacute;ge' vagy 'Helysz&iacute;ni m&oacute;d' linkre kell kattintani az admin oldalon.");
+		writeErrorResponse(response,
+				"Most m&aacute;r nem lehet m&oacute;dos&iacute;tani! El&#337;sz&ouml;r az 'El&#337;nevez&eacute;s v&eacute;ge' vagy 'Helysz&iacute;ni m&oacute;d' linkre kell kattintani az admin oldalon.");
 	}
-	
+
 	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final int userID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "userID"));
 
@@ -1323,12 +1342,12 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		String show = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"));
 		User user = getUser(request);
-		if(user.isSuperAdminUser() || (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
-    	final HttpSession session = request.getSession(false);
-        session.setAttribute(SessionAttribute.Show.name(), show);
-        saveCategoryGroup(show, ServletUtil.getRequestAttribute(request, "group"));
-		}
-		else {
+		if (user.isSuperAdminUser()
+				|| (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
+			final HttpSession session = request.getSession(false);
+			session.setAttribute(SessionAttribute.Show.name(), show);
+			saveCategoryGroup(show, ServletUtil.getRequestAttribute(request, "group"));
+		} else {
 			writeCategoryModificationErrorResponse(response);
 			return;
 		}
@@ -1336,8 +1355,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private CategoryGroup saveCategoryGroup(final String show, final String groupName) {
-		final CategoryGroup categoryGroup = new CategoryGroup(servletDAO.getNextID(CategoryGroup.class),
-        		show, groupName);
+		final CategoryGroup categoryGroup = new CategoryGroup(servletDAO.getNextID(CategoryGroup.class), show,
+				groupName);
 		servletDAO.save(categoryGroup);
 		return categoryGroup;
 	}
@@ -1422,8 +1441,10 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append(category.getAgeGroup().name());
 			buff.append("</td>");
 			buff.append("<td align='center' style='white-space: nowrap'>");
-			buff.append("<a href='inputForAddCategory?categoryID="+category.getId()+"'>"+language.getString("modify")+"</a>");
-			buff.append(" / <a href='deleteCategory?categoryID="+category.getId()+"'>"+language.getString("delete")+"</a>");
+			buff.append("<a href='inputForAddCategory?categoryID=" + category.getId() + "'>"
+					+ language.getString("modify") + "</a>");
+			buff.append(" / <a href='deleteCategory?categoryID=" + category.getId() + "'>"
+					+ language.getString("delete") + "</a>");
 			buff.append("</td>");
 			buff.append("</tr>");
 		}
@@ -1488,11 +1509,11 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<th style='white-space: nowrap'>");
 		buff.append("Login consent");
 		buff.append("</th>");
-		
+
 		buff.append("</tr>");
 
 		for (final User user : users) {
-			if(!loggedInUser.isSuperAdminUser() && user.isAdminUser()) {
+			if (!loggedInUser.isSuperAdminUser() && user.isAdminUser()) {
 				continue;
 			}
 
@@ -1546,11 +1567,11 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append(user.telephone);
 			buff.append("</td>");
 
-			
 			buff.append("<td align='center' >");
-            buff.append(servletDAO.getLoginConsents(user.getId()).stream().map(lc -> lc.getType().name()).collect(Collectors.joining(", ")));
+			buff.append(servletDAO.getLoginConsents(user.getId()).stream().map(lc -> lc.getType().name())
+					.collect(Collectors.joining(", ")));
 			buff.append("</td>");
-			
+
 			buff.append("</tr>");
 		}
 
@@ -1560,23 +1581,24 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private Object getLoginConsents(int userID) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    public void inputForAddCategory(final HttpServletRequest request, final HttpServletResponse response)
+	public void inputForAddCategory(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final ResourceBundle language = getLanguageForCurrentUser(request);
-		
+
 		Category category = null;
 		try {
-                    category = servletDAO.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
-                } catch (Exception e) {
-                    category = new Category(servletDAO.getNextID(Category.class));
-                    category.setCategoryCode("");
-                    category.setCategoryDescription("");
-                    category.setGroup(new CategoryGroup(0));
-                }
+			category = servletDAO
+					.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
+		} catch (Exception e) {
+			category = new Category(servletDAO.getNextID(Category.class));
+			category.setCategoryCode("");
+			category.setCategoryDescription("");
+			category.setGroup(new CategoryGroup(0));
+		}
 
 		final StringBuilder buff = new StringBuilder();
 
@@ -1587,8 +1609,8 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<body>");
 
 		buff.append("<form accept-charset=\"UTF-8\" name='input' action='./addCategory' method='POST'>");
-		if(category.getId() != 0)
-		    buff.append("<input type='hidden' name='categoryID' value='" + category.getId() +"'>");
+		if (category.getId() != 0)
+			buff.append("<input type='hidden' name='categoryID' value='" + category.getId() + "'>");
 		buff.append("<table border='0'>");
 
 		buff.append("<tr>");
@@ -1606,8 +1628,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			buff.append("<label><input type='radio' name='categoryGroupID' value='" + group.getId() + "' "
-			        + (group.getId() == category.getGroup().getId() ? "checked='checked'" :  "")
-			        + "/>");
+					+ (group.getId() == category.getGroup().getId() ? "checked='checked'" : "") + "/>");
 			buff.append(group.show + " - " + group.name + "</label><br>");
 		}
 
@@ -1620,7 +1641,8 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(language.getString("category.code"));
 		buff.append(": ");
 		buff.append("</td>");
-		buff.append("<td><input type='text' name='categorycode' value='"+category.getCategoryCode()+"'> <font color='#FF0000' size='+3'>&#8226;</font> </td>");
+		buff.append("<td><input type='text' name='categorycode' value='" + category.getCategoryCode()
+				+ "'> <font color='#FF0000' size='+3'>&#8226;</font> </td>");
 		buff.append("</tr>");
 
 		buff.append("<tr>");
@@ -1628,15 +1650,16 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(language.getString("category.description"));
 		buff.append(": ");
 		buff.append("</td>");
-		buff.append(
-				"<td><input type='text' name='categorydescription' value='"+category.getCategoryDescription()+"'> <font color='#FF0000' size='+3'>&#8226;</font> </td>");
+		buff.append("<td><input type='text' name='categorydescription' value='" + category.getCategoryDescription()
+				+ "'> <font color='#FF0000' size='+3'>&#8226;</font> </td>");
 		buff.append("</tr>");
 
 		buff.append("<tr>");
 		buff.append("<td>");
 		buff.append("Mester: ");
 		buff.append("</td>");
-		buff.append("<td><input name='master' type='checkbox' value='on' "+(category.isMaster() ? "checked" : "") +"></td>");
+		buff.append("<td><input name='master' type='checkbox' value='on' " + (category.isMaster() ? "checked" : "")
+				+ "></td>");
 		buff.append("</tr>");
 
 		buff.append("<tr>");
@@ -1644,8 +1667,9 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("Szak&aacute;g: ");
 		buff.append("</td>");
 		buff.append("<td><select name='modelClass'>");
-		if(category.getModelClass() != null)
-		    buff.append("<option value='" + category.getModelClass().name() + "'>" + category.getModelClass().name() + "</option>");
+		if (category.getModelClass() != null)
+			buff.append("<option value='" + category.getModelClass().name() + "'>" + category.getModelClass().name()
+					+ "</option>");
 		for (final ModelClass mc : ModelClass.values()) {
 			buff.append("<option value='" + mc.name() + "'>" + mc.name() + "</option>");
 		}
@@ -1658,11 +1682,12 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("Korcsoport: ");
 		buff.append("</td>");
 		buff.append("<td><select name='ageGroup'>");
-                if(category.getAgeGroup() != null)
-                    buff.append("<option value='" + category.getAgeGroup().name() + "'>" + category.getAgeGroup().name() + "</option>");
-                else
-                    buff.append("<option value='" + AgeGroup.ALL.name() + "' selected>" + AgeGroup.ALL.name() + "</option>");
-                
+		if (category.getAgeGroup() != null)
+			buff.append("<option value='" + category.getAgeGroup().name() + "'>" + category.getAgeGroup().name()
+					+ "</option>");
+		else
+			buff.append("<option value='" + AgeGroup.ALL.name() + "' selected>" + AgeGroup.ALL.name() + "</option>");
+
 		for (final AgeGroup mc : AgeGroup.values()) {
 			buff.append("<option value='" + mc.name() + "'>" + mc.name() + "</option>");
 		}
@@ -1690,14 +1715,13 @@ public class RegistrationServlet extends HttpServlet {
 		User user = getUser(request);
 		if (user.isAdminUser() || user.getId() == model.getUserID()) {
 			getModelForm(request, response, Command.modifyModel.name(), "modify", model);
-		}else {
+		} else {
 			redirectToMainPage(request, response);
 		}
 	}
 
 	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response)
-			throws Exception {
-	    
+			throws IOException {
 		if (isRegistrationAllowed(getShowFromSession(request))) {
 			getModelForm(request, response, Command.addModel.name(), "save.and.add.new.model", null);
 		} else {
@@ -1716,7 +1740,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 		createModel(model, request);
 		User user = getUser(request);
-        if(user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {   
+		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
 			servletDAO.save(model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
@@ -1738,24 +1762,26 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = new Model(servletDAO.getNextID(Model.class));
 		model.setUser(user);
 		createModel(model, request);
-		
-		
+
 		final int maxModelsPerCategory = getMaxModelsPerCategory(request);
-		if(servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
-			writeErrorResponse(response, "Maximum " + languageUtil.getLanguage(user.language).getString("models.number.per.category") + ": " + maxModelsPerCategory + "!");
+		if (servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
+			writeErrorResponse(response,
+					"Maximum " + languageUtil.getLanguage(user.language).getString("models.number.per.category") + ": "
+							+ maxModelsPerCategory + "!");
 			return;
 		}
 
 		servletDAO.save(model);
 
-		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
+		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
+				.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
 			final HttpSession session = request.getSession(false);
 			String notice = ServletUtil.encodeString(model.name) + " - " + model.scale + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode;
 			setNoticeInSession(session, notice);
 			response.sendRedirect("jsp/modelForm.jsp");
 		} else {
-			if(!isOnSiteUse()) {
+			if (!isOnSiteUse()) {
 				sendEmailWithModels(user, false /* insertUserDetails */);
 				setEmailSentNoticeInSession(request, user);
 			}
@@ -1770,42 +1796,41 @@ public class RegistrationServlet extends HttpServlet {
 			return 3;
 		}
 	}
-	
-	private static String getSystemParameter(String show, SystemParameter parameter)
-	{
-		if(show == null) {
+
+	private static String getSystemParameter(String show, SystemParameter parameter) {
+		if (show == null) {
 			return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 		}
-		
+
 		EnumMap<SystemParameter, String> enumMap = systemParameters.get(show);
 		String value = enumMap != null ? enumMap.get(parameter) : null;
-		return value == null ? servletDAO.getSystemParameter(parameter)  : value;
+		return value == null ? servletDAO.getSystemParameter(parameter) : value;
 	}
-	
-	private static String getSystemParameter(HttpServletRequest request, SystemParameter parameter)
-	{
+
+	private static String getSystemParameter(HttpServletRequest request, SystemParameter parameter) {
 		return getSystemParameter(getShowFromSession(request), parameter);
 	}
-	
+
 	private void setEmailSentNoticeInSession(final HttpServletRequest request, final User user)
 			throws UserNotLoggedInException {
 		ResourceBundle language = getLanguageForCurrentUser(request);
-                setNoticeInSession(request.getSession(false), language.getString("email") + ": <h2>" + user.email + "</h2>");
-		setNoticeInSession(request.getSession(false), new MainPageNotice(MainPageNotice.NoticeType.Warning, language.getString("email.warning")));
+		setNoticeInSession(request.getSession(false), language.getString("email") + ": <h2>" + user.email + "</h2>");
+		setNoticeInSession(request.getSession(false),
+				new MainPageNotice(MainPageNotice.NoticeType.Warning, language.getString("email.warning")));
 	}
 
-        private void setNoticeInSession(final HttpSession session, MainPageNotice notice) {
-            List<MainPageNotice> notices = (List<MainPageNotice>) session.getAttribute(SessionAttribute.Notices.name());
-            if(notices == null)
-                notices = new LinkedList<MainPageNotice>();
-            
-            notices.add(notice);
-            
-            session.setAttribute(SessionAttribute.Notices.name(), notices);
-        }
+	private void setNoticeInSession(final HttpSession session, MainPageNotice notice) {
+		List<MainPageNotice> notices = (List<MainPageNotice>) session.getAttribute(SessionAttribute.Notices.name());
+		if (notices == null)
+			notices = new LinkedList<MainPageNotice>();
 
-            private void setNoticeInSession(final HttpSession session, String noticeText) {
-                setNoticeInSession(session, new MainPageNotice(MainPageNotice.NoticeType.OK, noticeText));
+		notices.add(notice);
+
+		session.setAttribute(SessionAttribute.Notices.name(), notices);
+	}
+
+	private void setNoticeInSession(final HttpSession session, String noticeText) {
+		setNoticeInSession(session, new MainPageNotice(MainPageNotice.NoticeType.OK, noticeText));
 	}
 
 	private Model createModel(final Model model, final HttpServletRequest request)
@@ -1829,14 +1854,14 @@ public class RegistrationServlet extends HttpServlet {
 
 		return setDimensions(model, request, httpParameterPostTag);
 	}
-	
+
 	Model setDimensions(final Model model, final HttpServletRequest request, final String httpParameterPostTag) {
 		try {
 			int modelWidth = Integer
 					.parseInt(ServletUtil.getRequestAttribute(request, "modelWidth" + httpParameterPostTag));
 			int modelHeight = Integer
 					.parseInt(ServletUtil.getRequestAttribute(request, "modelHeight" + httpParameterPostTag));
-			
+
 			model.setDimensions(modelWidth, modelHeight);
 			return model;
 		} catch (Exception e) {
@@ -1853,7 +1878,8 @@ public class RegistrationServlet extends HttpServlet {
 			for (DetailingCriteria criteria : DetailingCriteria.values()) {
 				boolean checked = ServletUtil.isCheckedIn(request, "detailing." + group.name() + "." + criteria.name());
 				if (checked) {
-					Detailing newDetailing = new Detailing(servletDAO.getNextID(Detailing.class), group, criteria, checked);
+					Detailing newDetailing = new Detailing(servletDAO.getNextID(Detailing.class), group, criteria,
+							checked);
 					servletDAO.save(newDetailing);
 					detailing.add(newDetailing);
 				}
@@ -1872,16 +1898,16 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		User userInSession = (User) session.getAttribute(CommonSessionAttribute.UserID.name());
-		if(userInSession == null)
-		    throw new UserNotLoggedInException(
-		            "User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
-		
-            return userInSession;
+		if (userInSession == null)
+			throw new UserNotLoggedInException(
+					"User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
+
+		return userInSession;
 	}
 
-    public boolean isRegistrationAllowed(String show) {
-        return isPreRegistrationAllowed(show) || isOnSiteUse();
-    }
+	public boolean isRegistrationAllowed(String show) {
+		return isPreRegistrationAllowed(show) || isOnSiteUse();
+	}
 
 	public void inputForPhotoUpload(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
@@ -1935,7 +1961,8 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		buff.append("<link rel='stylesheet' href='jsp/base.css' media='screen' />");
-		buff.append("<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put' target='_top'>");
+		buff.append(
+				"<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put' target='_top'>");
 		buff.append("<input type='hidden' name='command' value='");
 		buff.append(action);
 		buff.append("'>");
@@ -1968,16 +1995,17 @@ public class RegistrationServlet extends HttpServlet {
 	public void inputForLoginUser(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final String language = getLanguage(request);
-		request.getSession(true).setAttribute(SessionAttribute.Show.name(), servletDAO.getShows().get(0));
-		
+		request.getSession(true).setAttribute(SessionAttribute.Show.name(), getShowFromSession(request));
+
 		selectUser(request, response, "directLogin", languageUtil.getLanguage(language).getString("login"), language);
 	}
 
 	public void inputForPrint(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String language = getLanguage(request);
-		selectUser(request, response, "directPrintModels", languageUtil.getLanguage(language).getString("print.models"), language);
+		selectUser(request, response, "directPrintModels", languageUtil.getLanguage(language).getString("print.models"),
+				language);
 	}
-	
+
 	private String getLanguage(final HttpServletRequest request) throws MissingRequestParameterException {
 		try {
 			return getUser(request).getLanguage();
@@ -2036,7 +2064,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
-				servletDAO.deleteUser(userID);
+		servletDAO.deleteUser(userID);
 		redirectToMainPage(request, response);
 	}
 
@@ -2057,13 +2085,15 @@ public class RegistrationServlet extends HttpServlet {
 
 		String paramName = ServletUtil.getRequestAttribute(request, "paramName");
 		String paramValue = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "paramValue"));
-		
+
 		servletDAO.setSystemParameter(paramName, paramValue);
-		
+
 		String show = getShowFromSession(request);
 		if (show != null) {
 			SystemParameter param = ServletDAO.SystemParameter.valueOf(paramName);
-			systemParameters.get(show).put(param, param.isBooleanValue() ? String.valueOf(ServletDAO.getYesNoSystemParameter(paramValue)): paramValue);
+			systemParameters.get(show).put(param,
+					param.isBooleanValue() ? String.valueOf(ServletDAO.getYesNoSystemParameter(paramValue))
+							: paramValue);
 			updateSystemSettings(show);
 		}
 
@@ -2076,7 +2106,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 
 		User user = getUser(request);
-		if(user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
+		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
 			servletDAO.deleteModel(model);
 			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
 		}
@@ -2113,7 +2143,8 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append(group.show + " - " + group.name);
 			buff.append("</td>");
 			buff.append("<td style='white-space: nowrap'>");
-			buff.append(" <a href='deleteCategoryGroup?categoryGroupID="+group.getId()+"'>"+language.getString("delete")+"</a>");
+			buff.append(" <a href='deleteCategoryGroup?categoryGroupID=" + group.getId() + "'>"
+					+ language.getString("delete") + "</a>");
 			buff.append("</td>");
 			buff.append("</tr>");
 		}
@@ -2126,16 +2157,16 @@ public class RegistrationServlet extends HttpServlet {
 	public void deleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		User user = getUser(request);
-		if(user.isSuperAdminUser() || (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
+		if (user.isSuperAdminUser()
+				|| (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
 			Integer categoryGroupID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID"));
-			
+
 			for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /* show */)) {
 				servletDAO.deleteModels(category.getId());
 				servletDAO.delete(category);
 			}
 			servletDAO.delete(servletDAO.get(categoryGroupID, CategoryGroup.class));
-		}
-		else {
+		} else {
 			writeCategoryModificationErrorResponse(response);
 			return;
 		}
@@ -2145,12 +2176,12 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		User user = getUser(request);
-		if(user.isSuperAdminUser() || (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
+		if (user.isSuperAdminUser()
+				|| (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
 			Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
 			servletDAO.deleteModels(categoryID);
 			servletDAO.delete(servletDAO.getCategory(categoryID));
-		}
-		else {
+		} else {
 			writeCategoryModificationErrorResponse(response);
 			return;
 		}
@@ -2170,7 +2201,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		});
 
-		  StringBuilder printBuffer = getPrintBuffer(request);
+		StringBuilder printBuffer = getPrintBuffer(request);
 		for (final User user : users) {
 			printModelsForUser(request, response, language, user.getId(), true /* alwaysPageBreak */, printBuffer);
 		}
@@ -2201,7 +2232,8 @@ public class RegistrationServlet extends HttpServlet {
 			final List<Model> sublist = allModels.subList(0, Math.min(cols * rows, allModels.size()));
 
 			int fee = calculateEntryFee(allModels);
-			ServletUtil.writeResponse(response, printModels(language, user, sublist, printCardBuffer, rows, cols, true, fee, request ));
+			ServletUtil.writeResponse(response,
+					printModels(language, user, sublist, printCardBuffer, rows, cols, true, fee, request));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
@@ -2218,7 +2250,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = getUser(request);
 
 		final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID");
-		  StringBuilder printBuffer = getPrintBuffer(request);
+		StringBuilder printBuffer = getPrintBuffer(request);
 
 		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
 			printModelsForUser(request, response, languageUtil.getLanguage(user.language), user.getId(),
@@ -2233,8 +2265,8 @@ public class RegistrationServlet extends HttpServlet {
 					final List<Model> subList = new LinkedList<Model>();
 					subList.add(model);
 
-					buff.append(printModels(languageUtil.getLanguage(user.language), servletDAO.getUser(user.getId()), subList,
-							printBuffer, 1, 3, false, fee, request));
+					buff.append(printModels(languageUtil.getLanguage(user.language), servletDAO.getUser(user.getId()),
+							subList, printBuffer, 1, 3, false, fee, request));
 					break;
 				}
 			}
@@ -2246,12 +2278,15 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void printModelsForUser(final HttpServletRequest request, final HttpServletResponse response,
-			final ResourceBundle language, final int userID, boolean alwaysPageBreak, StringBuilder printBuffer) throws Exception, IOException {
-		ServletUtil.writeResponse(response, printModelsForUser(language, userID, request, alwaysPageBreak, printBuffer));
+			final ResourceBundle language, final int userID, boolean alwaysPageBreak, StringBuilder printBuffer)
+			throws Exception, IOException {
+		ServletUtil.writeResponse(response,
+				printModelsForUser(language, userID, request, alwaysPageBreak, printBuffer));
 	}
 
 	private StringBuilder printModelsForUser(final ResourceBundle language, final int userID,
-			final HttpServletRequest request, boolean alwaysPageBreak, StringBuilder printBuffer) throws Exception, IOException {
+			final HttpServletRequest request, boolean alwaysPageBreak, StringBuilder printBuffer)
+			throws Exception, IOException {
 		final List<Model> models = servletDAO.getModels(userID);
 
 		// remove models that are not for the current show
@@ -2274,7 +2309,8 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = servletDAO.getUser(userID);
 		int modelsRemainingToPrint = models.size();
 		int fee = calculateEntryFee(models);
-		int modelsOnPage = 3;
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.MaxModelsPerPage.name());
+		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
 		while (!models.isEmpty()) {
 			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
 			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
@@ -2290,8 +2326,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	StringBuilder printModels(final ResourceBundle language, final User user, final List<Model> models,
-			final StringBuilder printBuffer, final int rows, final int cols, boolean pageBreak, final int fee, HttpServletRequest request)
-			throws Exception, IOException {
+			final StringBuilder printBuffer, final int rows, final int cols, boolean pageBreak, final int fee,
+			HttpServletRequest request) throws Exception, IOException {
 
 		final int width = 100 / cols;
 		final int height = 100 / rows;
@@ -2301,7 +2337,8 @@ public class RegistrationServlet extends HttpServlet {
 				+ (pageBreak ? "style='page-break-after: always;' " : "") + "border='0' >");
 
 		int ModelCount = 0;
-		String logoURL = getServletURL(request)+"/"+Command.LOADIMAGE.name()+"/"+getLogoIDForShow(getShowFromSession(request));
+		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
+				+ getLogoIDForShow(getShowFromSession(request));
 		for (int row = 0; row < rows; row++) {
 			buff.append("<tr valign='bottom'>");
 			for (int col = 0; col < cols; col++) {
@@ -2331,8 +2368,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_PRODUCER__", model.producer)
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, ".."))
-							.replaceAll("__FEE__", String.valueOf(fee))
-							.replaceAll("__LOGO_URL__", logoURL)
+							.replaceAll("__FEE__", String.valueOf(fee)).replaceAll("__LOGO_URL__", logoURL)
 
 					// "<font color='#006600'>Alapra ragasztva</font>"
 					// :
@@ -2364,20 +2400,19 @@ public class RegistrationServlet extends HttpServlet {
 		return buff;
 	}
 
-    public static String getGluedToBaseHTMLCode(final ResourceBundle language, final Model model, String imageBaseDir) {
-        
-        String borderColor = model.gluedToBase ? "lightgreen" : "red";
-        String imageFileName = model.gluedToBase ? "glued.jpg" : "notglued.jpg";
-        String gluedToBaseText = model.gluedToBase ? 
-                language.getString("yes") + "<br><em>yes</em>"
-                : language.getString("no") + "<br><em>no</em>";
-        
-        return 
-                "<div style='border: 3px solid " + borderColor + "; padding: 2px'>" +
-                "<img src='"+imageBaseDir+"/icons/" + imageFileName + "' style='float: right; vertical-align: middle; padding-left: 3px;'  height='25px'>" + 
-                "<font style='font-family: Calibri, Optima, Arial, sans-serif;font-size: 3mm'>" + gluedToBaseText + "</font>" +
-                "</div>";
-    }
+	public static String getGluedToBaseHTMLCode(final ResourceBundle language, final Model model, String imageBaseDir) {
+
+		String borderColor = model.gluedToBase ? "lightgreen" : "red";
+		String imageFileName = model.gluedToBase ? "glued.jpg" : "notglued.jpg";
+		String gluedToBaseText = model.gluedToBase ? language.getString("yes") + "<br><em>yes</em>"
+				: language.getString("no") + "<br><em>no</em>";
+
+		return "<div style='border: 3px solid " + borderColor + "; padding: 2px'>" + "<img src='" + imageBaseDir
+				+ "/icons/" + imageFileName
+				+ "' style='float: right; vertical-align: middle; padding-left: 3px;'  height='25px'>"
+				+ "<font style='font-family: Calibri, Optima, Arial, sans-serif;font-size: 3mm'>" + gluedToBaseText
+				+ "</font>" + "</div>";
+	}
 
 	public void inputForModifyUser(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
@@ -2396,17 +2431,18 @@ public class RegistrationServlet extends HttpServlet {
 			return requestURL.substring(0, requestURL.indexOf("jsp/")) + getClass().getSimpleName();
 		}
 
-		return requestURL.toString().substring(0, requestURL.indexOf(getClass().getSimpleName()) + getClass().getSimpleName().length());
+		return requestURL.toString().substring(0,
+				requestURL.indexOf(getClass().getSimpleName()) + getClass().getSimpleName().length());
 	}
 
 	public void sendEmail(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
 
-		if(!isOnSiteUse()) {
+		if (!isOnSiteUse()) {
 			sendEmailWithModels(user, false);
 			setEmailSentNoticeInSession(request, user);
 		}
-		
+
 		redirectToMainPage(request, response);
 	}
 
@@ -2420,7 +2456,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final HttpSession session = request.getSession(false);
 		String startPage = getStartPage(request);
-		
+
 		if (session != null) {
 			session.invalidate();
 		}
@@ -2428,7 +2464,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (isOnSiteUse()) {
 			response.sendRedirect("../helyi.html");
 		} else {
-		        response.sendRedirect("../" + startPage);
+			response.sendRedirect("../" + startPage);
 		}
 	}
 
@@ -2446,7 +2482,7 @@ public class RegistrationServlet extends HttpServlet {
 						: "");
 	}
 
-    private void updateSystemSettings(String show) throws SQLException {
+	private void updateSystemSettings(String show) throws SQLException {
 		onSiteUse = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.ONSITEUSE));
 		systemMessage = getSystemParameter(show, ServletDAO.SystemParameter.SYSTEMMESSAGE);
 	}
@@ -2508,7 +2544,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void getawardedModelsPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
-		String languageCode  = getLanguageCodeWithDefault(request);
+		String languageCode = getLanguageCodeWithDefault(request);
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		buff.append(awardedModelsBuffer.toString().replaceAll("__ADDNEWROW__", language.getString("add.new.row"))
@@ -2559,8 +2595,8 @@ public class RegistrationServlet extends HttpServlet {
 
 			servletDAO.saveAwardedModel(new AwardedModel(model, award));
 		}
-		
-		response.sendRedirect(request.getRequestURI()+ "/getawardedModelsPage");
+
+		response.sendRedirect(request.getRequestURI() + "/getawardedModelsPage");
 	}
 
 	private void printAwardedModels(final HttpServletRequest request, final HttpServletResponse response,
@@ -2591,7 +2627,8 @@ public class RegistrationServlet extends HttpServlet {
 	public void getbatchAddModelPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
-		final String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
+		final String languageCode = ServletUtil.getRequestAttribute(request,
+				RequestParameter.Language.getParameterName());
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		final StringBuilder categoriesBuff = new StringBuilder();
@@ -2642,9 +2679,11 @@ public class RegistrationServlet extends HttpServlet {
 
 	private User createUser(final HttpServletRequest request, final String email, final String httpParameterPostTag)
 			throws Exception {
-		final String passwordInRequest = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "password" + httpParameterPostTag));
+		final String passwordInRequest = ServletUtil
+				.encodeString(ServletUtil.getRequestAttribute(request, "password" + httpParameterPostTag));
 
-		return createUser(request, ServletUtil.sanitizeUserInput(email), StringEncoder.encode(passwordInRequest), httpParameterPostTag);
+		return createUser(request, ServletUtil.sanitizeUserInput(email), StringEncoder.encode(passwordInRequest),
+				httpParameterPostTag);
 	}
 
 	private User createUser(final HttpServletRequest request, final String email, final String password,
@@ -2662,8 +2701,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag);
 
-		return new User(servletDAO.getNextID(User.class),
-				password,
+		return new User(servletDAO.getNextID(User.class), password,
 				// ServletUtil.getRequestAttribute(request, "firstname" +
 				// httpParameterPostTag),
 				"-", ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag),
@@ -2741,7 +2779,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void getModelForm(final HttpServletRequest request, final HttpServletResponse response, final String action,
-			final String submitLabel, final Model model) throws Exception {
+			final String submitLabel, final Model model) throws IOException {
 		final HttpSession session = request.getSession(true);
 
 		session.setAttribute(SessionAttribute.Action.name(), action);
@@ -2762,12 +2800,12 @@ public class RegistrationServlet extends HttpServlet {
 		return VERSION;
 	}
 
-    public static boolean isPreRegistrationAllowed(String show) {
-        if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(show))
-            return true;
-        Boolean allowed = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.REGISTRATION));
-        return allowed == null ? false : allowed;
-    }
+	public static boolean isPreRegistrationAllowed(String show) {
+		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(show))
+			return true;
+		Boolean allowed = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.REGISTRATION));
+		return allowed == null ? false : allowed;
+	}
 
 	public void loadImage(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		response.setContentType("image/jpeg");

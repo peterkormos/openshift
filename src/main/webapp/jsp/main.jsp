@@ -26,7 +26,14 @@ if (show == null) {
 	show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 }
 
-	List<Model> models = servletDAO.getModels(user.getId());
+List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
+if (models == null) {
+	models = servletDAO.getModels(user.getId());
+}
+else {
+	session.removeAttribute(RegistrationServlet.SessionAttribute.Models.name());
+}
+
 	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
 			RegistrationServlet.SessionAttribute.Categories.name());
 	models = RegistrationServlet.getModelsForShow(show, models, categories);
