@@ -225,7 +225,7 @@ private JDBCDAO jdbcDAO;
 	return userID == INVALID_USERID ? getAll(Model.class) : getModels("userID = " + userID);
   }
 
-  public List<Model> getModelsInCategory(final int categoryID) throws SQLException
+  public List<Model> getModelsInCategory(final int categoryID)
   {
 	return getModels("categoryID = " + categoryID);
   }

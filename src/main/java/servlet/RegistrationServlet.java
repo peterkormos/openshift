@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.04.21.";
+	public String VERSION = "2025.04.25.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1001,11 +1001,22 @@ public class RegistrationServlet extends HttpServlet {
 			deleteModelsForShow(getShowFromSession(request));
 			
 			final List<Model> models = data.get(3);
-			if(!models.isEmpty()) {
+			if (!models.isEmpty()) {
 				buff.append("<p>Storing Models");
 				for (final Model model : models) {
-					buff.append(".");
+					if (model.detailing != null && !model.detailing.isEmpty()) {
+
+						final Collection<Detailing> newDetailing = new LinkedList<>();
+						model.detailing.forEach(detailing -> {
+							detailing.setId(servletDAO.getNextID(Detailing.class));
+							servletDAO.save(detailing);
+							newDetailing.add(detailing);
+						});
+						
+						model.setDetailing(newDetailing);
+					}
 					servletDAO.save(model);
+					buff.append(".");
 				}
 			}
 
@@ -2460,7 +2471,13 @@ public class RegistrationServlet extends HttpServlet {
 	private void deleteModelsForShow(final String show) {
 		servletDAO.getCategoryGroups(show).forEach(categoryGroup -> {
 			servletDAO.getCategoryList(categoryGroup.getId(), show).forEach(category -> {
-				servletDAO.delete(Model.class, "categoryID = " + category.getId());
+				servletDAO.getModelsInCategory(category.getId()).forEach(model -> {
+					try {
+						servletDAO.deleteModel(model);
+					} catch (SQLException e) {
+						logger.error("", e);
+					}
+				});
 				servletDAO.delete(category);
 			});
 		});
