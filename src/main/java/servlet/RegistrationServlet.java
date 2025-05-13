@@ -681,8 +681,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (!users.isEmpty()) {
 			StringBuilder printBuffer = getPrintBuffer(request);
 			for (final User user1 : users) {
-				ServletUtil.writeResponse(response,
-						printModelsForUser(language, user1.getId(), request, printBuffer));
+				printModelsForUser(request, response, language, user1.getId(), printBuffer);
 			}
 		}
 		showPrintDialog(response);
@@ -2240,8 +2239,10 @@ public class RegistrationServlet extends HttpServlet {
 			final List<Model> sublist = allModels.subList(0, Math.min(cols * rows, allModels.size()));
 
 			int fee = calculateEntryFee(allModels.size());
+			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
+					+ getLogoIDForShow(getShowFromSession(request));
 			ServletUtil.writeResponse(response,
-					printModels(language, sublist, printCardBuffer, rows, cols, true, fee, request));
+					printModels(language, sublist, printCardBuffer, rows, cols, true, fee, logoURL));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
@@ -2268,9 +2269,11 @@ public class RegistrationServlet extends HttpServlet {
 			int fee = calculateEntryFee(1);
 			final List<Model> subList = new LinkedList<Model>();
 			subList.add(servletDAO.getModel(Integer.parseInt(modelID)));
+			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
+					+ getLogoIDForShow(getShowFromSession(request));
 
 			buff.append(printModels(languageUtil.getLanguage(user.language), subList, printBuffer,
-					1, 3, false, fee, request));
+					1, 3, false, fee, logoURL));
 
 			ServletUtil.writeResponse(response, buff);
 		}
@@ -2298,13 +2301,15 @@ public class RegistrationServlet extends HttpServlet {
 		int fee = calculateEntryFee(models.size());
 		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.MaxModelsPerPage.name());
 		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
+		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
+				+ getLogoIDForShow(getShowFromSession(request));
 		while (!models.isEmpty()) {
 			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
 			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
 			models.removeAll(subList);
 
 			boolean pageBreak = currentModelsOnPage > 0;
-			buff.append(printModels(language, subList, printBuffer, 1, modelsOnPage, pageBreak, fee, request));
+			buff.append(printModels(language, subList, printBuffer, 1, modelsOnPage, pageBreak, fee, logoURL));
 		}
 
 		return buff;
@@ -2312,7 +2317,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	StringBuilder printModels(final ResourceBundle language, final List<Model> models, final StringBuilder printBuffer,
-			final int rows, final int cols, boolean pageBreak, final int fee, HttpServletRequest request) throws Exception, IOException {
+			final int rows, final int cols, boolean pageBreak, final int fee, String logoURL) throws Exception, IOException {
 
 		final int width = 100 / cols;
 		final int height = 100 / rows;
@@ -2322,8 +2327,6 @@ public class RegistrationServlet extends HttpServlet {
 				+ (pageBreak ? "style='page-break-after: always;' " : "") + "border='0' >");
 
 		int modelIndex = 0;
-		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
-				+ getLogoIDForShow(getShowFromSession(request));
 		for (int row = 0; row < rows; row++) {
 			buff.append("<tr valign='bottom'>");
 			for (int col = 0; col < cols; col++) {
