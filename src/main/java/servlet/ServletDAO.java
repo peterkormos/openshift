@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,8 @@ private JDBCDAO jdbcDAO;
 
   public enum SystemParameter
   {
-	REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory, PrintLanguage, MaxModelsPerPage;
+	REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory, // 
+	PrintLanguage, MaxModelsPerPage, PageBreakAtPrint;
 
 	private boolean booleanValue;
 	
@@ -222,7 +224,7 @@ private JDBCDAO jdbcDAO;
 
   public List<Model> getModels(final int userID)
   {
-	return userID == INVALID_USERID ? getAll(Model.class) : getModels("userID = " + userID);
+	return userID == INVALID_USERID ? getAll(Model.class) : getModels("user.id = " + userID);
   }
 
   public List<Model> getModelsInCategory(final int categoryID)
@@ -284,7 +286,7 @@ void deleteModels(final int categoryId) throws SQLException {
 
   public void deleteUser(final int userID) throws SQLException
   {
-	delete(Model.class, "userID = " + userID);
+	delete(Model.class, "user.id = " + userID);
 
 	delete(User.class, "id = " + userID);
   }
@@ -404,7 +406,7 @@ void deleteModels(final int categoryId) throws SQLException {
 	          
 	          session.beginTransaction();
 
-	          Query query = session.createQuery("select distinct u from Model m, User u where m.userID = u.id");
+	          Query query = session.createQuery("select distinct u from Model m, User u where m.user.id = u.id");
 	          
 	        return new LinkedList<User>(query.list());
 	      }
@@ -413,5 +415,18 @@ void deleteModels(final int categoryId) throws SQLException {
 	          closeSession(session);
 	      }
 	}
-}
+	
+	public List<Model> getModelsForShow(final String show, final int userID) {
+		final List<Model> models = getModels(userID);
+		final Iterator<Model> it = models.iterator();
+		while (it.hasNext()) {
+			final Model model = it.next();
 
+			if (show != null && !getCategory(model.categoryID).group.show.equals(show)) {
+				it.remove();
+			}
+		}
+
+		return models;
+	}
+}
