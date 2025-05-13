@@ -189,7 +189,7 @@
 		</td>
 
 		<%
-			final User modelsUser = servletDAO.getUser(model.userID);
+			final User modelsUser = servletDAO.getUser(model.getUserID());
 				if (!forJudges) {
 					if (insertAwards) {
 		%>
@@ -205,9 +205,9 @@
 		<td align='center'>
 			<%
 				for (String judge : servlet.judgingServletDAO.getJudges(category.categoryCode, model.getId(),
-									model.userID)) {
+									model.getUserID())) {
 			%> <a
-			href="<%=actionPathPrefix%>../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.UserID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
+			href="<%=actionPathPrefix%>../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.UserID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
 
 			<%
 				}
@@ -242,7 +242,7 @@
 		<%
 			}
 		%>
-		<td align='center'><%=model.userID%></td>
+		<td align='center'><%=model.getUserID()%></td>
 
 		<td align='center'><%=model.getId()%></td>
 		<%
