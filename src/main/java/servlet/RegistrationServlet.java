@@ -89,7 +89,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.04.25.";
+	public String VERSION = "2025.05.13.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -2307,17 +2307,19 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 
 		final User user = servletDAO.getUser(userID);
-		int modelsRemainingToPrint = models.size();
 		int fee = calculateEntryFee(models);
 		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.MaxModelsPerPage.name());
 		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
+		Optional<String> pageBreakAtPrint = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.PageBreakAtPrint.name());
+		boolean pageBreakAt = pageBreakAtPrint.isPresent() ? Boolean.parseBoolean(pageBreakAtPrint.get()) : true;
+		System.out.println(">>>>>>>>>>> modelsOnPage " + modelsOnPage);
+		System.out.println(">>>>>>>>>>> pageBreakAt " + pageBreakAt);
 		while (!models.isEmpty()) {
 			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
 			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
 			models.removeAll(subList);
 
-			modelsRemainingToPrint -= currentModelsOnPage;
-			boolean pageBreak = alwaysPageBreak || modelsRemainingToPrint > 0;
+			boolean pageBreak = alwaysPageBreak || currentModelsOnPage > 0;
 			buff.append(printModels(language, user, subList, printBuffer, 1, modelsOnPage, pageBreak, fee, request));
 		}
 
