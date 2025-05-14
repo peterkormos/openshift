@@ -189,7 +189,7 @@
 		</td>
 
 		<%
-			final User modelsUser = servletDAO.getUser(model.getUserID());
+			final User modelsUser = model.getUser();
 				if (!forJudges) {
 					if (insertAwards) {
 		%>

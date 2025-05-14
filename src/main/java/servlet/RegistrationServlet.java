@@ -75,6 +75,7 @@ import datatype.LoginConsent.LoginConsentType;
 import datatype.MainPageNotice;
 import datatype.Model;
 import datatype.ModelClass;
+import datatype.PrintedModel;
 import datatype.User;
 import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
@@ -2195,25 +2196,57 @@ public class RegistrationServlet extends HttpServlet {
 
 		StringBuilder printBuffer = getPrintBuffer(request);
 
+		List<User> users = servletDAO.getUsersWithModel();
 		if(pageBreak) {
-			List<User> users = servletDAO.getUsersWithModel();
-
-			Collections.sort(users, new Comparator() {
-				@Override
-				public int compare(Object o1, Object o2) {
-					return Integer.compare(User.class.cast(o1).getId(), User.class.cast(o2).getId());
-				}
-			});
-
 			for (final User user : users) {
 				printModelsForUser(request, response, language, user.getId(), printBuffer);
 			}
 		}
 		else {
-			
+			final StringBuilder buff = new StringBuilder();
+			List<PrintedModel> models = new LinkedList<>();
+
+			for (final User user : users) {
+				models.addAll(toPrintModels(request, user.getId()));
+			}
+
+			printModels(request, language, printBuffer, buff, models);
+			ServletUtil.writeResponse(response, buff);
 		}
 		response.getOutputStream().write("<p>Itt a vege...".getBytes());
 		showPrintDialog(response);
+	}
+
+	private List<PrintedModel> toPrintModels(final HttpServletRequest request, int userId ) {
+		final List<Model> usersModels = servletDAO.getModelsForShow(getShowFromSession(request), userId);
+		return toPrintModels(usersModels);
+	}
+
+	private List<PrintedModel> toPrintModels(final List<Model> usersModels) {
+		final int fee = calculateEntryFee(usersModels.size());
+		List<PrintedModel> pms = usersModels.stream().map(m -> {
+			PrintedModel pm = new PrintedModel(m);
+			pm.setFee(fee);
+			return pm;
+		}).collect(Collectors.toList());
+		return pms;
+	}
+
+	private void printModels(final HttpServletRequest request, final ResourceBundle language, StringBuilder printBuffer,
+			final StringBuilder buff, List<PrintedModel> models) throws SQLException, Exception, IOException {
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.MaxModelsPerPage.name());
+		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
+		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
+				+ getLogoIDForShow(getShowFromSession(request));
+		while (!models.isEmpty()) {
+			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
+			final List<PrintedModel> subList = new ArrayList<>(models.subList(0, currentModelsOnPage));
+			models.removeAll(subList);
+
+			boolean currentPageBreak = currentModelsOnPage > 0;
+			buff.append(printModels(language, subList, printBuffer, 1, modelsOnPage, currentPageBreak, logoURL));
+
+}
 	}
 
 	public void printCardsForAllModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -2238,11 +2271,10 @@ public class RegistrationServlet extends HttpServlet {
 		do {
 			final List<Model> sublist = allModels.subList(0, Math.min(cols * rows, allModels.size()));
 
-			int fee = calculateEntryFee(allModels.size());
 			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 					+ getLogoIDForShow(getShowFromSession(request));
 			ServletUtil.writeResponse(response,
-					printModels(language, sublist, printCardBuffer, rows, cols, true, fee, logoURL));
+					printModels(language, toPrintModels(sublist), printCardBuffer, rows, cols, true, logoURL));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
@@ -2266,14 +2298,13 @@ public class RegistrationServlet extends HttpServlet {
 		} else {
 			final StringBuilder buff = new StringBuilder();
 
-			int fee = calculateEntryFee(1);
 			final List<Model> subList = new LinkedList<Model>();
 			subList.add(servletDAO.getModel(Integer.parseInt(modelID)));
 			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 					+ getLogoIDForShow(getShowFromSession(request));
 
-			buff.append(printModels(languageUtil.getLanguage(user.language), subList, printBuffer,
-					1, 3, false, fee, logoURL));
+			buff.append(printModels(languageUtil.getLanguage(user.language), toPrintModels(subList), printBuffer,
+					1, 3, false, logoURL));
 
 			ServletUtil.writeResponse(response, buff);
 		}
@@ -2291,33 +2322,15 @@ public class RegistrationServlet extends HttpServlet {
 	private StringBuilder printModelsForUser(final ResourceBundle language, final int userID,
 			final HttpServletRequest request, StringBuilder printBuffer)
 			throws Exception, IOException {
-		final List<Model> models = servletDAO.getModelsForShow(getShowFromSession(request), userID);
-		if (models.isEmpty()) {
-			return new StringBuilder();
-		}
-
 		final StringBuilder buff = new StringBuilder();
 
-		int fee = calculateEntryFee(models.size());
-		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.MaxModelsPerPage.name());
-		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
-		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
-				+ getLogoIDForShow(getShowFromSession(request));
-		while (!models.isEmpty()) {
-			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
-			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
-			models.removeAll(subList);
-
-			boolean pageBreak = currentModelsOnPage > 0;
-			buff.append(printModels(language, subList, printBuffer, 1, modelsOnPage, pageBreak, fee, logoURL));
-		}
-
+		printModels(request, language, printBuffer, buff, toPrintModels(request, userID));
+		
 		return buff;
-
 	}
 
-	StringBuilder printModels(final ResourceBundle language, final List<Model> models, final StringBuilder printBuffer,
-			final int rows, final int cols, boolean pageBreak, final int fee, String logoURL) throws Exception, IOException {
+	StringBuilder printModels(final ResourceBundle language, final List<PrintedModel> models, final StringBuilder printBuffer,
+			final int rows, final int cols, boolean pageBreak, String logoURL) throws Exception, IOException {
 
 		final int width = 100 / cols;
 		final int height = 100 / rows;
@@ -2332,7 +2345,7 @@ public class RegistrationServlet extends HttpServlet {
 			for (int col = 0; col < cols; col++) {
 				buff.append("<td width='" + width + "%' height='" + height + "%'>");
 
-				final Model model = modelIndex < models.size() ? models.get(modelIndex) : null;
+				final PrintedModel model = modelIndex < models.size() ? models.get(modelIndex) : null;
 				modelIndex++;
 
 				if (model != null) {
@@ -2357,13 +2370,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_PRODUCER__", model.producer)
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, ".."))
-							.replaceAll("__FEE__", String.valueOf(fee)).replaceAll("__LOGO_URL__", logoURL)
-
-					// "<font color='#006600'>Alapra ragasztva</font>"
-					// :
-					// "<font color='#FF0000'><strong>Nincs leragasztva!!!
-					// </strong></font> "
-
+							.replaceAll("__FEE__", String.valueOf(model.getFee())).replaceAll("__LOGO_URL__", logoURL)
 					;
 
 					for (DetailingGroup group : DetailingGroup.values()) {

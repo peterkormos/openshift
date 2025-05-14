@@ -406,7 +406,7 @@ void deleteModels(final int categoryId) throws SQLException {
 	          
 	          session.beginTransaction();
 
-	          Query query = session.createQuery("select distinct u from Model m, User u where m.user.id = u.id");
+	          Query query = session.createQuery("select distinct u from Model m, User u where m.user.id = u.id order by u.id");
 	          
 	        return new LinkedList<User>(query.list());
 	      }
