@@ -8,6 +8,8 @@ import java.util.StringTokenizer;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,6 +48,10 @@ public class User extends Record {
 	public String country;
 	@Column(name = "MODEL_CLASS")
 	private String modelClasses;
+    
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
 	public static final String LOCAL_USER = "_LOCAL_";
 
@@ -222,5 +228,17 @@ public class User extends Record {
 	@Override
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public boolean isUserDetailsUpdateNeeded() {
+		return getGender() == null;
 	}
 }

@@ -65,10 +65,11 @@ private JDBCDAO jdbcDAO;
 		return !getList(User.class, "upper(email) = upper('" + email + "')").isEmpty();
 	}
 
-  public List<Category> getCategoryList(final String show) throws SQLException
+  public List<Category> getCategoryList(final String show)
   {
 	return getCategoryList(0, show);
   }
+  
   public List<Category> getCategoryList(final int categoryGroupId, final String show) 
   {
 		if (categoryGroupId != 0) {

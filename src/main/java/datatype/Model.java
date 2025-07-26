@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -51,7 +53,7 @@ public class Model extends Record {
     @JoinTable(name = "MAK_MAK_DETAILING")
     @Nullable
     public Collection<Detailing> detailing;
-    
+
     @Transient
     public Map<DetailingGroup, Map<DetailingCriteria, Boolean>> details;
 

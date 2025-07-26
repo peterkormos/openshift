@@ -1,6 +1,10 @@
 function updateMandatoryFieldMark(element)
 {
 	var font = element.parentNode.getElementsByTagName('FONT')[0]; 
+	if (font === undefined) {
+		font = element.parentNode.parentNode.getElementsByTagName('FONT')[0];
+	}
+	
     if (element.value == '' || (element.type == 'checkbox' && !element.checked))
     {
 		font.style.color = 'red'; 

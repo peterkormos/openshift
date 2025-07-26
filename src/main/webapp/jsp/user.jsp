@@ -7,6 +7,7 @@
 
 <jsp:useBean id="languageUtil" class="util.LanguageUtil"
 	scope="application" />
+<%@include file="util.jsp"%>
 
 <%
 //input parameters	
@@ -14,7 +15,10 @@ boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestAttr
 if (directRegister)
 	session.removeAttribute(CommonSessionAttribute.UserID.name());
 
-String action = request.getParameter("action");
+String action = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name());
+if(action == null) {
+	action = request.getParameter("action");
+}
 
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
@@ -117,21 +121,21 @@ function checkDeleteUserRequest()
 			<%
 			if (!directRegister) {
 			%>
-			<tr bgcolor='F6F4F0'>
+			<tr bgcolor="<%= highlight()%>">
 				<td><%=language.getString("email")%>:</td>
 				<td><input autocomplete="fuckoffchrome" name="email"
 					type="text" value="<%=user == null ? "" : user.email%>"
 					onchange="updateMandatoryFieldMark(this);"> <font
 					color="#FF0000" size="+3">&#8226;</font></td>
 			</tr>
-			<tr>
+			<tr bgcolor="<%= highlight()%>">
 				<td><%=language.getString("email.again")%>:</td>
 				<td><input autocomplete="fuckoffchrome" name="email2"
 					type="text" value="<%=user == null ? "" : user.email%>"
 					onchange="updateMandatoryFieldMark(this);"> <font
 					color="#FF0000" size="+3">&#8226;</font></td>
 			</tr>
-			<tr bgcolor='F6F4F0'>
+			<tr bgcolor="<%= highlight()%>">
 				<td width="32%"><strong><%=language.getString("password")%>:
 				</strong></td>
 				<td width="68%"><input autocomplete="fuckoffchrome"
@@ -139,7 +143,7 @@ function checkDeleteUserRequest()
 					onchange="updateMandatoryFieldMark(this);"> <font
 					color="#FF0000" size="+3">&#8226;</font></td>
 			</tr>
-			<tr>
+			<tr bgcolor="<%= highlight()%>">
 				<td><strong><%=language.getString("password.again")%>:
 				</strong></td>
 				<td><input autocomplete="fuckoffchrome" name="password2"
@@ -149,7 +153,7 @@ function checkDeleteUserRequest()
 			<%
 			}
 			%>
-			<tr bgcolor='F6F4F0'>
+			<tr bgcolor="<%= highlight()%>">
 				<td><%=language.getString("name")%>:</td>
 				<td>
 					<div id='fullnames'>
@@ -169,7 +173,32 @@ function checkDeleteUserRequest()
 					</div>
 				</td>
 			</tr>
-			<tr>
+			<tr bgcolor="<%= highlight(user != null && user.getGender() == null)%>">
+				<td>
+						<%
+						if (user != null && user.getGender() == null) {
+						%>					
+							<img src="../icons/new.png">
+						<%
+						}
+						%>
+				<%=language.getString("gender")%>:</td>
+				<td>
+					<%
+					    for (final Gender gender : Gender.values()) {
+					%> <label>
+					<input type='radio' name='gender'
+						onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));"
+						value='<%=gender.name()%>'
+						<%=(user == null ? "" : gender.equals(user.getGender()) ? " checked='checked'" : "")%> /> 
+						<%=language.getString(gender.name())%>
+						</label><br> <%
+					     }
+					 %> 
+					 <font color='#FF0000' size='+3'>&#8226;</font>									
+				</td>
+			</tr>
+			<tr bgcolor="<%= highlight()%>">
 				<td><%=language.getString("year.of.birth")%>:</td>
 				<td>
 					<%
@@ -186,7 +215,7 @@ function checkDeleteUserRequest()
 					</jsp:include> <font color="#FF0000" size="+3">&#8226;</font>
 				</td>
 			</tr>
-			<tr bgcolor='F6F4F0'>
+			<tr bgcolor="<%= highlight()%>">
 				<td><%=language.getString("language")%>:</td>
 				<td>
 					<%
@@ -203,7 +232,7 @@ function checkDeleteUserRequest()
 					</jsp:include> <font color="#FF0000" size="+3">&#8226;</font>
 				</td>
 			</tr>
-			<tr>
+			<tr bgcolor="<%= highlight()%>">
 				<td><%=language.getString("country")%></td>
 				<td>
 					<%
@@ -221,24 +250,24 @@ function checkDeleteUserRequest()
 					</jsp:include> <font color="#FF0000" size="+3">&#8226;</font>
 				</td>
 			</tr>
-			<tr bgcolor='F6F4F0'>
+			<tr bgcolor="<%= highlight()%>">
 				<td><%=language.getString("city")%>:</td>
 				<td><input autocomplete="fuckoffchrome" name="city" type="text"
 					value="<%=user == null ? "" : user.city%>"
 					onchange="updateMandatoryFieldMark(this);"> <font
 					color="#FF0000" size="+3">&#8226;</font></td>
 			</tr>
-			<tr>
+			<tr bgcolor="<%= highlight()%>">
 				<td><%=language.getString("address")%>:</td>
 				<td><input autocomplete="fuckoffchrome" name="address"
 					type="text" value="<%=user == null ? "" : user.address%>"></td>
 			</tr>
-			<tr bgcolor='F6F4F0'>
+			<tr bgcolor="<%= highlight()%>">
 				<td><%=language.getString("telephone")%>:</td>
 				<td><input autocomplete="fuckoffchrome" name="telephone"
 					type="text" value="<%=user == null ? "" : user.telephone%>"></td>
 			</tr>
-			<tr>
+			<tr bgcolor="<%= highlight()%>">
 				<td>&nbsp;</td>
 				<td><input autocomplete="fuckoffchrome" type="submit"
 					value="<%=language.getString("save")%>">

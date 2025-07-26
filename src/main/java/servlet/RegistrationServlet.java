@@ -70,6 +70,7 @@ import datatype.Detailing;
 import datatype.DetailingCriteria;
 import datatype.DetailingGroup;
 import datatype.EmailParameter;
+import datatype.Gender;
 import datatype.LoginConsent;
 import datatype.LoginConsent.LoginConsentType;
 import datatype.MainPageNotice;
@@ -89,7 +90,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.04.25.";
+	public String VERSION = "2025.07.26.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -514,7 +515,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user,
-			final String show) throws IOException, SQLException {
+			final String show) throws IOException {
 		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
 				+ show);
 
@@ -527,6 +528,11 @@ public class RegistrationServlet extends HttpServlet {
 			systemParameters.put(show, new EnumMap(SystemParameter.class));
 		}
 
+		if (user.isUserDetailsUpdateNeeded()) {
+			inputForModifyUser(request,response);
+			return;
+		}
+		
 		List<Model> models = servletDAO.getModels(user.getId());
 		if (models.isEmpty() && !user.isAdminUser()) {
 			session.setAttribute(SessionAttribute.Models.name(), models);
@@ -548,7 +554,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private HttpSession initHttpSession(final HttpServletRequest request, final User user, String show)
-			throws SQLException {
+			 {
 		final HttpSession session = request.getSession(true);
 		session.setAttribute(CommonSessionAttribute.UserID.name(), user);
 		ResourceBundle language = languageUtil.getLanguage(user.language);
@@ -2414,8 +2420,8 @@ public class RegistrationServlet extends HttpServlet {
 				+ "</font>" + "</div>";
 	}
 
-	public void inputForModifyUser(final HttpServletRequest request, final HttpServletResponse response)
-			throws Exception {
+	public void inputForModifyUser(final HttpServletRequest request, final HttpServletResponse response) throws IOException
+			{
 		final HttpSession session = request.getSession(true);
 
 		session.setAttribute(SessionAttribute.DirectRegister.name(), false);
@@ -2694,6 +2700,7 @@ public class RegistrationServlet extends HttpServlet {
 		// ServletUtil.getRequestAttribute(request, "firstname" +
 		// httpParameterPostTag);
 		ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag);
+		ServletUtil.getRequestAttribute(request, "gender" + httpParameterPostTag);
 		ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag);
 		ServletUtil.getRequestAttribute(request, "city" + httpParameterPostTag);
 		ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag);
@@ -2701,7 +2708,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag);
 
-		return new User(servletDAO.getNextID(User.class), password,
+		User user = new User(servletDAO.getNextID(User.class), password,
 				// ServletUtil.getRequestAttribute(request, "firstname" +
 				// httpParameterPostTag),
 				"-", ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag),
@@ -2711,6 +2718,9 @@ public class RegistrationServlet extends HttpServlet {
 				ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag),
 				Integer.parseInt(ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag)),
 				ServletUtil.getOptionalRequestAttribute(request, "city" + httpParameterPostTag));
+		user.setGender(Gender.valueOf(ServletUtil.getRequestAttribute(request, "gender" + httpParameterPostTag)));
+	
+		return user;
 	}
 
 	class ExceptionData {
