@@ -10,7 +10,7 @@
 	scope="application" />
 
 <%
-    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 ServletDAO servletDAO = servlet.getServletDAO();
 
 final String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
@@ -50,26 +50,25 @@ if (showIdHttpParameter != null)
 				}
 		        else if (dataUsageNoConsent) 
 			    {
-					noticeDiv.innerHTML = '<%=language.getString("data.usage.no.consent.warning")%>';
-			    }
-			    	
-				noticeDiv.className = "flash ERROR";
-	
-				submitButton.className = "disabledClass";
-				submitButton.disabled = true;
-
-				return false;
-			} 
-			else 
-			{
-				noticeDiv.innerHTML = '&nbsp;';
-				noticeDiv.className = "flash";
-	
-				submitButton.className = "";
-				submitButton.disabled = false;
-				
-				return true;
+					noticeDiv.innerHTML = 
+						'<%=language.getString("data.usage.no.consent.warning")%>';
 			}
+
+			noticeDiv.className = "flash ERROR";
+
+			submitButton.className = "disabledClass";
+			submitButton.disabled = true;
+
+			return false;
+		} else {
+			noticeDiv.innerHTML = '&nbsp;';
+			noticeDiv.className = "flash";
+
+			submitButton.className = "";
+			submitButton.disabled = false;
+
+			return true;
+		}
 	}
 </script>
 </head>
@@ -81,13 +80,17 @@ if (showIdHttpParameter != null)
 		action="../RegistrationServlet" method="post" accept-charset="UTF-8">
 
 		<input type="hidden" name="command" value="login"> <input
-			type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="<%=languageCode%>">
+			type="hidden"
+			name="<%=RequestParameter.Language.getParameterName()%>"
+			value="<%=languageCode%>">
 		<%
-		    if (showIdHttpParameter != null) {
+		if (showIdHttpParameter != null) {
 		%>
-		<input type="hidden" name="<%=RequestParameter.ShowId.getParameterName()%>" value="<%=showIdHttpParameter%>">
+		<input type="hidden"
+			name="<%=RequestParameter.ShowId.getParameterName()%>"
+			value="<%=showIdHttpParameter%>">
 		<%
-		    }
+		}
 		%>
 
 		<table border="0" height="100%" width="100%">
@@ -99,80 +102,73 @@ if (showIdHttpParameter != null)
 									<%=servlet.getVersion()%></FONT></td>
 						</tr>
 						<tr>
-							<td colspan="2"><FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT></td>
+							<td><FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT></td>
 						</tr>
-						<tr bgcolor='F6F4F0'>
-							<td><%=language.getString("show")%>:</td>
-							<td>
+						<tr>
+							<td align="center">
 								<%
-								    for (final String show : shows) {
-								%> <label>
-									<img style="height: 25mm; vertical-align: middle;" src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
-								<input type='radio' name='show'
+								for (final String show : shows) {
+								%> <label> <img
+									style="height: 25mm; vertical-align: middle;"
+									src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
+									<input type='radio' name='show'
 									onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));"
 									value='<%=StringEncoder.toBase64(show.getBytes())%>'
 									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <span
-									style="color:red"><b> <%=show%></b></span>
-								 <%=shows.isEmpty() || shows.size() == 1 ?  "" : "<font color='#FF0000' size='+3'>&#8226;</font>"%>									
-									</label><br> <%
-								     }
-								 %> 
+									style="color: red"><b> <%=show%></b></span> <%=shows.isEmpty() || shows.size() == 1 ? "" : "<font color='#FF0000' size='+3'>&#8226;</font>"%>
+							</label><br> <%
+ }
+ %>
 							</td>
 						</tr>
 						<tr>
-							<td><FONT COLOR='#ff0000'><b><%=language.getString("email")%></b></FONT>:</td>
-							<td><input type="text" name="email" id="email"
-								onchange="updateMandatoryFieldMark(this);"> <font
-								color='#FF0000' size='+3'>&#8226;</font></td>
-						</tr>
-						<tr bgcolor='F6F4F0'>
-							<td><%=language.getString("password")%>:</td>
-							<td><input type="password" name="password"
-								onchange="updateMandatoryFieldMark(this);">
-								<font color='#FF0000' size='+3'>&#8226;</font>
-								<p>
-									<a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
-									</td>
+							<td align="center">
+								<div class="input-caption-container">
+									<input type="email" name="email" id="email" placeholder=" "
+										onchange="updateMandatoryFieldMark(this);" /> 
+										<label
+										for="email" class="input-caption"><%=language.getString("email")%></label>
+								</div>
+									<font color='#FF0000' size='+3'>&#8226;</font>
+							</td>
 						</tr>
 						<tr>
-							<td colspan="2">
-<%
-		    for (LoginConsentType lc : LoginConsent.LoginConsentType.values() ) {
-		%>
-							<label
-							<%= lc.isMandatory() ? "class='flash Warning'" : "" %>
-							><input type="checkbox"
-									id="dataUsageConsent<%=lc.name() %>"
-									name="dataUsageConsent<%=lc.name() %>"
-									<%= lc.isMandatory() ? "required='required'" : "" %> 
-									onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));">
-									<%= language.getString("login.consent." + lc.name()) %> 
-		<%
-		    if (lc.isMandatory()) {
-		%>
+							<td align="center">
+								<div class="input-caption-container">
+									<input type="password" name="password" id="password"
+										placeholder=" " onchange="updateMandatoryFieldMark(this);" />
+									<label for="password" class="input-caption"><%=language.getString("password")%></label>
+								</div>
 									<font color='#FF0000' size='+3'>&#8226;</font>
-		<%
-		    }
-		%>
-									
-									</label>
-									<br>
-		<%
-		    }
-		%>									
-									</td>
+								<p>
+									<a
+										href="reminder.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<%
+								for (LoginConsentType lc : LoginConsent.LoginConsentType.values()) {
+								%> <label <%=lc.isMandatory() ? "class='flash Warning'" : ""%>><input
+									type="checkbox" id="dataUsageConsent<%=lc.name()%>"
+									name="dataUsageConsent<%=lc.name()%>"
+									<%=lc.isMandatory() ? "required='required'" : ""%>
+									onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));">
+									<%=language.getString("login.consent." + lc.name())%> <%
+ if (lc.isMandatory()) {
+ %> <font color='#FF0000' size='+3'>&#8226;</font> <%
+ }
+ %> </label> <br> <%
+ }
+ %>
+							</td>
 						</tr>
 						<tr>
 							<td colspan="2" align="center"><input name="submit"
-								id="submitbutton" 
-								class = "disabledClass"
-								type="submit"
+								id="submitbutton" class="disabledClass" type="submit"
 								value="<%=language.getString("login")%>">
 								<p>
-								
-								<div id="noticeDiv" class="flash">
-								&nbsp;
-								</div></td>
+								<div id="noticeDiv" class="flash">&nbsp;</div></td>
 						</tr>
 					</table>
 

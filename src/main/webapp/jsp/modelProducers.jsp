@@ -16,11 +16,15 @@
 
 	boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 %>
-<div>
-<input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>" placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
+    <div class="input-caption-container">
+<input list="modelproducer" 
+name="modelproducer" 
+value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>" placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
 <%= mandatory ?  "required='required'" : "" %>
 onchange="updateMandatoryFieldMark(this);"
 size="60">
+        <label for="modelproducer" class="input-caption"><%=request.getParameter("label")%></label>
+    </div>
 
 <datalist id="modelproducer">
     <option></option>
@@ -73,4 +77,3 @@ size="60">
 <% 
 	}
 %>
-</div>

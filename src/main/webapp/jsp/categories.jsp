@@ -16,7 +16,7 @@
   User user = RegistrationServlet.getUser(request);
 %>
 
-<div id='categories'>
+    <div class="input-caption-container">
 	<select name='categoryID'
 	'<%= mandatory ? "required='required'" : "" %>' 
 onchange="updateMandatoryFieldMark(this);"
@@ -65,6 +65,8 @@ onchange="updateMandatoryFieldMark(this);"
 		  }
 		%>
 	</select>
+        <label for="categoryID" class="input-caption"><%=request.getParameter("label")%></label>
+    </div>
 
 	<%
 	  if (mandatory)
@@ -74,4 +76,4 @@ onchange="updateMandatoryFieldMark(this);"
 	<%
 	  }
 	%>
-</div>
+    

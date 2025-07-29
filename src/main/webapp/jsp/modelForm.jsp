@@ -149,12 +149,13 @@ if(!servlet.isOnSiteUse())
 
 			<!--	scale-->
 			<tr>
-				<td><%=language.getString("scale")%>:</td>
+				
 				<td>
 					<%
 String scale = model == null ? "" : model.scale;
 %> <jsp:include page="scales.jsp">
 						<jsp:param name="selectValue" value="<%=scale%>" />
+						<jsp:param name="label" value='<%=language.getString("scale")%>' />
 						<jsp:param name="frequentlyUsed"
 							value='<%=language.getString("frequently.used")%>' />
 					</jsp:include>
@@ -165,13 +166,14 @@ String scale = model == null ? "" : model.scale;
 
 			<!--	models.name-->
 			<tr bgcolor='F6F4F0'>
-				<td><%=language.getString("models.name")%>:</td>
+				
 				<td>
 					<%
 String modelname = model == null ? "" : model.name;
 %> <jsp:include page="textInput.jsp">
 						<jsp:param name="name" value="modelname" />
 						<jsp:param name="value" value="<%=modelname%>" />
+						<jsp:param name="label" value='<%=language.getString("models.name")%>' />
 						<jsp:param name="mandatory" value="true" />
 						<jsp:param name="maxlength" value="60" />
 						<jsp:param name="size" value="60" />
@@ -181,12 +183,13 @@ String modelname = model == null ? "" : model.name;
 
 			<!--	models.producer-->
 			<tr>
-				<td><%=language.getString("models.producer")%>:</td>
+				
 				<td>
 					<%
 String modelproducer = model == null ? "" : model.producer;
 %> <jsp:include page="modelProducers.jsp">
 						<jsp:param name="selectValue" value="<%=modelproducer%>" />
+						<jsp:param name="label" value='<%=language.getString("models.producer")%>' />
 						<jsp:param name="mandatory" value="true" />
 						<jsp:param name="frequentlyUsed"
 							value='<%=language.getString("frequently.used")%>' />
@@ -196,16 +199,23 @@ String modelproducer = model == null ? "" : model.producer;
 
 			<!--	glued.to.base-->
 			<tr bgcolor='F6F4F0'>
-				<td><%=language.getString("glued.to.base")%>:</td>
+				
 
-				<td style="vertical-align: top;" colspan="2"><label><%=language.getString("yes")%>
+				<td>
+    <div class="input-caption-container">
+  <fieldset id="gluedToBaseGroup">
+
+				<label><%=language.getString("yes")%>
 						<input style="zoom: 2;" name='gluedToBase' type='radio' value='on'
 						<%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%>
-						onchange="updateMandatoryFieldMark(this.parentNode);updateGluedToBaseImg(this);"></label>
+						onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);"></label>
 					<br> <label><%=language.getString("no")%> <input
 						style="zoom: 2;" name='gluedToBase' type='radio' value='off'
 						<%=(model == null || model.gluedToBase ? "" : "checked='checked'")%>
-						onchange="updateMandatoryFieldMark(this.parentNode);updateGluedToBaseImg(this);"></label>
+						onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);"></label>
+  </fieldset>
+  <label for="gluedToBaseGroup" class="input-caption"><%=language.getString("glued.to.base")%></label>
+    </div>	
 					<font color='#FF0000' size='+3'>&#8226;</font> <img
 					id='gluedToBaseImg'
 					src='../icons/<%=(model != null && model.gluedToBase ? "glued.jpg" : "notglued.jpg")%>'
@@ -215,9 +225,9 @@ String modelproducer = model == null ? "" : model.producer;
 
 			<!--	category-->
 			<tr>
-				<td><%=language.getString("category")%>:</td>
+				
 
-				<td colspan="2">
+				<td>
 					<%
 					final Category category = model == null ? null : servletDAO.getCategory(model.categoryID);
 
@@ -226,6 +236,7 @@ String modelproducer = model == null ? "" : model.producer;
 
 					String categoryLabelValue = model == null ? "" : String.valueOf(category.getId());
 					%> <jsp:include page="categories.jsp">
+						<jsp:param name="label" value='<%=language.getString("category")%>' />
 						<jsp:param name="selectedLabel" value="<%=categoryLabel%>" />
 						<jsp:param name="selectedValue" value="<%=categoryLabelValue%>" />
 						<jsp:param name="mandatory" value="true" />
@@ -242,46 +253,48 @@ String modelproducer = model == null ? "" : model.producer;
 			<%-- <td><textarea name='modelcomment' cols='50' rows='10' maxlength="250" placeholder="Max. 250 char."><%=  (model != null) ? model.comment : "" %></textarea></td> --%>
 			<!-- </tr> -->
 
+
+			<!-- dimensions -->
 			<tr bgcolor='F6F4F0'>
-				<td><%=language.getString("models.space")%>:</td>
-				<td colspan="2">
-					<table border='0' style="box-shadow: none;">
-						<tr>
-							<td><%=language.getString("models.width")%>:</td>
-							<td>
+				
+				<td>
+    <div class="input-caption-container">
+  <fieldset id="spaceGroup" style="padding: 5px;">
+  <div>
 								<%
 								String modelWidth = model == null ? "" : String.valueOf(model.getWidth());
 								%> <jsp:include page="textInput.jsp">
 									<jsp:param name="name" value="modelWidth" />
 									<jsp:param name="value" value="<%=modelWidth%>" />
+									<jsp:param name="label" value='<%=language.getString("models.width")%>' />
 									<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse()%>" />
 									<jsp:param name="maxlength" value="3" />
-									<jsp:param name="size" value="10" />
+									<jsp:param name="size" value="15" />
 								</jsp:include>
-							</td>
-						</tr>
-						<tr>
-							<td><%=language.getString("models.length")%>:</td>
-							<td>
+  </div>
+
+  <div>
 								<%
 								String modelHeight = model == null ? "" : String.valueOf(model.getLength());
 								%> <jsp:include page="textInput.jsp">
 									<jsp:param name="name" value="modelHeight" />
 									<jsp:param name="value" value="<%=modelHeight%>" />
+									<jsp:param name="label" value='<%=language.getString("models.length")%>' />
 									<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse()%>" />
 									<jsp:param name="maxlength" value="3" />
-									<jsp:param name="size" value="10" />
+									<jsp:param name="size" value="15" />
 								</jsp:include>
-							</td>
-						</tr>
-					</table>
+  </div>
+  </fieldset>
+  <label for="spaceGroup" class="input-caption"><%=language.getString("models.space")%></label>
+    </div>
 				</td>
 			</tr>
 
 			<!--	submit-->
 			<tr>
-				<td></td>
-				<td colspan="2"><input name='<%=action%>' type='submit'
+				
+				<td><input name='<%=action%>' type='submit'
 					value='<%=language.getString(submitLabel)%>'> <%
  if (action == RegistrationServlet.Command.addModel.name()) {
  %> <input name='finishRegistration' type='submit'
@@ -293,14 +306,15 @@ String modelproducer = model == null ? "" : model.producer;
 
 			<!--	models.markings-->
 			<tr>
-				<td><%=language.getString("models.markings")%>:</td>
-				<td colspan="2">
+				
+				<td>
 					<%
 					String markingsLabel = model == null ? language.getString("select") : model.markings;
 					String markingsLabelValue = model == null ? "-" : model.markings;
 					%> <jsp:include page="countries.jsp">
 						<jsp:param name="defaultSelectedLabel"
 							value="<%=markingsLabel%>" />
+						<jsp:param name="label" value='<%=language.getString("models.markings")%>' />
 						<jsp:param name="defaultSelectedValue"
 							value="<%=markingsLabelValue%>" />
 						<jsp:param name="selectName" value="markings" />
@@ -310,13 +324,14 @@ String modelproducer = model == null ? "" : model.producer;
 
 			<!--	models.identification-->
 			<tr bgcolor='F6F4F0'>
-				<td><%=language.getString("models.identification")%>:</td>
-				<td colspan="2">
+				
+				<td>
 					<%
 String modelidentification = model == null ? "" : model.identification;
 %> <jsp:include page="textInput.jsp">
 						<jsp:param name="name" value="identification" />
 						<jsp:param name="value" value="<%=modelidentification%>" />
+						<jsp:param name="label" value='<%=language.getString("models.identification")%>' />
 						<jsp:param name="mandatory" value="false" />
 						<jsp:param name="size" value="60" />
 					</jsp:include>
@@ -325,9 +340,12 @@ String modelidentification = model == null ? "" : model.identification;
 
 			<!--	models.detailing-->
 			<tr>
-				<td><%=language.getString("models.detailing")%>:</td>
+				
 
-				<td colspan="2"><table cellpadding='5'
+				<td>
+				<%=language.getString("models.detailing")%>:
+				<br>
+				<table cellpadding='5'
 						style='border-collapse: collapse' border='1'>
 						<tr>
 							<td>&nbsp;</td>
@@ -366,8 +384,8 @@ String modelidentification = model == null ? "" : model.identification;
 
 			<!--	submit -->
 			<tr>
-				<td></td>
-				<td colspan="2"><input name='<%=action%>' type='submit'
+				
+				<td><input name='<%=action%>' type='submit'
 					value='<%=language.getString(submitLabel)%>'> <%
  if (action == RegistrationServlet.Command.addModel.name()) {
  %> <input name='finishRegistration' type='submit'

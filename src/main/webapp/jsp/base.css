@@ -8,14 +8,14 @@
   }
   
 input, select {
-	/*
-	border-radius: 5px; padding-left: 10px;
-	background: linear-gradient(rgb(235,235,235), white);
-	border: hidden;
-*/
-	border-width: 1px;
 	background: LemonChiffon;
 	padding-bottom: 5px;
+
+	border: 1px solid #CED4DA;
+    border-radius: 4px;
+    font-size: 1rem; /* Consistent font size */
+    transition: border-color 0.3s, box-shadow 0.3s;
+
 }
 
 input[type="submit"] {
@@ -26,9 +26,6 @@ input[type="submit"] {
 	color: LightGray;
 	font-weight: bold;
 	cursor: pointer;
-	/*
-	background: linear-gradient(rgba(0,150,0,0.3), white);
-*/
 }
 
 input[type="submit"].main {
@@ -43,8 +40,13 @@ input[type="submit"]:focus {
 
 input:focus, 
 select:focus {
+/*
 	border-color: #333;
-}
+*/
+    border-color: #4A90E2;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.4);
+    }
 
 table {
 border-collapse: collapse; empty-cells: show;
@@ -77,8 +79,7 @@ label {
 	display: inline-block;
 }
 
-a:hover,
-label:hover {
+a:hover {
 	border-left: 3px solid #00aa00;
 	text-decoration: underline;
 	background-color: #eeeeee;
@@ -240,4 +241,95 @@ animation-iteration-count: 5;
     100% {
         box-shadow: 0 0 0 50px rgba(255, 200, 0, 0);
     }
+}
+
+        /* --- Modern Variables --- */
+        :root {
+            --primary-color: #007bff; /* Blue */
+            --border-color: #ced4da; /* Light grey */
+            --text-color-dark: #212529; /* Dark text */
+            --text-color-light-grey: #6c757d; /* Muted grey for caption */
+            --background-color: #fff; /* White */
+            --light-bg: #f8f9fa; /* Very light grey for page background */
+            --transition-speed: 0.25s ease-out;
+            --border-radius: 4px;
+            --font-family-sans-serif: 'Inter', sans-serif;
+        }
+
+
+        /* --- Input with Caption on Border --- */
+        .input-caption-container {
+            position: relative;
+            max-width: 350px; /* Example max-width for form control */
+            margin: 5px;
+        }
+
+        .input-caption-container input,
+        .input-caption-container select,
+        .input-caption-container fieldset,
+        .input-caption-container textarea {
+            padding: 5px; /* Adjust padding for text inside */
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            color: var(--text-color-dark);
+            background-color: var(--background-color);
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .input-caption-container input:focus,
+        .input-caption-container select:focus,
+        .input-caption-container fieldset:focus,
+        .input-caption-container textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Subtle focus ring */
+        }
+
+        .input-caption {
+            position: absolute;
+            left: 5px; /* Align with input padding */
+            top: 50%; /* Start vertically centered */
+            transform: translateY(-50%); /* Adjust for vertical centering */
+            color: var(--text-color-light-grey);
+            background-color: var(--background-color);
+            padding: 0 5px; /* Padding for the "cutout" effect on the border */
+            font-size: 1rem;
+            pointer-events: none; /* Allows clicks to pass through to the input */
+            transition: top var(--transition-speed),
+                        left var(--transition-speed),
+                        font-size var(--transition-speed),
+                        color var(--transition-speed);
+            z-index: 1; /* Ensure label is above input when not transformed */
+        }
+
+        /* --- Floating Label Effect --- */
+        /* When the input is focused OR has content (not just a placeholder) */
+        .input-caption-container input:focus + .input-caption,
+        .input-caption-container input:not(:placeholder-shown) + .input-caption,
+        .input-caption-container fieldset:focus + .input-caption,
+        .input-caption-container fieldset:not(:placeholder-shown) + .input-caption,
+        .input-caption-container select:focus + .input-caption,
+        .input-caption-container select:not(:placeholder-shown) + .input-caption,
+        .input-caption-container textarea:focus + .input-caption,
+        .input-caption-container textarea:not(:placeholder-shown) + .input-caption {
+            top: 0; /* Move label to the top */
+            left: 10px; /* Adjust horizontal position to sit on the border */
+            font-size: 0.75rem; /* Make font smaller */
+            color: var(--primary-color); /* Change color for emphasis */
+            transform: translateY(-50%) scale(0.9); /* Tiny scale for visual pop */
+            z-index: 2; /* Ensure it stays above the border line visually */
+        }
+
+        /* Optional: Style for the border to "break" around the label */
+        .input-caption-container input:focus,
+        .input-caption-container select:focus,
+        .input-caption-container fieldset:focus,
+        .input-caption-container textarea:focus {
+            border-width: 1px; /* Ensure border doesn't get thicker on focus */
+        }
+
+fieldset {
+	padding: 15px;
+	margin: 15px;
 }
