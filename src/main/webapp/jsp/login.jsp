@@ -124,7 +124,7 @@ if (showIdHttpParameter != null)
 						<tr>
 							<td align="center">
 								<div class="input-caption-container">
-									<input type="email" name="email" id="email" placeholder=" "
+									<input type="text" name="email" id="email" placeholder=" "
 										onchange="updateMandatoryFieldMark(this);" /> 
 										<label
 										for="email" class="input-caption"><%=language.getString("email")%></label>
