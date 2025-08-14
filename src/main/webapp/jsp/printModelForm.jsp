@@ -42,7 +42,7 @@
 				<a
 											<%= firstModel ? "class='pulseBtn'" : ""%>
 					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
-					<img src="../icons/add.png" height="30" align="center" 
+					<img src="../icons/modify2.png" height="30" align="center" 
 					/> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 					 <%=language.getString("modify")%>
