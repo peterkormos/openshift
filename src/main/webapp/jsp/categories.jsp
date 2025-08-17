@@ -66,7 +66,6 @@ onchange="updateMandatoryFieldMark(this);"
 		%>
 	</select>
         <label for="categoryID" class="input-caption"><%=request.getParameter("label")%></label>
-    </div>
 
 	<%
 	  if (mandatory)
@@ -77,3 +76,4 @@ onchange="updateMandatoryFieldMark(this);"
 	  }
 	%>
     
+    </div>

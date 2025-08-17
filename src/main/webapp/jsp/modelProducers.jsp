@@ -24,6 +24,14 @@ value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>"
 onchange="updateMandatoryFieldMark(this);"
 size="60">
         <label for="modelproducer" class="input-caption"><%=request.getParameter("label")%></label>
+<%
+	if (mandatory)
+	{
+%>
+	  <font color='#FF0000' size='+3'>&#8226;</font>
+<% 
+	}
+%>
     </div>
 
 <datalist id="modelproducer">
@@ -69,11 +77,3 @@ size="60">
     <option>Young Miniatures</option>
     <option>Zvezda</option>
 </datalist>
-<%
-	if (mandatory)
-	{
-%>
-	  <font color='#FF0000' size='+3'>&#8226;</font>
-<% 
-	}
-%>

@@ -19,6 +19,8 @@ required="required"
 onchange="updateMandatoryFieldMark(this);"
 >
         <label for="modelscale" class="input-caption"><%=request.getParameter("label")%></label>
+
+<font color="#FF0000" size="+3">&#8226;</font> 
     </div>
 
 <datalist id="modelscale">
@@ -54,5 +56,3 @@ onchange="updateMandatoryFieldMark(this);"
       <option>75 mm</option>
       <option>90 mm</option>
 </datalist>
-
-<font color="#FF0000" size="+3">&#8226;</font> 

@@ -260,7 +260,6 @@ animation-iteration-count: 5;
         /* --- Input with Caption on Border --- */
         .input-caption-container {
             position: relative;
-            max-width: 350px; /* Example max-width for form control */
             margin: 5px;
         }
 

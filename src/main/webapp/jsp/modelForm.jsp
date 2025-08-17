@@ -203,7 +203,7 @@ String modelproducer = model == null ? "" : model.producer;
 
 				<td>
     <div class="input-caption-container">
-  <fieldset id="gluedToBaseGroup">
+  <fieldset id="gluedToBaseGroup" style="display: inline;">
 
 				<label><%=language.getString("yes")%>
 						<input style="zoom: 2;" name='gluedToBase' type='radio' value='on'
@@ -215,11 +215,12 @@ String modelproducer = model == null ? "" : model.producer;
 						onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);"></label>
   </fieldset>
   <label for="gluedToBaseGroup" class="input-caption"><%=language.getString("glued.to.base")%></label>
-    </div>	
-					<font color='#FF0000' size='+3'>&#8226;</font> <img
+					<font color='#FF0000' size='+3'>&#8226;</font> 
+					<img
 					id='gluedToBaseImg'
 					src='../icons/<%=(model != null && model.gluedToBase ? "glued.jpg" : "notglued.jpg")%>'
 					style='float: float: middle; <%=model == null ? "visibility: hidden;" : ""%>'>
+    </div>	
 				</td>
 			</tr>
 
@@ -259,8 +260,7 @@ String modelproducer = model == null ? "" : model.producer;
 				
 				<td>
     <div class="input-caption-container">
-  <fieldset id="spaceGroup" style="padding: 5px;">
-  <div>
+  <fieldset id="spaceGroup" style="display: inline; padding: 15px;">
 								<%
 								String modelWidth = model == null ? "" : String.valueOf(model.getWidth());
 								%> <jsp:include page="textInput.jsp">
@@ -271,9 +271,7 @@ String modelproducer = model == null ? "" : model.producer;
 									<jsp:param name="maxlength" value="3" />
 									<jsp:param name="size" value="15" />
 								</jsp:include>
-  </div>
 
-  <div>
 								<%
 								String modelHeight = model == null ? "" : String.valueOf(model.getLength());
 								%> <jsp:include page="textInput.jsp">
@@ -284,7 +282,6 @@ String modelproducer = model == null ? "" : model.producer;
 									<jsp:param name="maxlength" value="3" />
 									<jsp:param name="size" value="15" />
 								</jsp:include>
-  </div>
   </fieldset>
   <label for="spaceGroup" class="input-caption"><%=language.getString("models.space")%></label>
     </div>

@@ -5,7 +5,9 @@
 <%@page import="java.util.*"%>
 
 <%
-User user = RegistrationServlet.getUser(request);
+if (Boolean.parseBoolean(request.getParameter("loginRequired"))) {
+	User user = RegistrationServlet.getUser(request);
+}
 
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 final ResourceBundle language = (ResourceBundle) session.getAttribute(CommonSessionAttribute.Language.name());
@@ -31,8 +33,6 @@ if (value != null) {%>
 	<%=mandatory ? "required='required'" : ""%>
 	onchange="updateMandatoryFieldMark(this);">
 	<label for="<%=request.getParameter("name")%>" class="input-caption"><%=request.getParameter("label")%></label>
-</div>
-
 <%
 if (mandatory) {
 %>
@@ -40,3 +40,5 @@ if (mandatory) {
 <%
 }
 %>
+</div>
+

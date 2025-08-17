@@ -123,23 +123,23 @@ if (showIdHttpParameter != null)
 						</tr>
 						<tr>
 							<td align="center">
-								<div class="input-caption-container">
+								<div class="input-caption-container" style="width: 200px">
 									<input type="text" name="email" id="email" placeholder=" "
 										onchange="updateMandatoryFieldMark(this);" /> 
 										<label
 										for="email" class="input-caption"><%=language.getString("email")%></label>
-								</div>
 									<font color='#FF0000' size='+3'>&#8226;</font>
+								</div>
 							</td>
 						</tr>
 						<tr>
 							<td align="center">
-								<div class="input-caption-container">
+								<div class="input-caption-container" style="width: 200px">
 									<input type="password" name="password" id="password"
 										placeholder=" " onchange="updateMandatoryFieldMark(this);" />
 									<label for="password" class="input-caption"><%=language.getString("password")%></label>
-								</div>
 									<font color='#FF0000' size='+3'>&#8226;</font>
+								</div>
 								<p>
 									<a
 										href="reminder.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
