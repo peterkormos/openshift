@@ -165,7 +165,7 @@ String scale = model == null ? "" : model.scale;
 			</tr>
 
 			<!--	models.name-->
-			<tr bgcolor='F6F4F0'>
+			<tr>
 				
 				<td>
 					<%
@@ -198,7 +198,7 @@ String modelproducer = model == null ? "" : model.producer;
 			</tr>
 
 			<!--	glued.to.base-->
-			<tr bgcolor='F6F4F0'>
+			<tr>
 				
 
 				<td>
@@ -246,7 +246,7 @@ String modelproducer = model == null ? "" : model.producer;
 			</tr>
 
 			<!--	comment-->
-			<!-- <tr bgcolor='F6F4F0'> -->
+			<!-- <tr> -->
 			<!-- <td> -->
 			<%-- <%=language.getString("comment")%> --%>
 			<!-- :  -->
@@ -256,7 +256,7 @@ String modelproducer = model == null ? "" : model.producer;
 
 
 			<!-- dimensions -->
-			<tr bgcolor='F6F4F0'>
+			<tr>
 				
 				<td>
     <div class="input-caption-container">
@@ -320,7 +320,7 @@ String modelproducer = model == null ? "" : model.producer;
 			</tr>
 
 			<!--	models.identification-->
-			<tr bgcolor='F6F4F0'>
+			<tr>
 				
 				<td>
 					<%

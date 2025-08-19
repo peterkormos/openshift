@@ -247,9 +247,8 @@ animation-iteration-count: 5;
         :root {
             --primary-color: #007bff; /* Blue */
             --border-color: #ced4da; /* Light grey */
-            --text-color-dark: #212529; /* Dark text */
-            --text-color-light-grey: #6c757d; /* Muted grey for caption */
-            --background-color: #fff; /* White */
+            --text-color-dark: black; /* Dark text */
+            --background-color: Ivory;
             --light-bg: #f8f9fa; /* Very light grey for page background */
             --transition-speed: 0.25s ease-out;
             --border-radius: 4px;
@@ -289,9 +288,9 @@ animation-iteration-count: 5;
             position: absolute;
             left: 5px; /* Align with input padding */
             top: 50%; /* Start vertically centered */
-            transform: translateY(-50%); /* Adjust for vertical centering */
-            color: var(--text-color-light-grey);
-            background-color: var(--background-color);
+            transform: translateY(-35%); /* Adjust for vertical centering */
+            color: var(--text-color-dark);
+            background-color: white;
             padding: 0 5px; /* Padding for the "cutout" effect on the border */
             font-size: 1rem;
             pointer-events: none; /* Allows clicks to pass through to the input */
@@ -316,7 +315,7 @@ animation-iteration-count: 5;
             left: 10px; /* Adjust horizontal position to sit on the border */
             font-size: 0.75rem; /* Make font smaller */
             color: var(--primary-color); /* Change color for emphasis */
-            transform: translateY(-50%) scale(0.9); /* Tiny scale for visual pop */
+            transform: translateY(-35%) scale(0.9); /* Tiny scale for visual pop */
             z-index: 2; /* Ensure it stays above the border line visually */
         }
 
@@ -330,5 +329,4 @@ animation-iteration-count: 5;
 
 fieldset {
 	padding: 15px;
-	margin: 15px;
 }
