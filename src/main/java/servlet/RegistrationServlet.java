@@ -1779,9 +1779,15 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.save(model);
 
+		final HttpSession session = request.getSession(false);
+		List<Model> models = servletDAO.getModelsForShow(getShowFromSession(session), user.getId());
+
+		if (models.isEmpty() && !user.isAdminUser()) {
+			session.setAttribute(SessionAttribute.Models.name(), models);
+		}
+		
 		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
 				.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
-			final HttpSession session = request.getSession(false);
 			String notice = ServletUtil.encodeString(model.name) + " - " + model.scale + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode;
 			setNoticeInSession(session, notice);
