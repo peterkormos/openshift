@@ -205,7 +205,7 @@ private JDBCDAO jdbcDAO;
 	String where = "";
 
 	where = createWhereStatement(request, where, "categoryID", "categoryID", false);
-	where = createWhereStatement(request, where, "userID", "userID", false);
+	where = createWhereStatement(request, where, "user.id", "userID", false);
 	where = createWhereStatement(request, where, "ID", "modelID", false);
 	where = createWhereStatement(request, where, "name", "modelname", true);
 	where = createWhereStatement(request, where, "markings", "markings", true);
@@ -220,7 +220,7 @@ private JDBCDAO jdbcDAO;
   }
 
 	public int getModelsInCategory(final int userID, final int categoryID) {
-		return getModels("userID = " + userID + " and categoryID = " + categoryID).size();
+		return getModels("user.id = " + userID + " and categoryID = " + categoryID).size();
 	}
 
   public List<Model> getModels(final int userID)

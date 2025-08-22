@@ -91,7 +91,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.08.14.";
+	public String VERSION = "2025.08.22.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -528,7 +528,7 @@ public class RegistrationServlet extends HttpServlet {
 			systemParameters.put(show, new EnumMap(SystemParameter.class));
 		}
 
-		if (user.isUserDetailsUpdateNeeded()) {
+		if (!user.isAdminUser() && user.isUserDetailsUpdateNeeded()) {
 			inputForModifyUser(request,response);
 			return;
 		}
@@ -625,9 +625,7 @@ public class RegistrationServlet extends HttpServlet {
 		redirectToMainPage(request, response);
 	}
 
-	public void reminder(final HttpServletRequest request,
-
-			final HttpServletResponse response) throws Exception {
+	public void reminder(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = servletDAO.getUser(ServletUtil.getRequestAttribute(request, "email"));
 		final String newPassword = UUID.randomUUID().toString().substring(0, 8);
 		user.setPassword(StringEncoder.encode(newPassword));
@@ -644,7 +642,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		sendEmail(user.email, language.getString("email.subject"), buff);
 
-		ServletUtil.writeResponse(response, getEmailWasSentResponse(language, request));
+		proceedToLoginResponse(request, response, language);
 	}
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1135,16 +1133,26 @@ public class RegistrationServlet extends HttpServlet {
 
 		final User user = createUser(request, email);
 		servletDAO.save(user);
-
+		
 		if (!isOnSiteUse())
 			sendEmailWithModels(user, true);
+		
+		proceedToLoginResponse(request, response, language);
+	}
 
-		inputForAddModel(request, response);
+	private void proceedToLoginResponse(final HttpServletRequest request, final HttpServletResponse response,
+			final ResourceBundle language) throws IOException {
+		ServletUtil.writeResponse(response, getEmailWasSentResponse(language, request));
 	}
 
 	private StringBuilder getEmailWasSentResponse(final ResourceBundle language, HttpServletRequest request) {
 		final StringBuilder buff = new StringBuilder();
-		buff.append("<html><body>");
+		buff.append("<html>\n");
+		
+		buff.append("<head>\n");
+		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
+		buff.append("</head>\n");
+		buff.append("<body>\n");
 
 		buff.append(language.getString("email.was.sent"));
 		buff.append("<p>");
@@ -2456,24 +2464,12 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void logout(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final User user = getUser(request);
-
-		// if (!onSiteUse)
-		// {
-		// sendEmail(user, false);
-		// }
-
-		final HttpSession session = request.getSession(false);
-		String startPage = getStartPage(request);
-
-		if (session != null) {
-			session.invalidate();
-		}
+		Optional.ofNullable(request.getSession(false)).ifPresent(session -> session.invalidate());
 
 		if (isOnSiteUse()) {
 			response.sendRedirect("../helyi.html");
 		} else {
-			response.sendRedirect("../" + startPage);
+			response.sendRedirect("../" + getStartPage(request));
 		}
 	}
 

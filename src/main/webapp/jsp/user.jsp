@@ -247,6 +247,7 @@ function checkDeleteUserRequest()
 						<jsp:param name="defaultSelectedLabel" value="<%=country%>" />
 						<jsp:param name="defaultSelectedValue" value="<%=country%>" />
 						<jsp:param name="selectName" value="country" />
+						<jsp:param name="label" value='<%=language.getString("country")%>' />
 					</jsp:include> <font color="#FF0000" size="+3">&#8226;</font>
 				</td>
 			</tr>
