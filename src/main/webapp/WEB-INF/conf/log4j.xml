@@ -21,5 +21,14 @@
         <level value="TRACE" />
     <appender-ref ref="ASYNC_RegistrationServlet"/>
   </logger>
+
+  <logger name="org.hibernate.type">
+        <level value="ERROR" />
+    <appender-ref ref="ASYNC_RegistrationServlet"/>
+  </logger>
+  <logger name="org.hibernate.SQL">
+        <level value="ERROR" />
+    <appender-ref ref="ASYNC_RegistrationServlet"/>
+  </logger>
     
 </log4j:configuration>

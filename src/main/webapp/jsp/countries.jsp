@@ -1,26 +1,17 @@
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
 
 <%
-	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
-	ResourceBundle language;	 		
-	User user = null;
-	try
-	{
-		user = RegistrationServlet.getUser(request);
-		language = servlet.getLanguage(user.language);
-	}
-	catch(Exception e)
-	{
-//		language = servlet.getLanguage(request.getParameter("language"));
-		language = servlet.getLanguage("HU");
-	}	
+	ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 %>
 
-<select  name='<%= request.getParameter("selectName") %>' id="country">
+    <div class="input-caption-container">
+<select  name='<%= request.getParameter("selectName") %>' id="country" onchange="updateMandatoryFieldMark(this);">
 <option value='<%= request.getParameter("defaultSelectedValue") %>'><%= request.getParameter("defaultSelectedLabel") %></option>
 	<optgroup label="<%= language.getString("highlighted.country") %>">
 <option value='Hungary'>Magyarorsz&aacute;g</option>
@@ -88,7 +79,7 @@
 <option value='Colombia'>Colombia</option>
 <option value='Comoros'>Comoros</option>
 <option value='Congo'>Congo</option>
-<option value='Congo, the Democratic Republic of the'>Congo, the Democratic Republic of the</option>
+<option value='Congo, the Democratic Republic of the Congo'>Congo, the Democratic Republic of the Congo</option>
 <option value='Cook Islands'>Cook Islands</option>
 <option value='Costa Rica'>Costa Rica</option>
 <option value='Cote d'Ivoire'>Cote d'Ivoire</option>
@@ -140,7 +131,7 @@
 <option value='Iceland'>Iceland</option>
 <option value='India'>India</option>
 <option value='Indonesia'>Indonesia</option>
-<option value='Iran, Islamic Republic Of'>Iran, Islamic Republic Of</option>
+<option value='Iran'>Iran</option>
 <option value='Iraq'>Iraq</option>
 <option value='Ireland'>Ireland</option>
 <option value='Isle Of Man'>Isle Of Man</option>
@@ -153,8 +144,8 @@
 <option value='Kazakhstan'>Kazakhstan</option>
 <option value='Kenya'>Kenya</option>
 <option value='Kiribati'>Kiribati</option>
-<option value='Korea, Democratic People's Republic Of'>Korea, Democratic People's Republic Of</option>
-<option value='Korea, Republic of'>Korea, Republic of</option>
+<option value='Korea, Democratic People's Republic Of Korea'>Korea, Democratic People's Republic Of Korea</option>
+<option value='Korea, Republic of Korea'>Korea, Republic of Korea</option>
 <option value='Kuwait'>Kuwait</option>
 <option value='Kyrgyzstan'>Kyrgyzstan</option>
 <option value='Lao People's Democratic Republic'>Lao People's Democratic Republic</option>
@@ -180,8 +171,8 @@
 <option value='Mauritius'>Mauritius</option>
 <option value='Mayotte'>Mayotte</option>
 <option value='Mexico'>Mexico</option>
-<option value='Micronesia, Federated States of'>Micronesia, Federated States of</option>
-<option value='Moldova, Republic of'>Moldova, Republic of</option>
+<option value='Micronesia'>Micronesia</option>
+<option value='Moldova'>Moldova</option>
 <option value='Monaco'>Monaco</option>
 <option value='Mongolia'>Mongolia</option>
 <option value='Montenegro'>Montenegro</option>
@@ -286,4 +277,7 @@
 <option value='Zimbabwe'>Zimbabwe</option>
 	</optgroup>
 </select>
+
+        <label for="<%= request.getParameter("selectName") %>" class="input-caption"><%=request.getParameter("label")%></label>
+    </div>
 		

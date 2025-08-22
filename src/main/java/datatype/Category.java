@@ -2,26 +2,41 @@ package datatype;
 
 import java.io.Serializable;
 
-public class Category implements Serializable
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "MAK_CATEGORY")
+public class Category extends Record
 {
-  public int categoryID;
-
+	@ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+	@JoinColumn(name = "CATEGORY_GROUP_ID")
   public CategoryGroup group;
+  @Column(name = "CATEGORY_CODE")
   public String categoryCode;
+  @Column(name = "CATEGORY_DESCRIPTION")
   public String categoryDescription;
+  @Column(name = "MASTER")
   private boolean master;
+  @Column(name = "MODEL_CLASS")
+  @Enumerated(EnumType.STRING)
   private ModelClass modelClass;
+	@Column(name = "ageGroup")
+	@Enumerated(EnumType.STRING)
   private AgeGroup ageGroup;
-
-  public int getCategoryID()
-  {
-	return categoryID;
-  }
-
-  public void setCategoryID(final int categoryID)
-  {
-	this.categoryID = categoryID;
-  }
 
   public CategoryGroup getGroup()
   {
@@ -53,15 +68,14 @@ public class Category implements Serializable
 	this.categoryDescription = categoryDescription;
   }
 
-  public Category()
-  {
+  @Deprecated
+  public Category() {
+}
 
-  }
-
-  public Category(final int categoryID, final String categoryCode, final String categoryDescription, final CategoryGroup group,
+  public Category(final int id, final String categoryCode, final String categoryDescription, final CategoryGroup group,
 	  boolean master, ModelClass modelClass, AgeGroup ageGroup)
   {
-	this.categoryID = categoryID;
+  	super(id);
 	this.categoryCode = categoryCode;
 	this.categoryDescription = categoryDescription;
 	this.group = group;
@@ -71,7 +85,11 @@ public class Category implements Serializable
 	this.ageGroup = ageGroup;
   }
 
-  public boolean isMaster()
+  public Category(int id) {
+super(id);
+}
+
+public boolean isMaster()
   {
 	return master;
   }
@@ -104,8 +122,21 @@ public class Category implements Serializable
   @Override
   public String toString()
   {
-	return "Category [categoryID=" + categoryID + ", group=" + group + ", categoryCode=" + categoryCode
+	return "Category [" + super.toString() + ", group=" + group + ", categoryCode=" + categoryCode
 	    + ", categoryDescription=" + categoryDescription + ", master=" + master + ", modelClass=" + modelClass + ", ageGroup="
 	    + ageGroup + "]";
   }
-}
+	@Id
+	@Column(name = "CATEGORY_ID")
+	public int id;
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+	}

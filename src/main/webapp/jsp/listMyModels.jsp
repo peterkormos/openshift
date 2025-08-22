@@ -2,21 +2,33 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%
-  RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-  ServletDAO servletDAO = servlet.getServletDAO();
+RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+ServletDAO servletDAO = servlet.getServletDAO();
 
-  User user = servlet.getUser(request);
-  List<Model> models = servletDAO.getModels(user.userID);
+User user = servlet.getUser(request);
+String show = RegistrationServlet.getShowFromSession(session);
+List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
+if (models == null) {
+	models = servletDAO.getModels(user.getId());
+}
 
-  session.setAttribute("models", models);
+Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
+		RegistrationServlet.SessionAttribute.Categories.name());
+
+models = RegistrationServlet.getModelsForShow(show, models, categories);
+
+for (Model model : models) {
+	session.setAttribute(RegistrationServlet.SessionAttribute.Model.name(), model);
 %>
-
-<jsp:include page="listModels.jsp">
-	<jsp:param name="withDetailing" value="true" />
+<jsp:include page="printModelForm.jsp">
+	<jsp:param name="firstModel" value="<%=models.size() == 1%>" />
 </jsp:include>
-
-<%
-  session.removeAttribute("models");
-%>
+<p>
+	<%
+	session.removeAttribute(RegistrationServlet.SessionAttribute.Model.name());
+	}
+	;
+	%>

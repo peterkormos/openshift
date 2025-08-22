@@ -1,22 +1,19 @@
 package datatype;
 
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-public class CategoryGroup implements Serializable
+@Entity
+@Table(name = "MAK_CATEGORY_GROUP")
+public class CategoryGroup extends Record
 {
+  @Column(name="MODEL_SHOW")
   public String show;
+  
+  @Column(name="CATEGORY_GROUP")
   public String name;
-  public int categoryGroupID;
-
-  public int getCategoryGroupID()
-  {
-	return categoryGroupID;
-  }
-
-  public void setCategoryGroupID(final int categoryGroupID)
-  {
-	this.categoryGroupID = categoryGroupID;
-  }
 
   public String getShow()
   {
@@ -38,14 +35,17 @@ public class CategoryGroup implements Serializable
 	this.name = group;
   }
 
-  public CategoryGroup()
-  {
+  @Deprecated
+  public CategoryGroup() {
+}
 
-  }
+  public CategoryGroup(int id) {
+super(id);
+}
 
-  public CategoryGroup(final int categoryGroupID, final String show, final String group)
+  public CategoryGroup(final int id, final String show, final String group)
   {
-	this.categoryGroupID = categoryGroupID;
+  	super(id);
 	this.show = show;
 	this.name = group;
   }
@@ -53,7 +53,20 @@ public class CategoryGroup implements Serializable
   @Override
   public String toString()
   {
-	return "CategoryGroup [show=" + show + ", categoryGroupID=" + categoryGroupID + ", group=" + name + "]";
+	return "CategoryGroup [id=" + getId() + ", show=" + show + ", group=" + name + "]";
   }
 
+	@Id
+	@Column(name = "CATEGORY_GROUP_ID")
+	public int id;
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
 }

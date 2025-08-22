@@ -1,11 +1,20 @@
 <%!
   boolean highlightFlag;
-  long highlightStart;
+  long highlightStart = 0xEAEAEA;
 
   public final String highlight()
   {
+	  return highlight(false);
+  }
+  
+  public final String highlight(boolean alert)
+  {
 	try
 	{
+		if(alert) {
+			return Long.toHexString(0xfc8981); //red
+		}
+		
 	  if (highlightFlag)
 		return Long.toHexString(highlightStart);
 	  else

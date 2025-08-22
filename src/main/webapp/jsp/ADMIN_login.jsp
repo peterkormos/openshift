@@ -1,0 +1,11 @@
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
+
+<form action="../RegistrationServlet" method="get">
+<input name="command" value="login" type="hidden">
+<input name="<%=RequestParameter.Language.getParameterName()%>" value="HU" type="hidden">
+email: <input name="email">
+<br>
+password: <input name="password">
+<br>
+<input type="submit">
+</form>

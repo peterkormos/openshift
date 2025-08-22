@@ -1,55 +1,99 @@
 package datatype;
 
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Detailing implements Serializable
-{
-  public final static String DETAILING_GROUPS[] = new String[] { "scratch", "photoEtched", "resin", "documentation" };
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.MapKeyEnumerated;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-  public final static String DETAILING_CRITERIAS[] = new String[] { "externalSurface", "cockpit", "engine", "undercarriage",
-	"gearBay", "armament", "conversion" };
+@Entity
+@Table(name = "MAK_DETAILING")
+public class Detailing extends Record {
+	
+	@Column
+	@Enumerated(EnumType.STRING)
+	private DetailingGroup detailingGroup;
+	@Column
+	@Enumerated(EnumType.STRING)
+	private DetailingCriteria detailingCriteria;
+	@Column
+	private Boolean checked;
 
-  public String group;
+	@Deprecated
+	public Detailing() {
 
-  public List<Boolean> criterias = new LinkedList<Boolean>();
+	}
+	
+	public Detailing(final int id)
+	  {
+	  	setId(id);
+	}
 
-  public String getGroup()
-  {
-	return group;
-  }
 
-  public void setGroup(String group)
-  {
-	this.group = group;
-  }
+	public Detailing(final int id, DetailingGroup detailingGroup, DetailingCriteria detailingCriteria, Boolean checked) {
+		this(id);
+		this.detailingGroup = detailingGroup;
+		this.detailingCriteria = detailingCriteria;
+		this.checked = checked;
+	}
 
-  public List<Boolean> getCriterias()
-  {
-	return criterias;
-  }
+	public DetailingGroup getDetailingGroup() {
+		return detailingGroup;
+	}
 
-  public void setCriterias(List<Boolean> criterias)
-  {
-	this.criterias = criterias;
-  }
+	public void setDetailingGroup(DetailingGroup detailingGroup) {
+		this.detailingGroup = detailingGroup;
+	}
 
-  public Detailing()
-  {
+	public DetailingCriteria getDetailingCriteria() {
+		return detailingCriteria;
+	}
 
-  }
+	public void setDetailingCriteria(DetailingCriteria detailingCriteria) {
+		this.detailingCriteria = detailingCriteria;
+	}
 
-  public Detailing(String group, List<Boolean> criterias)
-  {
-	this.group = group;
-	this.criterias = criterias;
-  }
+	public Boolean getChecked() {
+		return checked;
+	}
 
-  @Override
-  public String toString()
-  {
-	return " group: " + group + " criterias: " + Arrays.asList(criterias);
-  }
-}
+	public void setChecked(Boolean checked) {
+		this.checked = checked;
+	}
+
+	@Override
+	public String toString() {
+		return "Detailing [detailingGroup=" + detailingGroup + ", detailingCriteria="
+				+ detailingCriteria + ", checked=" + checked + ", id=" + getId() + "]";
+	}
+	
+	@Id
+	@Column
+	public int id;
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+	}

@@ -1,55 +1,68 @@
-<%@page import="servlet.RegistrationServlet.Command"%>
+<%@page import="datatype.DetailingCriteria"%>
+<%@page import="datatype.DetailingGroup"%>
+<%@page import="servlet.*"%>
 <%@page import="java.util.*"%>
 
 <%@page import="datatype.*"%>
-<%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%@include file="util.jsp"%>
 
 <%
-  highlightStart = 0xEAEAEA;
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	ServletDAO servletDAO = servlet.getServletDAO();
 
-  RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-  ServletDAO servletDAO = servlet.getServletDAO();
-  User user = servlet.getUser(request);
+	final ResourceBundle language = (ResourceBundle) session
+			.getAttribute(CommonSessionAttribute.Language.name());
 
-  final ResourceBundle language = servlet.getLanguage(user.language);
+	String actionPathPrefix = ServletUtil.getOptionalAttribute(request, "actionPathPrefix").orElse("");
+	
+	boolean insertAwards = Boolean
+			.parseBoolean(ServletUtil.getRequestAttribute(request, "insertAwards", false));
+	boolean withDetailing = Boolean
+			.parseBoolean(ServletUtil.getRequestAttribute(request, "withDetailing", false));
+	boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
+	boolean forJudges = Boolean.parseBoolean(
+			ServletUtil.getRequestAttribute(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
-  boolean insertAwards = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "insertAwards", false));
-  boolean withDetailing = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "withDetailing", false));
-  boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
-
-  List<Model> models = (List<Model>) session.getAttribute("models");
+	boolean filterToOversized = ServletUtil.isCheckedIn(request, "filterToOversized");
+  List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
+  
+  String show = RegistrationServlet.getShowFromSession(session);
+  if (show == null)
+  {
+    show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+  }
 %>
 
-<table border=0>
+<table style='width: 100%; border-collapse: collapse;' border='1'>
 	<tr>
+		<th align='center' style='white-space: nowrap'></th>
 		<%
-		  if (insertAwards)
-		  {
+			if (!forJudges) {
+				if (insertAwards) {
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("award")%>
 		</th>
 		<%
-		  }
+			}
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("show")%>
 		</th>
 
 		<%
-		  if (withDetailing)
-		  {
+			if (withDetailing) {
 		%>
-		<th align='center' style='white-space: nowrap'><%=language.getString("email")%>
+		<th align='center' style='white-space: nowrap'><%=language.getString("judge")%>
 		</th>
 		<%
-		  }
+			}
+		%>
+		<%
+			if (!withDetailing) {
 		%>
 
-		<th align='center' style='white-space: nowrap'><%=language.getString("last.name")%>
-		</th>
-
-		<th align='center' style='white-space: nowrap'><%=language.getString("first.name")%>
+		<th align='center' style='white-space: nowrap'><%=language.getString("name")%>
 		</th>
 
 		<th align='center' style='white-space: nowrap'><%=language.getString("city")%>
@@ -57,17 +70,19 @@
 
 		<th align='center' style='white-space: nowrap'><%=language.getString("country")%>
 		</th>
+		<%
+			}
+			}
+		%>
 
 		<%
-		  if (!insertAwards)
-		  {
-				if (onlyPhotos)
-				{
+			if (!insertAwards) {
+				if (onlyPhotos) {
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("photo")%>
 		</th>
 		<%
-		  }
+			}
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("userID")%>
 		</th>
@@ -75,7 +90,7 @@
 		<th align='center' style='white-space: nowrap'><%=language.getString("modelID")%>
 		</th>
 		<%
-		  }
+			}
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("category.code")%>
 		</th>
@@ -83,8 +98,7 @@
 		</th>
 
 		<%
-		  if (!insertAwards)
-		  {
+			if (!insertAwards) {
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("scale")%>
 		</th>
@@ -99,7 +113,7 @@
 		</th>
 
 		<%
-		  }
+			}
 		%>
 
 
@@ -107,8 +121,7 @@
 		</th>
 
 		<%
-		  if (!insertAwards)
-		  {
+			if (!insertAwards && withDetailing) {
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("glued.to.base")%>
 		</th>
@@ -117,84 +130,123 @@
 		</th>
 
 		<%
-		  if (withDetailing)
-				{
+			if (withDetailing) {
 		%>
 		<th align='center' style='white-space: nowrap'><%=language.getString("models.detailing")%>
 		</th>
-
 		<%
-		  }
-		  }
+			}
+			}
 		%>
 
+		<th align='center' style='white-space: nowrap'><%=language.getString("models.width")%>
+		</th>
+		<th align='center' style='white-space: nowrap'><%=language.getString("models.length")%>
+		</th>
+		<th align='center' style='white-space: nowrap'></th>
 	</tr>
 
 	<%
-	  for (final Model model : models)
-	  {
-			final Category category = servletDAO.getCategory(model.categoryID);
-
-			if (onlyPhotos)
-			{
-			  try
-			  {
-				servletDAO.loadImage(model.modelID);
-			  }
-			  catch (Exception ex)
-			  {
+		for (final Model model : models) {
+			if(filterToOversized && !model.isOversized()) {
 				continue;
-			  }
+			}
+			
+			final Category category = servletDAO.getCategory(model.categoryID);
+			
+			if (onlyPhotos) {
+				try {
+					servletDAO.loadImage(model.getId());
+				} catch (Exception ex) {
+					continue;
+				}
 			}
 	%>
-	<tr bgcolor="<%=highlight()%>">
+	<tr bgcolor="<%= highlight(model.isOversized())%>">
+		<td>
+<%
+  if (servlet.isRegistrationAllowed(show))
+  {
+%>
+			<div class="tooltip">
+				<a
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
+					<img src="<%=actionPathPrefix%>../icons/add.png" height="30" align="center" /> <span
+					class="tooltiptext"> <%=language.getString("modify")%></span>
+				</a>
+			</div>
 
-		<%
-		  final User modelsUser = servletDAO.getUser(model.userID);
-				if (insertAwards)
-				{
-		%>
-		<td align='center'><%=model.award%></td>
-		<%
-		  }
-		%>
-		<td align='center' style='white-space: nowrap'><%=category.group.show%>
+			<div class="tooltip">
+				<a
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
+					<img src="<%=actionPathPrefix%>../icons/delete2.png" height="30" align="center" /> <span
+					class="tooltiptext"> <%=language.getString("delete")%></span>
+				</a>
+			</div>
+<%
+}
+%>
 		</td>
 
 		<%
-		  if (withDetailing)
-		  {
+			final User modelsUser = servletDAO.getUser(model.userID);
+				if (!forJudges) {
+					if (insertAwards) {
 		%>
-		<td align='center'><%=modelsUser.email%></td>
+		<td align='center'><%=servletDAO.getAward(model)%></td>
 		<%
-		  }
+			}
+		%>
+		<td align='center' style='white-space: nowrap'><%=category.group.show%>
+		</td>
+		<%
+			if (withDetailing) {
+		%>
+		<td align='center'>
+			<%
+				for (String judge : servlet.judgingServletDAO.getJudges(category.categoryCode, model.getId(),
+									model.userID)) {
+			%> <a
+			href="<%=actionPathPrefix%>../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.UserID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.userID%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
+
+			<%
+				}
+			%>
+		</td>
+		<%
+			}
+		%>
+		<%
+			if (!withDetailing) {
 		%>
 		<td align='center'><%=modelsUser.lastName%></td>
 
-		<td align='center'><%=modelsUser.firstName%></td>
+		<%-- 		<td align='center'><%=modelsUser.firstName%></td> --%>
 
 		<td align='center'><%=modelsUser.city%></td>
 
 		<td align='center'><%=modelsUser.country%></td>
+		<%
+			}
+				}
+		%>
 
 		<%
-		  if (!insertAwards)
-				{
-				  if (onlyPhotos)
-				  {
+			if (!insertAwards) {
+					if (onlyPhotos) {
 		%>
 		<td align='center' style='white-space: nowrap'><img
-			alt='<%=category.categoryCode%> - <%=model.modelID%>.jpg'
-			src='<%=servlet.getServletURL(request)%>/<%=Command.LOADIMAGE.name()%>/<%=model.modelID%>'>
+			alt='<%=category.categoryCode%> - <%=model.getId()%>.jpg'
+			src='<%=servlet.getServletURL(request)%>/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=model.getId()%>'>
 		</td>
 		<%
-		  }
+			}
 		%>
 		<td align='center'><%=model.userID%></td>
 
-		<td align='center'><%=model.modelID%></td>
+		<td align='center'><%=model.getId()%></td>
 		<%
-		  }
+			}
 		%>
 		<td align='center' style='white-space: nowrap'><%=category.categoryCode%>
 		</td>
@@ -202,8 +254,7 @@
 		<td align='center' style='white-space: nowrap'><%=model.name%></td>
 
 		<%
-		  if (!insertAwards)
-				{
+			if (!insertAwards) {
 		%>
 		<td align='center'><%=model.scale%></td>
 
@@ -217,71 +268,93 @@
 		</td>
 
 		<%
-		  }
+			}
 		%>
 
 		<td align='center' style='white-space: nowrap'><%=category.categoryDescription%>
 		</td>
 
 		<%
-		  if (!insertAwards)
-				{
+			if (!insertAwards && withDetailing) {
 		%>
-		<td align='center'><input type='checkbox'
-			"  <%=(model.gluedToBase ? "checked" : "")%>></td>
+		<td align='center'><%=RegistrationServlet.getGluedToBaseHTMLCode(language, model, "..")%></td>
 
 		<td align='center'><%=model.comment%></td>
 
 		<%
-		  if (withDetailing)
-				  {
+			if (withDetailing) {
 		%>
-		<td><table cellpadding='5' border='1'>
+		<td><table cellpadding='5' style='border-collapse: collapse'
+				border='1'>
 				<tr>
 					<td>&nbsp;</td>
 
 					<%
-					  for (int i = 0; i < Detailing.DETAILING_GROUPS.length; i++)
-								{
+						for (DetailingGroup group : DetailingGroup.values()) {
 					%>
-					<td><%=language.getString("detailing." + Detailing.DETAILING_GROUPS[i])%>
-					</td>
+					<td><%=language.getString("detailing." + group.name())%></td>
 					<%
-					  }
+						}
 					%>
 				</tr>
 
 				<%
-				  for (int i = 0; i < Detailing.DETAILING_CRITERIAS.length; i++)
-							{
+					for (DetailingCriteria criteria : DetailingCriteria.values()) {
+									if (!criteria.isVisible())
+										continue;
 				%>
 				<tr>
-					<td><%=language.getString("detailing." + Detailing.DETAILING_CRITERIAS[i])%>
-					</td>
+					<td><%=language.getString("detailing." + criteria.name())%></td>
 
 					<%
-					  for (int j = 0; j < Detailing.DETAILING_GROUPS.length; j++)
-								  {
+						for (DetailingGroup group : DetailingGroup.values()) {
 					%>
 
-					<td><input type='checkbox'
-						<%=(model.detailing[j].criterias.get(i) ? "checked" : "")%>></td>
+					<td align="center"><%=(model.isDetailed(group, criteria) ? "X" : "")%></td>
 					<%
-					  }
+						}
 					%>
 				</tr>
 				<%
-				  }
+					}
 				%>
 			</table></td>
 		<%
-		  }
+			}
 				}
 		%>
 
+		<td align='center' style='white-space: nowrap'><%=String.valueOf(model.getWidth())%>
+		</td>
+		<td align='center' style='white-space: nowrap'><%=String.valueOf(model.getLength())%>
+		</td>
+		<td>
+<%
+  if (servlet.isRegistrationAllowed(show))
+  {
+%>
+			<div class="tooltip">
+				<a
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
+					<img src="<%=actionPathPrefix%>../icons/add.png" height="30" align="center" /> <span
+					class="tooltiptext"> <%=language.getString("modify")%></span>
+				</a>
+			</div>
+
+			<div class="tooltip">
+				<a
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
+					<img src="<%=actionPathPrefix%>../icons/delete2.png" height="30" align="center" /> <span
+					class="tooltiptext"> <%=language.getString("delete")%></span>
+				</a>
+			</div>
+<%
+}
+%>
+		</td>
 	</tr>
 	<%
-	  }
+		}
 	%>
 
 </table>

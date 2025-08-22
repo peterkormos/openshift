@@ -3,27 +3,27 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
 
 <%
-  RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
 
   final String languageCode = "ADMIN";
-
-  final ResourceBundle language = servlet.getLanguage(languageCode);
+	
+  final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 
   final User user = new User(languageCode);
-  user.setUserID(servletDAO.getNextID("USERS", "USER_ID"));
   user.setEmail("admin");
   user.setPassword("secret");
   user.setFirstName("Peter");
   user.setLastName("Kormos");
 
-  servletDAO.registerNewUser(user);
+  servletDAO.save(user);
 
-  servletDAO.saveCategoryGroup(new CategoryGroup(servletDAO.getNextID("CATEGORY_GROUP", "CATEGORY_group_ID"), "-", "-"));
+  servletDAO.save(new CategoryGroup(servletDAO.getNextID("CATEGORY_GROUP", "CATEGORY_group_ID"), "-", "-"));
 
-  response.sendRedirect("../index.html");
+  response.sendRedirect("index.jsp");
 %>

@@ -1,6 +1,6 @@
 function sendRequest()
 {
-	var url = "../RegistrationServlet?command=getSimilarLastNames&lastname=" + document.getElementById('lastnameID').value;
+	var url = "../RegistrationServlet?command=getSimilarLastNames&lastname=" + document.getElementById('fullnameID').value;
 	var req = false;
 
 	if (window.XMLHttpRequest) 
@@ -123,6 +123,7 @@ function parseXML(xmlstring)
 
 function  loginUser(userID)
 {
+	document.getElementById('input').action="../RegistrationServlet"
 	document.getElementById('input').command.value="directLogin";
 	var newCat = document.input.command.cloneNode(true);
 	newCat.setAttribute("name", "userID");

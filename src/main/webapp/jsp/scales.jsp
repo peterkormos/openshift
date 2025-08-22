@@ -1,4 +1,27 @@
-<input list="modelscale" name="modelscale" value='<%= request.getParameter("selectValue") %>'>
+<%@page import="datatype.*"%>
+<%@page import="servlet.*"%>
+<%@page import="util.*"%>
+
+<%@page import="java.util.*"%>
+
+<%
+    User user = RegistrationServlet.getUser(request);
+	
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+  final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
+%>
+
+    <div class="input-caption-container">
+<input list="modelscale" 
+name="modelscale"
+value='<%= request.getParameter("selectValue") %>' placeholder="<%=language.getString("model.scales.select")%>"
+required="required"
+onchange="updateMandatoryFieldMark(this);"
+>
+        <label for="modelscale" class="input-caption"><%=request.getParameter("label")%></label>
+
+<font color="#FF0000" size="+3">&#8226;</font> 
+    </div>
 
 <datalist id="modelscale">
       <option></option>
@@ -10,6 +33,7 @@
       <option>1:225</option>
       <option>1:200</option>
       <option>1:144</option>
+      <option>1:100</option>
       <option>1:87</option>
       <option>1:77</option>
       <option>1:76</option>
@@ -20,14 +44,15 @@
       <option>1:32</option>
       <option>1:25</option>
       <option>1:24</option>
+      <option>1:16</option>
       <option>1:12</option>
       <option>1:10</option>
       <option>1:9</option>
       <option>1:8</option>
       <option>1:6</option>
+      <option>28 mm</option>
       <option>54 mm</option>
       <option>70 mm</option>
+      <option>75 mm</option>
       <option>90 mm</option>
 </datalist>
-
-<font color="#FF0000" size="+3">&#8226;</font> 

@@ -1,15 +1,16 @@
 <%@page import="datatype.*"%>
-<%@page import="servlet.*"%>
+<%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
 
 <%
-  User user = RegistrationServlet.getUser(request);
-  RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-  final ResourceBundle language = servlet.getLanguage(user.language);
+    final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 %>
 
 <html>
+<head>
+<link rel="stylesheet" href="base.css" media="screen" />
+</head>
 <body>
 	<form name='input' action='listSelectedModels.jsp' method='put'>
 		<table border='0'>
@@ -24,7 +25,7 @@
 					%> <jsp:include page="categories.jsp">
 						<jsp:param name="selectedLabel" value="<%=categoryLabel%>" />
 						<jsp:param name="selectedValue" value="<%=categoryLabelValue%>" />
-						<jsp:param name="mandatory" value="true" />
+						<jsp:param name="mandatory" value="false" />
 					</jsp:include>
 
 				</td>
@@ -67,6 +68,11 @@
 						<jsp:param name="frequentlyUsed"
 							value='<%=language.getString("frequently.used")%>' />
 					</jsp:include></td>
+			</tr>
+			<tr>
+				<td>Oversized :</td>
+				<td><label><input
+						name='filterToOversized' type='checkbox' value='on'> <%=language.getString("yes")%></label></td>
 			</tr>
 
 			<tr>

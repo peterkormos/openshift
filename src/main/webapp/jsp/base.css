@@ -1,50 +1,332 @@
-input , select
-{
-	border-radius: 5px; padding-left: 10px;
-	background: linear-gradient(rgb(235,235,235), white);
+@import url('https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed&display=swap');
+
+* {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+/*
+    font-size: 20px;
+*/
+  }
+  
+input, select {
+	background: LemonChiffon;
+	padding-bottom: 5px;
+
+	border: 1px solid #CED4DA;
+    border-radius: 4px;
+    font-size: 1rem; /* Consistent font size */
+    transition: border-color 0.3s, box-shadow 0.3s;
+
 }
 
-input[type="submit"]
-{
-	background: linear-gradient(rgba(0,150,0,0.3), white);
+input[type="submit"] {
+	background: DodgerBlue;
+	border: 3px solid DodgerBlue;
+	border-radius: 3px;
+	padding: 5px;
+	color: LightGray;
+	font-weight: bold;
+	cursor: pointer;
 }
 
-input:focus 
-{
-	border-color:#333; 
-	background: linear-gradient(rgba(100,100,200,0.3), white);
+input[type="submit"].main {
+	background: green;
+	border: 3px solid green;
 }
 
-table
-{
+input[type="submit"]:hover,
+input[type="submit"]:focus {
+	color: white;
+}
+
+input:focus, 
+select:focus {
+/*
+	border-color: #333;
+*/
+    border-color: #4A90E2;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.4);
+    }
+
+table {
+border-collapse: collapse; empty-cells: show;
 	box-shadow: 5px 5px 10px #888;
-    padding-top: 5px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-    padding-left: 5px;
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
 }
 
-a
-{
-    border-style: solid;
+th {
+	background: lightblue;
+	padding: 5px;
+  }
+
+td {
+	padding: 3px;
+  }
+
+a,
+label {
 	border-color: transparent;
 	border-width: 3px;
-	padding-left: 5px;
-	display:block;
-	height: 30px;
+	border-style: solid;
+/* 	
+	padding-left: 5px; 
+	height: 20px;
+	padding: 5px;
+*/
+	display: inline-block;
 }
 
-a:link {
-    text-decoration:none;
-}
-a:visited {
-    text-decoration:none;
-}
 a:hover {
-    border-left: 3px solid #00aa00;
-    text-decoration:underline;
+	border-left: 3px solid #00aa00;
+	text-decoration: underline;
 	background-color: #eeeeee;
+  }
+
+a:link, a:visited {
+	text-decoration: none;
 }
+
 a:active {
-    text-decoration:underline;
+	text-decoration: underline;
+}
+
+.flash {
+	padding: 5px;
+}
+
+.flash.OK {
+	padding-left: 40px;
+	background: url(../icons/true.png) 8px 8px no-repeat;
+	background-color: #dfffdf;
+	border: 1px solid;
+	border-color: #9fcf9f;
+	color: #005f00;
+}
+
+.flash.Error {
+	padding-left: 30px;
+	background: url(../icons/exclamation.png) 8px 50% no-repeat;
+	background-color: #ffe3e3;
+	border: 1px solid;
+	border-color: #d88;
+	color: #880000;
+}
+
+.flash.Warning {
+/*
+	background: url(../icons/warning.png) 8px 8px no-repeat;
+	background-position: left center;
+	padding-left: 8px;
+*/
+	width: 100%; 
+	background-color: #ffD1A4;
+	border: 1px solid;
+	border-color: #ff8000;
+	vertical-align: middle;
+}
+
+.disabledClass {
+	pointer-events: none;
+	background: grey !important;
+	border: 3px solid grey !important;
+}
+
+/*
+modal css start
+*/
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+	float:left; 
+  background-color: #fefefe;
+margin-left: 20px;
+/*
+	margin: auto;
+*/	
+  padding: 20px;
+  border: 1px solid #888;
+  width: 500px;
+  height: 300px;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+/*
+modal css end
+*/
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltiptext {
+  /*
+  width: 120px;
+  border-radius: 6px;
+  right: -40px;
+  */
+  visibility: hidden;
+  top: 40px;
+  color: #fff;
+  background-color: lightblue;
+  text-align: center;
+  padding: 5px;
+
+  position: absolute;
+  z-index: 1;
+  left: 0px;
+}
+
+.tooltiptext-right {
+right:0px
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+ 
+  tr.strikeout td { position:relative        } /* Setup a new coordinate system   */
+tr.strikeout td:before {                     /* Create a new element that       */
+  content: " ";                              /* �has no text content            */
+  position: absolute;                        /* �is absolutely positioned       */
+  left: 0; top: 50%; width: 100%;            /* �with the top across the middle */
+  border-bottom: 1px solid #000;             /* �and with a border on the top   */
+}
+
+.pulseBtn {
+-moz-animation: pulse 2s infinite;
+-webkit-animation: pulse 2s infinite;
+animation-name: pulse;
+animation-duration: 2s;
+animation-iteration-count: 5;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 200, 0, 1);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 200, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 50px rgba(255, 200, 0, 0);
+    }
+}
+
+        /* --- Modern Variables --- */
+        :root {
+            --primary-color: #007bff; /* Blue */
+            --border-color: #ced4da; /* Light grey */
+            --text-color-dark: black; /* Dark text */
+            --background-color: Ivory;
+            --light-bg: #f8f9fa; /* Very light grey for page background */
+            --transition-speed: 0.25s ease-out;
+            --border-radius: 4px;
+            --font-family-sans-serif: 'Inter', sans-serif;
+        }
+
+
+        /* --- Input with Caption on Border --- */
+        .input-caption-container {
+            position: relative;
+            margin: 5px;
+        }
+
+        .input-caption-container input,
+        .input-caption-container select,
+        .input-caption-container fieldset,
+        .input-caption-container textarea {
+            padding: 5px; /* Adjust padding for text inside */
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            color: var(--text-color-dark);
+            background-color: var(--background-color);
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .input-caption-container input:focus,
+        .input-caption-container select:focus,
+        .input-caption-container fieldset:focus,
+        .input-caption-container textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Subtle focus ring */
+        }
+
+        .input-caption {
+            position: absolute;
+            left: 5px; /* Align with input padding */
+            top: 50%; /* Start vertically centered */
+            transform: translateY(-35%); /* Adjust for vertical centering */
+            color: var(--text-color-dark);
+            background-color: white;
+            padding: 0 5px; /* Padding for the "cutout" effect on the border */
+            font-size: 1rem;
+            pointer-events: none; /* Allows clicks to pass through to the input */
+            transition: top var(--transition-speed),
+                        left var(--transition-speed),
+                        font-size var(--transition-speed),
+                        color var(--transition-speed);
+            z-index: 1; /* Ensure label is above input when not transformed */
+        }
+
+        /* --- Floating Label Effect --- */
+        /* When the input is focused OR has content (not just a placeholder) */
+        .input-caption-container input:focus + .input-caption,
+        .input-caption-container input:not(:placeholder-shown) + .input-caption,
+        .input-caption-container fieldset:focus + .input-caption,
+        .input-caption-container fieldset:not(:placeholder-shown) + .input-caption,
+        .input-caption-container select:focus + .input-caption,
+        .input-caption-container select:not(:placeholder-shown) + .input-caption,
+        .input-caption-container textarea:focus + .input-caption,
+        .input-caption-container textarea:not(:placeholder-shown) + .input-caption {
+            top: 0; /* Move label to the top */
+            left: 10px; /* Adjust horizontal position to sit on the border */
+            font-size: 0.75rem; /* Make font smaller */
+            color: var(--primary-color); /* Change color for emphasis */
+            transform: translateY(-35%) scale(0.9); /* Tiny scale for visual pop */
+            z-index: 2; /* Ensure it stays above the border line visually */
+        }
+
+        /* Optional: Style for the border to "break" around the label */
+        .input-caption-container input:focus,
+        .input-caption-container select:focus,
+        .input-caption-container fieldset:focus,
+        .input-caption-container textarea:focus {
+            border-width: 1px; /* Ensure border doesn't get thicker on focus */
+        }
+
+fieldset {
+	padding: 15px;
 }

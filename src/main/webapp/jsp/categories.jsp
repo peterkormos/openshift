@@ -16,8 +16,11 @@
   User user = RegistrationServlet.getUser(request);
 %>
 
-<div id='categories'>
-	<select name='categoryID'>
+    <div class="input-caption-container">
+	<select name='categoryID'
+	'<%= mandatory ? "required='required'" : "" %>' 
+onchange="updateMandatoryFieldMark(this);"
+	>
 
 		<option value='<%=selectedValue%>'><%=selectedLabel%></option>
 
@@ -28,7 +31,6 @@
 		  {
 				if (show != null && !group.show.equals(show))
 				{
-				  // System.out.println(group.show + " " + show);
 				  continue;
 				}
 		%>
@@ -36,7 +38,7 @@
 			<%
 			  for (final Category category : categoryList)
 					{
-					  if (category.group.categoryGroupID != group.categoryGroupID)
+					  if (category.group.getId() != group.getId())
 					  {
 						continue;
 					  }
@@ -51,7 +53,7 @@
 						continue;
 					  }
 			%>
-			<option value='<%=category.categoryID%>'>
+			<option value='<%=category.getId()%>'>
 				<%=category.categoryCode + " - " + category.categoryDescription%>
 			</option>
 
@@ -63,6 +65,7 @@
 		  }
 		%>
 	</select>
+        <label for="categoryID" class="input-caption"><%=request.getParameter("label")%></label>
 
 	<%
 	  if (mandatory)
@@ -72,4 +75,5 @@
 	<%
 	  }
 	%>
-</div>
+    
+    </div>

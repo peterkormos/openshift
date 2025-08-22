@@ -1,4 +1,38 @@
-<input list="modelproducer" name="modelproducer" value='<%= request.getParameter("selectValue") %>'>
+<%@page import="datatype.*"%>
+<%@page import="servlet.*"%>
+<%@page import="util.*"%>
+
+<%@page import="java.util.*"%>
+
+<%
+    User user = RegistrationServlet.getUser(request);
+	
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+  final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
+
+	int maxlength = 100;
+	if(request.getParameter("maxlength") != null) 
+		maxlength = Integer.parseInt(request.getParameter("maxlength"));
+
+	boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
+%>
+    <div class="input-caption-container">
+<input list="modelproducer" 
+name="modelproducer" 
+value='<%= request.getParameter("selectValue") %>'  maxlength="<%= maxlength %>" placeholder="<%= String.format(language.getString("input.text.maxlength"), maxlength)%>"
+<%= mandatory ?  "required='required'" : "" %>
+onchange="updateMandatoryFieldMark(this);"
+size="60">
+        <label for="modelproducer" class="input-caption"><%=request.getParameter("label")%></label>
+<%
+	if (mandatory)
+	{
+%>
+	  <font color='#FF0000' size='+3'>&#8226;</font>
+<% 
+	}
+%>
+    </div>
 
 <datalist id="modelproducer">
     <option></option>
@@ -43,4 +77,3 @@
     <option>Young Miniatures</option>
     <option>Zvezda</option>
 </datalist>
-<font color="#FF0000" size="+3">&#8226;</font> 

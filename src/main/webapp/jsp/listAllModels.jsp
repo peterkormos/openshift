@@ -2,9 +2,12 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
+
+<link href="base.css" rel="stylesheet" type="text/css">
 
 <%
-  RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+    RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
 
   User user = servlet.getUser(request);
@@ -23,11 +26,11 @@
 	  }
 	}
 
-  session.setAttribute("models", models);
+  session.setAttribute(RegistrationServlet.SessionAttribute.Models.name(), models);
 %>
 
 <jsp:include page="listModels.jsp"></jsp:include>
 
 <%
-  session.removeAttribute("models");
+    session.removeAttribute(RegistrationServlet.SessionAttribute.Models.name());
 %>

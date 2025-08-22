@@ -1,9 +1,14 @@
 package servlet;
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.persistence.Column;
+
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -11,11 +16,13 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 
 import datatype.Record;
+import datatype.judging.JudgingScore;
 
 public class HibernateDAO
 {
   private static SessionFactory sessionFactory;
   private final URL configFile;
+  public static Logger logger = Logger.getLogger(HibernateDAO.class);
 
   protected Session getHibernateSession()
   {
@@ -45,7 +52,7 @@ public class HibernateDAO
 	this.configFile = configFile;
   }
 
-  public void delete(int id, Class<? extends Record> recordClass) throws Exception
+  public void delete(int id, Class<? extends Record> recordClass)
   {
 	Session session = null;
 
@@ -65,7 +72,27 @@ public class HibernateDAO
 	}
   }
 
-  public int getNextID(Class<? extends Record> recordClass) throws Exception
+  public void delete(Record record)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  
+		  session.beginTransaction();
+		  
+		  session.delete(record);
+		  
+		  session.getTransaction().commit();
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public int getNextID(Class<? extends Record> recordClass)
   {
 	Session session = null;
 
@@ -85,7 +112,7 @@ public class HibernateDAO
 	}
   }
 
-  public Record get(int id, Class<? extends Record> recordClass) throws Exception
+  public <T> T get(int id, Class<T> recordClass)
   {
 	Session session = null;
 
@@ -95,17 +122,15 @@ public class HibernateDAO
 
 	  session.beginTransaction();
 
-	  Record returned = (Record) session.createQuery("From " + recordClass.getSimpleName() + " as u where u.id = ?")
+	  T returned = (T) session.createQuery("From " + recordClass.getName() + " as r where r.id = ?")
 		  .setInteger(0, id).uniqueResult();
 
 	  if (returned == null)
 	  {
-		throw new Exception("No record is found with id: " + id);
+		throw new IllegalArgumentException("No record is found with id: " + id);
 	  }
-	  else
-	  {
-		return returned;
-	  }
+	  
+	  return returned;
 	}
 	finally
 	{
@@ -113,8 +138,115 @@ public class HibernateDAO
 	}
   }
 
+  public <T> List<T> getList(Class<T> recordClass, String whereClause)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  
+		  session.beginTransaction();
+		  
+		  List<T> returned = (List<T>) session.createQuery("From " + recordClass.getName() + " as r where " + whereClause)
+				  .list();
+		  
+		  if (returned == null)
+		  {
+			  throw new IllegalArgumentException("No record is found with whereClause: " + whereClause);
+		  }
+		  
+		  return returned;
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public <T> T get(Class<T> recordClass, String whereClause)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  
+		  session.beginTransaction();
+		  
+		  T returned = (T) session.createQuery("From " + recordClass.getName() + " as r where " + whereClause)
+				  .uniqueResult();
+		  
+		  if (returned == null)
+		  {
+			  throw new IllegalArgumentException("No record is found with whereClause: " + whereClause);
+		  }
+		  
+		  return returned;
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public <T> void delete(Class<T> recordClass, String setWhereClause)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  session.createQuery("delete from " + recordClass.getName() + " where " + setWhereClause).executeUpdate();
+		  session.getTransaction().commit();
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public <T> void deleteAll(Class<T> recordClass)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  session.createQuery("delete from " + recordClass.getName()).executeUpdate();
+		  session.getTransaction().commit();
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public <T> int count(Class<T> recordClass, String whereClause)
+  {
+	  Session session = null;
+	  
+	  try
+	  {
+		  session = getHibernateSession();
+		  
+		  session.beginTransaction();
+		  
+		  int returned = (int) session.createQuery("count(*) From " + recordClass.getName() + " as r where " + whereClause)
+				  .uniqueResult();
+		  
+		  return returned;
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
   @SuppressWarnings("unchecked")
-  public Set<Record> getAll(Class<? extends Record> recordClass) throws Exception
+  public <T> List<T> getAll(Class<T> recordClass)
   {
 	Session session = null;
 
@@ -124,7 +256,7 @@ public class HibernateDAO
 
 	  session.beginTransaction();
 
-	  return new HashSet<Record>(session.createQuery("From " + recordClass.getSimpleName() + " order by id asc").list());
+	  return new LinkedList<T>(session.createQuery("From " + recordClass.getSimpleName() + " order by id asc").list());
 	}
 	finally
 	{
@@ -132,12 +264,12 @@ public class HibernateDAO
 	}
   }
 
-  public void save(Record record) throws Exception
+  public void save(Record record)
   {
 	try
 	{
 	  get(record.getId(), record.getClass());
-	  throw new IllegalArgumentException("M&aacute;r l&eacute;tez&ocirc; bejegyz&eacute;s! sorsz&aacute;m: <b>" + record.getId()
+	  throw new IllegalArgumentException("M&aacute;r l&eacute;tez&#337; bejegyz&eacute;s! sorsz&aacute;m: <b>" + record.getId()
 		  + "</b>");
 	}
 	catch (Exception e)
@@ -151,6 +283,8 @@ public class HibernateDAO
 	  session.beginTransaction();
 	  session.saveOrUpdate(record);
 	  session.getTransaction().commit();
+	  
+	  logger.debug(record);
 	}
 	finally
 	{
@@ -158,7 +292,7 @@ public class HibernateDAO
 	}
   }
 
-  public void update(Record record) throws Exception
+  public void update(Record record) 
   {
 	Session session = null;
 

@@ -2,138 +2,162 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="util.*"%>
+
+<jsp:useBean id="languageUtil" class="util.LanguageUtil"
+	scope="application" />
 
 <%
-	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	User user = RegistrationServlet.getUser(request);
+User user = null;
+try {
+	user = RegistrationServlet.getUser(request);
+} catch (Exception ex) {
+	out.print(ex.getMessage());
+	return;
+}
 
-	if (user.language.length() != 2)
-	{
-	  response.sendRedirect(user.language + "_main.jsp");
-	  return;
-	}
+RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 
-	final ResourceBundle language = servlet.getLanguage(user.language);
-	String show = RegistrationServlet.getShowFromSession(session);
-	if (show == null)
-	{
-	  show = "-";
-	}
+ResourceBundle language = languageUtil.getLanguage(user.language);
+
+String show = RegistrationServlet.getShowFromSession(session);
+if (show == null) {
+	show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+}
+
+List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
+if (models == null) {
+	models = servletDAO.getModels(user.getId());
+}
+else {
+	session.removeAttribute(RegistrationServlet.SessionAttribute.Models.name());
+}
+
+	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
+			RegistrationServlet.SessionAttribute.Categories.name());
+	models = RegistrationServlet.getModelsForShow(show, models, categories);
 %>
 <html>
 <head>
+
+<meta http-equiv="Cache-Control"
+	content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 
-<link href="base.css" rel="stylesheet" type="text/css"/>
-<div class="header"></div>
+	<div class="header"></div>
 
-<p>
-<FONT COLOR='#ff0000'><b><%=language.getString("show")%>: <%=show%>
-<p>
-<p>
-<%=servlet.getSystemMessage()%>
-</b></FONT>
+	<form name="input" id="input" onsubmit="myFunction()"
+		action="../RegistrationServlet" method="put" accept-charset="UTF-8">
+		<input type="hidden" id="command" name="command" value="">
+		<table style="border: 0px; width: 100%">
+			<tr>
+				<td rowspan="2"><img style="height: 25mm"
+					src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
+				</td>
+				<td colspan="5" style="width: 100%; white-space: nowrap">
+				<FONT
+					COLOR='#ff0000'> <b> <%=show%>
+					</b>
+				</FONT>
+				<br>
+				<FONT
+					COLOR='#ff0000'> <b> <%=servlet.getSystemMessage()%>
+					</b>
+				</FONT>
+				</td>
+			</tr>
 
-<p></p>
-<p></p>
+			<tr>
+				<%
+				if (servlet.isRegistrationAllowed(show)) {
+				%>
+				<td style="white-space: nowrap; vertical-align: top;">
+					<div class="tooltip">
+						<a href="../RegistrationServlet/inputForAddModel"
+						<%= models.isEmpty() ? "class='pulseBtn'" : ""%>
+						> <img
+							src="../icons/add.png" height="30" align="center" /> <span
+							class="tooltiptext"> <%=language.getString("add")%></span>
+							 <%=language.getString("add")%>
+						</a>
+					</div>
+				</td>
+				<%
+				}
+				%>
 
-<script type="text/javascript">
-// <!--
+				<td style="white-space: nowrap; vertical-align: top;">
+					<div class="tooltip">
+						<a href="../RegistrationServlet/sendEmail"> <img
+							src="../icons/email.png" height="30" align="center" /> <span
+							class="tooltiptext"> <%=language.getString("send.email")%></span>
+							 <%=language.getString("send.email")%>
+						</a>
+					</div>
+				</td>
 
-function checkSubmit()
-{
-	confirmed = confirm('Are you sure you want to delete?'); 
-	
-	if(confirmed)
-	{
-		document.getElementById('command').value='deleteUser';
-		document.getElementById('input').submit();
+				<td style="width: 100%; white-space: nowrap"></td>
+
+				<td style="width: 40px; text-align: right; vertical-align: top;">
+					<div class="tooltip">
+						<a href="../RegistrationServlet/logout"> <img
+							src="../icons/exit.png" height="30" align="center" /> <span
+							class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
+						</a>
+					</div>
+				</td>
+
+				<td style="width: 40px; text-align: right; vertical-align: top;">
+					<div class="tooltip">
+						<a href="#"
+							onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
+							<img src="../icons/modify2.png" height="30" align="center" /><span
+							class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
+						</a>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</form>
+	<p></p>
+
+	<%
+	if (!(servlet.isPreRegistrationAllowed(show) || servlet.isOnSiteUse())) {
+	%>
+	<strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong>
+	<%
 	}
-}
-
-//-->
-</script>
+	%>
 
 
-<form name="input" id="input" onsubmit="myFunction()" action="../RegistrationServlet" method="put">
-  <input type="hidden" id="command"  name="command" value="">
+	<jsp:include page="notices.jsp" />
 
-  <a href="#" onClick="document.getElementById('command').value='inputForAddModel';this.parentNode.submit();">
-  <img src="../icons/add.png" height="30" align="center"> <%=language.getString("add")%></a>
-
-<p></p>
-    <!--
-  <a href="#" onClick="document.getElementById('command').value='inputForPhotoUpload';this.parentNode.submit();">
-  <img src="../icons/photo.png" height="30" align="center"> <%=language.getString("photo")%>
+	<p></p>
+	<!--
+  <a href="#" onClick="document.getElementById('command').value='inputForPhotoUpload';document.getElementById('input').submit();">
+  <img src="../icons/photo.png" height="30" align="center">language.getString("photo")to")%>
   </a>
  
 <p></p>
    -->
-  <a href="#" onClick="document.getElementById('command').value='inputForSelectModelForModify';this.parentNode.submit();">
-  <img src="../icons/modify.png" height="30" align="center"> <%=language.getString("modify.model")%></a>
 
-<p></p>
-   
-  <a href="#" onClick="document.getElementById('command').value='inputForDeleteModel';this.parentNode.submit();">
-  <img src="../icons/delete2.png" height="30" align="center"> <%=language.getString("delete")%></a>
-
-<p></p>
-
-<%-- 
-  <a href="#" onClick="document.getElementById('command').value='listMyModels';this.parentNode.submit();">
+	<%-- 
+  <a href="#" onClick="document.getElementById('command').value='listMyModels';document.getElementById('input').submit();">
   <img src="../icons/list.png" height="30" align="center"> <%=language.getString("list.models")%></a>
 
 <p></p>
  --%>
 
-  <a href="#" onClick="document.getElementById('command').value='sendEmail';this.parentNode.submit();">
-  <img src="../icons/email.png" height="30" align="center"> <%=language.getString("send.email")%></a>
+	<jsp:include page="ADMIN_helyi.jsp" />
 
-<p></p>
-    
-  <a href="#" onClick="document.getElementById('command').value='logout';this.parentNode.submit();">
-  <img src="../icons/exit.png" height="30" align="center"> <%=language.getString("logout")%></a>
+	<jsp:include page="listMyModels.jsp" />
 
-<p></p>
-   
-  <a href="#" onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';this.parentNode.submit();">
-  <img src="../icons/modify2.png" height="30" align="center"> <%=language.getString("modify.user")%></a>
-
-<p></p>
-
-<hr>
-	<a href="#" onClick="checkSubmit();" style="{color: rgb(255,0,0);font-weight:bold}">
-  <img src="../icons/delete.png" height="30" align="center"> <%=language.getString("delete.user")%></a>
-
-</form>
-<hr>
-<%
-if(servlet.isOnSiteUse())
-{
-%>
-	<hr>
-	<a href='../helyi.html'> helyi.html</a>
-	<p>
-	<hr>
-	<form name='input' action='../RegistrationServlet' method='put'>
-	<input type='hidden' name='command' value='printMyModels'>
-	<input name='printMyModels' type='submit' value='<%=language.getString("print.models")%>'>
-	</form>
-	<p><hr>
-	
-	<jsp:include page="modelSelect.jsp">
-	  <jsp:param name="action" value="printMyModels"/>
-	  <jsp:param name="submitLabel" value='<%=language.getString("print.models")%>'/>
-	</jsp:include>
-
-<%
-}
-%>
-
-<%=language.getString("list.models")%>
-<p>
-
-<jsp:include page="listMyModels.jsp"/>
-
-</body></html>
+</body>
+</html>
