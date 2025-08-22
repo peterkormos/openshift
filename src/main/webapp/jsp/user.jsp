@@ -15,9 +15,9 @@ boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestAttr
 if (directRegister)
 	session.removeAttribute(CommonSessionAttribute.UserID.name());
 
-String action = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name());
+String action = request.getParameter("action");
 if(action == null) {
-	action = request.getParameter("action");
+	action = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name());
 }
 
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);

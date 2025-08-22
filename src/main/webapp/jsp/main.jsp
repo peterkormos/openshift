@@ -33,6 +33,7 @@ if (models == null) {
 else {
 	session.removeAttribute(RegistrationServlet.SessionAttribute.Models.name());
 }
+	session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
 
 	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
 			RegistrationServlet.SessionAttribute.Categories.name());

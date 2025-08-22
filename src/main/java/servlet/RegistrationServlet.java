@@ -1761,6 +1761,7 @@ public class RegistrationServlet extends HttpServlet {
 			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
 		}
 		session.removeAttribute(SessionAttribute.ModelID.name());
+		session.removeAttribute(SessionAttribute.Action.name());
 		redirectToMainPage(request, response);
 	}
 
@@ -1788,6 +1789,7 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.save(model);
 
 		final HttpSession session = request.getSession(false);
+		session.removeAttribute(SessionAttribute.Action.name());
 		List<Model> models = servletDAO.getModelsForShow(getShowFromSession(session), user.getId());
 
 		if (models.isEmpty() && !user.isAdminUser()) {
