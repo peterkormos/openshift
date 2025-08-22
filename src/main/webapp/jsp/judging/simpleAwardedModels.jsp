@@ -45,7 +45,7 @@ List<AwardedModel> awardedModels = RegistrationServlet.servletDAO.getAwardedMode
 		<tr bgcolor="<%=highlight()%>">
 			<td align="center"><%=category.categoryCode%> - <%=category.categoryDescription%></td>
 			<td align="center"><%=awardedModel.name%></td>
-			<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.userID).getFullName()%></td>
+			<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.getUserID()).getFullName()%></td>
 			<td align="center"><%=awardedModel.getAward()%></td>
 		</tr>
 		<%

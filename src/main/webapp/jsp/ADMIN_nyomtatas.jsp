@@ -14,9 +14,14 @@ if (show == null) {
 		<td>
 			<form accept-charset="UTF-8" name="input" id="input6"
 				action="../RegistrationServlet" method="post">
-				<input type="hidden" id="command6" name="command" value="">
+				<input type="hidden" id="command6" name="command" value="printAllModels">
 				<input type="hidden" id="paramName6" name="paramName" value="">
 				<input type="hidden" id="paramValue6" name="paramValue" value="">
+				<a href="#"
+					onClick="document.getElementById('paramName6').name='printPreRegisteredModels';document.getElementById('paramName6').value='true';document.getElementById('input6').submit();">
+					>
+					Nevez&eacute;si lapok nyomtat&aacute;sa (El&ouml;nevezettek) </a> -
+
 				Nyelv megad&aacute;sa:
 				<%
 				for (RegistrationServlet.PrintLanguages pl : RegistrationServlet.PrintLanguages.values()) {
@@ -29,16 +34,18 @@ if (show == null) {
 					}
 					%>
 
-				<a
-					href="../RegistrationServlet/printAllModels?printPreRegisteredModels=true">
-					- <a href="#"
-					onClick="document.getElementById('paramName6').value='<%=ServletDAO.SystemParameter.MaxModelsPerPage.name()%>';document.getElementById('command6').value='printAllModels';document.getElementById('input6').submit();">
-						Nevez&eacute;si lapok nyomtat&aacute;sa (El&ouml;nevezettek) </a> Max.
-					makettek oldalank&eacute;nt: <input
-					onClick="document.getElementById('paramName6').value='<%=ServletDAO.SystemParameter.MaxModelsPerPage.name()%>';document.getElementById('paramValue6').value=this.value;document.getElementById('command6').value='printAllModels';"
-					type="number" id="paramValue"
+				<a href="#"
+					onClick="document.getElementById('input6').submit();">
+					Max. makettek oldalank&eacute;nt: </a> <input type="number"
 					name="<%=ServletDAO.SystemParameter.MaxModelsPerPage.name()%>"
-					size="2" value="3">
+					size="2" value="3"> <a href="#"
+					onClick="document.getElementById('input6').submit();">
+					Lapt&ouml;r&eacute;s nyomtat&aacute;skor</a> igen: <input type="radio"
+					name="<%=ServletDAO.SystemParameter.PageBreakAtPrint.name()%>"
+					value="<%=Boolean.TRUE%>" checked='checked'> nem: <input
+					type="radio"
+					name="<%=ServletDAO.SystemParameter.PageBreakAtPrint.name()%>"
+					value="<%=Boolean.FALSE%>">
 			</form> <!--
 -
 <a

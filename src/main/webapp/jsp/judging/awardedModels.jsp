@@ -65,7 +65,7 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 		%>
 		<tr>
 			<td align="center"><%=awardedModel.name%></td>
-			<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.userID).getFullName()%></td>
+			<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.getUserID()).getFullName()%></td>
 			<td align="center"><%=awardedModel.getAward()%></td>
 			<%
 			//				  if (RegistrationServlet.onSiteUse)

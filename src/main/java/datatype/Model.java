@@ -15,7 +15,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
@@ -28,8 +30,6 @@ import javax.persistence.Transient;
 public class Model extends Record {
     private static final long serialVersionUID = -3161543148518903037L;
 
-    @Column(name = "USER_ID")
-    public int userID;
     @Column(name = "CATEGORY_ID")
     public int categoryID;
 
@@ -56,11 +56,13 @@ public class Model extends Record {
 
     @Transient
     public Map<DetailingGroup, Map<DetailingCriteria, Boolean>> details;
-
-    @Transient
-    public User user;
+    
     @Transient
     public Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    public User user;
 
 	public User getUser() {
         return user;
@@ -68,7 +70,6 @@ public class Model extends Record {
 
     public void setUser(User user) {
         this.user = user;
-        this.userID = this.user.getId();
     }
 
     public Category getCategory() {
@@ -85,11 +86,7 @@ public class Model extends Record {
     }
 
     public int getUserID() {
-        return userID;
-    }
-
-    public void setUserID(int userID) {
-        this.userID = userID;
+        return user.getId();
     }
 
     public int getCategoryID() {
@@ -189,11 +186,11 @@ public class Model extends Record {
     	setId(id);
   }
     
-    public Model(final int id, int userID, int categoryID, String scale, String name, String producer, String comment,
+    public Model(final int id, User user, int categoryID, String scale, String name, String producer, String comment,
 	  String identification, String markings, boolean gluedToBase)
   {
     	this(id);
-	this.userID = userID;
+	this.user = user;
 	this.categoryID = categoryID;
 	this.scale = scale;
 	this.name = name;
@@ -208,7 +205,7 @@ public class Model extends Record {
 	public Model(Model model)
   {
 	this(model.getId());
-	this.userID = model.userID;
+	this.user = model.getUser();
 	this.categoryID = model.categoryID;
 	this.scale = model.scale;
 	this.name = model.name;
@@ -224,7 +221,7 @@ public class Model extends Record {
 
     @Override
     public String toString() {
-        String returned = super.toString() + " userID: " + userID + " categoryID: " + categoryID + " scale: " + scale + " name: "
+        String returned = super.toString() + " userID: " + getUserID() + " categoryID: " + categoryID + " scale: " + scale + " name: "
                 + name + " producer: " + producer + " comment: " + comment +
 
                 " identification: " + identification + " markings: " + markings + " gluedToBase: " + gluedToBase +

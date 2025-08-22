@@ -11,7 +11,7 @@
 	%>
 	<label> <input type='radio' name='modelID'
 		value='<%=model.getId()%>' /> <%=model.id%> - <%=model.scale%> - <%=model.name%>
-		- <%=RegistrationServlet.servletDAO.getUser(model.userID).getFullName()%> - <%=model.getAward()%>
+		- <%=RegistrationServlet.servletDAO.getUser(model.getUserID()).getFullName()%> - <%=model.getAward()%>
 	</label> <br>
 	<%
 }

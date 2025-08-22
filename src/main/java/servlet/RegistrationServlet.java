@@ -76,6 +76,7 @@ import datatype.LoginConsent.LoginConsentType;
 import datatype.MainPageNotice;
 import datatype.Model;
 import datatype.ModelClass;
+import datatype.PrintedModel;
 import datatype.User;
 import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
@@ -435,8 +436,7 @@ public class RegistrationServlet extends HttpServlet {
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
 
 		StringBuilder printBuffer = getPrintBuffer(request);
-		printModelsForUser(request, response, getLanguageFromRequest(request), userID, true/* alwaysPageBreak */,
-				printBuffer);
+		printModelsForUser(request, response, getLanguageFromRequest(request), userID, printBuffer);
 		showPrintDialog(response);
 		return;
 	}
@@ -533,7 +533,8 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 		
-		List<Model> models = servletDAO.getModels(user.getId());
+		List<Model> models = servletDAO.getModelsForShow(show, user.getId());
+
 		if (models.isEmpty() && !user.isAdminUser()) {
 			session.setAttribute(SessionAttribute.Models.name(), models);
 			inputForAddModel(request, response);
@@ -688,8 +689,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (!users.isEmpty()) {
 			StringBuilder printBuffer = getPrintBuffer(request);
 			for (final User user1 : users) {
-				ServletUtil.writeResponse(response,
-						printModelsForUser(language, user1.getId(), request, true /* alwaysPageBreak */, printBuffer));
+				printModelsForUser(request, response, language, user1.getId(), printBuffer);
 			}
 		}
 		showPrintDialog(response);
@@ -1444,7 +1444,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append(category.getModelClass().name());
 			buff.append("</td>");
 			buff.append("<td align='center' >");
-			buff.append(category.getAgeGroup().name());
+			buff.append(category.getAgeGroup().toString());
 			buff.append("</td>");
 			buff.append("<td align='center' style='white-space: nowrap'>");
 			buff.append("<a href='inputForAddCategory?categoryID=" + category.getId() + "'>"
@@ -1689,13 +1689,13 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</td>");
 		buff.append("<td><select name='ageGroup'>");
 		if (category.getAgeGroup() != null)
-			buff.append("<option value='" + category.getAgeGroup().name() + "'>" + category.getAgeGroup().name()
+			buff.append("<option value='" + category.getAgeGroup().name() + "'>" + category.getAgeGroup().toString()
 					+ "</option>");
 		else
-			buff.append("<option value='" + AgeGroup.ALL.name() + "' selected>" + AgeGroup.ALL.name() + "</option>");
+			buff.append("<option value='" + AgeGroup.ALL.name() + "' selected>" + AgeGroup.ALL.toString() + "</option>");
 
 		for (final AgeGroup mc : AgeGroup.values()) {
-			buff.append("<option value='" + mc.name() + "'>" + mc.name() + "</option>");
+			buff.append("<option value='" + mc.name() + "'>" + mc.toString() + "</option>");
 		}
 		buff.append("</select>");
 		buff.append("</td>");
@@ -2198,21 +2198,62 @@ public class RegistrationServlet extends HttpServlet {
 	public void printAllModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final ResourceBundle language = getLanguageForCurrentUser(request);
 
-		List<User> users = servletDAO.getUsersWithModel();
-
-		Collections.sort(users, new Comparator() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return Integer.compare(User.class.cast(o1).getId(), User.class.cast(o2).getId());
-			}
-		});
+		boolean pageBreak = Boolean.parseBoolean(
+				ServletUtil.getOptionalRequestAttribute(request, ServletDAO.SystemParameter.PageBreakAtPrint.name()));
 
 		StringBuilder printBuffer = getPrintBuffer(request);
-		for (final User user : users) {
-			printModelsForUser(request, response, language, user.getId(), true /* alwaysPageBreak */, printBuffer);
+
+		List<User> users = servletDAO.getUsersWithModel();
+		if(pageBreak) {
+			for (final User user : users) {
+				printModelsForUser(request, response, language, user.getId(), printBuffer);
+			}
+		}
+		else {
+			final StringBuilder buff = new StringBuilder();
+			List<PrintedModel> models = new LinkedList<>();
+
+			for (final User user : users) {
+				models.addAll(toPrintModels(request, user.getId()));
+			}
+
+			printModels(request, language, printBuffer, buff, models);
+			ServletUtil.writeResponse(response, buff);
 		}
 		response.getOutputStream().write("<p>Itt a vege...".getBytes());
 		showPrintDialog(response);
+	}
+
+	private List<PrintedModel> toPrintModels(final HttpServletRequest request, int userId ) {
+		final List<Model> usersModels = servletDAO.getModelsForShow(getShowFromSession(request), userId);
+		return toPrintModels(usersModels);
+	}
+
+	private List<PrintedModel> toPrintModels(final List<Model> usersModels) {
+		final int fee = calculateEntryFee(usersModels.size());
+		List<PrintedModel> pms = usersModels.stream().map(m -> {
+			PrintedModel pm = new PrintedModel(m);
+			pm.setFee(fee);
+			return pm;
+		}).collect(Collectors.toList());
+		return pms;
+	}
+
+	private void printModels(final HttpServletRequest request, final ResourceBundle language, StringBuilder printBuffer,
+			final StringBuilder buff, List<PrintedModel> models) throws SQLException, Exception, IOException {
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.MaxModelsPerPage.name());
+		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
+		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
+				+ getLogoIDForShow(getShowFromSession(request));
+		while (!models.isEmpty()) {
+			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
+			final List<PrintedModel> subList = new ArrayList<>(models.subList(0, currentModelsOnPage));
+			models.removeAll(subList);
+
+			boolean currentPageBreak = currentModelsOnPage > 0;
+			buff.append(printModels(language, subList, printBuffer, 1, modelsOnPage, currentPageBreak, logoURL));
+
+}
 	}
 
 	public void printCardsForAllModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -2237,17 +2278,17 @@ public class RegistrationServlet extends HttpServlet {
 		do {
 			final List<Model> sublist = allModels.subList(0, Math.min(cols * rows, allModels.size()));
 
-			int fee = calculateEntryFee(allModels);
+			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
+					+ getLogoIDForShow(getShowFromSession(request));
 			ServletUtil.writeResponse(response,
-					printModels(language, user, sublist, printCardBuffer, rows, cols, true, fee, request));
+					printModels(language, toPrintModels(sublist), printCardBuffer, rows, cols, true, logoURL));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
 		showPrintDialog(response);
 	}
 
-	private int calculateEntryFee(List<Model> allModels) {
-		int size = allModels.size();
+	private int calculateEntryFee(int size) {
 //		return 5 + (Math.max(0, size - 3) > 0 ? 2 * (size - 3) : 0);
 		return 8;
 	}
@@ -2260,22 +2301,17 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
 			printModelsForUser(request, response, languageUtil.getLanguage(user.language), user.getId(),
-					false /* alwaysPageBreak */, printBuffer);
+					printBuffer);
 		} else {
 			final StringBuilder buff = new StringBuilder();
 
-			final List<Model> models = servletDAO.getModels(user.getId());
-			int fee = calculateEntryFee(models);
-			for (final Model model : models) {
-				if (model.getId() == Integer.parseInt(modelID)) {
-					final List<Model> subList = new LinkedList<Model>();
-					subList.add(model);
+			final List<Model> subList = new LinkedList<Model>();
+			subList.add(servletDAO.getModel(Integer.parseInt(modelID)));
+			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
+					+ getLogoIDForShow(getShowFromSession(request));
 
-					buff.append(printModels(languageUtil.getLanguage(user.language), servletDAO.getUser(user.getId()),
-							subList, printBuffer, 1, 3, false, fee, request));
-					break;
-				}
-			}
+			buff.append(printModels(languageUtil.getLanguage(user.language), toPrintModels(subList), printBuffer,
+					1, 3, false, logoURL));
 
 			ServletUtil.writeResponse(response, buff);
 		}
@@ -2284,56 +2320,24 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void printModelsForUser(final HttpServletRequest request, final HttpServletResponse response,
-			final ResourceBundle language, final int userID, boolean alwaysPageBreak, StringBuilder printBuffer)
+			final ResourceBundle language, final int userID, StringBuilder printBuffer)
 			throws Exception, IOException {
 		ServletUtil.writeResponse(response,
-				printModelsForUser(language, userID, request, alwaysPageBreak, printBuffer));
+				printModelsForUser(language, userID, request, printBuffer));
 	}
 
 	private StringBuilder printModelsForUser(final ResourceBundle language, final int userID,
-			final HttpServletRequest request, boolean alwaysPageBreak, StringBuilder printBuffer)
+			final HttpServletRequest request, StringBuilder printBuffer)
 			throws Exception, IOException {
-		final List<Model> models = servletDAO.getModels(userID);
-
-		// remove models that are not for the current show
-		final String show = getShowFromSession(request);
-		final Iterator<Model> it = models.iterator();
-		while (it.hasNext()) {
-			final Model model = it.next();
-
-			if (show != null && !servletDAO.getCategory(model.categoryID).group.show.equals(show)) {
-				it.remove();
-			}
-		}
-
-		if (models.isEmpty()) {
-			return new StringBuilder();
-		}
-
 		final StringBuilder buff = new StringBuilder();
 
-		final User user = servletDAO.getUser(userID);
-		int modelsRemainingToPrint = models.size();
-		int fee = calculateEntryFee(models);
-		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.MaxModelsPerPage.name());
-		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
-		while (!models.isEmpty()) {
-			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
-			final List<Model> subList = new ArrayList<Model>(models.subList(0, currentModelsOnPage));
-			models.removeAll(subList);
-
-			modelsRemainingToPrint -= currentModelsOnPage;
-			boolean pageBreak = alwaysPageBreak || modelsRemainingToPrint > 0;
-			buff.append(printModels(language, user, subList, printBuffer, 1, modelsOnPage, pageBreak, fee, request));
-		}
-
+		printModels(request, language, printBuffer, buff, toPrintModels(request, userID));
+		
 		return buff;
-
 	}
 
-	StringBuilder printModels(final ResourceBundle language, final User user, final List<Model> models,
-			final StringBuilder printBuffer, final int rows, final int cols, boolean pageBreak, final int fee,
-			HttpServletRequest request) throws Exception, IOException {
+	StringBuilder printModels(final ResourceBundle language, final List<PrintedModel> models, final StringBuilder printBuffer,
+			final int rows, final int cols, boolean pageBreak, String logoURL) throws Exception, IOException {
 
 		final int width = 100 / cols;
 		final int height = 100 / rows;
@@ -2342,18 +2346,17 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("\n\n<table cellpadding='0' cellspacing='10' width='100%' height='100%' "
 				+ (pageBreak ? "style='page-break-after: always;' " : "") + "border='0' >");
 
-		int ModelCount = 0;
-		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
-				+ getLogoIDForShow(getShowFromSession(request));
+		int modelIndex = 0;
 		for (int row = 0; row < rows; row++) {
 			buff.append("<tr valign='bottom'>");
 			for (int col = 0; col < cols; col++) {
 				buff.append("<td width='" + width + "%' height='" + height + "%'>");
 
-				final Model model = ModelCount < models.size() ? models.get(ModelCount) : null;
-				ModelCount++;
+				final PrintedModel model = modelIndex < models.size() ? models.get(modelIndex) : null;
+				modelIndex++;
 
 				if (model != null) {
+					User user = model.getUser();
 					String print = printBuffer.toString().replaceAll("__FULLNAME__", String.valueOf(user.lastName))
 							// .replaceAll("__FIRSTNAME__",
 							// String.valueOf(user.firstName))
@@ -2374,13 +2377,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_PRODUCER__", model.producer)
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, ".."))
-							.replaceAll("__FEE__", String.valueOf(fee)).replaceAll("__LOGO_URL__", logoURL)
-
-					// "<font color='#006600'>Alapra ragasztva</font>"
-					// :
-					// "<font color='#FF0000'><strong>Nincs leragasztva!!!
-					// </strong></font> "
-
+							.replaceAll("__FEE__", String.valueOf(model.getFee())).replaceAll("__LOGO_URL__", logoURL)
 					;
 
 					for (DetailingGroup group : DetailingGroup.values()) {
@@ -2845,7 +2842,7 @@ public class RegistrationServlet extends HttpServlet {
 		String message = ServletUtil.getRequestAttribute(request, "message");
 		int emailsSent = 0;
 		for (User user : servletDAO.getUsers())
-			if (!servletDAO.getModels(user.getId()).isEmpty())
+			if (!servletDAO.getModelsForShow(getShowFromSession(request), user.getId()).isEmpty())
 				try {
 					final StringBuilder messageBody = new StringBuilder();
 					final ResourceBundle language = languageUtil.getLanguage(user.language);
