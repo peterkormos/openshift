@@ -35,10 +35,8 @@ if (showIdHttpParameter != null)
 <script> 
 	    function checkSubmit(form) {
 	    	var showNotSet = form.show == null || form.show.value == '';
-	    	var dataUsageNoConsent = !document.getElementById('dataUsageConsentCompetition').checked
-	    	var submitDisabled =  
-									(showNotSet || dataUsageNoConsent) 
-									;
+	    	var dataUsageNoConsent = !document.getElementById('dataUsageConsentCompetition').checked;
+	    	var submitDisabled = (showNotSet || dataUsageNoConsent);
 	    	var noticeDiv = document.getElementById('noticeDiv');
 	    	var submitButton = document.getElementById('submitbutton');
 	    	
@@ -50,8 +48,7 @@ if (showIdHttpParameter != null)
 				}
 		        else if (dataUsageNoConsent) 
 			    {
-					noticeDiv.innerHTML = 
-						'<%=language.getString("data.usage.no.consent.warning")%>';
+					noticeDiv.innerHTML = '<%=language.getString("data.usage.no.consent.warning")%>';
 			}
 
 			noticeDiv.className = "flash ERROR";
@@ -108,14 +105,13 @@ if (showIdHttpParameter != null)
 							<td align="center">
 								<%
 								for (final String show : shows) {
-								%> <label> <img
-									style="height: 25mm; vertical-align: middle;"
-									src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
-									<input type='radio' name='show'
+								%> <label> <input type='radio' name='show'
 									onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));"
 									value='<%=StringEncoder.toBase64(show.getBytes())%>'
-									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <span
-									style="color: red"><b> <%=show%></b></span> <%=shows.isEmpty() || shows.size() == 1 ? "" : "<font color='#FF0000' size='+3'>&#8226;</font>"%>
+									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <img
+									style="height: 25mm; vertical-align: middle;"
+									src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
+									<span style="color: red"><b> <%=show%></b></span> <%=shows.isEmpty() || shows.size() == 1 ? "" : "<font color='#FF0000' size='+3'>&#8226;</font>"%>
 							</label><br> <%
  }
  %>
@@ -125,8 +121,7 @@ if (showIdHttpParameter != null)
 							<td align="center">
 								<div class="input-caption-container" style="width: 200px">
 									<input type="text" name="email" id="email" placeholder=" "
-										onchange="updateMandatoryFieldMark(this);" /> 
-										<label
+										onchange="updateMandatoryFieldMark(this);" /> <label
 										for="email" class="input-caption"><%=language.getString("email")%></label>
 									<font color='#FF0000' size='+3'>&#8226;</font>
 								</div>

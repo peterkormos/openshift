@@ -16,6 +16,18 @@ int maxlength = 60;
 if (request.getParameter("maxlength") != null)
 	maxlength = Integer.parseInt(request.getParameter("maxlength"));
 
+String inputType;
+if (request.getParameter("inputType") != null)
+	inputType = request.getParameter("inputType");
+else
+	inputType = "text";
+
+String id;
+if (request.getParameter("id") != null)
+	id = request.getParameter("id");
+else
+	id = request.getParameter("name");
+
 boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 %>
 
@@ -24,7 +36,8 @@ boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 	size="<%=ServletUtil.getOptionalRequestAttribute(request, "size")%>"
 	maxlength='<%=maxlength%>'
 	name='<%=request.getParameter("name")%>'
-	id='<%=request.getParameter("name")%>'
+	type='<%=request.getParameter("inputType")%>'
+	id='<%=id%>'
 	placeholder="<%=String.format(language.getString("input.text.maxlength"), maxlength)%>"
 	<%String value = request.getParameter("value");
 

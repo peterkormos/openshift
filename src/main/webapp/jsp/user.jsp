@@ -16,7 +16,7 @@ if (directRegister)
 	session.removeAttribute(CommonSessionAttribute.UserID.name());
 
 String action = request.getParameter("action");
-if(action == null) {
+if (action == null) {
 	action = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name());
 }
 
@@ -59,7 +59,7 @@ function checkDeleteUserRequest()
 	
 	        if (password1 == '' || password2 == '' || password1 != password2)
 	        {  
-	        	document.getElementById('noticeDiv').innerHTML = '<%= language.getString("passwords.not.same") %>';
+	        	document.getElementById('noticeDiv').innerHTML = '<%=language.getString("passwords.not.same")%>';
 				document.getElementById('noticeDiv').className ="flash ERROR";
 				return false; 
 	        } 
@@ -74,7 +74,7 @@ function checkDeleteUserRequest()
 	
 	        if (email1 == '' || email2 == '' || email1 != email2)
 	        {  
-	        	document.getElementById('noticeDiv').innerHTML = '<%= language.getString("emails.not.same") %>';
+	        	document.getElementById('noticeDiv').innerHTML = '<%=language.getString("emails.not.same")%>';
 				document.getElementById('noticeDiv').className ="flash ERROR";
 				return false; 
 	        } 
@@ -86,12 +86,13 @@ function checkDeleteUserRequest()
 
 	    function checkName(form) {
 			if(form.fullname.value.split(' ').length == 1) {
-				document.getElementById('noticeDiv').innerHTML = '<%= language.getString("name.too.short") %>';
-				document.getElementById('noticeDiv').className = "flash ERROR";
-				return false;
-			} else {
-				return checkOK();
-			}
+				document.getElementById('noticeDiv').innerHTML = '<%=language.getString("name.too.short")%>
+	';
+			document.getElementById('noticeDiv').className = "flash ERROR";
+			return false;
+		} else {
+			return checkOK();
+		}
 	}
 
 	function checkOK() {
@@ -100,7 +101,7 @@ function checkDeleteUserRequest()
 		return true;
 	}
 </script>
-<link rel="stylesheet" href="base.css" media="screen" type="text/css"/>
+<link rel="stylesheet" href="base.css" media="screen" type="text/css" />
 </head>
 
 
@@ -121,85 +122,103 @@ function checkDeleteUserRequest()
 			<%
 			if (!directRegister) {
 			%>
-			<tr bgcolor="<%= highlight()%>">
-				<td><%=language.getString("email")%>:</td>
-				<td><input autocomplete="fuckoffchrome" name="email"
-					type="text" value="<%=user == null ? "" : user.email%>"
-					onchange="updateMandatoryFieldMark(this);"> <font
-					color="#FF0000" size="+3">&#8226;</font></td>
+			<tr>
+				<td><jsp:include page="textInput.jsp">
+						<jsp:param name="name" value="email" />
+						<jsp:param name="size" value="30" />
+						<jsp:param name="value"
+							value='<%=user == null ? "" : user.email%>' />
+						<jsp:param name="label" value='<%=language.getString("email")%>' />
+						<jsp:param name="mandatory" value="true" />
+					</jsp:include></td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td><%=language.getString("email.again")%>:</td>
-				<td><input autocomplete="fuckoffchrome" name="email2"
-					type="text" value="<%=user == null ? "" : user.email%>"
-					onchange="updateMandatoryFieldMark(this);"> <font
-					color="#FF0000" size="+3">&#8226;</font></td>
+			<tr>
+				<td><jsp:include page="textInput.jsp">
+						<jsp:param name="name" value="email2" />
+						<jsp:param name="size" value="30" />
+						<jsp:param name="value"
+							value='<%=user == null ? "" : user.email%>' />
+						<jsp:param name="label"
+							value='<%=language.getString("email.again")%>' />
+						<jsp:param name="mandatory" value="true" />
+					</jsp:include></td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td width="32%"><strong><%=language.getString("password")%>:
-				</strong></td>
-				<td width="68%"><input autocomplete="fuckoffchrome"
-					name="password" type="password"
-					onchange="updateMandatoryFieldMark(this);"> <font
-					color="#FF0000" size="+3">&#8226;</font></td>
+			<tr>
+				<td><jsp:include page="textInput.jsp">
+						<jsp:param name="name" value="password" />
+						<jsp:param name="size" value="30" />
+						<jsp:param name="inputType" value="password" />
+						<jsp:param name="label"
+							value='<%=language.getString("password")%>' />
+						<jsp:param name="mandatory" value="true" />
+					</jsp:include></td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td><strong><%=language.getString("password.again")%>:
-				</strong></td>
-				<td><input autocomplete="fuckoffchrome" name="password2"
-					type="password" onchange="updateMandatoryFieldMark(this);">
-					<font color="#FF0000" size="+3">&#8226;</font></td>
+			<tr>
+				<td><jsp:include page="textInput.jsp">
+						<jsp:param name="name" value="password2" />
+						<jsp:param name="size" value="30" />
+						<jsp:param name="inputType" value="password" />
+						<jsp:param name="label"
+							value='<%=language.getString("password.again")%>' />
+						<jsp:param name="mandatory" value="true" />
+					</jsp:include></td>
 			</tr>
 			<%
 			}
 			%>
-			<tr bgcolor="<%= highlight()%>">
-				<td><%=language.getString("name")%>:</td>
+			<tr>
 				<td>
 					<div id='fullnames'>
-						<input autocomplete="fuckoffchrome" name="fullname" type="text"
-							value="<%=user == null ? "" : user.lastName%>" id="fullnameID"
-							onChange="sendRequest(); updateMandatoryFieldMark(this);">
-						<font color="#FF0000" size="+3">&#8226;</font>
-						<%
-						if (directRegister) {
-						%>
-						- <select id="selectID" name="lastname_select"
-							onChange="loginUser(options[selectedIndex].value);">
-						</select>
-						<%
-						}
-						%>
+						<div class="input-caption-container">
+							<input autocomplete="fuckoffchrome" name="fullname" type="text"
+								size="30" value="<%=user == null ? "" : user.lastName%>"
+								id="fullnameID"
+								onChange="sendRequest(); updateMandatoryFieldMark(this);">
+							<%
+							if (directRegister) {
+							%>
+							- <select id="selectID" name="lastname_select"
+								onChange="loginUser(options[selectedIndex].value);">
+							</select>
+							<%
+							}
+							%>
+							<label for="fullname" class="input-caption"><%=language.getString("name")%></label>
+							<font color="#FF0000" size="+3">&#8226;</font>
+						</div>
 					</div>
 				</td>
 			</tr>
-			<tr bgcolor="<%= highlight(user != null && user.getGender() == null)%>">
+			<tr>
 				<td>
-						<%
-						if (user != null && user.getGender() == null) {
-						%>					
+					<div class="input-caption-container">
+						<fieldset id="genderGroup" style="display: inline; padding: 15px;">
+							<%
+							if (user != null && user.getGender() == null) {
+							%>
 							<img src="../icons/new.png">
-						<%
-						}
-						%>
-				<%=language.getString("gender")%>:</td>
-				<td>
-					<%
-					    for (final Gender gender : Gender.values()) {
-					%> <label>
-					<input type='radio' name='gender'
-						onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));"
-						value='<%=gender.name()%>'
-						<%=(user == null ? "" : gender.equals(user.getGender()) ? " checked='checked'" : "")%> /> 
-						<%=language.getString(gender.name())%>
-						</label><br> <%
-					     }
-					 %> 
-					 <font color='#FF0000' size='+3'>&#8226;</font>									
+							<%
+							}
+							%>
+							<%
+							for (final Gender gender : Gender.values()) {
+							%>
+							<label> <input type='radio' name='gender'
+								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode); checkSubmit(document.getElementById('inputForm'));"
+								value='<%=gender.name()%>'
+								<%=(user == null ? "" : gender.equals(user.getGender()) ? " checked='checked'" : "")%> />
+								<%=language.getString(gender.name())%>
+							</label><br>
+							<%
+							}
+							%>
+						</fieldset>
+						<label for="genderGroup" class="input-caption"><%=language.getString("gender")%></label>
+						<font color='#FF0000' size='+3'>&#8226;</font>
+					</div>
 				</td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td><%=language.getString("year.of.birth")%>:</td>
+			<tr>
 				<td>
 					<%
 					String yearOfBirth = "";
@@ -210,13 +229,14 @@ function checkDeleteUserRequest()
 					} else
 						yearOfBirth = String.valueOf(user.yearOfBirth);
 					%> <jsp:include page="year.jsp">
+						<jsp:param name="label"
+							value='<%=language.getString("year.of.birth")%>' />
 						<jsp:param name="selectLabel" value="<%=yearOfBirth%>" />
 						<jsp:param name="selectValue" value="<%=yearOfBirth%>" />
-					</jsp:include> <font color="#FF0000" size="+3">&#8226;</font>
+					</jsp:include>
 				</td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td><%=language.getString("language")%>:</td>
+			<tr>
 				<td>
 					<%
 					languageCode = "";
@@ -227,13 +247,14 @@ function checkDeleteUserRequest()
 					} else
 						languageCode = user.language;
 					%> <jsp:include page="language.jsp">
+						<jsp:param name="label"
+							value='<%=language.getString("language")%>' />
 						<jsp:param name="selectLabel" value="<%=languageCode%>" />
 						<jsp:param name="selectValue" value="<%=languageCode%>" />
-					</jsp:include> <font color="#FF0000" size="+3">&#8226;</font>
+					</jsp:include>
 				</td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td><%=language.getString("country")%></td>
+			<tr>
 				<td>
 					<%
 					String country = "";
@@ -244,32 +265,42 @@ function checkDeleteUserRequest()
 					} else
 						country = user.country;
 					%> <jsp:include page="countries.jsp">
+						<jsp:param name="label" value='<%=language.getString("country")%>' />
 						<jsp:param name="defaultSelectedLabel" value="<%=country%>" />
 						<jsp:param name="defaultSelectedValue" value="<%=country%>" />
 						<jsp:param name="selectName" value="country" />
-						<jsp:param name="label" value='<%=language.getString("country")%>' />
-					</jsp:include> <font color="#FF0000" size="+3">&#8226;</font>
+					</jsp:include>
 				</td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td><%=language.getString("city")%>:</td>
-				<td><input autocomplete="fuckoffchrome" name="city" type="text"
-					value="<%=user == null ? "" : user.city%>"
-					onchange="updateMandatoryFieldMark(this);"> <font
-					color="#FF0000" size="+3">&#8226;</font></td>
+			<tr>
+				<td><jsp:include page="textInput.jsp">
+						<jsp:param name="name" value="city" />
+						<jsp:param name="size" value="30" />
+						<jsp:param name="label" value='<%=language.getString("city")%>' />
+						<jsp:param name="value" value='<%=user == null ? "" : user.city%>' />
+						<jsp:param name="mandatory" value="true" />
+					</jsp:include></td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td><%=language.getString("address")%>:</td>
-				<td><input autocomplete="fuckoffchrome" name="address"
-					type="text" value="<%=user == null ? "" : user.address%>"></td>
+			<tr>
+				<td><jsp:include page="textInput.jsp">
+						<jsp:param name="name" value="address" />
+						<jsp:param name="size" value="30" />
+						<jsp:param name="label" value='<%=language.getString("address")%>' />
+						<jsp:param name="value"
+							value='<%=user == null ? "" : user.address%>' />
+					</jsp:include></td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td><%=language.getString("telephone")%>:</td>
-				<td><input autocomplete="fuckoffchrome" name="telephone"
-					type="text" value="<%=user == null ? "" : user.telephone%>"></td>
+			<tr>
+				<td><jsp:include page="textInput.jsp">
+						<jsp:param name="name" value="telephone" />
+						<jsp:param name="size" value="30" />
+						<jsp:param name="label"
+							value='<%=language.getString("telephone")%>' />
+						<jsp:param name="value"
+							value='<%=user == null ? "" : user.telephone%>' />
+					</jsp:include></td>
 			</tr>
-			<tr bgcolor="<%= highlight()%>">
-				<td>&nbsp;</td>
+			<tr>
 				<td><input autocomplete="fuckoffchrome" type="submit"
 					value="<%=language.getString("save")%>">
 					<p>
