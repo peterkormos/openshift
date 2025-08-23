@@ -91,7 +91,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.08.22.";
+	public String VERSION = "2025.08.23.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -515,7 +515,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user,
-			final String show) throws IOException {
+			final String show) throws IOException, UserNotLoggedInException {
 		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
 				+ show);
 
@@ -1735,7 +1735,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response)
-			throws IOException {
+			throws IOException, UserNotLoggedInException {
 		if (isRegistrationAllowed(getShowFromSession(request))) {
 			getModelForm(request, response, Command.addModel.name(), "save.and.add.new.model", null);
 		} else {
@@ -2790,13 +2790,20 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void getModelForm(final HttpServletRequest request, final HttpServletResponse response, final String action,
-			final String submitLabel, final Model model) throws IOException {
+			final String submitLabel, final Model model) throws IOException, UserNotLoggedInException {
 		final HttpSession session = request.getSession(true);
 
 		session.setAttribute(SessionAttribute.Action.name(), action);
 		session.setAttribute(SessionAttribute.SubmitLabel.name(), submitLabel);
 		if (model != null) {
 			session.setAttribute(SessionAttribute.Model.name(), model);
+		}
+
+		User user = getUser(request);
+		List<Model> models = servletDAO.getModelsForShow(getShowFromSession(session), user.getId());
+
+		if (!models.isEmpty() && !user.isAdminUser()) {
+			session.setAttribute(SessionAttribute.Models.name(), models);
 		}
 
 		boolean goToParentDir = request.getPathInfo() != null;
