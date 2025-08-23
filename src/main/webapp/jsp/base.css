@@ -315,7 +315,7 @@ animation-iteration-count: 5;
             left: 10px; /* Adjust horizontal position to sit on the border */
             font-size: 0.75rem; /* Make font smaller */
             color: var(--primary-color); /* Change color for emphasis */
-            transform: translateY(-35%) scale(0.9); /* Tiny scale for visual pop */
+            transform: translateY(-35%) scale(110%);
             z-index: 2; /* Ensure it stays above the border line visually */
         }
 
