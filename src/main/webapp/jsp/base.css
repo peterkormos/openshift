@@ -330,3 +330,10 @@ animation-iteration-count: 5;
 fieldset {
 	padding: 15px;
 }
+
+.fixed-icon-container {
+      position: fixed; /* This is key: it positions the element relative to the viewport */
+      bottom: 60px;    /* Adjust as needed for vertical position */
+      right: 60px;     /* Adjust as needed for horizontal position */
+      z-index: 1000;   /* Ensures the icon is on top of other content */
+    }

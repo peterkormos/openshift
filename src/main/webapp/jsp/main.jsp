@@ -29,15 +29,15 @@ if (show == null) {
 List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 if (models == null) {
 	models = servletDAO.getModels(user.getId());
+
+	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
+			RegistrationServlet.SessionAttribute.Categories.name());
+	models = RegistrationServlet.getModelsForShow(show, models, categories);
 }
 else {
 	session.removeAttribute(RegistrationServlet.SessionAttribute.Models.name());
 }
 	session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
-
-	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
-			RegistrationServlet.SessionAttribute.Categories.name());
-	models = RegistrationServlet.getModelsForShow(show, models, categories);
 %>
 <html>
 <head>

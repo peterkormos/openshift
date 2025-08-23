@@ -86,8 +86,7 @@ function checkDeleteUserRequest()
 
 	    function checkName(form) {
 			if(form.fullname.value.split(' ').length == 1) {
-				document.getElementById('noticeDiv').innerHTML = '<%=language.getString("name.too.short")%>
-	';
+				document.getElementById('noticeDiv').innerHTML = '<%=language.getString("name.too.short")%>';
 			document.getElementById('noticeDiv').className = "flash ERROR";
 			return false;
 		} else {

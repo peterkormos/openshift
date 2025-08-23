@@ -10,15 +10,14 @@ ServletDAO servletDAO = servlet.getServletDAO();
 
 User user = servlet.getUser(request);
 String show = RegistrationServlet.getShowFromSession(session);
-List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
-if (models == null) {
-	models = servletDAO.getModels(user.getId());
-}
 
 Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
 		RegistrationServlet.SessionAttribute.Categories.name());
-
-models = RegistrationServlet.getModelsForShow(show, models, categories);
+List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
+if (models == null) {
+	models = servletDAO.getModels(user.getId());
+	models = RegistrationServlet.getModelsForShow(show, models, categories);
+}
 
 for (Model model : models) {
 	session.setAttribute(RegistrationServlet.SessionAttribute.Model.name(), model);

@@ -24,6 +24,7 @@
 	}
 
 	String logoURL = "../RegistrationServlet/"+RegistrationServlet.Command.LOADIMAGE.name()+"/"+servlet.getLogoIDForShow(servlet.getShowFromSession(request));
+	List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 %>
 
 <html>
@@ -202,7 +203,8 @@ if(!servlet.isOnSiteUse())
 
 				<td>
 					<div class="input-caption-container">
-						<fieldset id="gluedToBaseGroup" style="display: inline; padding: 15px;">
+						<fieldset id="gluedToBaseGroup"
+							style="display: inline; padding: 15px;">
 
 							<label><%=language.getString("yes")%> <input
 								style="zoom: 2;" name='gluedToBase' type='radio' value='on'
@@ -396,8 +398,23 @@ if(!servlet.isOnSiteUse())
 		</table>
 
 	</form>
+
+	<%
+	if (models != null) {
+	%>
 	<hr>
+	<div id="bottom"></div>
+	<div class="tooltip fixed-icon-container">
+		<a href="#bottom" class='pulseBtn'
+			> <img
+			src="../icons/list.png" height="60"> <span class="tooltiptext">
+				<%=language.getString("list.models")%></span></a>
+	</div>
 	<jsp:include page="listMyModels.jsp" />
+
+	<%
+	}
+	%>
 </body>
 </html>
 
