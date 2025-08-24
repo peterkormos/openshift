@@ -19,7 +19,6 @@ if (show == null) {
 				<input type="hidden" id="paramValue6" name="paramValue" value="">
 				<a href="#"
 					onClick="document.getElementById('paramName6').name='printPreRegisteredModels';document.getElementById('paramName6').value='true';document.getElementById('input6').submit();">
-					>
 					Nevez&eacute;si lapok nyomtat&aacute;sa (El&ouml;nevezettek) </a> -
 
 				Nyelv megad&aacute;sa:
