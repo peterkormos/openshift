@@ -105,14 +105,14 @@ if (showIdHttpParameter != null)
 							<td align="center">
 								<%
 								for (final String show : shows) {
-								%> <label> <input type='radio' name='show'
+								%> <div></div><label> <input type='radio' name='show'
 									onchange="updateMandatoryFieldMark(this.parentNode); checkSubmit(document.getElementById('inputForm'));"
 									value='<%=StringEncoder.toBase64(show.getBytes())%>'
 									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <img
 									style="height: 25mm; vertical-align: middle;"
 									src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
 									<span style="color: red"><b> <%=show%></b></span> 
-							</label><br> <%
+							</label></div><%
  }
  %>
 									<%=shows.isEmpty() || shows.size() == 1 ? "" : "<font color='#FF0000' size='+3'>&#8226;</font>"%>
