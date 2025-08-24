@@ -45,6 +45,7 @@ if (show == null) {
 	}
 }
 %>
+<body <%= request.getRequestURL().indexOf("localhost") > -1 ? "" : "style='background-color: #FFCCCC;'" %>>
 <table style="border: 0px; width: 100%">
 	<tr>
 		<td style="width: 100%;">
@@ -142,4 +143,5 @@ if (show == null) {
 </p>
 <p>
 	<jsp:include page="ADMIN_adatkezeles.jsp" />
-</p>
+</p>	
+</body>
