@@ -8,6 +8,7 @@
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
 ResourceBundle language = (ResourceBundle) session.getAttribute(CommonSessionAttribute.Language.name());
+boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 %>
 
 <div class="input-caption-container">
@@ -299,7 +300,13 @@ ResourceBundle language = (ResourceBundle) session.getAttribute(CommonSessionAtt
 			<option value='Zimbabwe'>Zimbabwe</option>
 		</optgroup>
 	</select> <label for="<%=request.getParameter("selectName")%>"
-		class="input-caption"><%=request.getParameter("label")%></label> <font
-		color="#FF0000" size="+3">&#8226;</font>
+		class="input-caption"><%=request.getParameter("label")%></label> 
+<%
+if (mandatory) {
+%>
+<font color='#FF0000' size='+3'>&#8226;</font>
+<%
+}
+%>
 </div>
 

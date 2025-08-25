@@ -188,7 +188,7 @@ function checkDeleteUserRequest()
 					</div>
 				</td>
 			</tr>
-			<tr>
+			<tr bgcolor="<%= highlight(user != null && user.getGender() == null)%>">
 				<td>
 					<div class="input-caption-container">
 						<fieldset id="genderGroup" style="display: inline; padding: 15px;">
@@ -264,6 +264,7 @@ function checkDeleteUserRequest()
 					} else
 						country = user.country;
 					%> <jsp:include page="countries.jsp">
+						<jsp:param name="mandatory" value="true" />
 						<jsp:param name="label" value='<%=language.getString("country")%>' />
 						<jsp:param name="defaultSelectedLabel" value="<%=country%>" />
 						<jsp:param name="defaultSelectedValue" value="<%=country%>" />

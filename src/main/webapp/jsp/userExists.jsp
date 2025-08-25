@@ -25,5 +25,6 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 </head>
 
 <%=language.getString("select.another.email")%>
+<br>
 <a
 	href="../jsp/reminder.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%>?</a>

@@ -32,7 +32,7 @@
 								<div align="center">-</div>
 							</td>
 							<td><a
-								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=HU">Regisztr&aacute;ci&oacute;</a></td>
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=HU">Regisztr&aacute;ci&oacute; &uacute;j felhaszn&aacute;l&oacute;knak</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
