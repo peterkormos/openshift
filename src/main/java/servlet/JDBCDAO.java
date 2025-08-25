@@ -286,7 +286,7 @@ public class JDBCDAO {
 
 		try {
 			logger.debug("ServletDAO.execute(): " + sql);
-			if (sql.toLowerCase().indexOf("select") > -1) {
+			if (sql.toLowerCase().startsWith("select")) {
 				queryStatement = getDBConnection().createStatement();
 				rs = queryStatement.executeQuery(sql);
 
