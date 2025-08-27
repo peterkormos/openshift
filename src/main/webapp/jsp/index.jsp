@@ -31,12 +31,12 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a
-								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=HU">Regisztr&aacute;ci&oacute; &uacute;j felhaszn&aacute;l&oacute;knak</a></td>
+							<td align="center"><a
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=HU">Fi&oacute;k l&eacute;trehoz&aacute;sa &uacute;j felhaszn&aacute;l&oacute;knak</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=HU">Elfelejtette jelszav&aacute;t</a></td>
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=HU">Elfelejtette jelszav&aacute;t?</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/gb.gif"></td>
@@ -44,13 +44,13 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a
-								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=EN">Registration
+							<td align="center"><a
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=EN">Create account
 									for new users</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=EN">Forgot Password</a></td>
+							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=EN">Forgot Password?</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/sk.gif"></td>
@@ -59,7 +59,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a
+							<td align="center"><a
 								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=SK">Nov&aacute;
 									registr&aacute;cia</a></td>
 							<td>
@@ -74,7 +74,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a
+							<td align="center"><a
 								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=CZ">Nov&aacute;
 									registrace</a></td>
 							<td>
@@ -89,7 +89,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a
+							<td align="center"><a
 								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=PL">Zarejestruj si&#281;</a></td>
 							<td>
 								<div align="center">-</div>
@@ -105,7 +105,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a
+							<td align="center"><a
 								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=IT">Registrazione</a></td>
 							<td>
 								<div align="center">-</div>
@@ -118,7 +118,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a
+							<td align="center"><a
 								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=DE">Registration</a></td>
 							<td>
 								<div align="center">-</div>
@@ -131,7 +131,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a
+							<td align="center"><a
 								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=RU">&#1056;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1103;
 &#1085;&#1086;&#1074;&#1086;&#1075;&#1086; &#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1077;&#1083;&#1103;</a></td>
 							<td>
