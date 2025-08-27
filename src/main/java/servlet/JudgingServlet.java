@@ -543,7 +543,7 @@ public final class JudgingServlet extends HttpServlet {
 		User user = new User(languageCode);
 		user.setYearOfBirth(1977);
 		
-		setSessionAttribute(request, CommonSessionAttribute.UserID, user);
+		setSessionAttribute(request, CommonSessionAttribute.User, user);
 		setSessionAttribute(request, RegistrationServlet.SessionAttribute.MainPageFile, "judging/judging.jsp");
 				
 		redirectToMainPage(request, response);

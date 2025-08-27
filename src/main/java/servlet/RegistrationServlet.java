@@ -557,7 +557,7 @@ public class RegistrationServlet extends HttpServlet {
 	private HttpSession initHttpSession(final HttpServletRequest request, final User user, String show)
 			 {
 		final HttpSession session = request.getSession(true);
-		session.setAttribute(CommonSessionAttribute.UserID.name(), user);
+		session.setAttribute(CommonSessionAttribute.User.name(), user);
 		ResourceBundle language = languageUtil.getLanguage(user.language);
 		session.setAttribute(CommonSessionAttribute.Language.name(), language);
 		session.setAttribute(SessionAttribute.ShowId.name(),
@@ -1178,7 +1178,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		HttpSession session = request.getSession(false);
 		session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
-		session.setAttribute(CommonSessionAttribute.UserID.name(), servletDAO.getUser(oldUser.getId()));
+		session.setAttribute(CommonSessionAttribute.User.name(), servletDAO.getUser(oldUser.getId()));
 
 		redirectToMainPage(request, response);
 	}
@@ -1919,7 +1919,7 @@ public class RegistrationServlet extends HttpServlet {
 					"User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
 		}
 
-		User userInSession = (User) session.getAttribute(CommonSessionAttribute.UserID.name());
+		User userInSession = (User) session.getAttribute(CommonSessionAttribute.User.name());
 		if (userInSession == null)
 			throw new UserNotLoggedInException(
 					"User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");

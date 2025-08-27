@@ -10,10 +10,12 @@
 <%@include file="util.jsp"%>
 
 <%
+p
+
 //input parameters	
 boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestAttribute(request, "directRegister"));
 if (directRegister)
-	session.removeAttribute(CommonSessionAttribute.UserID.name());
+	session.removeAttribute(CommonSessionAttribute.User.name());
 
 String action = request.getParameter("action");
 if (action == null) {
@@ -32,7 +34,7 @@ try {
 }
 
 ResourceBundle language = languageUtil.getLanguage(languageCode);
-session.setAttribute(CommonSessionAttribute.Language.name(), language);
+session.setAttribute(CommonSessionAttribute.Language.name(), language)
 %>
 
 <html>
