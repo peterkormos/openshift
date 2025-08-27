@@ -32,7 +32,7 @@ try {
 }
 
 ResourceBundle language = languageUtil.getLanguage(languageCode);
-session.setAttribute(CommonSessionAttribute.Language.name(), language)
+session.setAttribute(CommonSessionAttribute.Language.name(), language);
 %>
 
 <html>
