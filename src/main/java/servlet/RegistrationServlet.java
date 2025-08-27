@@ -516,7 +516,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user,
 			final String show) throws IOException, UserNotLoggedInException {
-		logger.info("login(): login successful. email: " + user.email + " user.language: " + user.language + " show: "
+		logger.info("loginSuccessful(): email: " + user.email + " user.language: " + user.language + " show: "
 				+ show);
 
 		saveLoginConsentData(request, user);
@@ -565,22 +565,22 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (user.language.length() != 2) // admin user
 			session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + getDefaultMainPageFile());
-		else
+		else {
 			session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
+			
+			if (user.getFullName().split(" ").length == 1) {
+				setNoticeInSession(session,
+						new MainPageNotice(MainPageNotice.NoticeType.Error, "<a href='user.jsp?action=modifyUser'>("
+								+ user.getFullName() + ") " + language.getString("name.too.short") + "</a>"));
+			}
+		}
 
 		if (show != null) {
 			session.setAttribute(SessionAttribute.Show.name(), show);
-
+			
 			Map<Integer, Category> categories = servletDAO.getCategoryList(show).stream()
 					.collect(Collectors.toMap(category -> category.getId(), Function.identity()));
 			session.setAttribute(SessionAttribute.Categories.name(), categories);
-
-		}
-
-		if (user.getFullName().split(" ").length == 1) {
-			setNoticeInSession(session,
-					new MainPageNotice(MainPageNotice.NoticeType.Error, "<a href='user.jsp?action=modifyUser'>("
-							+ user.getFullName() + ") " + language.getString("name.too.short") + "</a>"));
 		}
 
 		return session;
