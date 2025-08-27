@@ -10,8 +10,6 @@
 <%@include file="util.jsp"%>
 
 <%
-p
-
 //input parameters	
 boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestAttribute(request, "directRegister"));
 if (directRegister)
