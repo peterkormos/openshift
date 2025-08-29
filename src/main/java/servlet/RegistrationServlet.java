@@ -91,7 +91,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.08.23.";
+	public String VERSION = "2025.08.29.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -1789,7 +1789,6 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.save(model);
 
 		final HttpSession session = request.getSession(false);
-		session.removeAttribute(SessionAttribute.Action.name());
 		List<Model> models = servletDAO.getModelsForShow(getShowFromSession(session), user.getId());
 
 		if (!models.isEmpty() && !user.isAdminUser()) {
@@ -1807,6 +1806,7 @@ public class RegistrationServlet extends HttpServlet {
 				sendEmailWithModels(user, false /* insertUserDetails */);
 				setEmailSentNoticeInSession(request, user);
 			}
+			session.removeAttribute(SessionAttribute.Action.name());
 			redirectToMainPage(request, response);
 		}
 	}
