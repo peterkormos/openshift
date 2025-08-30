@@ -45,7 +45,7 @@ if (show == null) {
 	}
 }
 %>
-<body <%= request.getRequestURL().indexOf("localhost") > -1 ? "" : "style='background-color: #FFCCCC;'" %>>
+<body <%= request.getRequestURL().indexOf("localhost") > -1 ? "" : "style='background-color: #cff6c9;'" %>>
 <table style="border: 0px; width: 100%">
 	<tr>
 		<td style="width: 100%;">

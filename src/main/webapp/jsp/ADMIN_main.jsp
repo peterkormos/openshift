@@ -11,7 +11,7 @@
 <script type="text/javascript" src="findUser.js"></script>
 <script src="jquery.min.js"></script>
 </head>
-<body <%= request.getRequestURL().indexOf("localhost") > -1 ? "" : "style='background-color: #FFCCCC;'" %>>
+<body <%= request.getRequestURL().indexOf("localhost") > -1 ? "" : "style='background-color: #cff6c9;'" %>>
 
 <jsp:include page="CATEGORY_main.jsp" />
 
