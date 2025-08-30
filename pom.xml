@@ -1,97 +1,98 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.peterkormos.openshift</groupId>
-  <version>1.0</version>
-  <artifactId>form-modelregistration</artifactId>
-  <packaging>war</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.peterkormos.openshift</groupId>
+	<version>1.0</version>
+	<artifactId>form-modelregistration</artifactId>
+	<packaging>war</packaging>
 
-  <scm>
-    <connection>scm:git:https://github.com/peterkormos/openshift.git</connection>
-    <url>https://github.com/peterkormos/openshift.git</url>
-  </scm>
+	<scm>
+		<connection>scm:git:https://github.com/peterkormos/openshift.git</connection>
+		<url>https://github.com/peterkormos/openshift.git</url>
+	</scm>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-text</artifactId>
-      <version>1.8</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi</artifactId>
-      <version>4.1.2</version>
-    </dependency>
-<!--     <dependency> -->
-<!--       <groupId>org.apache.poi</groupId> -->
-<!--       <artifactId>poi-ooxml</artifactId> -->
-<!--       <version>4.1.2</version> -->
-<!--     </dependency> -->
-<!--     <dependency> -->
-<!--       <groupId>org.apache.poi</groupId> -->
-<!--       <artifactId>poi-ooxml-schemas</artifactId> -->
-<!--       <version>4.1.2</version> -->
-<!--     </dependency> -->
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.12.1.1</version>
-    </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>4.1.2</version>
+		</dependency>
+		<!--     <dependency> -->
+		<!--       <groupId>org.apache.poi</groupId> -->
+		<!--       <artifactId>poi-ooxml</artifactId> -->
+		<!--       <version>4.1.2</version> -->
+		<!--     </dependency> -->
+		<!--     <dependency> -->
+		<!--       <groupId>org.apache.poi</groupId> -->
+		<!--       <artifactId>poi-ooxml-schemas</artifactId> -->
+		<!--       <version>4.1.2</version> -->
+		<!--     </dependency> -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.12.1.1</version>
+		</dependency>
 
-    <dependency>
-      <groupId>com.mchange</groupId>
-      <artifactId>c3p0</artifactId>
-      <version>0.9.5.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-c3p0</artifactId>
-      <version>4.1.4.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>4.1.4.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.16</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.4</version>
-    </dependency>
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.5.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>4.1.4.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.1.4.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
 
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.24</version>
-    </dependency>
-<dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.24</version>
+		</dependency>
+		<dependency>
 			<groupId>com.google.api-client</groupId>
 			<artifactId>google-api-client</artifactId>
 			<version>1.23.0</version>
@@ -106,103 +107,126 @@
 			<artifactId>google-api-services-gmail</artifactId>
 			<version>v1-rev83-1.23.0</version>
 		</dependency>
-  </dependencies>
-  <build>
-   <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.4</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Implementation-Build>${buildNumber}</Implementation-Build>
-              <Implementation-Branch>${scmBranch}</Implementation-Branch>
-            </manifestEntries>
-          </archive>
-          <webResources>
-            <resource>
-              <directory>${build.sourceDirectory}</directory>
-              <targetPath>sources</targetPath>
-            </resource>
-            <resource>
-              <directory>${basedir}/src/main/webapp/WEB-INF</directory>
-              <targetPath>WEB-INF</targetPath>
-              <filtering>true</filtering>
-            </resource>
-			<resource>
-				<directory>..</directory>
-				<targetPath>WEB-INF/classes</targetPath>
-				<includes>
-					<include>credentials.json</include>
-				</includes>
-			</resource>
-          </webResources>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Build>${buildNumber}</Implementation-Build>
+							<Implementation-Branch>${scmBranch}</Implementation-Branch>
+						</manifestEntries>
+					</archive>
+					<webResources>
+						<resource>
+							<directory>${build.sourceDirectory}</directory>
+							<targetPath>sources</targetPath>
+						</resource>
+						<resource>
+							<directory>${basedir}/src/main/webapp/WEB-INF</directory>
+							<targetPath>WEB-INF</targetPath>
+							<filtering>true</filtering>
+						</resource>
+						<resource>
+							<directory>..</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+							<includes>
+								<include>credentials.json</include>
+							</includes>
+						</resource>
+					</webResources>
+					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.6.0</version>
+				<executions>
+					<execution>
+						<id>make-zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>
+									src/main/assembly/dependencies-zip.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
-  <profiles>
-    <!-- <profile> -->
-    <!-- <id>openshift</id> -->
-    <!-- <build> -->
-    <!-- <finalName>modelregistration</finalName> -->
-    <!-- <plugins> -->
-    <!-- <plugin> -->
-    <!-- <artifactId>maven-war-plugin</artifactId> -->
-    <!-- <version>2.1.1</version> -->
-    <!-- <configuration> -->
-    <!-- <outputDirectory>webapps</outputDirectory> -->
-    <!-- <warName>ROOT</warName> -->
-    <!-- <resource> -->
-    <!-- <directory>${basedir}/src/main/webapp/WEB-INF</directory> -->
-    <!-- <targetPath>WEB-INF</targetPath> -->
-    <!-- <filtering>true</filtering> -->
-    <!-- </resource> -->
-    <!-- </configuration> -->
-    <!-- </plugin> -->
-    <!-- </plugins> -->
-    <!-- </build> -->
-    <!-- <properties> -->
-    <!-- <db.url>jdbc:mysql://${OPENSHIFT_MYSQL_DB_HOST}:${OPENSHIFT_MYSQL_DB_PORT}/${OPENSHIFT_APP_NAME}</db.url> -->
-    <!-- <db.user>adminFdLe6nH</db.user> -->
-    <!-- <db.password>FlGKBzJ7u_bJ</db.password> -->
-    <!-- <db.driver.class>com.mysql.jdbc.Driver</db.driver.class> -->
-    <!-- <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect> -->
-    <!-- </properties> -->
-    <!-- </profile> -->
-  </profiles>
+	<profiles>
+		<!-- <profile> -->
+		<!-- <id>openshift</id> -->
+		<!-- <build> -->
+		<!-- <finalName>modelregistration</finalName> -->
+		<!-- <plugins> -->
+		<!-- <plugin> -->
+		<!-- <artifactId>maven-war-plugin</artifactId> -->
+		<!-- <version>2.1.1</version> -->
+		<!-- <configuration> -->
+		<!-- <outputDirectory>webapps</outputDirectory> -->
+		<!-- <warName>ROOT</warName> -->
+		<!-- <resource> -->
+		<!-- <directory>${basedir}/src/main/webapp/WEB-INF</directory> -->
+		<!-- <targetPath>WEB-INF</targetPath> -->
+		<!-- <filtering>true</filtering> -->
+		<!-- </resource> -->
+		<!-- </configuration> -->
+		<!-- </plugin> -->
+		<!-- </plugins> -->
+		<!-- </build> -->
+		<!-- <properties> -->
+		<!--
+		<db.url>jdbc:mysql://${OPENSHIFT_MYSQL_DB_HOST}:${OPENSHIFT_MYSQL_DB_PORT}/${OPENSHIFT_APP_NAME}</db.url> -->
+		<!-- <db.user>adminFdLe6nH</db.user> -->
+		<!-- <db.password>FlGKBzJ7u_bJ</db.password> -->
+		<!-- <db.driver.class>com.mysql.jdbc.Driver</db.driver.class> -->
+		<!--
+		<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect> -->
+		<!-- </properties> -->
+		<!-- </profile> -->
+	</profiles>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 
-    <db.driver.class>org.apache.derby.jdbc.EmbeddedDriver</db.driver.class>
-    <hibernate.dialect>org.hibernate.dialect.DerbyDialect</hibernate.dialect>
-    <db.url>jdbc:derby:makettDB;create=true</db.url>
-    <db.user></db.user>
-    <db.password></db.password>
-    <jetty.version>9.2.2.v20140723</jetty.version>
-  </properties>
+		<db.driver.class>org.apache.derby.jdbc.EmbeddedDriver</db.driver.class>
+		<hibernate.dialect>org.hibernate.dialect.DerbyDialect</hibernate.dialect>
+		<db.url>jdbc:derby:makettDB;create=true</db.url>
+		<db.user></db.user>
+		<db.password></db.password>
+		<jetty.version>9.2.2.v20140723</jetty.version>
+	</properties>
 </project>
