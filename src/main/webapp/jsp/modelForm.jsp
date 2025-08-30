@@ -400,7 +400,7 @@ if(!servlet.isOnSiteUse())
 	</form>
 
 	<%
-	if (models != null) {
+	if (models != null && !models.isEmpty()) {
 	%>
 	<hr>
 	<div id="bottom"></div>
