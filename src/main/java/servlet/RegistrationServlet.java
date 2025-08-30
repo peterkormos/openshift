@@ -91,7 +91,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.08.29.";
+	public String VERSION = "2025.08.30.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -534,9 +534,9 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		
 		List<Model> models = servletDAO.getModelsForShow(show, user.getId());
+		session.setAttribute(SessionAttribute.Models.name(), models);
 
 		if (models.isEmpty() && !user.isAdminUser()) {
-			session.setAttribute(SessionAttribute.Models.name(), models);
 			inputForAddModel(request, response);
 		} else {
 			redirectToMainPage(request, response);
@@ -1758,7 +1758,8 @@ public class RegistrationServlet extends HttpServlet {
 			servletDAO.save(model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
-			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model"));
+			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model") + ": "
+					+ model.scale + " - " + model.name + " - " + servletDAO.getCategory(model.categoryID).categoryCode);
 		}
 		session.removeAttribute(SessionAttribute.ModelID.name());
 		session.removeAttribute(SessionAttribute.Action.name());
@@ -1797,9 +1798,9 @@ public class RegistrationServlet extends HttpServlet {
 		
 		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
 				.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
-			String notice = ServletUtil.encodeString(model.name) + " - " + model.scale + " - "
-					+ servletDAO.getCategory(model.categoryID).categoryCode;
-			setNoticeInSession(session, notice);
+			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("add") + ": "
+					+ model.scale + " - " + model.name + " - "
+					+ servletDAO.getCategory(model.categoryID).categoryCode);
 			response.sendRedirect("jsp/modelForm.jsp");
 		} else {
 			if (!isOnSiteUse()) {
@@ -2130,7 +2131,9 @@ public class RegistrationServlet extends HttpServlet {
 		User user = getUser(request);
 		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
 			servletDAO.deleteModel(model);
-			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete"));
+			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete") + ": "
+					+ model.scale + " - " + model.name + " - "
+					+ servletDAO.getCategory(model.categoryID).categoryCode);
 		}
 	}
 
@@ -2778,7 +2781,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public String getSystemMessage() {
-		return systemMessage;
+		return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemMessage) ? "" : systemMessage;
 	}
 
 	public boolean isOnSiteUse() {
