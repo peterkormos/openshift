@@ -92,14 +92,22 @@ if(!servlet.isOnSiteUse())
 		action="<%=(String) session.getAttribute(RegistrationServlet.SessionAttribute.MainPageFile.name())%>">
 		<table style="border: 0px; box-shadow: none; width: 100%">
 			<tr>
-				<td><input class="main" type='submit'
-					value='<%=language.getString("proceed.to.main")%>'></td>
+				<td style="white-space: nowrap;"><input class="main" type='submit'
+					value='<%=language.getString("proceed.to.main")%>'>
+					
+					<div class="tooltip">
+						<a href="../RegistrationServlet/sendEmail"> <img
+							src="../icons/email.png" height="30" align="center" /> <span
+							class="tooltiptext"> <%=language.getString("send.email")%></span>
+							 <%=language.getString("send.email")%>
+						</a>
+					</div>
+					
+					</td>
 				<td style="width: 100%; white-space: nowrap"><FONT
 					COLOR='#ff0000'> <b> <%=servlet.getSystemMessage()%>
 					</b>
 				</FONT></td>
-
-				<td style="width: 100%; white-space: nowrap"></td>
 
 				<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">

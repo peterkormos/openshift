@@ -51,6 +51,7 @@ size="60">
     <option>Emhar</option>
     <option>Fine Molds</option>
     <option>Fujimi</option>
+    <option>Games Workshop</option>
     <option>Great Wall Hobby</option>
     <option>Hasegawa</option>
     <option>Heller</option>
@@ -58,6 +59,7 @@ size="60">
     <option>Italeri</option>
     <option>ICM</option>
     <option>Kitty Hawk</option>
+    <option>Kinetic</option>
     <option>Meng Model</option>
     <option>Miniart</option>
     <option>Mirage</option>
@@ -69,6 +71,7 @@ size="60">
     <option>S-Model</option>
     <option>Special Hobby</option>
     <option>Tamiya</option>
+    <option>Takom</option>
     <option>Tristar</option>
     <option>Trumpeter</option>
     <option>UM</option>
