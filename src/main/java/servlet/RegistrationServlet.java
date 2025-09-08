@@ -91,7 +91,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.08.30.";
+	public String VERSION = "2025.09.08.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -235,7 +235,6 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		br.close();
-
 		return buffer;
 	}
 
@@ -306,13 +305,18 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			if (logger.isTraceEnabled()) {
-				String email = null;
-				try {
-					email = getUser(request).email;
-				} catch (final Exception e) {
-				}
+				String userInfo = null;
+				HttpSession httpSession = getHttpSession(request);
+				if (httpSession != null) {
+					userInfo = httpSession.getId();
+					User userInSession = getUserInSession(httpSession);
+					if (userInSession != null) {
+						userInfo += " " + userInSession.getEmail();
+					}
+				} else
+					userInfo = "N/A";
 
-				logger.trace("doPost() request arrived from " + request.getRemoteAddr() + " email: " + email
+				logger.trace("doPost() request arrived from " + request.getRemoteAddr() + " userInfo: " + userInfo
 						+ " command: " + command + " processTime: " + (System.currentTimeMillis() - startTime));
 			}
 
@@ -594,7 +598,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private String getMainPageFile(final HttpServletRequest request) {
-		HttpSession session = request.getSession(false);
+		HttpSession session = getHttpSession(request);
 		String mainPageFile = (String) session.getAttribute(SessionAttribute.MainPageFile.name());
 
 		if (session == null) {
@@ -1176,11 +1180,15 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.modifyUser(newUser, oldUser);
 
-		HttpSession session = request.getSession(false);
+		HttpSession session = getHttpSession(request);
 		session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
 		session.setAttribute(CommonSessionAttribute.User.name(), servletDAO.getUser(oldUser.getId()));
 
 		redirectToMainPage(request, response);
+	}
+
+	private static HttpSession getHttpSession(final HttpServletRequest request) {
+		return request.getSession(false);
 	}
 
 	public void deleteUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1358,7 +1366,7 @@ public class RegistrationServlet extends HttpServlet {
 		User user = getUser(request);
 		if (user.isSuperAdminUser()
 				|| (user.isCategoryAdminUser() && !isPreRegistrationAllowed(getShowFromSession(request)))) {
-			final HttpSession session = request.getSession(false);
+			final HttpSession session = getHttpSession(request);
 			session.setAttribute(SessionAttribute.Show.name(), show);
 			saveCategoryGroup(show, ServletUtil.getRequestAttribute(request, "group"));
 		} else {
@@ -1744,7 +1752,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void modifyModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final HttpSession session = request.getSession(false);
+		final HttpSession session = getHttpSession(request);
 
 		if (session == null)
 			return;
@@ -1789,7 +1797,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.save(model);
 
-		final HttpSession session = request.getSession(false);
+		final HttpSession session = getHttpSession(request);
 		List<Model> models = servletDAO.getModelsForShow(getShowFromSession(session), user.getId());
 
 		if (!models.isEmpty() && !user.isAdminUser()) {
@@ -1846,8 +1854,8 @@ public class RegistrationServlet extends HttpServlet {
 	private void setEmailSentNoticeInSession(final HttpServletRequest request, final User user)
 			throws UserNotLoggedInException {
 		ResourceBundle language = getLanguageForCurrentUser(request);
-		setNoticeInSession(request.getSession(false), language.getString("email") + ": <h2>" + user.email + "</h2>");
-		setNoticeInSession(request.getSession(false),
+		setNoticeInSession(getHttpSession(request), language.getString("email") + ": <h2>" + user.email + "</h2>");
+		setNoticeInSession(getHttpSession(request),
 				new MainPageNotice(MainPageNotice.NoticeType.Warning, language.getString("email.warning")));
 	}
 
@@ -1922,19 +1930,23 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static final User getUser(final HttpServletRequest request) throws UserNotLoggedInException {
-		final HttpSession session = request.getSession(false);
+		final HttpSession session = getHttpSession(request);
 
 		if (session == null) {
 			throw new UserNotLoggedInException(
 					"User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
 		}
 
-		User userInSession = (User) session.getAttribute(CommonSessionAttribute.User.name());
+		User userInSession = getUserInSession(session);
 		if (userInSession == null)
 			throw new UserNotLoggedInException(
 					"User is not logged in! <a href='" + getStartPage(request) + "'>Please go to login page...</a>");
 
 		return userInSession;
+	}
+
+	private static User getUserInSession(final HttpSession session) {
+		return (User) session.getAttribute(CommonSessionAttribute.User.name());
 	}
 
 	public boolean isRegistrationAllowed(String show) {
@@ -2140,7 +2152,7 @@ public class RegistrationServlet extends HttpServlet {
 		User user = getUser(request);
 		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
 			servletDAO.deleteModel(model);
-			setNoticeInSession(request.getSession(false), getLanguageForCurrentUser(request).getString("delete") + ": "
+			setNoticeInSession(getHttpSession(request), getLanguageForCurrentUser(request).getString("delete") + ": "
 					+ model.scale + " - " + model.name + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
 		}
@@ -2478,7 +2490,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void logout(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		Optional.ofNullable(request.getSession(false)).ifPresent(session -> session.invalidate());
+		Optional.ofNullable(getHttpSession(request)).ifPresent(session -> session.invalidate());
 
 		if (isOnSiteUse()) {
 			response.sendRedirect("../helyi.html");
@@ -2488,7 +2500,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private static String getStartPage(HttpServletRequest request) {
-		final HttpSession session = request.getSession(false);
+		final HttpSession session = getHttpSession(request);
 		String showId = null;
 		if (session != null)
 			showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
