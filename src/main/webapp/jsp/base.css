@@ -116,12 +116,9 @@ a:active {
 }
 
 .flash.Warning {
-/*
 	background: url(../icons/warning.png) 8px 8px no-repeat;
 	background-position: left center;
-	padding-left: 8px;
-*/
-	width: 100%; 
+	padding-left: 20px;
 	background-color: #ffD1A4;
 	border: 1px solid;
 	border-color: #ff8000;
