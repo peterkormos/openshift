@@ -284,7 +284,7 @@ public class HibernateDAO
 	  session.saveOrUpdate(record);
 	  session.getTransaction().commit();
 	  
-	  logger.debug(record);
+	  logger.debug("save(): " + record);
 	}
 	finally
 	{
