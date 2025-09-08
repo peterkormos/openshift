@@ -101,7 +101,7 @@ public class RegistrationServlet extends HttpServlet {
 	StringBuilder presentationBuffer;
 	StringBuilder printCardBuffer;
 
-	public static Map<String, EnumMap<SystemParameter, String>> systemParameters = new HashMap<>();
+	private Map<String, EnumMap<SystemParameter, String>> systemParameters = new HashMap<>();
 	private boolean onSiteUse;
 	private String systemMessage = "";
 
@@ -1819,17 +1819,26 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	private static String getSystemParameter(String show, SystemParameter parameter) {
+	private String getSystemParameter(String show, SystemParameter parameter) {
 		if (show == null) {
 			return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
 		}
 
 		EnumMap<SystemParameter, String> enumMap = systemParameters.get(show);
-		String value = enumMap != null ? enumMap.get(parameter) : null;
-		return value == null ? servletDAO.getSystemParameter(parameter) : value;
+		if (enumMap == null) {
+			enumMap = new EnumMap<>(SystemParameter.class);
+			systemParameters.put(show, enumMap);
+		}
+
+		String value =  enumMap.get(parameter);
+		if(value == null) {
+			value = servletDAO.getSystemParameter(parameter);
+			enumMap.put(parameter, value);
+		}
+		return value; 
 	}
 
-	private static String getSystemParameter(HttpServletRequest request, SystemParameter parameter) {
+	private String getSystemParameter(HttpServletRequest request, SystemParameter parameter) {
 		return getSystemParameter(getShowFromSession(request), parameter);
 	}
 
@@ -2818,7 +2827,7 @@ public class RegistrationServlet extends HttpServlet {
 		return VERSION;
 	}
 
-	public static boolean isPreRegistrationAllowed(String show) {
+	public boolean isPreRegistrationAllowed(String show) {
 		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(show))
 			return true;
 		Boolean allowed = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.REGISTRATION));
@@ -2882,5 +2891,9 @@ public class RegistrationServlet extends HttpServlet {
 				}
 
 		ServletUtil.writeResponse(response, new StringBuilder("emailsSent: " + emailsSent));
+	}
+	
+	public Map<String, EnumMap<SystemParameter, String>> getSystemParameters() {
+		return systemParameters;
 	}
 }
