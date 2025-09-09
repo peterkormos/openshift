@@ -95,34 +95,30 @@ a:active {
 
 .flash {
 	padding: 5px;
+	padding-left: 30px;
+	background-position: 8px center;
+	background-repeat: no-repeat;
+	border: 1px solid;
 }
 
 .flash.OK {
-	padding-left: 40px;
-	background: url(../icons/true.png) 8px 8px no-repeat;
+	background-image: url(../icons/true.png);
 	background-color: #dfffdf;
-	border: 1px solid;
 	border-color: #9fcf9f;
 	color: #005f00;
 }
 
 .flash.Error {
-	padding-left: 30px;
-	background: url(../icons/exclamation.png) 8px 50% no-repeat;
+	background-image: url(../icons/exclamation.png);
 	background-color: #ffe3e3;
-	border: 1px solid;
 	border-color: #d88;
 	color: #880000;
 }
 
 .flash.Warning {
-	background: url(../icons/warning.png) 8px 8px no-repeat;
-	background-position: left center;
-	padding-left: 20px;
+	background-image: url(../icons/warning.png);
 	background-color: #ffD1A4;
-	border: 1px solid;
 	border-color: #ff8000;
-	vertical-align: middle;
 }
 
 .disabledClass {
