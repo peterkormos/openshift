@@ -214,21 +214,24 @@ if(!servlet.isOnSiteUse())
 						<fieldset id="gluedToBaseGroup"
 							style="display: inline; padding: 15px;">
 
-							<label><%=language.getString("yes")%> <input
+							<label><input
 								style="zoom: 2;" name='gluedToBase' type='radio' value='on'
 								<%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%>
-								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);"></label>
-							<br> <label><%=language.getString("no")%> <input
+								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);">
+								<%=language.getString("yes")%> </label>
+							<label><input
 								style="zoom: 2;" name='gluedToBase' type='radio' value='off'
 								<%=(model == null || model.gluedToBase ? "" : "checked='checked'")%>
-								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);"></label>
+								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);">
+								<%=language.getString("no")%> </label>
 						</fieldset>
 						<label for="gluedToBaseGroup" class="input-caption"><%=language.getString("glued.to.base")%></label>
-						<font color='#FF0000' size='+3'>&#8226;</font> <img
+						<font color='#FF0000' size='+3'>&#8226;</font> 
+					</div>
+						<img
 							id='gluedToBaseImg'
 							src='../icons/<%=(model != null && model.gluedToBase ? "glued.jpg" : "notglued.jpg")%>'
 							style='float: float: middle; <%=model == null ? "visibility: hidden;" : ""%>'>
-					</div>
 				</td>
 			</tr>
 

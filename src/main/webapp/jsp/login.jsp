@@ -59,7 +59,7 @@ if (showIdHttpParameter != null)
 			return false;
 		} else {
 			noticeDiv.innerHTML = '&nbsp;';
-			noticeDiv.className = "flash";
+			noticeDiv.className = "";
 
 			submitButton.className = "";
 			submitButton.disabled = false;
@@ -164,7 +164,7 @@ if (showIdHttpParameter != null)
 								id="submitbutton" class="disabledClass" type="submit"
 								value="<%=language.getString("login")%>">
 								<p>
-								<div id="noticeDiv" class="flash">&nbsp;</div></td>
+								<div id="noticeDiv">&nbsp;</div></td>
 						</tr>
 					</table>
 

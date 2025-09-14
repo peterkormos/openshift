@@ -253,6 +253,7 @@ animation-iteration-count: 5;
         .input-caption-container {
             position: relative;
             margin: 5px;
+            display: inline-block;
         }
 
         .input-caption-container input,

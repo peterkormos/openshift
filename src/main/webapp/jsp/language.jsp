@@ -22,7 +22,7 @@ if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameterName))
 	parameterName = RequestParameter.Language.getParameterName();
 %>
 
-<div class="input-caption-container">
+<div class="input-caption-container" style="display: inline-block;">
 	<select name="<%=parameterName%>"
 		<%=ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "required")) ? ""
 				: "required='" + ServletUtil.getOptionalRequestAttribute(request, "required") + "'"%>
