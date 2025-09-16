@@ -89,9 +89,9 @@ private JDBCDAO jdbcDAO;
 		}
   }
 
-  public CategoryGroup getCategoryGroup(final String name)
+  public CategoryGroup getCategoryGroup(final String show, final String name)
   {
-	  return get(CategoryGroup.class, " r.name = '" + name + "'");
+	  return get(CategoryGroup.class, " r.show = '" + show + "' and r.name = '" + name + "'");
   }
   
   public CategoryGroup getCategoryGroup(final int categoryGroupID, final List<CategoryGroup> groups)

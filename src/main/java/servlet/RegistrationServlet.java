@@ -960,12 +960,13 @@ public class RegistrationServlet extends HttpServlet {
 				continue;
 			}
 
+			String show = getShowFromSession(request);
 			CategoryGroup categoryGroup;
 			try {
-				categoryGroup = servletDAO.getCategoryGroup(categoryGroupName);
+				categoryGroup = servletDAO.getCategoryGroup(show, categoryGroupName);
 //				buff.append(categoryGroupName + " már létezik.<p>");
 			} catch (IllegalArgumentException e) {
-				categoryGroup = saveCategoryGroup(getShowFromSession(request), categoryGroupName);
+				categoryGroup = saveCategoryGroup(show, categoryGroupName);
 				buff.append(categoryGroupName + " mentése.<br>");
 			}
 
