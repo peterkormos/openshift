@@ -28,7 +28,7 @@ if (show == null) {
 
 List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 if (models == null) {
-	models = servletDAO.getModels(user.getId());
+	models = servletDAO.getModelsForShow(show, user.getId());
 
 	Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
 			RegistrationServlet.SessionAttribute.Categories.name());
@@ -69,7 +69,7 @@ else {
 				</FONT>
 				<br>
 				<FONT
-					COLOR='#ff0000'> <b> <%=servlet.getSystemMessage()%>
+					COLOR='#ff0000'> <b> <%=servlet.getSystemMessage(show)%>
 					</b>
 				</FONT>
 				</td>
@@ -130,7 +130,7 @@ else {
 	<p></p>
 
 	<%
-	if (!(servlet.isPreRegistrationAllowed(show) || servlet.isOnSiteUse())) {
+	if (!(servlet.isPreRegistrationAllowed(show) || servlet.isOnSiteUse(show))) {
 	%>
 	<strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong>
 	<%

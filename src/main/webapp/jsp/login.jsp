@@ -99,9 +99,6 @@ if (showIdHttpParameter != null)
 									<%=servlet.getVersion()%></FONT></td>
 						</tr>
 						<tr>
-							<td><FONT COLOR='#ff0000'><b><%=servlet.getSystemMessage()%></b></FONT></td>
-						</tr>
-						<tr>
 							<td align="center">
 								<%
 								for (final String show : shows) {

@@ -9,7 +9,9 @@
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	User user = servlet.getUser(request);
 
-	for (final Model model : servlet.getServletDAO().getModels(user.getId()))
+	String show = RegistrationServlet.getShowFromSession(session);
+
+	for (final Model model : servlet.getServletDAO().getModelsForShow(show, user.getId()))
 	{
 %>
 <label>

@@ -20,11 +20,16 @@
 		return;
 	}
 	
+	String show = RegistrationServlet.getShowFromSession(session);
+	if (show == null) {
+		show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+	}
+
 	ResourceBundle language = languageUtil.getLanguage(user.language);
 %>
 
 <%
-if (servlet.isOnSiteUse()) {
+if (servlet.isOnSiteUse(show)) {
 %>
 <a href='../helyi.html'>Helyi bel&eacute;p&eacute;si oldal
 	bet&ouml;lt&eacute;se...</a>

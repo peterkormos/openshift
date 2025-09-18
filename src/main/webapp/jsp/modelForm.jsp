@@ -8,7 +8,9 @@
 <%@page import="java.util.*"%>
 
 <%
-    //input parameters	
+	String show = RegistrationServlet.getShowFromSession(session);
+	
+	//input parameters	
 	String submitLabel = (String)session.getAttribute(RegistrationServlet.SessionAttribute.SubmitLabel.name());
 	String action = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name()); 
 	Model model = (Model)session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
@@ -50,7 +52,7 @@ function checkMandatory(form)
 	returned = checkMandatoryElement(form.categoryID) && returned;
 
 <%
-if(!servlet.isOnSiteUse())
+if(!servlet.isOnSiteUse(show))
 {
 %>
 
@@ -105,7 +107,7 @@ if(!servlet.isOnSiteUse())
 					
 					</td>
 				<td style="width: 100%; white-space: nowrap"><FONT
-					COLOR='#ff0000'> <b> <%=servlet.getSystemMessage()%>
+					COLOR='#ff0000'> <b> <%=servlet.getSystemMessage(show)%>
 					</b>
 				</FONT></td>
 
@@ -281,7 +283,7 @@ if(!servlet.isOnSiteUse())
 								<jsp:param name="value" value="<%=modelWidth%>" />
 								<jsp:param name="label"
 									value='<%=language.getString("models.width")%>' />
-								<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse()%>" />
+								<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse(show)%>" />
 								<jsp:param name="maxlength" value="3" />
 								<jsp:param name="size" value="15" />
 							</jsp:include>
@@ -294,7 +296,7 @@ if(!servlet.isOnSiteUse())
 								<jsp:param name="value" value="<%=modelHeight%>" />
 								<jsp:param name="label"
 									value='<%=language.getString("models.length")%>' />
-								<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse()%>" />
+								<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse(show)%>" />
 								<jsp:param name="maxlength" value="3" />
 								<jsp:param name="size" value="15" />
 							</jsp:include>

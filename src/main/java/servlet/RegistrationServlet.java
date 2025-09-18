@@ -91,7 +91,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.09.16.";
+	public String VERSION = "2025.09.18.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -102,7 +102,6 @@ public class RegistrationServlet extends HttpServlet {
 	StringBuilder printCardBuffer;
 
 	private Map<String, EnumMap<SystemParameter, String>> systemParameters = new HashMap<>();
-	private boolean onSiteUse;
 	private String systemMessage = "";
 
 	private final List<ExceptionData> exceptionHistory = new LinkedList<ExceptionData>();
@@ -198,7 +197,6 @@ public class RegistrationServlet extends HttpServlet {
 							.valueOf(servletDAO.getSystemParameter(ServletDAO.SystemParameter.MaxModelsPerCategory)));
 					enumMap.put(ServletDAO.SystemParameter.PrintLanguage, servletDAO.getSystemParameterWithDefault(
 							ServletDAO.SystemParameter.PrintLanguage, PrintLanguages.Hu.name()));
-					updateSystemSettings(show);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -490,7 +488,7 @@ public class RegistrationServlet extends HttpServlet {
 		try {
 			show = StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show")));
 		} catch (final Exception e) {
-			if (user.isAdminUser() || isOnSiteUse())
+			if (user.isAdminUser())
 				show = null;
 			else {
 				writeErrorResponse(response, languageUtil.getLanguage(user.language).getString("select.show"));
@@ -582,8 +580,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (show != null) {
 			session.setAttribute(SessionAttribute.Show.name(), show);
 			
-			Map<Integer, Category> categories = servletDAO.getCategoryList(show).stream()
-					.collect(Collectors.toMap(category -> category.getId(), Function.identity()));
+			Map<Integer, Category> categories = servletDAO.getCategoryMap(show);
 			session.setAttribute(SessionAttribute.Categories.name(), categories);
 		}
 
@@ -684,7 +681,7 @@ public class RegistrationServlet extends HttpServlet {
 			models.add(model);
 		}
 
-		if (user != null && user.email != null && !isOnSiteUse()) {
+		if (user != null && user.email != null && !user.isLocalUser()) {
 			sendEmailWithModels(user, true);
 		}
 
@@ -1139,7 +1136,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = createUser(request, email);
 		servletDAO.save(user);
 		
-		if (!isOnSiteUse())
+		if (!user.isLocalUser())
 			sendEmailWithModels(user, true);
 		
 		proceedToLoginResponse(request, response, language);
@@ -1274,12 +1271,11 @@ public class RegistrationServlet extends HttpServlet {
 		if (to.trim().length() == 0 || to.equals("-") || to.indexOf("@") == -1) {
 			return;
 		}
-		if (!isOnSiteUse())
-			try {
-				emailUtil.sendEmail(getServerConfigParamter("email.from"), to, subject, message.toString());
-			} catch (Exception e) {
-				logger.error("", e);
-			}
+		try {
+			emailUtil.sendEmail(getServerConfigParamter("email.from"), to, subject, message.toString());
+		} catch (Exception e) {
+			logger.error("", e);
+		}
 	}
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1799,7 +1795,8 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.save(model);
 
 		final HttpSession session = getHttpSession(request);
-		List<Model> models = servletDAO.getModelsForShow(getShowFromSession(session), user.getId());
+		String show = getShowFromSession(session);
+		List<Model> models = servletDAO.getModelsForShow(show, user.getId());
 
 		if (!models.isEmpty() && !user.isAdminUser()) {
 			session.setAttribute(SessionAttribute.Models.name(), models);
@@ -1812,7 +1809,7 @@ public class RegistrationServlet extends HttpServlet {
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
 			response.sendRedirect("jsp/modelForm.jsp");
 		} else {
-			if (!isOnSiteUse()) {
+			if (!isOnSiteUse(show) && !user.isLocalUser()) {
 				sendEmailWithModels(user, false /* insertUserDetails */);
 				setEmailSentNoticeInSession(request, user);
 			}
@@ -1951,7 +1948,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public boolean isRegistrationAllowed(String show) {
-		return isPreRegistrationAllowed(show) || isOnSiteUse();
+		return isPreRegistrationAllowed(show) || isOnSiteUse(show);
 	}
 
 	public void inputForPhotoUpload(final HttpServletRequest request, final HttpServletResponse response)
@@ -2079,7 +2076,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<input type='hidden' name='rows' value='" + users.size() + "'>");
 
 		try {
-			User loggedInUser = isOnSiteUse() ? new User("HU") : getUser(request);
+			User loggedInUser = isOnSiteUse(show) ? new User("HU") : getUser(request);
 			for (int i = 0; i < users.size(); i++) {
 				final User user = users.get(i);
 
@@ -2139,7 +2136,6 @@ public class RegistrationServlet extends HttpServlet {
 			systemParameters.get(show).put(param,
 					param.isBooleanValue() ? String.valueOf(ServletDAO.getYesNoSystemParameter(paramValue))
 							: paramValue);
-			updateSystemSettings(show);
 		}
 
 		redirectToMainPage(request, response);
@@ -2417,7 +2413,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_IDENTIFICATION__", model.identification)
 							.replaceAll("__MODEL_PRODUCER__", model.producer)
 							.replaceAll("__MODEL_COMMENT__", model.comment)
-							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, ".."))
+							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, "."))
 							.replaceAll("__FEE__", String.valueOf(model.getFee())).replaceAll("__LOGO_URL__", logoURL)
 					;
 
@@ -2482,7 +2478,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void sendEmail(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
 
-		if (!isOnSiteUse()) {
+		if (!isOnSiteUse(getShowFromSession(request)) && !user.isLocalUser()) {
 			sendEmailWithModels(user, false);
 			setEmailSentNoticeInSession(request, user);
 		}
@@ -2493,7 +2489,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void logout(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		Optional.ofNullable(getHttpSession(request)).ifPresent(session -> session.invalidate());
 
-		if (isOnSiteUse()) {
+		if (isOnSiteUse(getShowFromSession(request))) {
 			response.sendRedirect("../helyi.html");
 		} else {
 			response.sendRedirect("../" + getStartPage(request));
@@ -2512,11 +2508,6 @@ public class RegistrationServlet extends HttpServlet {
 				+ (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)
 						? "?" + RequestParameter.ShowId.getParameterName() + "=" + showId
 						: "");
-	}
-
-	private void updateSystemSettings(String show) throws SQLException {
-		onSiteUse = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.ONSITEUSE));
-		systemMessage = getSystemParameter(show, ServletDAO.SystemParameter.SYSTEMMESSAGE);
 	}
 
 	private void deleteDataForShow(final HttpServletRequest request) throws SQLException {
@@ -2802,12 +2793,12 @@ public class RegistrationServlet extends HttpServlet {
 		exceptionHistory.add(new ExceptionData(timestamp, exception, request));
 	}
 
-	public String getSystemMessage() {
-		return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemMessage) ? "" : systemMessage;
+	public String getSystemMessage(String show) {
+		return getSystemParameter(show, ServletDAO.SystemParameter.SYSTEMMESSAGE);
 	}
 
-	public boolean isOnSiteUse() {
-		return onSiteUse;
+	public boolean isOnSiteUse(String show) {
+		return Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.ONSITEUSE));
 	}
 
 	public static ServletDAO getServletDAO() {
