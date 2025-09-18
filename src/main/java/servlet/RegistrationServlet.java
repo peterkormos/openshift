@@ -2794,7 +2794,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public String getSystemMessage(String show) {
-		return getSystemParameter(show, ServletDAO.SystemParameter.SYSTEMMESSAGE);
+		String systemMessage = getSystemParameter(show, ServletDAO.SystemParameter.SYSTEMMESSAGE);
+		return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemMessage) ? "" : systemMessage; 
 	}
 
 	public boolean isOnSiteUse(String show) {
