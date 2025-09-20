@@ -91,7 +91,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.09.18.";
+	public String VERSION = "2025.09.20.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -542,7 +542,7 @@ public class RegistrationServlet extends HttpServlet {
 		List<Model> models = servletDAO.getModelsForShow(show, user.getId());
 		session.setAttribute(SessionAttribute.Models.name(), models);
 
-		if (isPreRegistrationAllowed(show) && models.isEmpty() && !user.isAdminUser()) {
+		if (isRegistrationAllowed(show, session) && models.isEmpty() && !user.isAdminUser()) {
 			inputForAddModel(request, response);
 		} else {
 			redirectToMainPage(request, response);
@@ -1955,12 +1955,12 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public boolean isRegistrationAllowed(String show, HttpSession session) {
-		Boolean adminSession = false;
+		Boolean isAdminSession = false;
 		if(session != null) {
-			adminSession = (Boolean)session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
+			isAdminSession = (Boolean)session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
 		}
 
-		return isPreRegistrationAllowed(show) || (isOnSiteUse(show) && (adminSession != null && adminSession == Boolean.TRUE));
+		return isPreRegistrationAllowed(show) || (isOnSiteUse(show) && Boolean.TRUE == isAdminSession);
 	}
 
 	public void inputForPhotoUpload(final HttpServletRequest request, final HttpServletResponse response)
@@ -2500,13 +2500,15 @@ public class RegistrationServlet extends HttpServlet {
 	public void logout(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		HttpSession session = getHttpSession(request);
 
-		Boolean adminSession = false;
+		Boolean isAdminSession = false;
 		if(session != null) {
-			adminSession = (Boolean)session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
-			session.invalidate();
+			isAdminSession = (Boolean) session.getAttribute(SessionAttribute.AdminSession.name());
 		}
-
-		if (isOnSiteUse(getShowFromSession(request)) && (adminSession != null && adminSession == Boolean.TRUE)) {
+		
+		String show = getShowFromSession(session);
+		session.invalidate();
+		
+		if (isOnSiteUse(show) && Boolean.TRUE == isAdminSession) {
 			response.sendRedirect("../helyi.html");
 		} else {
 			response.sendRedirect("../" + getStartPage(request));
