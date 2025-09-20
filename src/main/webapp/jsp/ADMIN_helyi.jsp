@@ -12,8 +12,13 @@
 <%
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 Boolean adminSession = (Boolean)session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
+	
+	String show = RegistrationServlet.getShowFromSession(session);
+	if (show == null) {
+		show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+	}
 
-if (servlet.isOnSiteUse() && (adminSession != null && adminSession == Boolean.TRUE)) {
+if (servlet.isOnSiteUse(show) && (adminSession != null && adminSession == Boolean.TRUE)) {
 
 	User user = null;
 	try {
@@ -22,9 +27,10 @@ if (servlet.isOnSiteUse() && (adminSession != null && adminSession == Boolean.TR
 		out.print(ex.getMessage());
 		return;
 	}
-	
+
 	ResourceBundle language = languageUtil.getLanguage(user.language);
 %>
+
 <a href='../helyi.html'>Helyi bel&eacute;p&eacute;si oldal
 	bet&ouml;lt&eacute;se...</a>
 <p>

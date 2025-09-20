@@ -13,6 +13,7 @@ String show = RegistrationServlet.getShowFromSession(session);
 
 Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
 		RegistrationServlet.SessionAttribute.Categories.name());
+
 List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 if (models == null) {
 	models = RegistrationServlet.getModelsForShow(show, servletDAO.getModels(user.getId()), categories);

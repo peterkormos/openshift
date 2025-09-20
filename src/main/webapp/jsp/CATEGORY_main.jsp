@@ -23,18 +23,8 @@ if (user == null || !user.isAdminUser()) {
 }
 
 ResourceBundle language = languageUtil.getLanguage("HU");
-%>
 
-<link rel="stylesheet" href="base.css" media="screen" />
-<script type="text/javascript" src="findUser.js"></script>
-<script src="jquery.min.js"></script>
-
-<!-- 
-<link rel="stylesheet" href="base.css" media="screen" />
- -->
-
-<%
-String show = (String) session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
+String show = RegistrationServlet.getShowFromSession(session);
 if (show == null) {
 	final List<String> shows = servletDAO.getShows();
 	if (shows.isEmpty())
@@ -45,6 +35,11 @@ if (show == null) {
 	}
 }
 %>
+
+<link rel="stylesheet" href="base.css" media="screen" />
+<script type="text/javascript" src="findUser.js"></script>
+<script src="jquery.min.js"></script>
+
 <body <%= request.getRequestURL().indexOf("localhost") > -1 ? "" : "style='background-color: #cff6c9;'" %>>
 <table style="border: 0px; width: 100%">
 	<tr>
@@ -127,7 +122,7 @@ if (show == null) {
 	action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="setSystemParameter">
 	<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
-	<textarea name="paramValue" cols="100" rows="3"><%=servlet.getSystemMessage()%></textarea>
+	<textarea name="paramValue" cols="100" rows="3"><%=servlet.getSystemMessage(show)%></textarea>
 	<input name="setSystemParameter" type="submit"
 		value="Rendszer&#252;zenet be&aacute;ll&iacute;t&aacute;sa">
 </form>

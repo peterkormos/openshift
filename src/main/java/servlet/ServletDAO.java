@@ -72,6 +72,12 @@ private JDBCDAO jdbcDAO;
 	return getCategoryList(0, show);
   }
   
+  public Map<Integer, Category> getCategoryMap(final String show)
+  {
+	 return getCategoryList(show).stream()
+			.collect(Collectors.toMap(category -> category.getId(), Function.identity()));
+  }
+  
   public List<Category> getCategoryList(final int categoryGroupId, final String show) 
   {
 		if (categoryGroupId != 0) {
@@ -89,9 +95,9 @@ private JDBCDAO jdbcDAO;
 		}
   }
 
-  public CategoryGroup getCategoryGroup(final String name)
+  public CategoryGroup getCategoryGroup(final String show, final String name)
   {
-	  return get(CategoryGroup.class, " r.name = '" + name + "'");
+	  return get(CategoryGroup.class, " r.show = '" + show + "' and r.name = '" + name + "'");
   }
   
   public CategoryGroup getCategoryGroup(final int categoryGroupID, final List<CategoryGroup> groups)
@@ -418,16 +424,6 @@ void deleteModels(final int categoryId) throws SQLException {
 	}
 	
 	public List<Model> getModelsForShow(final String show, final int userID) {
-		final List<Model> models = getModels(userID);
-		final Iterator<Model> it = models.iterator();
-		while (it.hasNext()) {
-			final Model model = it.next();
-
-			if (show != null && !getCategory(model.categoryID).group.show.equals(show)) {
-				it.remove();
-			}
-		}
-
-		return models;
+		return RegistrationServlet.getModelsForShow(show, getModels(userID), getCategoryMap(show));
 	}
 }
