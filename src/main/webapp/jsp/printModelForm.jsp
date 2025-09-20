@@ -36,7 +36,7 @@
 	<tr>
 		<td>
 			<%
-				if (servlet.isRegistrationAllowed(show)) {
+				if (servlet.isRegistrationAllowed(show, session)) {
 			%>
 			<div class="tooltip">
 				<a

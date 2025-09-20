@@ -116,7 +116,7 @@ public class RegistrationServlet extends HttpServlet {
 	public static JudgingServletDAO judgingServletDAO;
 
 	public static enum SessionAttribute {
-		Notices, Action, SubmitLabel, Show, DirectRegister, ModelID, Models, MainPageFile, ShowId, Model, Categories
+		Notices, Action, SubmitLabel, Show, ModelID, Models, MainPageFile, ShowId, Model, Categories, AdminSession
 	}
 
 	public static enum RequestParameter {
@@ -431,6 +431,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void directLogin(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
+		getHttpSession(request).setAttribute(SessionAttribute.AdminSession.name(), true);
 		loginSuccessful(request, response, servletDAO.getUser(userID),
 				StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"))));
 	}
@@ -536,11 +537,14 @@ public class RegistrationServlet extends HttpServlet {
 			inputForModifyUser(request,response);
 			return;
 		}
+		if (user.isAdminUser()) {
+			session.setAttribute(SessionAttribute.AdminSession.name(), true);
+		}
 		
 		List<Model> models = servletDAO.getModelsForShow(show, user.getId());
 		session.setAttribute(SessionAttribute.Models.name(), models);
 
-		if (models.isEmpty() && !user.isAdminUser()) {
+		if (isPreRegistrationAllowed(show) && models.isEmpty() && !user.isAdminUser()) {
 			inputForAddModel(request, response);
 		} else {
 			redirectToMainPage(request, response);
@@ -721,7 +725,9 @@ public class RegistrationServlet extends HttpServlet {
 				: ServletUtil.getRequestAttribute(request, "fullname") + User.LOCAL_USER + System.currentTimeMillis();
 		final User user = directRegisterUser(request, language, "" /* httpParameterPostTag */, email,
 				StringEncoder.encode(ServletUtil.getOptionalRequestAttribute(request, "password")));
+		
 		initHttpSession(request, user, servletDAO.getShows().get(0));
+		getHttpSession(request).setAttribute(SessionAttribute.AdminSession.name(), true);
 		redirectToMainPage(request, response);
 	}
 
@@ -1744,7 +1750,8 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void inputForAddModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws IOException, UserNotLoggedInException {
-		if (isRegistrationAllowed(getShowFromSession(request))) {
+		HttpSession session = getHttpSession(request);
+		if (isRegistrationAllowed(getShowFromSession(session), session)) {
 			getModelForm(request, response, Command.addModel.name(), "save.and.add.new.model", null);
 		} else {
 			redirectToMainPage(request, response);
@@ -1949,8 +1956,13 @@ public class RegistrationServlet extends HttpServlet {
 		return (User) session.getAttribute(CommonSessionAttribute.User.name());
 	}
 
-	public boolean isRegistrationAllowed(String show) {
-		return isPreRegistrationAllowed(show) || isOnSiteUse();
+	public boolean isRegistrationAllowed(String show, HttpSession session) {
+		Boolean adminSession = false;
+		if(session != null) {
+			adminSession = (Boolean)session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
+		}
+
+		return isPreRegistrationAllowed(show) || (isOnSiteUse() && (adminSession != null && adminSession == Boolean.TRUE));
 	}
 
 	public void inputForPhotoUpload(final HttpServletRequest request, final HttpServletResponse response)
@@ -2461,7 +2473,6 @@ public class RegistrationServlet extends HttpServlet {
 			{
 		final HttpSession session = request.getSession(true);
 
-		session.setAttribute(SessionAttribute.DirectRegister.name(), false);
 		session.setAttribute(SessionAttribute.Action.name(), "modifyUser");
 
 		response.sendRedirect("jsp/user.jsp");
@@ -2490,9 +2501,15 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void logout(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		Optional.ofNullable(getHttpSession(request)).ifPresent(session -> session.invalidate());
+		HttpSession session = getHttpSession(request);
 
-		if (isOnSiteUse()) {
+		Boolean adminSession = false;
+		if(session != null) {
+			adminSession = (Boolean)session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
+			session.invalidate();
+		}
+
+		if (isOnSiteUse() && (adminSession != null && adminSession == Boolean.TRUE)) {
 			response.sendRedirect("../helyi.html");
 		} else {
 			response.sendRedirect("../" + getStartPage(request));

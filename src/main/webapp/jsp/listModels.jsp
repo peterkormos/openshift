@@ -165,7 +165,7 @@
 	<tr bgcolor="<%= highlight(model.isOversized())%>">
 		<td>
 <%
-  if (servlet.isRegistrationAllowed(show))
+  if (servlet.isRegistrationAllowed(show, session))
   {
 %>
 			<div class="tooltip">
@@ -330,7 +330,7 @@
 		</td>
 		<td>
 <%
-  if (servlet.isRegistrationAllowed(show))
+  if (servlet.isRegistrationAllowed(show, session))
   {
 %>
 			<div class="tooltip">

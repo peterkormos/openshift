@@ -77,7 +77,7 @@ else {
 
 			<tr>
 				<%
-				if (servlet.isRegistrationAllowed(show)) {
+				if (servlet.isRegistrationAllowed(show, session)) {
 				%>
 				<td style="white-space: nowrap; vertical-align: top;">
 					<div class="tooltip">

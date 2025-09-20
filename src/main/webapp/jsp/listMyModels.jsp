@@ -15,8 +15,7 @@ Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSess
 		RegistrationServlet.SessionAttribute.Categories.name());
 List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 if (models == null) {
-	models = servletDAO.getModels(user.getId());
-	models = RegistrationServlet.getModelsForShow(show, models, categories);
+	models = RegistrationServlet.getModelsForShow(show, servletDAO.getModels(user.getId()), categories);
 }
 
 for (Model model : models) {
@@ -29,5 +28,4 @@ for (Model model : models) {
 	<%
 	session.removeAttribute(RegistrationServlet.SessionAttribute.Model.name());
 	}
-	;
 	%>
