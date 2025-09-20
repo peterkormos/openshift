@@ -7,16 +7,17 @@
 <%@page import="servlet.*"%>
 <%@page import="util.*"%>
 
-<jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
+<jsp:useBean id="languageUtil" class="util.LanguageUtil"
+	scope="application" />
 
 <%
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-Boolean adminSession = (Boolean)session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
-	
-	String show = RegistrationServlet.getShowFromSession(session);
-	if (show == null) {
-		show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
-	}
+Boolean adminSession = (Boolean) session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
+
+String show = RegistrationServlet.getShowFromSession(session);
+if (show == null) {
+	show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
+}
 
 if (servlet.isOnSiteUse(show) && (adminSession != null && adminSession == Boolean.TRUE)) {
 
@@ -31,7 +32,7 @@ if (servlet.isOnSiteUse(show) && (adminSession != null && adminSession == Boolea
 	ResourceBundle language = languageUtil.getLanguage(user.language);
 %>
 
-<a href='../helyi.html'>Helyi bel&eacute;p&eacute;si oldal
+<a href='helyi.jsp'>Helyi bel&eacute;p&eacute;si oldal
 	bet&ouml;lt&eacute;se...</a>
 <p>
 
@@ -41,6 +42,6 @@ if (servlet.isOnSiteUse(show) && (adminSession != null && adminSession == Boolea
 		<jsp:param name="submitLabel"
 			value='<%=language.getString("print.models")%>' />
 	</jsp:include>
-<%
-}
-%>
+	<%
+	}
+	%>

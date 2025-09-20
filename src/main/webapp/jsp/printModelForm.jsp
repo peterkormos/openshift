@@ -18,7 +18,7 @@
 	final Category category = servletDAO.getCategory(model.categoryID);
 	String show = RegistrationServlet.getShowFromSession(session);
 	if (show == null) {
-		show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+		show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 	}
 
 	boolean insertAwards = Boolean

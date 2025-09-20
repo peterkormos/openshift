@@ -35,7 +35,7 @@ public class StringEncoder
   {
 	if (base64Text == null)
 	{
-	  return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+	  return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 	}
 	else
 	{

@@ -4,7 +4,7 @@
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 String show = RegistrationServlet.getShowFromSession(session);
 if (show == null) {
-	show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+	show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 }
 %>
 
@@ -27,7 +27,7 @@ if (show == null) {
 				%>
 				<a href="#"
 					class='<%=pl.name().equals(servlet.getPrintLanguage(request)) ? "flash OK" : ""%> %>'
-					onClick="document.getElementById('paramName6').value='<%=ServletDAO.SystemParameter.PrintLanguage.name()%>';document.getElementById('paramValue6').value='<%=pl.name()%>';document.getElementById('command6').value='setSystemParameter';document.getElementById('input6').submit();">
+					onClick="document.getElementById('paramName6').value='<%=RegistrationServlet.SystemParameter.PrintLanguage.name()%>';document.getElementById('paramValue6').value='<%=pl.name()%>';document.getElementById('command6').value='setSystemParameter';document.getElementById('input6').submit();">
 					<%=pl.name()%></a> -
 				<%
 					}
@@ -36,14 +36,14 @@ if (show == null) {
 				<a href="#"
 					onClick="document.getElementById('input6').submit();">
 					Max. makettek oldalank&eacute;nt: </a> <input type="number"
-					name="<%=ServletDAO.SystemParameter.MaxModelsPerPage.name()%>"
+					name="<%=RegistrationServlet.SystemParameter.MaxModelsPerPage.name()%>"
 					size="2" value="3"> <a href="#"
 					onClick="document.getElementById('input6').submit();">
 					Lapt&ouml;r&eacute;s nyomtat&aacute;skor</a> igen: <input type="radio"
-					name="<%=ServletDAO.SystemParameter.PageBreakAtPrint.name()%>"
+					name="<%=RegistrationServlet.SystemParameter.PageBreakAtPrint.name()%>"
 					value="<%=Boolean.TRUE%>" checked='checked'> nem: <input
 					type="radio"
-					name="<%=ServletDAO.SystemParameter.PageBreakAtPrint.name()%>"
+					name="<%=RegistrationServlet.SystemParameter.PageBreakAtPrint.name()%>"
 					value="<%=Boolean.FALSE%>">
 			</form> <!--
 -

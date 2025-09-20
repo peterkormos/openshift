@@ -23,7 +23,7 @@ boolean shortStatistics = Boolean.valueOf(ServletUtil.getOptionalRequestAttribut
 String show = RegistrationServlet.getShowFromSession(request);
 List<String> shows = show == null ? servletDAO.getShows() : Arrays.asList(new String[] { show });
 String showId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ShowId.getParameterName());
-if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)) {
+if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)) {
 	shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showId) - 1)));
 }
 %>

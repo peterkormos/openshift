@@ -4,15 +4,15 @@
 <%
 	String fieldValue = ServletUtil.getOptionalRequestAttribute(request, "value");
 	
-	if(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(fieldValue))
+	if(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(fieldValue))
 	{
 	%>
 		<input type="text" 
 		required="required"
 		name="<%= request.getParameter("name") %>"
 		min="1"
-		size="<%= ServletUtil.getOptionalRequestAttribute(request, "size").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "20") %>"
-		onChange="<%= ServletUtil.getOptionalRequestAttribute(request, "onChange").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "") %>"
+		size="<%= ServletUtil.getOptionalRequestAttribute(request, "size").replaceAll(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE, "20") %>"
+		onChange="<%= ServletUtil.getOptionalRequestAttribute(request, "onChange").replaceAll(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE, "") %>"
 		> 
 	<%
 	}
@@ -23,10 +23,10 @@
 		required="required"
 		name="<%= request.getParameter("name") %>"
 		value="<%= fieldValue %>"
-		<%= ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "disabled")) ? "" : "style='pointer-events: none;'" %>
+		<%= RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "disabled")) ? "" : "style='pointer-events: none;'" %>
 		min="1"
-		size="<%= ServletUtil.getOptionalRequestAttribute(request, "size").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "20") %>"
-		onChange="<%= ServletUtil.getOptionalRequestAttribute(request, "onChange").replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "") %>"
+		size="<%= ServletUtil.getOptionalRequestAttribute(request, "size").replaceAll(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE, "20") %>"
+		onChange="<%= ServletUtil.getOptionalRequestAttribute(request, "onChange").replaceAll(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE, "") %>"
 		> 
 
 <!-- 		<input type="hidden" -->

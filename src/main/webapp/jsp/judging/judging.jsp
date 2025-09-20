@@ -12,7 +12,7 @@ String languageCode = null;
 
 if (language == null) {
 	languageCode = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Language.name());
-	if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(languageCode)) {
+	if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(languageCode)) {
 		languageCode = "HU";
 	}
 	language = languageUtil.getLanguage(languageCode);

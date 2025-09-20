@@ -82,7 +82,7 @@ import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
-import servlet.ServletDAO.SystemParameter;
+import servlet.RegistrationServlet.SystemParameter;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import tools.InitDB;
@@ -101,7 +101,7 @@ public class RegistrationServlet extends HttpServlet {
 	StringBuilder presentationBuffer;
 	StringBuilder printCardBuffer;
 
-	private Map<String, EnumMap<SystemParameter, String>> systemParameters = new HashMap<>();
+	private Map<String, EnumMap<RegistrationServlet.SystemParameter, String>> systemParameters = new HashMap<>();
 	private String systemMessage = "";
 
 	private final List<ExceptionData> exceptionHistory = new LinkedList<ExceptionData>();
@@ -187,16 +187,16 @@ public class RegistrationServlet extends HttpServlet {
 			}
 			try {
 				for (String show : servletDAO.getShows()) {
-					EnumMap<SystemParameter, String> enumMap = new EnumMap<>(SystemParameter.class);
+					EnumMap<RegistrationServlet.SystemParameter, String> enumMap = new EnumMap<>(RegistrationServlet.SystemParameter.class);
 					systemParameters.put(show, enumMap);
-					enumMap.put(ServletDAO.SystemParameter.REGISTRATION, String
-							.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SystemParameter.REGISTRATION)));
-					enumMap.put(ServletDAO.SystemParameter.ONSITEUSE,
-							String.valueOf(servletDAO.getYesNoSystemParameter(ServletDAO.SystemParameter.ONSITEUSE)));
-					enumMap.put(ServletDAO.SystemParameter.MaxModelsPerCategory, String
-							.valueOf(servletDAO.getSystemParameter(ServletDAO.SystemParameter.MaxModelsPerCategory)));
-					enumMap.put(ServletDAO.SystemParameter.PrintLanguage, servletDAO.getSystemParameterWithDefault(
-							ServletDAO.SystemParameter.PrintLanguage, PrintLanguages.Hu.name()));
+					enumMap.put(RegistrationServlet.SystemParameter.REGISTRATION, String
+							.valueOf(servletDAO.getYesNoSystemParameter(RegistrationServlet.SystemParameter.REGISTRATION)));
+					enumMap.put(RegistrationServlet.SystemParameter.ONSITEUSE,
+							String.valueOf(servletDAO.getYesNoSystemParameter(RegistrationServlet.SystemParameter.ONSITEUSE)));
+					enumMap.put(RegistrationServlet.SystemParameter.MaxModelsPerCategory, String
+							.valueOf(servletDAO.getSystemParameter(RegistrationServlet.SystemParameter.MaxModelsPerCategory)));
+					enumMap.put(RegistrationServlet.SystemParameter.PrintLanguage, servletDAO.getSystemParameterWithDefault(
+							RegistrationServlet.SystemParameter.PrintLanguage, PrintLanguages.Hu.name()));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -364,6 +364,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private LanguageUtil languageUtil = new LanguageUtil();
+	public static final String ATTRIBUTE_NOT_FOUND_VALUE = "-";
 
 	private String processRestful(HttpServletRequest request, HttpServletResponse response, String pathInfo)
 			throws Exception {
@@ -526,9 +527,9 @@ public class RegistrationServlet extends HttpServlet {
 
 		HttpSession session = initHttpSession(request, user, show);
 
-		EnumMap<SystemParameter, String> enumMap = systemParameters.get(show);
+		EnumMap<RegistrationServlet.SystemParameter, String> enumMap = systemParameters.get(show);
 		if (enumMap == null) {
-			systemParameters.put(show, new EnumMap(SystemParameter.class));
+			systemParameters.put(show, new EnumMap(RegistrationServlet.SystemParameter.class));
 		}
 
 		if (!user.isAdminUser() && user.isUserDetailsUpdateNeeded()) {
@@ -602,6 +603,7 @@ public class RegistrationServlet extends HttpServlet {
 		HttpSession session = getHttpSession(request);
 		String mainPageFile = (String) session.getAttribute(SessionAttribute.MainPageFile.name());
 
+//		new Throwable().printStackTrace();
 		if (session == null) {
 			return getDefaultMainPageFile();
 		}
@@ -672,7 +674,7 @@ public class RegistrationServlet extends HttpServlet {
 				user = directRegisterUser(request, language, httpParameterPostTag,
 						ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag) + User.LOCAL_USER
 								+ System.currentTimeMillis(),
-						ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE /* password */);
+						RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE /* password */);
 				users.add(user);
 			}
 
@@ -703,8 +705,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public String getPrintLanguage(final HttpServletRequest request) {
-		String printLanguage = getSystemParameter(getShowFromSession(request), SystemParameter.PrintLanguage);
-		return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(printLanguage) ? PrintLanguages.Hu.name() : printLanguage;
+		String printLanguage = getSystemParameter(getShowFromSession(request), RegistrationServlet.SystemParameter.PrintLanguage);
+		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(printLanguage) ? PrintLanguages.Hu.name() : printLanguage;
 	}
 
 	private void showPrintDialog(final HttpServletResponse response) throws IOException {
@@ -1119,7 +1121,7 @@ public class RegistrationServlet extends HttpServlet {
 		final String email = ServletUtil.getRequestAttribute(request, "email");
 		final ResourceBundle language = getLanguageFromRequest(request);
 
-		if (email.trim().length() == 0 || ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(email)
+		if (email.trim().length() == 0 || RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(email)
 				|| email.indexOf("@") == -1 || email.indexOf(".") == -1) {
 			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
 					+ ": [" + email + "]");
@@ -1176,7 +1178,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User newUser = createUser(request, ServletUtil.getRequestAttribute(request, "email"));
 		newUser.setId(oldUser.getId());
 		if (!newUser.isAdminUser() && !newUser.isLocalUser() && (newUser.email.trim().length() == 0
-				|| ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(newUser.email) || newUser.email.indexOf("@") == -1)) {
+				|| RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(newUser.email) || newUser.email.indexOf("@") == -1)) {
 			writeErrorResponse(response, language.getString("authentication.failed") + " " + language.getString("email")
 					+ ": [" + newUser.email + "]");
 			return;
@@ -1809,7 +1811,7 @@ public class RegistrationServlet extends HttpServlet {
 			session.setAttribute(SessionAttribute.Models.name(), models);
 		}
 		
-		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
+		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE
 				.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
 			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("add") + ": "
 					+ model.scale + " - " + model.name + " - "
@@ -1827,20 +1829,20 @@ public class RegistrationServlet extends HttpServlet {
 
 	public int getMaxModelsPerCategory(final HttpServletRequest request) {
 		try {
-			return Integer.parseInt(getSystemParameter(request, ServletDAO.SystemParameter.MaxModelsPerCategory));
+			return Integer.parseInt(getSystemParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerCategory));
 		} catch (Exception e) {
 			return 3;
 		}
 	}
 
-	private String getSystemParameter(String show, SystemParameter parameter) {
+	private String getSystemParameter(String show, RegistrationServlet.SystemParameter parameter) {
 		if (show == null) {
-			return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+			return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 		}
 
-		EnumMap<SystemParameter, String> enumMap = systemParameters.get(show);
+		EnumMap<RegistrationServlet.SystemParameter, String> enumMap = systemParameters.get(show);
 		if (enumMap == null) {
-			enumMap = new EnumMap<>(SystemParameter.class);
+			enumMap = new EnumMap<>(RegistrationServlet.SystemParameter.class);
 			systemParameters.put(show, enumMap);
 		}
 
@@ -1852,7 +1854,7 @@ public class RegistrationServlet extends HttpServlet {
 		return value; 
 	}
 
-	private String getSystemParameter(HttpServletRequest request, SystemParameter parameter) {
+	private String getSystemParameter(HttpServletRequest request, RegistrationServlet.SystemParameter parameter) {
 		return getSystemParameter(getShowFromSession(request), parameter);
 	}
 
@@ -2049,7 +2051,8 @@ public class RegistrationServlet extends HttpServlet {
 	public void inputForLoginUser(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final String language = getLanguage(request);
-		request.getSession(true).setAttribute(SessionAttribute.Show.name(), getShowFromSession(request));
+		
+		getHttpSession(request).setAttribute(SessionAttribute.Show.name(), getShowFromSession(request));
 
 		selectUser(request, response, "directLogin", languageUtil.getLanguage(language).getString("login"), language);
 	}
@@ -2144,7 +2147,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		String show = getShowFromSession(request);
 		if (show != null) {
-			SystemParameter param = ServletDAO.SystemParameter.valueOf(paramName);
+			RegistrationServlet.SystemParameter param = RegistrationServlet.SystemParameter.valueOf(paramName);
 			systemParameters.get(show).put(param,
 					param.isBooleanValue() ? String.valueOf(ServletDAO.getYesNoSystemParameter(paramValue))
 							: paramValue);
@@ -2248,7 +2251,7 @@ public class RegistrationServlet extends HttpServlet {
 		final ResourceBundle language = getLanguageForCurrentUser(request);
 
 		boolean pageBreak = Boolean.parseBoolean(
-				ServletUtil.getOptionalRequestAttribute(request, ServletDAO.SystemParameter.PageBreakAtPrint.name()));
+				ServletUtil.getOptionalRequestAttribute(request, RegistrationServlet.SystemParameter.PageBreakAtPrint.name()));
 
 		StringBuilder printBuffer = getPrintBuffer(request);
 
@@ -2290,7 +2293,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void printModels(final HttpServletRequest request, final ResourceBundle language, StringBuilder printBuffer,
 			final StringBuilder buff, List<PrintedModel> models) throws SQLException, Exception, IOException {
-		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, ServletDAO.SystemParameter.MaxModelsPerPage.name());
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
 		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
 		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 				+ getLogoIDForShow(getShowFromSession(request));
@@ -2348,7 +2351,7 @@ public class RegistrationServlet extends HttpServlet {
 		final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID");
 		StringBuilder printBuffer = getPrintBuffer(request);
 
-		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
+		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
 			printModelsForUser(request, response, languageUtil.getLanguage(user.language), user.getId(),
 					printBuffer);
 		} else {
@@ -2468,7 +2471,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void inputForModifyUser(final HttpServletRequest request, final HttpServletResponse response) throws IOException
 			{
-		final HttpSession session = request.getSession(true);
+		final HttpSession session = getHttpSession(request);
 
 		session.setAttribute(SessionAttribute.Action.name(), "modifyUser");
 
@@ -2509,7 +2512,8 @@ public class RegistrationServlet extends HttpServlet {
 		session.invalidate();
 		
 		if (isOnSiteUse(show) && Boolean.TRUE == isAdminSession) {
-			response.sendRedirect("../helyi.html");
+			boolean goToParentDir = request.getPathInfo() != null;
+			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/helyi.jsp");
 		} else {
 			response.sendRedirect("../" + getStartPage(request));
 		}
@@ -2521,10 +2525,10 @@ public class RegistrationServlet extends HttpServlet {
 		if (session != null)
 			showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
 		if (showId == null)
-			showId = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+			showId = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 
 		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp"
-				+ (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)
+				+ (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)
 						? "?" + RequestParameter.ShowId.getParameterName() + "=" + showId
 						: "");
 	}
@@ -2625,7 +2629,7 @@ public class RegistrationServlet extends HttpServlet {
 			final String httpParameterPostTag = String.valueOf(i);
 
 			final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID" + httpParameterPostTag);
-			if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
+			if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
 				continue;
 			}
 
@@ -2804,6 +2808,27 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
+	public enum SystemParameter
+	  {
+		REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory, // 
+		PrintLanguage, MaxModelsPerPage, PageBreakAtPrint;
+	
+		private boolean booleanValue;
+		
+		SystemParameter()
+		{
+		}
+		
+		SystemParameter(boolean booleanValue)
+		{
+			this.booleanValue = booleanValue;
+		}
+	
+		public boolean isBooleanValue() {
+			return booleanValue;
+		}
+	  }
+
 	void addExceptionToHistory(final long timestamp, final Throwable exception, final HttpServletRequest request) {
 		if (exceptionHistory.size() == 10) {
 			exceptionHistory.remove(0);
@@ -2813,12 +2838,12 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public String getSystemMessage(String show) {
-		String systemMessage = getSystemParameter(show, ServletDAO.SystemParameter.SYSTEMMESSAGE);
-		return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemMessage) ? "" : systemMessage; 
+		String systemMessage = getSystemParameter(show, RegistrationServlet.SystemParameter.SYSTEMMESSAGE);
+		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemMessage) ? "" : systemMessage; 
 	}
 
 	public boolean isOnSiteUse(String show) {
-		return Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.ONSITEUSE));
+		return Boolean.parseBoolean(getSystemParameter(show, RegistrationServlet.SystemParameter.ONSITEUSE));
 	}
 
 	public static ServletDAO getServletDAO() {
@@ -2827,7 +2852,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void getModelForm(final HttpServletRequest request, final HttpServletResponse response, final String action,
 			final String submitLabel, final Model model) throws IOException, UserNotLoggedInException {
-		final HttpSession session = request.getSession(true);
+		final HttpSession session = getHttpSession(request);
 
 		session.setAttribute(SessionAttribute.Action.name(), action);
 		session.setAttribute(SessionAttribute.SubmitLabel.name(), submitLabel);
@@ -2855,9 +2880,9 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public boolean isPreRegistrationAllowed(String show) {
-		if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(show))
+		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(show))
 			return true;
-		Boolean allowed = Boolean.parseBoolean(getSystemParameter(show, ServletDAO.SystemParameter.REGISTRATION));
+		Boolean allowed = Boolean.parseBoolean(getSystemParameter(show, RegistrationServlet.SystemParameter.REGISTRATION));
 		return allowed == null ? false : allowed;
 	}
 
@@ -2920,7 +2945,7 @@ public class RegistrationServlet extends HttpServlet {
 		ServletUtil.writeResponse(response, new StringBuilder("emailsSent: " + emailsSent));
 	}
 	
-	public Map<String, EnumMap<SystemParameter, String>> getSystemParameters() {
+	public Map<String, EnumMap<RegistrationServlet.SystemParameter, String>> getSystemParameters() {
 		return systemParameters;
 	}
 }

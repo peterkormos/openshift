@@ -322,10 +322,10 @@ public final class JudgingServlet extends HttpServlet {
         final String modelId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ModelID.name());
         final String modellerId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ModellerID.name());
 
-        if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(category) && //
-                !ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judge) && //
-                !ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelId) && //
-                !ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerId)) {
+        if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(category) && //
+                !RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(judge) && //
+                !RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelId) && //
+                !RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerId)) {
             dao.deleteJudgingScores(judge, category, Integer.parseInt(modelId), Integer.parseInt(modellerId));
         }
 
@@ -418,14 +418,14 @@ public final class JudgingServlet extends HttpServlet {
 	    Model model = (Model) getSessionAttribute(request, CommonSessionAttribute.Model);
 	    if(model == null) {
 			String modelId = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.ModelID.name());
-			if(!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelId))
+			if(!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelId))
 				model = servletDAO.getModel(Integer.parseInt(modelId));
 		}
 
 	    JudgingResult judgingResult = model != null ? new JudgingResult(model) : new JudgingResult();
 		
 	    String modellerID = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.ModellerID.name());
-		if(!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerID))
+		if(!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerID))
 			judgingResult.setModellerID(Integer.parseInt(modellerID));
 		
 		judgingResult.setCategory(categoryCode);
@@ -436,7 +436,7 @@ public final class JudgingServlet extends HttpServlet {
 
 	    String judgeInRequestAttribute = ServletUtil.encodeString(ServletUtil.getOptionalRequestAttribute(request,
                 RequestParameter.Judge.name()));
-        if (!ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute)) {
+        if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute)) {
         	judgingResult.setJudge(judgeInRequestAttribute);
         }
         else
@@ -613,7 +613,7 @@ public final class JudgingServlet extends HttpServlet {
         for (int i = 1; i <= judgingCriterias; i++) {
             final String optionalRequestAttribute = ServletUtil.getOptionalRequestAttribute(request,
                     RequestParameter.JudgingCriteria.name() + i);
-            if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(optionalRequestAttribute)) {
+            if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(optionalRequestAttribute)) {
                 continue;
             }
 
@@ -628,7 +628,7 @@ public final class JudgingServlet extends HttpServlet {
         session.removeAttribute(CommonSessionAttribute.Model.name());
     	session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
 
-        if (ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE
+        if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE
                 .equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
             if(getSessionAttribute(request, SessionAttribute.Judge) == null)
             	setSessionAttribute(request, SessionAttribute.Judge, judge);

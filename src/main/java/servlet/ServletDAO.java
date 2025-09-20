@@ -32,30 +32,9 @@ public class ServletDAO extends HibernateDAO
 {
   public static Logger logger = Logger.getLogger(ServletDAO.class);
 
-private JDBCDAO jdbcDAO;
+  private JDBCDAO jdbcDAO;
   public final static int INVALID_USERID = -1;
 
-  public enum SystemParameter
-  {
-	REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory, // 
-	PrintLanguage, MaxModelsPerPage, PageBreakAtPrint;
-
-	private boolean booleanValue;
-	
-	SystemParameter()
-	{
-	}
-	
-	SystemParameter(boolean booleanValue)
-	{
-		this.booleanValue = booleanValue;
-	}
-
-	public boolean isBooleanValue() {
-		return booleanValue;
-	}
-  };
- 
   public ServletDAO(String dbURL, String dbUserName, String dbPassword,
           URL configFile) 
   {
@@ -162,7 +141,7 @@ private JDBCDAO jdbcDAO;
 		return user;
 	}
 
-  public boolean getYesNoSystemParameter(final SystemParameter parameter) 
+  public boolean getYesNoSystemParameter(final RegistrationServlet.SystemParameter parameter) 
   {
 	final String value = jdbcDAO.getSystemParameter(parameter);
 	return getYesNoSystemParameter(value);
@@ -383,13 +362,13 @@ void deleteModels(final int categoryId) throws SQLException {
 		jdbcDAO.setSystemParameter(parameterName, parameterValue);
 	}
 
-	public String getSystemParameter(final SystemParameter parameter) {
+	public String getSystemParameter(final RegistrationServlet.SystemParameter parameter) {
 		return jdbcDAO.getSystemParameter(parameter);
 	}
 
-	public String getSystemParameterWithDefault(final SystemParameter parameter, String defaultValue) {
+	public String getSystemParameterWithDefault(final RegistrationServlet.SystemParameter parameter, String defaultValue) {
 		String systemParameter = getSystemParameter(parameter);
-		return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemParameter) ? defaultValue : systemParameter;
+		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemParameter) ? defaultValue : systemParameter;
 	}
 
 	public void saveAwardedModel(final AwardedModel model) throws SQLException {

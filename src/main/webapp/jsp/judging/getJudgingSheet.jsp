@@ -25,7 +25,7 @@
 	
 	boolean listMode = Boolean.parseBoolean(
 			ServletUtil.getOptionalRequestAttribute(request, "listMode").
-			replaceAll(ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE, "false"));
+			replaceAll(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE, "false"));
 %>
 
 
@@ -54,10 +54,10 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 				<jsp:param name="value"
 					value='<%=judgedModel == null ? "" : judgedModel.getModellerID()%>' />
 				<jsp:param name="disabled"
-					value='<%=judgedModel == null ? ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE : "disabled"%>' />
+					value='<%=judgedModel == null ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : "disabled"%>' />
 				<jsp:param name="size" value='3' />
 				<jsp:param name="caption" value='<%=language.getString("userID")%>' />
-			</jsp:include> <%-- 			  <jsp:param name="disabled" value='<%= judgedModel == null ? ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE : "disabled" %>'/> --%>
+			</jsp:include> <%-- 			  <jsp:param name="disabled" value='<%= judgedModel == null ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : "disabled" %>'/> --%>
 			<jsp:include page="fillableFormField.jsp">
 				<jsp:param name="name"
 					value="<%=JudgingServlet.RequestParameter.ModelID.name()%>" />
@@ -93,7 +93,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 					value="<%=JudgingServlet.RequestParameter.Judge.name()%>" />
 				<jsp:param name="value" value='<%=judge%>' />
 				<jsp:param name="disabled"
-					value='<%=judge == null ? ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE : judge%>' />
+					value='<%=judge == null ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : judge%>' />
 				<jsp:param name="caption" value='<%=language.getString("judge")%>' />
 			</jsp:include></td>
 	</tr>
@@ -116,8 +116,8 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 		<td><%=criteria.getDescription()%></td>
 		<td><label> <input type="radio"
 				name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%=criteria.getCriteriaId()%>"
-				value="<%=ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE%>"
-				onchange="parentNode.parentNode.parentNode.style = '<%=unjudgedCriteriaStyle%>';"><%=ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE%>
+				value="<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE%>"
+				onchange="parentNode.parentNode.parentNode.style = '<%=unjudgedCriteriaStyle%>';"><%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE%>
 		</label> <%
  	for (int i = 0; i < criteria.getMaxScore() + 1; i++) {
 

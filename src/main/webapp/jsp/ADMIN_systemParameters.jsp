@@ -16,10 +16,10 @@
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ServletDAO servletDAO = servlet.getServletDAO();
 
-	Map<String, EnumMap<ServletDAO.SystemParameter, String>> systemParameters = servlet.getSystemParameters();
+	Map<String, EnumMap<RegistrationServlet.SystemParameter, String>> systemParameters = servlet.getSystemParameters();
 	for (String show : systemParameters.keySet()) {
-		EnumMap<ServletDAO.SystemParameter, String> showParams = systemParameters.get(show);
-		for (ServletDAO.SystemParameter param : showParams.keySet()) {
+		EnumMap<RegistrationServlet.SystemParameter, String> showParams = systemParameters.get(show);
+		for (RegistrationServlet.SystemParameter param : showParams.keySet()) {
 			String paramValue = showParams.get(param);
 	%>
 	<tr>

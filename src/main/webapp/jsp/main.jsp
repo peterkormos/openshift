@@ -23,7 +23,7 @@ ResourceBundle language = languageUtil.getLanguage(user.language);
 
 String show = RegistrationServlet.getShowFromSession(session);
 if (show == null) {
-	show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+	show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 }
 
 List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());

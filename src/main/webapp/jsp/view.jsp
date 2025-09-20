@@ -15,7 +15,7 @@
 
 				List<String> shows = servletDAO.getShows();
 				if (shows.isEmpty())
-				  show = ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+				  show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 				else
 				  show = shows.get(0);
 		  }

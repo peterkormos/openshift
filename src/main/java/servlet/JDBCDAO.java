@@ -24,7 +24,7 @@ import datatype.AwardedModel;
 import datatype.Category;
 import datatype.Model;
 import datatype.User;
-import servlet.ServletDAO.SystemParameter;
+import servlet.RegistrationServlet.SystemParameter;
 
 public class JDBCDAO {
 	public static Logger logger = Logger.getLogger(JDBCDAO.class);
@@ -188,7 +188,7 @@ public class JDBCDAO {
 		}
 	}
 
-	public String getSystemParameter(final SystemParameter parameter) {
+	public String getSystemParameter(final RegistrationServlet.SystemParameter parameter) {
 		PreparedStatement queryStatement = null;
 		ResultSet rs = null;
 
@@ -201,11 +201,11 @@ public class JDBCDAO {
 			if (rs.next()) {
 				return rs.getString("PARAM_VALUE");
 			} else {
-				return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+				return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 			}
 		} catch (final Exception ex) {
 			logger.fatal("!!! ServletDAO.getSystemParameter(): parameterName: " + parameter, ex);
-			return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE;
+			return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 		} finally {
 			try {
 				if (rs != null) {

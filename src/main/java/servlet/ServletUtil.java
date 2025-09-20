@@ -25,8 +25,6 @@ import exception.MissingRequestParameterException;
 import exception.UserNotLoggedInException;
 
 public class ServletUtil {
-    public static final String ATTRIBUTE_NOT_FOUND_VALUE = "-";
-
     private static final Map<Integer, String> charEncodeMap;
 
     static {
@@ -100,17 +98,17 @@ public class ServletUtil {
     public static Optional<String> getOptionalAttribute(final HttpServletRequest request, final String name) {
         final String value = ServletUtil.getOptionalRequestAttribute(request, name);
 
-        return  ATTRIBUTE_NOT_FOUND_VALUE.equals(value) ? Optional.empty() : Optional.of(value);
+        return  RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(value) ? Optional.empty() : Optional.of(value);
     }
     
     public static String getOptionalRequestAttribute(final HttpServletRequest request, final String name) {
         try {
             final String value = ServletUtil.getRequestAttribute(request, name, false);
 
-            return "".equals(value) ? ATTRIBUTE_NOT_FOUND_VALUE : value;
+            return "".equals(value) ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : value;
         } catch (final MissingRequestParameterException e) {
             e.printStackTrace();
-            return ATTRIBUTE_NOT_FOUND_VALUE;
+            return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
         }
     }
 
@@ -126,7 +124,7 @@ public class ServletUtil {
             if (throwException) {
                 throw new MissingRequestParameterException(name);
             } else {
-                return ATTRIBUTE_NOT_FOUND_VALUE;
+                return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
             }
         }
 

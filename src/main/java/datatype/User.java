@@ -16,7 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import servlet.ServletUtil;
+import servlet.RegistrationServlet;
 
 @Entity
 @Table(name = "MAK_USERS")
@@ -56,7 +56,7 @@ public class User extends Record {
 	public static final String LOCAL_USER = "_LOCAL_";
 
 	public String getFullName() {
-		return ServletUtil.ATTRIBUTE_NOT_FOUND_VALUE.equals(firstName) ? lastName : lastName + " " + firstName;
+		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(firstName) ? lastName : lastName + " " + firstName;
 	}
 
 	public String getPassword() {
