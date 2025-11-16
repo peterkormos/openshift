@@ -12,14 +12,13 @@
 
 <%
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-Boolean adminSession = (Boolean) session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
 
 String show = RegistrationServlet.getShowFromSession(session);
 if (show == null) {
 	show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 }
 
-if (servlet.isOnSiteUse(show) && (adminSession != null && adminSession == Boolean.TRUE)) {
+if (servlet.isAdminSession(session)) {
 
 	User user = null;
 	try {

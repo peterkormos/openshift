@@ -51,14 +51,7 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 			<th width="25%">Makett</th>
 			<th width="25%">Makettez&otilde;</th>
 			<th width="25%">Helyez&eacute;s</th>
-			<%
-			//				  if (RegistrationServlet.onSiteUse)
-			{
-			%>
 			<th width="25%">K&eacute;p</th>
-			<%
-			}
-			%>
 		</tr>
 		<%
 		for (AwardedModel awardedModel : awardedModels.get(category.getId())) {
@@ -67,16 +60,9 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 			<td align="center"><%=awardedModel.name%></td>
 			<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.getUserID()).getFullName()%></td>
 			<td align="center"><%=awardedModel.getAward()%></td>
-			<%
-			//				  if (RegistrationServlet.onSiteUse)
-			{
-			%>
 			<td align="center"><img
 				src='<%=servlet.getServletURL(request)%>/<%=Command.LOADIMAGE.name()%>/<%=awardedModel.getId()%>'>
 			</td>
-			<%
-			}
-			%>
 		</tr>
 		<%
 		}

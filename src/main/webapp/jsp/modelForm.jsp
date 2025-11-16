@@ -52,7 +52,7 @@ function checkMandatory(form)
 	returned = checkMandatoryElement(form.categoryID) && returned;
 
 <%
-if(!servlet.isOnSiteUse(show))
+if(!servlet.isAdminSession(session))
 {
 %>
 
@@ -283,7 +283,7 @@ if(!servlet.isOnSiteUse(show))
 								<jsp:param name="value" value="<%=modelWidth%>" />
 								<jsp:param name="label"
 									value='<%=language.getString("models.width")%>' />
-								<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse(show)%>" />
+								<jsp:param name="mandatory" value="<%=!servlet.isAdminSession(session)%>" />
 								<jsp:param name="maxlength" value="3" />
 								<jsp:param name="size" value="15" />
 							</jsp:include>
@@ -296,7 +296,7 @@ if(!servlet.isOnSiteUse(show))
 								<jsp:param name="value" value="<%=modelHeight%>" />
 								<jsp:param name="label"
 									value='<%=language.getString("models.length")%>' />
-								<jsp:param name="mandatory" value="<%=!servlet.isOnSiteUse(show)%>" />
+								<jsp:param name="mandatory" value="<%=!servlet.isAdminSession(session)%>" />
 								<jsp:param name="maxlength" value="3" />
 								<jsp:param name="size" value="15" />
 							</jsp:include>

@@ -191,8 +191,6 @@ public class RegistrationServlet extends HttpServlet {
 					systemParameters.put(show, enumMap);
 					enumMap.put(RegistrationServlet.SystemParameter.REGISTRATION, String
 							.valueOf(servletDAO.getYesNoSystemParameter(RegistrationServlet.SystemParameter.REGISTRATION)));
-					enumMap.put(RegistrationServlet.SystemParameter.ONSITEUSE,
-							String.valueOf(servletDAO.getYesNoSystemParameter(RegistrationServlet.SystemParameter.ONSITEUSE)));
 					enumMap.put(RegistrationServlet.SystemParameter.MaxModelsPerCategory, String
 							.valueOf(servletDAO.getSystemParameter(RegistrationServlet.SystemParameter.MaxModelsPerCategory)));
 					enumMap.put(RegistrationServlet.SystemParameter.PrintLanguage, servletDAO.getSystemParameterWithDefault(
@@ -1818,7 +1816,7 @@ public class RegistrationServlet extends HttpServlet {
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
 			response.sendRedirect("jsp/modelForm.jsp");
 		} else {
-			if (!isOnSiteUse(show) && !user.isLocalUser()) {
+			if (!isAdminSession(session) && !user.isLocalUser()) {
 				sendEmailWithModels(user, false /* insertUserDetails */);
 				setEmailSentNoticeInSession(request, user);
 			}
@@ -1957,12 +1955,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public boolean isRegistrationAllowed(String show, HttpSession session) {
-		Boolean isAdminSession = false;
-		if(session != null) {
-			isAdminSession = (Boolean)session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
-		}
-
-		return isPreRegistrationAllowed(show) || (isOnSiteUse(show) && Boolean.TRUE == isAdminSession);
+		return isPreRegistrationAllowed(show) || isAdminSession(session);
 	}
 
 	public void inputForPhotoUpload(final HttpServletRequest request, final HttpServletResponse response)
@@ -2075,7 +2068,8 @@ public class RegistrationServlet extends HttpServlet {
 			final String submitLabel, final String language) throws Exception, IOException {
 		final StringBuilder buff = new StringBuilder();
 
-		final String show = getShowFromSession(request);
+		HttpSession session = getHttpSession(request);
+		final String show = getShowFromSession(session);
 
 		buff.append("<html>");
 
@@ -2098,7 +2092,7 @@ public class RegistrationServlet extends HttpServlet {
 		ResourceBundle languageBundle = languageUtil.getLanguage(language);
 		
 		try {
-			User loggedInUser = isOnSiteUse(show) ? new User("HU") : getUser(request);
+			User loggedInUser = isAdminSession(session) ? new User("HU") : getUser(request);
 
 			buff.append("<table border=1>");
 			buff.append("<tr>");
@@ -2515,7 +2509,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void sendEmail(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
 
-		if (!isOnSiteUse(getShowFromSession(request)) && !user.isLocalUser()) {
+		if (!(isAdminSession(getHttpSession(request)) || user.isLocalUser())) {
 			sendEmailWithModels(user, false);
 			setEmailSentNoticeInSession(request, user);
 		}
@@ -2526,20 +2520,16 @@ public class RegistrationServlet extends HttpServlet {
 	public void logout(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		HttpSession session = getHttpSession(request);
 
-		Boolean isAdminSession = false;
-		if(session != null) {
-			isAdminSession = (Boolean) session.getAttribute(SessionAttribute.AdminSession.name());
-		}
-		
 		String show = getShowFromSession(session);
-		session.invalidate();
 		
-		if (isOnSiteUse(show) && Boolean.TRUE == isAdminSession) {
+		if (isAdminSession(session)) {
 			boolean goToParentDir = request.getPathInfo() != null;
 			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/helyi.jsp");
 		} else {
 			response.sendRedirect("../" + getStartPage(request));
 		}
+		
+		session.invalidate();
 	}
 
 	private static String getStartPage(HttpServletRequest request) {
@@ -2833,7 +2823,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public enum SystemParameter
 	  {
-		REGISTRATION(true), ONSITEUSE(true), SYSTEMMESSAGE, MaxModelsPerCategory, // 
+		REGISTRATION(true), SYSTEMMESSAGE, MaxModelsPerCategory, // 
 		PrintLanguage, MaxModelsPerPage, PageBreakAtPrint;
 	
 		private boolean booleanValue;
@@ -2863,10 +2853,6 @@ public class RegistrationServlet extends HttpServlet {
 	public String getSystemMessage(String show) {
 		String systemMessage = getSystemParameter(show, RegistrationServlet.SystemParameter.SYSTEMMESSAGE);
 		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemMessage) ? "" : systemMessage; 
-	}
-
-	public boolean isOnSiteUse(String show) {
-		return Boolean.parseBoolean(getSystemParameter(show, RegistrationServlet.SystemParameter.ONSITEUSE));
 	}
 
 	public static ServletDAO getServletDAO() {
@@ -2971,4 +2957,15 @@ public class RegistrationServlet extends HttpServlet {
 	public Map<String, EnumMap<RegistrationServlet.SystemParameter, String>> getSystemParameters() {
 		return systemParameters;
 	}
+
+	public boolean isAdminSession(HttpSession session) {
+		if (session != null) {
+			Boolean adminSession = (Boolean) session
+					.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
+			return adminSession != null && Boolean.TRUE.equals(adminSession);
+		} else {
+			return false;
+		}
+	}
+
 }

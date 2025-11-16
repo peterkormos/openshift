@@ -130,7 +130,7 @@ else {
 	<p></p>
 
 	<%
-	if (!(servlet.isPreRegistrationAllowed(show) || servlet.isOnSiteUse(show))) {
+	if (!(servlet.isPreRegistrationAllowed(show) || servlet.isAdminSession(session))) {
 	%>
 	<strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong>
 	<%
