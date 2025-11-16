@@ -91,7 +91,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.09.20.";
+	public String VERSION = "2025.11.16.";
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -2077,9 +2077,14 @@ public class RegistrationServlet extends HttpServlet {
 
 		final String show = getShowFromSession(request);
 
-		buff.append("<html>" + "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /></head>"
-				+ "<body>");
+		buff.append("<html>");
 
+		buff.append("<head>\n");
+		buff.append("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />\n");
+		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
+		buff.append("</head>\n");
+
+		buff.append("<body>\n");
 		buff.append("<form accept-charset='UTF-8' name='input' action='../RegistrationServlet' method='put' >");
 		buff.append("<input type='hidden' name='command' value='" + command + "'>");
 		if (show != null) {
@@ -2090,8 +2095,21 @@ public class RegistrationServlet extends HttpServlet {
 		final List<User> users = servletDAO.getUsers();
 		buff.append("<input type='hidden' name='rows' value='" + users.size() + "'>");
 
+		ResourceBundle languageBundle = languageUtil.getLanguage(language);
+		
 		try {
 			User loggedInUser = isOnSiteUse(show) ? new User("HU") : getUser(request);
+
+			buff.append("<table border=1>");
+			buff.append("<tr>");
+			buff.append("<th>"+languageBundle.getString("name") + "</th>");
+			buff.append("<th>"+languageBundle.getString("country") + "</th>");
+			buff.append("<th>"+languageBundle.getString("city") + "</th>");
+			buff.append("<th>"+languageBundle.getString("year.of.birth") + "</th>");
+			buff.append("<th></th>");
+			buff.append("<th>"+languageBundle.getString("userID") + "</th>");
+			buff.append("</tr>");
+
 			for (int i = 0; i < users.size(); i++) {
 				final User user = users.get(i);
 
@@ -2100,15 +2118,20 @@ public class RegistrationServlet extends HttpServlet {
 					continue;
 				}
 
-				buff.append("<label><input type='radio' name='userID' value='" + user.getId()
-						+ "' onClick='document.input.submit()'/>");
-				buff.append(user.lastName + " (" + user.getId()
-						+ (loggedInUser.isSuperAdminUser()
-								? " - " + user.email + " - " + user.yearOfBirth + " - " + user.country + " - "
-										+ user.city + " - " + user.address + " - " + user.telephone
-								: "")
-						+ ")</label><br>");
+				buff.append("<tr>");
+				buff.append("<td><label><input type='radio' name='userID' value='" + user.getId()
+						+ "' onClick='document.input.submit()'/>" + user.lastName + "</label></td>");
+				buff.append("<td>" + user.getCountry() + "</td>");
+				buff.append("<td>" + user.getCity() + "</td>");
+				buff.append("<td>" + user.getYearOfBirth() + "</td>");
+				buff.append("<td>" + (loggedInUser.isSuperAdminUser()
+						? " - " + user.email + " - " + user.address + " - " + user.telephone
+						: "") + "</td>");
+				buff.append("<td>" + user.getId() + "</td>");
+				buff.append("</tr>");
+				
 			}
+			buff.append("</table>");
 
 			buff.append("</form></body></html>");
 
