@@ -1,8 +1,11 @@
+<%@page import="java.io.*"%>
 <%@page import="java.util.*"%>
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 <%@page import="util.*"%>
+
+<%@include file="util.jsp"%>
 
 <jsp:useBean id="languageUtil" class="util.LanguageUtil"
 	scope="application" />
@@ -39,20 +42,23 @@
 		if (show == null) {
 			final List<String> shows = servletDAO.getShows();
 			if (shows.isEmpty())
-				show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
+		show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 			else {
-				show = shows.get(0);
-				session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
+		show = shows.get(0);
+		session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
 			}
 		}
-	} 
+	}
 	%>
 	<p>
-		<b>1 makettez&#337;... </b> <a
-			href="../RegistrationServlet/inputForLoginUser?language=HU">
-			nev&eacute;ben bel&eacute;p&eacute;s</a> - <a
-			href="../RegistrationServlet/inputForPrint?language=HU">
-			nevez&eacute;si lapjainak nyomtat&aacute;sa </a>
+		<b>1 makettez&#337;... </b>
+		<%
+		addAdminLink(session, out, "../RegistrationServlet/inputForLoginUser?language=HU", "nev&eacute;ben bel&eacute;p&eacute;s");
+		%>
+		-
+		<%
+		addAdminLink(session, out, "../RegistrationServlet/inputForPrint?language=HU", "nevez&eacute;si lapjainak nyomtat&aacute;sa");
+		%>
 	</p>
 	<p>
 		<a href="./judging/judging.jsp?language=HU"><b>Zs&utilde;riz&eacute;s</b></a>

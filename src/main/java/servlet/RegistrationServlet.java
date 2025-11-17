@@ -428,7 +428,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void directLogin(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
-		getHttpSession(request).setAttribute(SessionAttribute.AdminSession.name(), true);
+		setToAdminSession(getHttpSession(request));
 		loginSuccessful(request, response, servletDAO.getUser(userID),
 				StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"))));
 	}
@@ -535,7 +535,7 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 		if (user.isAdminUser()) {
-			session.setAttribute(SessionAttribute.AdminSession.name(), true);
+			setToAdminSession(session);
 		}
 		
 		List<Model> models = servletDAO.getModelsForShow(show, user.getId());
@@ -546,6 +546,10 @@ public class RegistrationServlet extends HttpServlet {
 		} else {
 			redirectToMainPage(request, response);
 		}
+	}
+
+	public static void setToAdminSession(HttpSession session) {
+		session.setAttribute(SessionAttribute.AdminSession.name(), true);
 	}
 
 	private void saveLoginConsentData(HttpServletRequest request, User user) {
@@ -607,6 +611,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		if (mainPageFile == null) {
+			logger.error("", new Throwable());
 			return request.getRequestURI();
 		}
 
@@ -724,7 +729,7 @@ public class RegistrationServlet extends HttpServlet {
 				StringEncoder.encode(ServletUtil.getOptionalRequestAttribute(request, "password")));
 		
 		initHttpSession(request, user, servletDAO.getShows().get(0));
-		getHttpSession(request).setAttribute(SessionAttribute.AdminSession.name(), true);
+		setToAdminSession(getHttpSession(request));
 		redirectToMainPage(request, response);
 	}
 
@@ -2043,10 +2048,9 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void inputForLoginUser(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		final String language = getLanguage(request);
-		
 		getHttpSession(request).setAttribute(SessionAttribute.Show.name(), getShowFromSession(request));
 
+		final String language = getLanguage(request);
 		selectUser(request, response, "directLogin", languageUtil.getLanguage(language).getString("login"), language);
 	}
 
@@ -2066,9 +2070,12 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void selectUser(final HttpServletRequest request, final HttpServletResponse response, final String command,
 			final String submitLabel, final String language) throws Exception, IOException {
-		final StringBuilder buff = new StringBuilder();
-
 		HttpSession session = getHttpSession(request);
+		if(!isAdminSession(session)) {
+			return;
+		}
+		
+		final StringBuilder buff = new StringBuilder();
 		final String show = getShowFromSession(session);
 
 		buff.append("<html>");
@@ -2092,7 +2099,7 @@ public class RegistrationServlet extends HttpServlet {
 		ResourceBundle languageBundle = languageUtil.getLanguage(language);
 		
 		try {
-			User loggedInUser = isAdminSession(session) ? new User("HU") : getUser(request);
+			User loggedInUser = getUser(request);
 
 			buff.append("<table border=1>");
 			buff.append("<tr>");
@@ -2100,7 +2107,9 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("<th>"+languageBundle.getString("country") + "</th>");
 			buff.append("<th>"+languageBundle.getString("city") + "</th>");
 			buff.append("<th>"+languageBundle.getString("year.of.birth") + "</th>");
-			buff.append("<th></th>");
+			if(loggedInUser.isSuperAdminUser()) {
+				buff.append("<th></th>");				
+			}
 			buff.append("<th>"+languageBundle.getString("userID") + "</th>");
 			buff.append("</tr>");
 
@@ -2118,9 +2127,9 @@ public class RegistrationServlet extends HttpServlet {
 				buff.append("<td>" + user.getCountry() + "</td>");
 				buff.append("<td>" + user.getCity() + "</td>");
 				buff.append("<td>" + user.getYearOfBirth() + "</td>");
-				buff.append("<td>" + (loggedInUser.isSuperAdminUser()
-						? " - " + user.email + " - " + user.address + " - " + user.telephone
-						: "") + "</td>");
+				if(loggedInUser.isSuperAdminUser()) {
+					buff.append("<td>" + String.join(" - ", user.email, user.address, user.telephone) + "</td>");
+				}
 				buff.append("<td>" + user.getId() + "</td>");
 				buff.append("</tr>");
 				
@@ -2958,7 +2967,7 @@ public class RegistrationServlet extends HttpServlet {
 		return systemParameters;
 	}
 
-	public boolean isAdminSession(HttpSession session) {
+	public static boolean isAdminSession(HttpSession session) {
 		if (session != null) {
 			Boolean adminSession = (Boolean) session
 					.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
