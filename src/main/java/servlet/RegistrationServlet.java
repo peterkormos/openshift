@@ -58,6 +58,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -866,25 +867,50 @@ public class RegistrationServlet extends HttpServlet {
 
 		response.setContentType("application/vnd.ms-excel");
 
-		List<List<Object>> modelsForExcel = servletDAO.getCategoryList(show).stream().map(category -> {
+		List<List<Object>> rowsInExcel = servletDAO.getCategoryList(show).stream().map(category -> {
 			ArrayList<Object> returned = new ArrayList<>();
 			returned.add(StringEscapeUtils.unescapeHtml4(category.getGroup().getGroup()));
 			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
 			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
 			returned.add(category.isMaster());
-			returned.add(category.getModelClass().name());
-			returned.add(category.getAgeGroup().name());
+			returned.add(category.getModelClass().getTitle());
+			returned.add(category.getAgeGroup().toString());
 			return returned;
 
 		}).collect(Collectors.toList());
 		ResourceBundle language = getLanguageForCurrentUser(request);
-		Workbook u = ExcelUtil.generateExcelTableWithHeaders("model",
+		Workbook workbook = ExcelUtil.generateExcelTableWithHeaders("model",
 				Arrays.asList("Group", StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
-						StringEscapeUtils.unescapeHtml4(language.getString("category.description")), "isMaster",
-						"ModelClass", "AgeGroup"),
-				modelsForExcel);
+						StringEscapeUtils.unescapeHtml4(language.getString("category.description")), "Mester",
+						"Szakág", "Korcsoport"),
+				rowsInExcel);
 
-		u.writeTo(response.getOutputStream());
+		HSSFSheet sheet = workbook.getWorkbook().getSheetAt(0);
+		int rows = rowsInExcel.size()+50;
+		
+		sheet.addValidationData(ExcelUtil.getDataValidation(rows, 3, new String[]{"HAMIS", "IGAZ", "FALSE", "TRUE"}));
+		
+		List<String> modelClasses = new LinkedList<>();
+		for (ModelClass group : ModelClass.values()) {
+			modelClasses.add(group.getTitle());
+		}
+		for (ModelClass group : ModelClass.values()) {
+			modelClasses.add(group.name());
+		}
+		sheet.addValidationData(ExcelUtil.getDataValidation(rows, 4, modelClasses.toArray(new String[modelClasses.size()])));
+
+		
+		List<String> ageGroups = new LinkedList<>();
+		for (AgeGroup group : AgeGroup.values()) {
+			ageGroups.add(group.toString());
+		}
+		for (AgeGroup group : AgeGroup.values()) {
+			ageGroups.add(group.name());
+		}
+		sheet.addValidationData(ExcelUtil.getDataValidation(rows, 5, ageGroups.toArray(new String[ageGroups.size()])));
+
+
+		workbook.writeTo(response.getOutputStream());
 	}
 
 	public static List<Model> getModelsForShow(final String show, final List<Model> models,
@@ -998,11 +1024,11 @@ public class RegistrationServlet extends HttpServlet {
 			// 5. column
 			String stringCellValue = row.getCell(4).getStringCellValue();
 			ModelClass modelClass = stringCellValue.length() == 0 ? ModelClass.Other
-					: ModelClass.valueOf(stringCellValue);
+					: ModelClass.of(stringCellValue);
 
 			// 6. column
 			stringCellValue = row.getCell(5).getStringCellValue();
-			AgeGroup ageGroup = stringCellValue.length() == 0 ? AgeGroup.ALL : AgeGroup.valueOf(stringCellValue);
+			AgeGroup ageGroup = stringCellValue.length() == 0 ? AgeGroup.ALL : AgeGroup.of(stringCellValue);
 
 			try {
 				servletDAO.getCategory(categoryCode);

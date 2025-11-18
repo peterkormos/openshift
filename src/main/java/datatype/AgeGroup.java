@@ -6,14 +6,14 @@ public enum AgeGroup {
 
 	private int from;
 	private int to;
-	private String cimke;
+	private String title;
 
 	public String toString() {
-		return cimke + " (" + from + "-" + to + ")";
+		return title + " (" + from + "-" + to + ")";
 	}
-
-	AgeGroup(String cimke, int from, int to) {
-		this.cimke = cimke;
+	
+	AgeGroup(String title, int from, int to) {
+		this.title = title;
 		this.from = from;
 		this.to = to;
 	}
@@ -34,5 +34,13 @@ public enum AgeGroup {
 		}
 
 		throw new IllegalArgumentException("Wrong age: " + age);
+	}
+	
+	public static AgeGroup of(String name) {
+		return EnumGroup.of(AgeGroup.class, name, (group, name2) -> group.toString().equals(name2));
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 }

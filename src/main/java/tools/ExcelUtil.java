@@ -6,20 +6,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddressList;
 
 public class ExcelUtil {
 
@@ -52,6 +54,9 @@ public class ExcelUtil {
             workbook.write(stream);
         }
 
+        public HSSFWorkbook getWorkbook() {
+			return workbook;
+		}
     }
 
     public static Spreadsheet createSpreadsheet(String spreadSheetName, List<String> columnHeaders, List<List<Object>> tableData,
@@ -157,4 +162,10 @@ public class ExcelUtil {
     private static HSSFSheet createSpreadsheet(String spreadSheetName, HSSFWorkbook workbook) {
         return workbook.createSheet(spreadSheetName);
     }
+    
+	public static HSSFDataValidation getDataValidation(int rows, int column, String[] constraintList) {
+		CellRangeAddressList addressList = new CellRangeAddressList(0, rows, column, column);
+		DVConstraint dvConstraint = DVConstraint.createExplicitListConstraint(constraintList);
+		return new HSSFDataValidation(addressList, dvConstraint);
+	}
 }
