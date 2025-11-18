@@ -875,16 +875,17 @@ public class RegistrationServlet extends HttpServlet {
 			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
 			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
 			returned.add(category.isMaster());
-			returned.add(category.getModelClass().getTitle());
+			returned.add(category.getModelClass().toString());
 			returned.add(category.getAgeGroup().toString());
 			return returned;
 
 		}).collect(Collectors.toList());
 		ResourceBundle language = getLanguageForCurrentUser(request);
 		Workbook workbook = ExcelUtil.generateExcelTableWithHeaders("model",
-				Arrays.asList("Group", StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
-						StringEscapeUtils.unescapeHtml4(language.getString("category.description")), "Mester",
-						"Szakág", "Korcsoport"),
+				Arrays.asList(StringEscapeUtils.unescapeHtml4(language.getString("group")),
+						StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
+						StringEscapeUtils.unescapeHtml4(language.getString("category.description")), "Mester", "Szakág",
+						"Korcsoport"),
 				rowsInExcel);
 
 		HSSFSheet sheet = workbook.getWorkbook().getSheetAt(0);
@@ -894,7 +895,7 @@ public class RegistrationServlet extends HttpServlet {
 		
 		List<String> modelClasses = new LinkedList<>();
 		for (ModelClass group : ModelClass.values()) {
-			modelClasses.add(group.getTitle());
+			modelClasses.add(group.toString());
 		}
 		for (ModelClass group : ModelClass.values()) {
 			modelClasses.add(group.name());
@@ -1337,8 +1338,8 @@ public class RegistrationServlet extends HttpServlet {
 					Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
 					servletDAO.getCategoryGroups()));
 			modifyingCategory.setMaster(ServletUtil.isCheckedIn(request, "master"));
-			modifyingCategory.setModelClass(ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")));
-			modifyingCategory.setAgeGroup(AgeGroup.valueOf(ServletUtil.getRequestAttribute(request, "ageGroup")));
+			modifyingCategory.setModelClass(ModelClass.of(ServletUtil.getRequestAttribute(request, "modelClass")));
+			modifyingCategory.setAgeGroup(AgeGroup.of(ServletUtil.getRequestAttribute(request, "ageGroup")));
 
 			servletDAO.save(modifyingCategory);
 		} else {
@@ -1391,7 +1392,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final int userID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "userID"));
 
-		servletDAO.saveModelClass(userID, ModelClass.valueOf(ServletUtil.getRequestAttribute(request, "modelClass")));
+		servletDAO.saveModelClass(userID, ModelClass.of(ServletUtil.getRequestAttribute(request, "modelClass")));
 
 		redirectToMainPage(request, response);
 	}
@@ -1493,10 +1494,10 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("<input type='checkbox' " + (category.isMaster() ? "checked" : "") + ">");
 			buff.append("</td>");
 			buff.append("<td align='center' >");
-			buff.append(category.getModelClass().name());
+			buff.append(ServletUtil.encodeString(category.getModelClass().getTitle()));
 			buff.append("</td>");
 			buff.append("<td align='center' >");
-			buff.append(category.getAgeGroup().toString());
+			buff.append(ServletUtil.encodeString(category.getAgeGroup().toString()));
 			buff.append("</td>");
 			buff.append("<td align='center' style='white-space: nowrap'>");
 			buff.append("<a href='inputForAddCategory?categoryID=" + category.getId() + "'>"
@@ -1726,10 +1727,10 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</td>");
 		buff.append("<td><select name='modelClass'>");
 		if (category.getModelClass() != null)
-			buff.append("<option value='" + category.getModelClass().name() + "'>" + category.getModelClass().name()
+			buff.append("<option value='" + category.getModelClass().name() + "'>" + category.getModelClass().toString()
 					+ "</option>");
 		for (final ModelClass mc : ModelClass.values()) {
-			buff.append("<option value='" + mc.name() + "'>" + mc.name() + "</option>");
+			buff.append("<option value='" + mc.name() + "'>" + mc.toString() + "</option>");
 		}
 		buff.append("</select>");
 		buff.append("</td>");
@@ -1811,8 +1812,8 @@ public class RegistrationServlet extends HttpServlet {
 		redirectToMainPage(request, response);
 	}
 
-	public ResourceBundle getLanguageForCurrentUser(final HttpServletRequest request) throws UserNotLoggedInException {
-		return languageUtil.getLanguage(getUser(request).language);
+	public ResourceBundle getLanguageForCurrentUser(final HttpServletRequest request) throws UserNotLoggedInException, MissingRequestParameterException {
+		return languageUtil.getLanguage(getLanguage(request));
 	}
 
 	public synchronized void addModel(final HttpServletRequest request, final HttpServletResponse response)
@@ -1890,7 +1891,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void setEmailSentNoticeInSession(final HttpServletRequest request, final User user)
-			throws UserNotLoggedInException {
+			throws UserNotLoggedInException, MissingRequestParameterException {
 		ResourceBundle language = getLanguageForCurrentUser(request);
 		setNoticeInSession(getHttpSession(request), language.getString("email") + ": <h2>" + user.email + "</h2>");
 		setNoticeInSession(getHttpSession(request),
