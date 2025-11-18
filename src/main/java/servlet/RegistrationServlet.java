@@ -2069,7 +2069,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		final String language = getLanguage(request);
 
-		selectUser(request, response, "deleteUsers", languageUtil.getLanguage(language).getString("delete"), language);
+		selectUser(request, response, "deleteUsers", language);
 	}
 
 	public void inputForLoginUser(final HttpServletRequest request, final HttpServletResponse response)
@@ -2077,13 +2077,12 @@ public class RegistrationServlet extends HttpServlet {
 		getHttpSession(request).setAttribute(SessionAttribute.Show.name(), getShowFromSession(request));
 
 		final String language = getLanguage(request);
-		selectUser(request, response, "directLogin", languageUtil.getLanguage(language).getString("login"), language);
+		selectUser(request, response, "directLogin", language);
 	}
 
 	public void inputForPrint(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String language = getLanguage(request);
-		selectUser(request, response, "directPrintModels", languageUtil.getLanguage(language).getString("print.models"),
-				language);
+		selectUser(request, response, "directPrintModels", language);
 	}
 
 	private String getLanguage(final HttpServletRequest request) throws MissingRequestParameterException {
@@ -2095,7 +2094,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void selectUser(final HttpServletRequest request, final HttpServletResponse response, final String command,
-			final String submitLabel, final String language) throws Exception, IOException {
+			final String language) throws Exception, IOException {
 		HttpSession session = getHttpSession(request);
 		if(!isAdminSession(session)) {
 			return;
