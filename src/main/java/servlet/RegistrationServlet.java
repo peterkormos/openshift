@@ -92,7 +92,9 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.11.16.";
+	public String VERSION = "2025.11.18.";
+	public static final String DEFAULT_LANGUAGE = "HU";
+	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
 
 	public static ServletDAO servletDAO;
@@ -2087,7 +2089,8 @@ public class RegistrationServlet extends HttpServlet {
 
 	private String getLanguage(final HttpServletRequest request) throws MissingRequestParameterException {
 		try {
-			return getUser(request).getLanguage();
+			User user = getUser(request);
+			return user.isAdminUser() ? DEFAULT_LANGUAGE : user.getLanguage();
 		} catch (UserNotLoggedInException e) {
 			return ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
 		}
@@ -2653,7 +2656,7 @@ public class RegistrationServlet extends HttpServlet {
 		try {
 			languageCode = getUser(request).language;
 		} catch (UserNotLoggedInException e) {
-			languageCode = "HU";
+			languageCode = DEFAULT_LANGUAGE;
 		}
 		return languageCode;
 	}

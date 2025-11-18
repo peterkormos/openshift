@@ -20,7 +20,7 @@
 				  show = shows.get(0);
 		  }
 
-		  User user = new User("HU");
+		  User user = new User(RegistrationServlet.DEFAULT_LANGUAGE);
 		  session = request.getSession(true);
 		  session.setAttribute(CommonSessionAttribute.User.name(), user);
 	%>

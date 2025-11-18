@@ -22,7 +22,8 @@ if (user == null || !user.isAdminUser()) {
 	return;
 }
 
-ResourceBundle language = languageUtil.getLanguage("HU");
+String languageCode = RegistrationServlet.DEFAULT_LANGUAGE;
+ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 String show = RegistrationServlet.getShowFromSession(session);
 if (show == null) {
@@ -70,7 +71,7 @@ if (show == null) {
 				action="../RegistrationServlet" method="post">
 				<input type="hidden" id="command" name="command" value=""> <input
 					type="hidden"
-					name="<%=RequestParameter.Language.getParameterName()%>" value="HU">
+					name="<%=RequestParameter.Language.getParameterName()%>" value="<%=languageCode %>>">
 				<div class="tooltip">
 					<a href="#"
 						onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">

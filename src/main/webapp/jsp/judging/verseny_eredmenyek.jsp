@@ -13,7 +13,7 @@ String languageCode = null;
 if (language == null) {
 	languageCode = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.Language.name());
 	if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(languageCode)) {
-		languageCode = "HU";
+		languageCode = RegistrationServlet.DEFAULT_LANGUAGE;
 	}
 	session.setAttribute(CommonSessionAttribute.Language.name(), language);
 } else

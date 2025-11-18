@@ -242,7 +242,7 @@ function checkDeleteUserRequest()
 
 					if (user == null) {
 						if (directRegister)
-							languageCode = "HU";
+							languageCode = RegistrationServlet.DEFAULT_LANGUAGE;
 					} else
 						languageCode = user.language;
 					%> <jsp:include page="language.jsp">
