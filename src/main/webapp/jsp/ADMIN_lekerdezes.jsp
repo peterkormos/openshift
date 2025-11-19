@@ -22,26 +22,35 @@ if (user == null || !user.isAdminUser()) {
 }
 %>
 
-<table style="box-shadow: none" border="0">
+<table style="box-shadow: none" border="1">
 	<tr>
-		<th style="background: none">Lek&eacute;rdez&eacute;sek:</th>
+		<th colspan="4">Lek&eacute;rdez&eacute;sek</th>
+	</tr>
+	<tr>
 		<td><a href="../RegistrationServlet/exportExcel"><strong>&Ouml;sszes
 					benevezett makett Excelbe</strong></a></td>
 		<td><a href="../RegistrationServlet/exportCategoryExcel"><strong>&Ouml;sszes
 					kateg&oacute;ria Excelbe</strong></a></td>
-		<td><a href="statistics.jsp?<%= RequestParameter.Language.getParameterName()%>=HU&shortStatistics=true"><strong>Egyszer&#369; statisztika
-					k&eacute;sz&iacute;t&eacute;se</strong></a></td>
-		<td><a href="statistics.jsp?<%= RequestParameter.Language.getParameterName()%>=HU"><strong>Statisztika
-					k&eacute;sz&iacute;t&eacute;se</strong></a></td>
-		<td><a href="../RegistrationServlet/exportStatistics?<%= RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
-					Statisztika Excelbe</strong></a></td>
 		<td><a href="listAllModels.jsp"> &Ouml;sszes benevezett
-				makett list&aacute;z&aacute;sa</a> - <a href="customQuery.jsp">Egyedi
+				makett list&aacute;z&aacute;sa</a></td>
+		<td><a href="customQuery.jsp">Egyedi
 				lek&eacute;rdez&eacute;sek</a> <%
  if (user.isSuperAdminUser()) {
  %> - <a href="../RegistrationServlet/listUsers">&Ouml;sszes
 				felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a> <%
  }
  %></td>
+	</tr>
+	<tr>
+		<td><a
+			href="statistics.jsp?<%=RequestParameter.Language.getParameterName()%>=HU&shortStatistics=true"><strong>Egyszer&#369;
+					statisztika k&eacute;sz&iacute;t&eacute;se</strong></a></td>
+		<td><a
+			href="statistics.jsp?<%=RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
+					statisztika k&eacute;sz&iacute;t&eacute;se</strong></a></td>
+		<td><a
+			href="../RegistrationServlet/exportStatistics?<%=RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
+					Statisztika Excelbe</strong></a></td>
+		<td></td>
 	</tr>
 </table>

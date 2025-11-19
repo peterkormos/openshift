@@ -41,103 +41,115 @@ if (show == null) {
 <script type="text/javascript" src="findUser.js"></script>
 <script src="jquery.min.js"></script>
 
-<body <%= request.getRequestURL().indexOf("localhost") > -1 ? "" : "style='background-color: #cff6c9;'" %>>
-<table style="border: 0px; width: 100%">
-	<tr>
-		<td style="width: 100%;">
-			<div>
-				<img style="vertical-align: middle; height: 25mm"
-					src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
+<body
+	<%=request.getRequestURL().indexOf("localhost") > -1 ? "" : "style='background-color: #cff6c9;'"%>>
+	<table style="border: 0px; width: 100%">
+		<tr>
+			<td style="width: 100%;">
+				<div>
+					<img style="vertical-align: middle; height: 25mm"
+						src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
 
-				<a href="../RegistrationServlet/inputForLogoUpload">Versenyhez
-					log&oacute; felt&ouml;lt&eacute;s</a>
-			</div>
-		</td>
+					<a href="../RegistrationServlet/inputForLogoUpload">Versenyhez
+						log&oacute; felt&ouml;lt&eacute;s</a>
+				</div>
+			</td>
 
-		<td style="width: 40px; text-align: right; vertical-align: top;">
-			<div class="tooltip">
-				<a href="../RegistrationServlet/logout"> <img
-					src="../icons/exit.png" height="30" align="center" /> <span
-					class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
-				</a>
-			</div>
-		</td>
-
-		<%
-		if (user.isSuperAdminUser()) {
-		%>
-		<td style="width: 40px; text-align: right; vertical-align: top;">
-			<form accept-charset="UTF-8" name="input" id="input"
-				action="../RegistrationServlet" method="post">
-				<input type="hidden" id="command" name="command" value=""> <input
-					type="hidden"
-					name="<%=RequestParameter.Language.getParameterName()%>" value="<%=languageCode %>>">
+			<td style="width: 40px; text-align: right; vertical-align: top;">
 				<div class="tooltip">
-					<a href="#"
-						onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
-						<img src="../icons/modify2.png" height="30" align="center" /><span
-						class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
+					<a href="../RegistrationServlet/logout"> <img
+						src="../icons/exit.png" height="30" align="center" /> <span
+						class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
 					</a>
 				</div>
-			</form>
-		</td>
-		<%
-		}
-		%>
-	</tr>
+			</td>
 
-	<tr>
-		<td style="width: 100%; text-align: left; vertical-align: top;"><FONT
-			COLOR='#ff0000'><b><%=show%></b></FONT></td>
-	</tr>
-</table>
+			<%
+			if (user.isSuperAdminUser()) {
+			%>
+			<td style="width: 40px; text-align: right; vertical-align: top;">
+				<form accept-charset="UTF-8" name="input" id="input"
+					action="../RegistrationServlet" method="post">
+					<input type="hidden" id="command" name="command" value="">
+					<input type="hidden"
+						name="<%=RequestParameter.Language.getParameterName()%>"
+						value="<%=languageCode%>>">
+					<div class="tooltip">
+						<a href="#"
+							onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
+							<img src="../icons/modify2.png" height="30" align="center" /><span
+							class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
+						</a>
+					</div>
+				</form>
+			</td>
+			<%
+			}
+			%>
+		</tr>
 
-<p></p>
+		<tr>
+			<td style="width: 100%; text-align: left; vertical-align: top;"><FONT
+				COLOR='#ff0000'><b><%=show%></b></FONT></td>
+		</tr>
+	</table>
 
-<table style="box-shadow: none" border="0">
-	<tr>
-		<th style="background: none">1 makettez&#337;...</th>
-		<td>
-			<form accept-charset="UTF-8" name="input" id="inputAtsorolas"
-				action="../RegistrationServlet" method="post">
-				<input type="hidden" name="command" id="commandAtsorolas"> <a
-					href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
-					bel&eacute;p&eacute;s</a> - <a
-					href="../RegistrationServlet/inputForPrint"> nevez&eacute;si
-					lapjainak nyomtat&aacute;sa </a> - <a
-					href="../RegistrationServlet/inputForPrint"> <a href="#"
-					-			onClick="document.getElementById('commandAtsorolas').value='inputForModifyModel';document.getElementById('inputAtsorolas').submit();">Makett
-						&aacute;tsorol&aacute;sa. </a> <input
-					placeholder="Makett sorsz&aacute;ma" type="number" name="modelID"
+	<p></p>
+
+	<form accept-charset="UTF-8" name="input" id="inputAtsorolas"
+		action="../RegistrationServlet" method="post">
+		<input type="hidden" name="command" id="commandAtsorolas">
+		<table style="box-shadow: none" border="1">
+			<tr>
+				<th colspan="2">1 makettez&#337;...</th>
+			</tr>
+			<tr>
+				<td><a href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
+						bel&eacute;p&eacute;s</a></td>
+				<td><a href="../RegistrationServlet/inputForPrint">
+						nevez&eacute;si lapjainak nyomtat&aacute;sa </a></td>
+			</tr>
+			<tr>
+				<td><a href="#"
+					onClick="document.getElementById('commandAtsorolas').value='inputForModifyModel';document.getElementById('inputAtsorolas').submit();">Makett
+						&aacute;tsorol&aacute;sa: </a></td>
+				<td><input placeholder="Makett sorsz&aacute;ma" type="number"
+					name="modelID"
 					onchange="document.getElementById('commandAtsorolas').value='inputForModifyModel'">
-				</a>
-			</form>
-		</td>
-	</tr>
-</table>
-<p>
-	<jsp:include page="ADMIN_elonevezes.jsp" />
-</p>
+				</td>
+			</tr>
+		</table>
+	</form>
+	<p>
+		<jsp:include page="ADMIN_elonevezes.jsp" />
+	</p>
 
-<form accept-charset="UTF-8" name="input"
-	action="../RegistrationServlet" method="post">
-	<input type="hidden" name="command" value="setSystemParameter">
-	<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
-	<textarea name="paramValue" cols="100" rows="3"><%=servlet.getSystemMessage(show)%></textarea>
-	<input name="setSystemParameter" type="submit"
-		value="Rendszer&#252;zenet be&aacute;ll&iacute;t&aacute;sa">
-</form>
+	<form accept-charset="UTF-8" name="input"
+		action="../RegistrationServlet" method="post">
+		<input type="hidden" name="command" value="setSystemParameter">
+		<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
+		<table style="box-shadow: none" border="1">
+			<tr>
+				<th><input name="setSystemParameter" type="submit"
+					value="Rendszer&#252;zenet be&aacute;ll&iacute;t&aacute;sa"></th>
+			</tr>
+			<tr>
+				<td><textarea name="paramValue" cols="100" rows="3"><%=servlet.getSystemMessage(show)%></textarea>
+				</td>
+			</tr>
+		</table>
+	</form>
 
-<p>
-	<jsp:include page="ADMIN_nyomtatas.jsp" />
-</p>
-<p>
-	<jsp:include page="ADMIN_kategoria.jsp" />
-</p>
-<p>
-	<jsp:include page="ADMIN_lekerdezes.jsp" />
-</p>
-<p>
-	<jsp:include page="ADMIN_adatkezeles.jsp" />
-</p>	
+	<p>
+		<jsp:include page="ADMIN_nyomtatas.jsp" />
+	</p>
+	<p>
+		<jsp:include page="ADMIN_kategoria.jsp" />
+	</p>
+	<p>
+		<jsp:include page="ADMIN_lekerdezes.jsp" />
+	</p>
+	<p>
+		<jsp:include page="ADMIN_adatkezeles.jsp" />
+	</p>
 </body>

@@ -9,7 +9,16 @@ if (show == null) {
 	show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 }
 %>
-
+<p>
+<a href="../RegistrationServlet/encodeCategorGroups">Kateg&oacute;riacsoport
+	k&oacute;dol&aacute;sa</a>
+-
+<a href="../RegistrationServlet/encodeCategories">Kateg&oacute;ria
+	k&oacute;dol&aacute;sa</a>
+-
+<a href="../RegistrationServlet/encodeModels">Makett
+	k&oacute;dol&aacute;sa</a>
+</p>
 <em><strong>Hibakezel&eacute;s..</strong>.</em>
 <p>
 	<a href="../RegistrationServlet/exceptionHistory">Exception history</a>
