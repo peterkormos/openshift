@@ -1386,7 +1386,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void writeCategoryModificationErrorResponse(final HttpServletResponse response) throws IOException {
 		writeErrorResponse(response,
-				"Most m&aacute;r nem lehet m&oacute;dos&iacute;tani! El&#337;sz&ouml;r az 'El&#337;nevez&eacute;s v&eacute;ge' vagy 'Helysz&iacute;ni m&oacute;d' linkre kell kattintani az admin oldalon.");
+				"Most m&aacute;r nem lehet m&oacute;dos&iacute;tani! El&#337;sz&ouml;r az 'El&#337;nevez&eacute;s v&eacute;ge' linkre kell kattintani az admin oldalon.");
 	}
 
 	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
