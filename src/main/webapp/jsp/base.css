@@ -57,6 +57,12 @@ border-collapse: collapse; empty-cells: show;
 	padding-left: 5px;
 }
 
+/*
+tr:nth-child(even) {
+  background-color: #F6F4F0;
+}
+*/
+
 th {
 	background: lightblue;
 	padding: 5px;
