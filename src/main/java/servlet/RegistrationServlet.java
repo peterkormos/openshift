@@ -1435,6 +1435,10 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void getCategoryTable(final StringBuilder buff, final List<Category> categories,
 			final ResourceBundle language) throws SQLException {
+		buff.append("<head>\n");
+		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
+		buff.append("</head>\n");
+
 		buff.append("<table border=1>");
 		buff.append("<tr>");
 		buff.append("<th>CategoryID</th>");
@@ -1517,6 +1521,10 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 
 		final List<User> users = servletDAO.getUsers();
+
+		buff.append("<head>\n");
+		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
+		buff.append("</head>\n");
 
 		buff.append("<table border=1>");
 		buff.append("<tr>");
@@ -1664,6 +1672,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<html>");
 		buff.append("<head>");
 		buff.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
+		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
 		buff.append("</head>");
 		buff.append("<body>");
 
@@ -2242,7 +2251,17 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 		final ResourceBundle language = getLanguageForCurrentUser(request);
 
-		buff.append("<html><body><table border=1>");
+		buff.append("<head>\n");
+		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
+		buff.append("</head>\n");
+		buff.append("<body><table border=1>");
+		buff.append("<tr>");
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append(language.getString("group"));
+		buff.append("</th>");
+		buff.append("<th>");
+		buff.append("</th>");
+		buff.append("</tr>");
 
 		final String show = getShowFromSession(request);
 
@@ -2262,7 +2281,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("</tr>");
 		}
 
-		buff.append("</table></body></html>");
+		buff.append("</table></body>");
 
 		ServletUtil.writeResponse(response, buff);
 	}
