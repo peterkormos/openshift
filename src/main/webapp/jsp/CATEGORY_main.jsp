@@ -43,7 +43,7 @@ if (show == null) {
 
 <body
 	<%=request.getRequestURL().indexOf("localhost") > -1 ? "" : "style='background-color: #cff6c9;'"%>>
-	<table style="border: 0px; width: 100%">
+	<table style='border: 0px; width: 100%'>
 		<tr>
 			<td style="width: 100%;">
 				<div>
@@ -96,13 +96,16 @@ if (show == null) {
 
 	<p></p>
 
-	<form accept-charset="UTF-8" name="input" id="inputAtsorolas"
+	<form accept-charset="UTF-8" name="input" id="input4"
 		action="../RegistrationServlet" method="post">
-		<input type="hidden" name="command" id="commandAtsorolas">
-		<table style="box-shadow: none" border="1">
+		<input type="hidden" id="command4" name="command" value=""> <input
+			type="hidden" id="paramName" name="paramName" value="">
+
+		<table style="box-shadow: none" border="0">
 			<tr>
-				<th colspan="2">1 makettez&#337;...</th>
+				<th colspan="5">1 makettez&#337;...</th>
 			</tr>
+
 			<tr>
 				<td><a href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
 						bel&eacute;p&eacute;s</a></td>
@@ -111,45 +114,72 @@ if (show == null) {
 			</tr>
 			<tr>
 				<td><a href="#"
-					onClick="document.getElementById('commandAtsorolas').value='inputForModifyModel';document.getElementById('inputAtsorolas').submit();">Makett
+					onClick="document.getElementById('command4').value='inputForModifyModel';document.getElementById('input4').submit();">Makett
 						&aacute;tsorol&aacute;sa: </a></td>
 				<td><input placeholder="Makett sorsz&aacute;ma" type="number"
 					name="modelID"
-					onchange="document.getElementById('commandAtsorolas').value='inputForModifyModel'">
+					onchange="document.getElementById('command4').value='inputForModifyModel'">
 				</td>
 			</tr>
-		</table>
-	</form>
-	<p>
-		<jsp:include page="ADMIN_elonevezes.jsp" />
-	</p>
 
-	<form accept-charset="UTF-8" name="input"
-		action="../RegistrationServlet" method="post">
-		<input type="hidden" name="command" value="setSystemParameter">
-		<input type="hidden" name="paramName" value="SYSTEMMESSAGE">
-		<table style="box-shadow: none" border="1">
 			<tr>
-				<th><input name="setSystemParameter" type="submit"
+				<td colspan="5">&nbsp;</td>
+			</tr>
+
+			<tr>
+				<th colspan="5">El&otilde;nevez&eacute;s</th>
+			</tr>
+			<jsp:include page="ADMIN_elonevezes.jsp" />
+
+			<tr>
+				<td colspan="5">&nbsp;</td>
+			</tr>
+
+			<tr>
+				<th colspan="5"><input name="setSystemParameter" type="submit"
+					onClick="document.getElementById('paramName').value='SYSTEMMESSAGE';document.getElementById('command4').value='setSystemParameter';"
 					value="Rendszer&#252;zenet be&aacute;ll&iacute;t&aacute;sa"></th>
 			</tr>
 			<tr>
-				<td><textarea name="paramValue" cols="100" rows="3"><%=servlet.getSystemMessage(show)%></textarea>
+				<td colspan="2"><textarea name="paramValue" cols="100" rows="3"><%=servlet.getSystemMessage(show)%></textarea>
 				</td>
 			</tr>
+
+			<tr>
+				<td colspan="5">&nbsp;</td>
+			</tr>
+
+			<tr>
+				<th colspan="5">Nyomtat&aacute;s</th>
+			</tr>
+			<jsp:include page="ADMIN_nyomtatas.jsp" />
+
+
+			<tr>
+				<td colspan="5">&nbsp;</td>
+			</tr>
+
+			<tr>
+				<th colspan="5">&nbsp;</th>
+			</tr>
+			<jsp:include page="ADMIN_kategoria.jsp" />
+
+			<tr>
+				<td colspan="5">&nbsp;</td>
+			</tr>
+
+			<jsp:include page="ADMIN_lekerdezes.jsp" />
+
+			<tr>
+				<td colspan="5">&nbsp;</td>
+			</tr>
+			<tr>
+				<th colspan="5">Adatkezel&eacute;s</th>
+			</tr>
+
+			<p>
+				<jsp:include page="ADMIN_adatkezeles.jsp" />
+			</p>
 		</table>
 	</form>
-
-	<p>
-		<jsp:include page="ADMIN_nyomtatas.jsp" />
-	</p>
-	<p>
-		<jsp:include page="ADMIN_kategoria.jsp" />
-	</p>
-	<p>
-		<jsp:include page="ADMIN_lekerdezes.jsp" />
-	</p>
-	<p>
-		<jsp:include page="ADMIN_adatkezeles.jsp" />
-	</p>
 </body>

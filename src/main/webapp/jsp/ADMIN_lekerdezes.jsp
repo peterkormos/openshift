@@ -22,15 +22,12 @@ if (user == null || !user.isAdminUser()) {
 }
 %>
 
-<table style="box-shadow: none" border="1">
 	<tr>
-		<th colspan="4">Lek&eacute;rdez&eacute;sek</th>
+		<th colspan="5">Lek&eacute;rdez&eacute;sek</th>
 	</tr>
 	<tr>
 		<td><a href="../RegistrationServlet/exportExcel"><strong>&Ouml;sszes
 					benevezett makett Excelbe</strong></a></td>
-		<td><a href="../RegistrationServlet/exportCategoryExcel"><strong>&Ouml;sszes
-					kateg&oacute;ria Excelbe</strong></a></td>
 		<td><a href="listAllModels.jsp"> &Ouml;sszes benevezett
 				makett list&aacute;z&aacute;sa</a></td>
 		<td><a href="customQuery.jsp">Egyedi
@@ -51,6 +48,4 @@ if (user == null || !user.isAdminUser()) {
 		<td><a
 			href="../RegistrationServlet/exportStatistics?<%=RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
 					Statisztika Excelbe</strong></a></td>
-		<td></td>
 	</tr>
-</table>

@@ -1,4 +1,3 @@
-<table style="box-shadow: none; border-collapse: collapse;" border="1">
 	<tr>
 		<th>Kateg&oacute;riacsoport</th>
 		<td><a href="addCategoryGroup.jsp">&uacute;j
@@ -18,7 +17,6 @@
 		<td><a href="../RegistrationServlet/listCategories">t&ouml;rl&eacute;se</a></td>
 		<td><a href="../RegistrationServlet/listCategories">list&aacute;z&aacute;sa</a></td>
 	</tr>
-
 	<tr>
 		<th>Import</th>
 		<form accept-charset="UTF-8" action="../RegistrationServlet"
@@ -38,4 +36,8 @@
 			</td>
 		</form>
 	</tr>
-</table>
+	<tr>
+		<th>Export</th>
+		<td><a href="../RegistrationServlet/exportCategoryExcel"><strong>&Ouml;sszes
+					kateg&oacute;ria Excelbe</strong></a></td>
+	</tr>
