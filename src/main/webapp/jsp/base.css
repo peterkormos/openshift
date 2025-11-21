@@ -286,7 +286,7 @@ animation-iteration-count: 5;
 
         .input-caption {
             position: absolute;
-            left: 5px; /* Align with input padding */
+            left: 10px; /* Align with input padding */
             top: 50%; /* Start vertically centered */
             transform: translateY(-35%); /* Adjust for vertical centering */
             color: var(--text-color-dark);
