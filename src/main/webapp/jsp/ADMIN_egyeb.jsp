@@ -80,6 +80,6 @@ if (show == null) {
 </form>
 
 <p>
-	<jsp:include page="ADMIN_mesteroklevel.jsp" />
+	<jsp:include page="ADMIN_mester.jsp" />
 </p>
 

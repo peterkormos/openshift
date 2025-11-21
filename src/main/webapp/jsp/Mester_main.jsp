@@ -49,6 +49,6 @@ final ResourceBundle language = servlet.getLanguageForCurrentUser(request);
 		</tr>
 	</table>
 	<p>
-		<jsp:include page="ADMIN_mesteroklevel.jsp" />
+		<jsp:include page="ADMIN_mester.jsp" />
 	</p>
 </body>

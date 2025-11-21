@@ -21,7 +21,7 @@ import servlet.ServletUtil;
 @Table(name = "MAK_USERS")
 public class User extends Record {
 	public static enum AdminLanguages {
-		ADMIN, CATEGORY, MesterOklevel
+		ADMIN, CATEGORY, Mester
 	};
 
 	private static final long serialVersionUID = -8059689879773108457l;

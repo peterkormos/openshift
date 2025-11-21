@@ -16,8 +16,7 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 	action="../RegistrationServlet/saveModelClass" method="post">
 	<table style="border: 0px;">
 		<tr>
-			<th colspan="2" style='white-space: nowrap'>Mesteroklevelesek
-				rögzítése</th>
+			<th colspan="2" style='white-space: nowrap'>Mesterek rögzítése</th>
 		</tr>
 		<tr>
 			<td>Makettez&#337; neve:</td>
