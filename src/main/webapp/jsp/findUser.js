@@ -1,6 +1,6 @@
 function sendRequest()
 {
-	var url = "../RegistrationServlet?command=getSimilarLastNames&lastname=" + document.getElementById('fullnameID').value;
+	var url = "../RegistrationServlet?command=getSimilarLastNames&lastname=" + encodeURIComponent(document.getElementById('fullnameID').value);
 	var req = false;
 
 	if (window.XMLHttpRequest) 
@@ -116,6 +116,7 @@ function parseXML(xmlstring)
 		}
 		
 		var list = document.getElementById('selectID');
+		list.length = 0;
 		list.add(new Option("-", userID),  null);
 		list.options[list.options.length-1].innerHTML = lastName + " " + firstName + " (" + yearOfBirth + " - " + country + " - " + city + ")";
 	}
