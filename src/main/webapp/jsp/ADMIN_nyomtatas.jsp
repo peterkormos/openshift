@@ -38,13 +38,13 @@ if (show == null) {
 	<td><a href="#"
 		onClick="document.getElementById('command4').value='printAllModels';document.getElementById('input4').submit();">
 			Lapt&ouml;r&eacute;s nyomtat&aacute;skor</a></td>
-	<td>igen: <input type="radio"
-		name="<%=RegistrationServlet.SystemParameter.PageBreakAtPrint.name()%>"
-		value="<%=Boolean.TRUE%>" checked='checked'> nem: <input
-		type="radio"
-		name="<%=RegistrationServlet.SystemParameter.PageBreakAtPrint.name()%>"
-		value="<%=Boolean.FALSE%>">
-	</td>
+	<td><label>igen: <input type="radio"
+			name="<%=RegistrationServlet.SystemParameter.PageBreakAtPrint.name()%>"
+			value="<%=Boolean.TRUE%>" checked='checked'></label> <label>nem:
+			<input type="radio"
+			name="<%=RegistrationServlet.SystemParameter.PageBreakAtPrint.name()%>"
+			value="<%=Boolean.FALSE%>">
+	</label></td>
 </tr>
 <!--
 -
