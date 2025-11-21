@@ -92,7 +92,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.11.18.";
+	public String VERSION = "2025.11.21.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -1421,7 +1421,10 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void listUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		ServletUtil.writeResponse(response, getUserTable(getUser(request)));
+		User user = getUser(request);
+		if(user.isSuperAdminUser()) {
+			ServletUtil.writeResponse(response, getUserTable(user));
+		}
 	}
 
 	public void listCategories(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1615,7 +1618,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("</td>");
 
 			buff.append("<td align='center' >");
-			buff.append(user.getModelClass());
+			buff.append(user.getModelClass().stream().map(mc -> ServletUtil.encodeString(mc.toString())).collect(Collectors.toList()));
 			buff.append("</td>");
 
 			buff.append("<td align='center' >");

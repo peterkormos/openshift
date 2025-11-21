@@ -90,7 +90,7 @@ function parseXML(xmlstring)
 			var fieldName = fields[j].getElementsByTagName("string")[0].firstChild.nodeValue;	
 			
 			
-			if(fieldName == 'userID')
+			if(fieldName == 'id')
 				userID = getIntValue(fields[j]);
 
 			if(fieldName == 'lastName')

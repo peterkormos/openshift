@@ -111,15 +111,17 @@ public class ServletDAO extends HibernateDAO
   public void saveModelClass(int userID, ModelClass modelClass) throws SQLException
   {
 	  User user = get(userID, User.class);
-	user.getModelClass().add(modelClass);
+	List<ModelClass> modelClass2 = user.getModelClass();
+	if(!modelClass2.contains(modelClass)) {
+		modelClass2.add(modelClass);
+	}
 
 	String modelClasses = "";
-	for (final ModelClass currentModelClass : user.getModelClass())
+	for (final ModelClass currentModelClass : modelClass2)
 	{
 	  modelClasses += currentModelClass.name() + ",";
 	}
 	user.setModelClasses(modelClasses);
-
 	update(user);
   }
 

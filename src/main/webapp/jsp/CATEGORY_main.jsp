@@ -98,8 +98,11 @@ if (show == null) {
 
 	<form accept-charset="UTF-8" name="input" id="input4"
 		action="../RegistrationServlet" method="post">
-		<input type="hidden" id="command4" name="command" value=""> <input
+		<input type="hidden" id="command4" name="command" value=""> 
+		<input
 			type="hidden" id="paramName" name="paramName" value="">
+		<input
+			type="hidden" id="paramValue" name="paramValue" value="">
 
 		<table style="box-shadow: none" border="0">
 			<tr>
