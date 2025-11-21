@@ -1,9 +1,11 @@
 package datatype;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,12 +15,15 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import servlet.RegistrationServlet;
+import servlet.ServletUtil;
 
 @Entity
 @Table(name = "MAK_USERS")
 public class User extends Record {
-	public static enum AdminLanguages { ADMIN, CATEGORY};
-	
+	public static enum AdminLanguages {
+		ADMIN, CATEGORY, MesterOklevel
+	};
+
 	private static final long serialVersionUID = -8059689879773108457l;
 	@Column(name = "USER_PASSWORD")
 	public String password;
@@ -44,10 +49,10 @@ public class User extends Record {
 	public String country;
 	@Column(name = "MODEL_CLASS")
 	private String modelClasses;
-    
-    @Column
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
+
+	@Column
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
 
 	public static final String LOCAL_USER = "_LOCAL_";
 
@@ -142,8 +147,9 @@ public class User extends Record {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	  @Deprecated
-	  public User() {
+
+	@Deprecated
+	public User() {
 	}
 
 	public User(String language) {
@@ -180,20 +186,24 @@ public class User extends Record {
 		return returned;
 	}
 	
+	public String getHTMLModelClass() {
+		return getModelClass().stream().map(mc -> ServletUtil.encodeString(mc.toString())).collect(Collectors.toList()).toString();
+	}
+
 	public void setModelClasses(String modelClasses) {
 		this.modelClasses = modelClasses;
 	}
 
 	@Override
 	public String toString() {
-		return "User [ID=" + id + ", password=" + password + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", yearOfBirth=" + yearOfBirth + ", city=" + city + ", address=" + address + ", telephone="
+		return "User [ID=" + id + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", yearOfBirth=" + yearOfBirth + ", city=" + city + ", address=" + address + ", telephone="
 				+ telephone + ", email=" + email + ", enabled=" + enabled + ", language=" + language + ", country="
 				+ country + ", modelClass=" + modelClasses + "]";
 	}
 
 	public int getAge() {
-		return Calendar.getInstance().get(Calendar.YEAR) - yearOfBirth-1;
+		return Calendar.getInstance().get(Calendar.YEAR) - yearOfBirth - 1;
 	}
 
 	public boolean isLocalUser() {
@@ -201,15 +211,20 @@ public class User extends Record {
 	}
 
 	public boolean isAdminUser() {
-		return isSuperAdminUser() || isCategoryAdminUser();
+		return Arrays.asList(AdminLanguages.values()).stream().map(AdminLanguages::name).collect(Collectors.toList())
+				.contains(this.language);
 	}
 
 	public boolean isSuperAdminUser() {
-		return AdminLanguages.ADMIN.name().equals(language);
+		return isAdminUser(AdminLanguages.ADMIN);
 	}
 
 	public boolean isCategoryAdminUser() {
-		return AdminLanguages.CATEGORY.name().equals(language);
+		return isAdminUser(AdminLanguages.CATEGORY);
+	}
+
+	public boolean isAdminUser(AdminLanguages language) {
+		return language.name().equals(this.language);
 	}
 
 	@Id

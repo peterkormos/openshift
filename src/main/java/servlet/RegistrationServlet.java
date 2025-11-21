@@ -893,13 +893,7 @@ public class RegistrationServlet extends HttpServlet {
 		
 		sheet.addValidationData(ExcelUtil.getDataValidation(rows, 3, new String[]{"HAMIS", "IGAZ", "FALSE", "TRUE"}));
 		
-		List<String> modelClasses = new LinkedList<>();
-		for (ModelClass group : ModelClass.values()) {
-			modelClasses.add(group.toString());
-		}
-		for (ModelClass group : ModelClass.values()) {
-			modelClasses.add(group.name());
-		}
+		List<String> modelClasses = getModelClassList();
 		sheet.addValidationData(ExcelUtil.getDataValidation(rows, 4, modelClasses.toArray(new String[modelClasses.size()])));
 
 		
@@ -914,6 +908,17 @@ public class RegistrationServlet extends HttpServlet {
 
 
 		workbook.writeTo(response.getOutputStream());
+	}
+
+	public final static List<String> getModelClassList() {
+		List<String> modelClasses = new LinkedList<>();
+		for (ModelClass group : ModelClass.values()) {
+			modelClasses.add(group.toString());
+		}
+		for (ModelClass group : ModelClass.values()) {
+			modelClasses.add(group.name());
+		}
+		return modelClasses;
 	}
 
 	public static List<Model> getModelsForShow(final String show, final List<Model> models,
@@ -1392,7 +1397,8 @@ public class RegistrationServlet extends HttpServlet {
 	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final int userID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "userID"));
 
-		servletDAO.saveModelClass(userID, ModelClass.of(ServletUtil.getRequestAttribute(request, "modelClass")));
+		servletDAO.saveModelClass(userID,
+				ModelClass.of(StringEscapeUtils.unescapeHtml4(ServletUtil.getRequestAttribute(request, "modelClass"))));
 
 		redirectToMainPage(request, response);
 	}
@@ -1618,7 +1624,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("</td>");
 
 			buff.append("<td align='center' >");
-			buff.append(user.getModelClass().stream().map(mc -> ServletUtil.encodeString(mc.toString())).collect(Collectors.toList()));
+			buff.append(user.getHTMLModelClass());
 			buff.append("</td>");
 
 			buff.append("<td align='center' >");

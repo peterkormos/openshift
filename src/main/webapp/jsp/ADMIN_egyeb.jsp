@@ -79,21 +79,7 @@ if (show == null) {
 	<input type="submit" value="Küld">
 </form>
 
-<form accept-charset="UTF-8" name="input" id="input5"
-	action="../RegistrationServlet" method="post">
-	<input type="hidden" id="command5" name="command" value="">
-	Mesteroklevelesek rögzítése. Makettez&#337; neve: <input
-		name="lastname" type="text" id="fullnameID" onChange="sendRequest();">
-	- <select id="selectID" name="userID">
-	</select> Szakoszt&aacute;ly: <select name="modelClass">
-		<%
-		for (ModelClass mc : ModelClass.values()) {
-		%>
-		<option value='<%=mc.name()%>'><%=mc.name()%></option>
-		<%
-		}
-		%>
-	</select> <a href="#"
-		onClick="document.getElementById('command5').value='saveModelClass';this.parentNode.submit();">Szakoszt&aacute;ly
-		ment&eacute;se</a>
-</form>
+<p>
+	<jsp:include page="ADMIN_mesteroklevel.jsp" />
+</p>
+

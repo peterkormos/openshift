@@ -117,7 +117,7 @@ function parseXML(xmlstring)
 		
 		var list = document.getElementById('selectID');
 		list.add(new Option("-", userID),  null);
-		list.options[list.options.length-1].innerHTML = lastName + " " + firstName + " (" + yearOfBirth + " - " + city + ")";
+		list.options[list.options.length-1].innerHTML = lastName + " " + firstName + " (" + yearOfBirth + " - " + country + " - " + city + ")";
 	}
 }
 

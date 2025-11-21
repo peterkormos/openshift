@@ -108,6 +108,11 @@ public class ServletDAO extends HibernateDAO
 	  return getList(User.class, "enabled=true order by lastName, firstName");
   }
 
+  public List<User> getMasterAwardedUsers() throws SQLException
+  {
+	  return getList(User.class, "enabled=true and modelClasses is not null order by lastName, firstName");
+  }
+  
   public void saveModelClass(int userID, ModelClass modelClass) throws SQLException
   {
 	  User user = get(userID, User.class);

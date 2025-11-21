@@ -13,7 +13,7 @@ class EnumGroup {
 					return group;
 				}
 			}
-			throw new IllegalArgumentException("Wrong age: " + name);
+			throw new IllegalArgumentException("Wrong name [" + name + "] for enum class: " + c.getName());
 		}
 	}
 }

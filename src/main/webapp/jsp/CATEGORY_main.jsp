@@ -104,7 +104,7 @@ if (show == null) {
 		<input
 			type="hidden" id="paramValue" name="paramValue" value="">
 
-		<table style="box-shadow: none" border="0">
+		<table style="box-shadow: none; border: 0px;">
 			<tr>
 				<th colspan="5">1 makettez&#337;...</th>
 			</tr>
