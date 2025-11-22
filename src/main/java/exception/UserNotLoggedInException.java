@@ -1,6 +1,6 @@
 package exception;
 
-public class UserNotLoggedInException extends Exception {
+public class UserNotLoggedInException extends IllegalStateException {
 
 	private static final long serialVersionUID = 9015168831062648237L;
 

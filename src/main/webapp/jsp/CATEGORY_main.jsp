@@ -32,8 +32,8 @@ if (show == null) {
 		show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 	else {
 		show = shows.get(0);
-		session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
 	}
+	session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
 }
 %>
 

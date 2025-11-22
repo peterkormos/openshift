@@ -30,11 +30,11 @@ if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameterName))
 		<option value="<%=request.getParameter("selectValue")%>" selected><%=request.getParameter("selectLabel")%></option>
 		<option value="">-------</option>
 		<%
-		if (user != null && user.isSuperAdminUser()) {
+		if (user != null && RegistrationServlet.isAdminSession(session)) {
 		%>
 
-		<option value="<%=User.AdminLanguages.ADMIN%>"><%=User.AdminLanguages.ADMIN%></option>
-		<option value="<%=User.AdminLanguages.CATEGORY%>"><%=User.AdminLanguages.CATEGORY%></option>
+		<option value="<%=User.AdminTypes.SuperAdmin.getLanguage()%>"><%=User.AdminTypes.SuperAdmin%></option>
+		<option value="<%=User.AdminTypes.ShowAdmin.getLanguage()%>"><%=User.AdminTypes.ShowAdmin%></option>
 		<%
 		}
 		%>

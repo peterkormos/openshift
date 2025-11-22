@@ -1,6 +1,6 @@
 package exception;
 
-public class MissingServletConfigException extends Exception {
+public class MissingServletConfigException extends IllegalArgumentException {
 
 	private static final long serialVersionUID = -958059770669733876L;
 

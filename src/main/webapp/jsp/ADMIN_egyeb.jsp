@@ -42,7 +42,7 @@ if (show == null) {
 	action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="directRegister"> <input
 		type="hidden" name="<%=RequestParameter.Language.getParameterName()%>"
-		value="<%=User.AdminLanguages.CATEGORY.name()%>"> <input
+		value="<%=User.AdminTypes.ShowAdmin.getLanguage()%>"> <input
 		type="hidden" name="country" value="HU"> <input type="hidden"
 		name="city" value="<%=show%>"> <input type="hidden"
 		name="gender" value="<%=Gender.Male.name()%>"> <input

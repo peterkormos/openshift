@@ -20,11 +20,24 @@ import servlet.ServletUtil;
 @Entity
 @Table(name = "MAK_USERS")
 public class User extends Record {
-	public static enum AdminLanguages {
-		ADMIN, CATEGORY, Mester
+	public static enum AdminTypes {
+		SuperAdmin("ADMIN"), ShowAdmin("CATEGORY"), MasterModelerAdmin("Mester");
+
+		private String language;
+
+		AdminTypes(String language) {
+			this.language = language;
+		}
+		
+		public String getLanguage() {
+			return language;
+		}
 	};
 
+	public static final String LOCAL_USER = "_LOCAL_";
+
 	private static final long serialVersionUID = -8059689879773108457l;
+
 	@Column(name = "USER_PASSWORD")
 	public String password;
 	@Column(name = "FIRST_NAME")
@@ -53,8 +66,6 @@ public class User extends Record {
 	@Column
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
-
-	public static final String LOCAL_USER = "_LOCAL_";
 
 	public String getFullName() {
 		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(firstName) ? lastName : lastName + " " + firstName;
@@ -211,20 +222,20 @@ public class User extends Record {
 	}
 
 	public boolean isAdminUser() {
-		return Arrays.asList(AdminLanguages.values()).stream().map(AdminLanguages::name).collect(Collectors.toList())
+		return Arrays.asList(AdminTypes.values()).stream().map(AdminTypes::getLanguage).collect(Collectors.toList())
 				.contains(this.language);
 	}
 
 	public boolean isSuperAdminUser() {
-		return isAdminUser(AdminLanguages.ADMIN);
+		return isAdminUser(AdminTypes.SuperAdmin);
 	}
 
-	public boolean isCategoryAdminUser() {
-		return isAdminUser(AdminLanguages.CATEGORY);
+	public boolean isShowAdminUser() {
+		return isAdminUser(AdminTypes.ShowAdmin);
 	}
 
-	public boolean isAdminUser(AdminLanguages language) {
-		return language.name().equals(this.language);
+	public boolean isAdminUser(AdminTypes adminType) {
+		return adminType.getLanguage().equals(this.language);
 	}
 
 	@Id

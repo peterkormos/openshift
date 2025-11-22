@@ -1,6 +1,6 @@
 package exception;
 
-public class MissingRequestParameterException extends Exception {
+public class MissingRequestParameterException extends IllegalArgumentException {
 
 	public MissingRequestParameterException(String parameter) {
 		super(parameter + " is not set!");
