@@ -130,6 +130,15 @@ if (show == null) {
 			</tr>
 
 			<tr>
+				<th colspan="5">Nyomtat&aacute;s</th>
+			</tr>
+			<jsp:include page="ADMIN_nyomtatas.jsp" />
+
+			<tr>
+				<td colspan="5">&nbsp;</td>
+			</tr>
+
+			<tr>
 				<th colspan="5">El&otilde;nevez&eacute;s</th>
 			</tr>
 			<jsp:include page="ADMIN_elonevezes.jsp" />
@@ -153,17 +162,7 @@ if (show == null) {
 			</tr>
 
 			<tr>
-				<th colspan="5">Nyomtat&aacute;s</th>
-			</tr>
-			<jsp:include page="ADMIN_nyomtatas.jsp" />
-
-
-			<tr>
-				<td colspan="5">&nbsp;</td>
-			</tr>
-
-			<tr>
-				<th colspan="5">&nbsp;</th>
+				<th colspan="5">Kateg&oacute;ri&aacute;k</th>
 			</tr>
 			<jsp:include page="ADMIN_kategoria.jsp" />
 
