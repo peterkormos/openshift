@@ -21,8 +21,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Enumeration;
@@ -42,7 +40,6 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -60,6 +57,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -86,7 +84,6 @@ import exception.EmailNotFoundException;
 import exception.MissingRequestParameterException;
 import exception.MissingServletConfigException;
 import exception.UserNotLoggedInException;
-import servlet.RegistrationServlet.SystemParameter;
 import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import tools.InitDB;
@@ -95,7 +92,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.11.22.";
+	public String VERSION = "2025.12.05.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -884,6 +881,41 @@ public class RegistrationServlet extends HttpServlet {
 		response.setContentType("application/vnd.ms-excel");
 		u.writeTo(response.getOutputStream());
 	}
+	
+	public void exportMasters(final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
+
+		response.setContentType("application/vnd.ms-excel");
+
+		List<User> users = servletDAO.getMasterAwardedUsers();
+
+		List<List<Object>> rowsInExcel = users.stream().map(moUser -> {
+			ArrayList<Object> returned = new ArrayList<>();
+			returned.add(StringEscapeUtils.unescapeHtml4(moUser.getFullName()));
+			returned.add(StringEscapeUtils.unescapeHtml4(String.valueOf(moUser.getYearOfBirth())));
+			returned.add(StringEscapeUtils.unescapeHtml4(moUser.getCountry()));
+			returned.add(StringEscapeUtils.unescapeHtml4(moUser.getCity()));
+			returned.add(StringEscapeUtils.unescapeHtml4(String.valueOf(moUser.getId())));
+			returned.add(StringEscapeUtils.unescapeHtml4(moUser.getHTMLModelClass()));
+			return returned;
+
+		}).collect(Collectors.toList());
+
+		ResourceBundle language = getLanguageForCurrentUser(request);
+
+		Workbook workbook = ExcelUtil.generateExcelTableWithHeaders("model",
+				Arrays.asList(StringEscapeUtils.unescapeHtml4(language.getString("name")),
+						StringEscapeUtils.unescapeHtml4(language.getString("year.of.birth")),
+						StringEscapeUtils.unescapeHtml4(language.getString("country")), 
+						StringEscapeUtils.unescapeHtml4(language.getString("city")), 
+						StringEscapeUtils.unescapeHtml4(language.getString("userID")), 
+						StringEscapeUtils.unescapeHtml4("Szakoszt&aacute;ly")
+						),
+				rowsInExcel);
+
+		workbook.writeTo(response.getOutputStream());
+	}
 
 	public void exportCategoryExcel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
@@ -956,7 +988,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void importData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
 		final DiskFileItemFactory factory = new DiskFileItemFactory();
 		final ServletFileUpload upload = new ServletFileUpload(factory);
@@ -986,6 +1018,8 @@ public class RegistrationServlet extends HttpServlet {
 			final StringBuilder buff = processUploadedCategoryExcel(request, item);
 			ServletUtil.writeResponse(response, buff);
 			return;
+		} else if ("mastersFile".equals(item.getFieldName())) {
+			setNoticeInSession(getHttpSession(request), processUploadedMastersExcel(request, item));
 		}
 
 		redirectToMainPage(request, response);
@@ -1007,6 +1041,61 @@ public class RegistrationServlet extends HttpServlet {
 			modelID = getLogoIDForShow(getShowFromSession(request));
 		}
 		servletDAO.saveImage(modelID, new ByteArrayInputStream(output.toByteArray()));
+	}
+
+	private String processUploadedMastersExcel(final HttpServletRequest request, final FileItem item)
+			throws IOException {
+		final StringBuilder buff = new StringBuilder();
+
+		org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(item.getInputStream());
+		Sheet s = wb.getSheetAt(0);
+
+		// skip first (header) row...
+		buff.append(s.getLastRowNum() + " sor feldolgozása.<p>");
+		for (int i = 1; i < s.getLastRowNum() + 1; i++) {
+			Row row = s.getRow(i);
+
+			// 1. column
+			final String fullNameName = ServletUtil.encodeString(row.getCell(0).getStringCellValue());
+			// 2. column
+			final String yearOfBirth = row.getCell(1).getStringCellValue();
+			// 3. column
+			final String country  = ServletUtil.encodeString(row.getCell(2).getStringCellValue());
+			// 4. column
+			final String city  = ServletUtil.encodeString(row.getCell(3).getStringCellValue());
+
+			// 5. column
+			Cell userIdCell = row.getCell(4);
+			int userID;
+					
+			try {
+				userID = (int)userIdCell.getNumericCellValue();
+			} catch (Exception e) {
+				userID = Integer.parseInt(userIdCell.getStringCellValue());
+			}
+			final int userIDFinal = userID;
+			
+			// 6. column
+			String stringCellValue = row.getCell(5).getStringCellValue().trim();
+			if(stringCellValue.isEmpty()) {
+				continue;
+			}
+			ModelClass.fromHTMLModelClasses(stringCellValue).forEach(mc -> {
+				try {
+					User user = servletDAO.get(userIDFinal, User.class);
+					boolean addedNewClass = servletDAO.saveModelClass(user.getId(), mc);
+					if (addedNewClass) {
+						buff.append(user.getFullName() + " - " + user.getYearOfBirth() + " - " + user.getCountry()
+								+ " - " + user.getCity() + " - " + user.getId() + ": "
+								+ ServletUtil.encodeString(mc.getTitle()) + " mentése.<br>");
+					}
+				} catch (SQLException e) {
+					logger.error("", e);
+				}
+			});
+		}
+
+		return buff.toString();
 	}
 
 	private StringBuilder processUploadedCategoryExcel(final HttpServletRequest request, final FileItem item)

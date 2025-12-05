@@ -11,6 +11,9 @@ final ResourceBundle language = servlet.getLanguageForCurrentUser(request);
 List<User> users = servletDAO.getMasterAwardedUsers();
 %>
 
+<jsp:include page="notices.jsp" />
+
+<p></p>
 
 <form accept-charset="UTF-8" name="input" id="input5"
 	action="../RegistrationServlet/saveModelClass" method="post">
@@ -42,9 +45,24 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 				value="<%=language.getString("save")%>"></td>
 		</tr>
 	</table>
-
-
 </form>
+
+<table style='border-collapse: collapse;' border='1'>
+	<tr>
+		<td><a href="../RegistrationServlet/exportMasters">&Ouml;sszes
+				adat export&aacute;l&aacute;sa</a></td>
+
+		<form accept-charset="UTF-8" action="../RegistrationServlet"
+			method="post" enctype="multipart/form-data" name="input">
+			<input type="hidden" name="command" value="importData">
+			<td><input type="submit"
+				value="Excelb&#337;l import&aacute;l&aacute;s"> <input
+				type="file" name="mastersFile"></td>
+		</form>
+	</tr>
+</table>
+
+<p></p>
 
 <table style='border-collapse: collapse;' border='1'>
 	<tr>
@@ -58,6 +76,8 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 
 		<th style='white-space: nowrap'><%=language.getString("city")%></th>
 
+		<th style='white-space: nowrap'><%=language.getString("userID")%></th>
+
 		<th style='white-space: nowrap'>Szakoszt&aacute;ly</th>
 	</tr>
 	<%
@@ -68,6 +88,7 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 		<td><%=moUser.getYearOfBirth()%></td>
 		<td><%=moUser.getCountry()%></td>
 		<td><%=moUser.getCity()%></td>
+		<td><%=moUser.getId()%></td>
 		<td><%=moUser.getHTMLModelClass()%></td>
 	</tr>
 	<%

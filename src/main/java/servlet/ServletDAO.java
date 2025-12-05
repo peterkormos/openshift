@@ -113,22 +113,13 @@ public class ServletDAO extends HibernateDAO
 	  return getList(User.class, "enabled=true and modelClasses is not null order by lastName, firstName");
   }
   
-  public void saveModelClass(int userID, ModelClass modelClass) throws SQLException
-  {
-	  User user = get(userID, User.class);
-	List<ModelClass> modelClass2 = user.getModelClass();
-	if(!modelClass2.contains(modelClass)) {
-		modelClass2.add(modelClass);
+	public boolean saveModelClass(int userID, ModelClass modelClass) throws SQLException {
+		User user = get(userID, User.class);
+		boolean addedNewClass = user.setModelClass(modelClass);
+		update(user);
+		
+		return addedNewClass;
 	}
-
-	String modelClasses = "";
-	for (final ModelClass currentModelClass : modelClass2)
-	{
-	  modelClasses += currentModelClass.name() + ",";
-	}
-	user.setModelClasses(modelClasses);
-	update(user);
-  }
 
 	public User getUser(String email) throws EmailNotFoundException {
 		email = ServletUtil.sanitizeUserInput(email);

@@ -14,6 +14,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import servlet.RegistrationServlet;
 import servlet.ServletUtil;
 
@@ -198,7 +200,7 @@ public class User extends Record {
 	}
 	
 	public String getHTMLModelClass() {
-		return getModelClass().stream().map(mc -> ServletUtil.encodeString(mc.toString())).collect(Collectors.toList()).toString();
+		return ModelClass.getHTMLModelClasses(getModelClass());
 	}
 
 	public void setModelClasses(String modelClasses) {
@@ -262,5 +264,21 @@ public class User extends Record {
 
 	public boolean isUserDetailsUpdateNeeded() {
 		return getGender() == null;
+	}
+
+	public boolean setModelClass(ModelClass modelClass) {
+		boolean addedNewClass = false;
+		List<ModelClass> modelClass2 = getModelClass();
+		if (!modelClass2.contains(modelClass)) {
+			modelClass2.add(modelClass);
+			addedNewClass = true;
+		}
+
+		String modelClasses = "";
+		for (final ModelClass currentModelClass : modelClass2) {
+			modelClasses += currentModelClass.name() + ",";
+		}
+		setModelClasses(modelClasses);
+		return addedNewClass;
 	}
 }
