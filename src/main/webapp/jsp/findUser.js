@@ -63,9 +63,13 @@ function getIntValue(field)
 
 function parseXML(xmlstring)
 {
-	var xmlobject = (new DOMParser()).parseFromString(xmlstring, "text/xml");
+	var list = document.getElementById('selectID');
+	list.length = 0;
+
+		var xmlobject = (new DOMParser()).parseFromString(xmlstring, "text/xml");
 	var root = xmlobject.getElementsByTagName('object')[0];
 	var users = root.getElementsByTagName("void");
+
 	for (var i = 0 ; i < users.length ; i++) 
 	{
 		if(users[i].getAttribute("method") != "add")
@@ -115,8 +119,6 @@ function parseXML(xmlstring)
 				city = getStringValue(fields[j])
 		}
 		
-		var list = document.getElementById('selectID');
-		list.length = 0;
 		list.add(new Option("-", userID),  null);
 		list.options[list.options.length-1].innerHTML = lastName + " " + firstName + " (" + yearOfBirth + " - " + country + " - " + city + ")";
 	}
