@@ -92,7 +92,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.12.05.";
+	public String VERSION = "2025.12.06.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -1528,17 +1528,29 @@ public class RegistrationServlet extends HttpServlet {
 				response, "Most m&aacute;r nem lehet m&oacute;dos&iacute;tani! El&#337;sz&ouml;r az 'El&#337;nevez&eacute;s v&eacute;ge' linkre kell kattintani az admin oldalon.");
 	}
 
-	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.MasterModelerAdmin);
-
+	public void deleteMasterUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin);
 		final int userID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "userID"));
 
-		servletDAO.saveModelClass(userID,
-				ModelClass.of(StringEscapeUtils.unescapeHtml4(ServletUtil.getRequestAttribute(request, "modelClass"))));
+		User user = servletDAO.get(userID, User.class);
+		user.setModelClasses(null);
+		servletDAO.update(user);
 
 		redirectToMainPage(request, response);
 	}
 
+	
+	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.MasterModelerAdmin);
+		
+		final int userID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "userID"));
+		
+		servletDAO.saveModelClass(userID,
+				ModelClass.of(StringEscapeUtils.unescapeHtml4(ServletUtil.getRequestAttribute(request, "modelClass"))));
+		
+		redirectToMainPage(request, response);
+	}
+	
 	public void addCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		User user = getUser(request);

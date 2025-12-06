@@ -5,6 +5,7 @@
 <%
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 ServletDAO servletDAO = servlet.getServletDAO();
+User user = servlet.getUser(request);
 
 final ResourceBundle language = servlet.getLanguageForCurrentUser(request);
 
@@ -15,22 +16,22 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 
 <p></p>
 
-<form accept-charset="UTF-8" name="input" id="input5"
-	action="../RegistrationServlet/saveModelClass" method="post">
 	<table style="border: 0px;">
 		<tr>
-			<th colspan="2" style='white-space: nowrap'>Mesterek rögzítése</th>
+			<th colspan="7" style='white-space: nowrap'>Mesterek rÃ¶gzÃ­tÃ©se</th>
 		</tr>
+<form accept-charset="UTF-8" name="input" id="input5"
+	action="../RegistrationServlet/saveModelClass" method="post">
 		<tr>
 			<td>Makettez&#337; neve:</td>
-			<td><input name="lastname" type="text" id="fullnameID"
+			<td colspan="6"><input name="lastname" type="text" id="fullnameID"
 				onChange="sendRequest();"> <select id="selectID"
 				name="userID">
 			</select></td>
 		</tr>
 		<tr>
 			<td>Szakoszt&aacute;ly:</td>
-			<td><select name="modelClass">
+			<td colspan="6"><select name="modelClass">
 					<%
 					for (String mc : RegistrationServlet.getModelClassList()) {
 					%>
@@ -41,30 +42,32 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 			</select></td>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="submit"
+			<td colspan="7"><input type="submit"
 				value="<%=language.getString("save")%>"></td>
 		</tr>
-	</table>
 </form>
+			<tr>
+				<td colspan="7">&nbsp;</td>
+			</tr>
 
-<table style='border-collapse: collapse;' border='1'>
 	<tr>
-		<td><a href="../RegistrationServlet/exportMasters">&Ouml;sszes
+		<th colspan="7" style='white-space: nowrap'>Adatkezel&eacute;s</th>
+	</tr>
+	<tr>
+		<td colspan="2"><a href="../RegistrationServlet/exportMasters">&Ouml;sszes
 				adat export&aacute;l&aacute;sa</a></td>
 
 		<form accept-charset="UTF-8" action="../RegistrationServlet"
 			method="post" enctype="multipart/form-data" name="input">
 			<input type="hidden" name="command" value="importData">
-			<td><input type="submit"
+			<td colspan="5"><input type="submit"
 				value="Excelb&#337;l import&aacute;l&aacute;s"> <input
 				type="file" name="mastersFile"></td>
 		</form>
 	</tr>
-</table>
-
-<p></p>
-
-<table style='border-collapse: collapse;' border='1'>
+			<tr>
+				<td colspan="7">&nbsp;</td>
+			</tr>
 	<tr>
 		<th style='white-space: nowrap'><%=language.getString("name")%></th>
 
@@ -79,17 +82,33 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 		<th style='white-space: nowrap'><%=language.getString("userID")%></th>
 
 		<th style='white-space: nowrap'>Szakoszt&aacute;ly</th>
+		<th style='white-space: nowrap'></th>
 	</tr>
 	<%
 	for (final User moUser : users) {
 	%>
 	<tr>
-		<td><%=moUser.getFullName()%></td>
-		<td><%=moUser.getYearOfBirth()%></td>
-		<td><%=moUser.getCountry()%></td>
-		<td><%=moUser.getCity()%></td>
-		<td><%=moUser.getId()%></td>
-		<td><%=moUser.getHTMLModelClass()%></td>
+		<td align="center"><%=moUser.getFullName()%></td>
+		<td align="center"><%=moUser.getYearOfBirth()%></td>
+		<td align="center"><%=moUser.getCountry()%></td>
+		<td align="center"><%=moUser.getCity()%></td>
+		<td align="center"><%=moUser.getId()%></td>
+		<td align="center"><%=moUser.getHTMLModelClass()%></td>
+		<td align="center">
+	<%
+	if (user.isSuperAdminUser()) {
+	%>
+			<div class="tooltip">
+				<a
+					href="../RegistrationServlet/deleteMasterUser?userID=<%=moUser.getId()%>">
+					<img src="../icons/delete2.png" height="30" align="center" /> <span
+					class="tooltiptext"> <%=language.getString("delete")%></span>
+				</a>
+			</div>
+	<%
+	}
+	%>
+</td>
 	</tr>
 	<%
 	}
