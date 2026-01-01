@@ -92,7 +92,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2025.12.06.";
+	public String VERSION = "2026.01.01.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -1010,7 +1010,7 @@ public class RegistrationServlet extends HttpServlet {
 			FileItem item, Map<String, String> parameters) throws IOException, SQLException, Exception {
 		
 		if(item.getInputStream().available() == 0) {
-			ServletUtil.writeResponse(response, new StringBuilder("stream.available() == 0"));
+//			ServletUtil.writeResponse(response, new StringBuilder(item.getFieldName() + ": stream.available() == 0"));
 			return;
 		};
 

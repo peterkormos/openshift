@@ -6,11 +6,8 @@
 	</tr>
 
 	<tr>
-		<form accept-charset="UTF-8" action="../RegistrationServlet"
-			method="post" enctype="multipart/form-data" name="input">
-			<input type="hidden" name="command" value="importData">
-			<td><input type="submit"
-				value="Adatok import&aacute;l&aacute;sa"></td>
-			<td><input type="file" name="zipFile"></td>
-		</form>
+		<td><input type="submit"
+		onClick="document.getElementById('command4').value='importData';document.getElementById('input4').enctype='multipart/form-data';"
+			value="Adatok import&aacute;l&aacute;sa"></td>
+		<td><input type="file" name="zipFile"></td>
 	</tr>
