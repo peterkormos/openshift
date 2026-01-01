@@ -1008,26 +1008,32 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void processUploadedFile(final HttpServletRequest request, final HttpServletResponse response,
 			FileItem item, Map<String, String> parameters) throws IOException, SQLException, Exception {
+		
+		if(item.getInputStream().available() == 0) {
+			ServletUtil.writeResponse(response, new StringBuilder("stream.available() == 0"));
+			return;
+		};
+
 		if ("imageFile".equals(item.getFieldName())) {
-			processUploadedImageFile(request, item, parameters);
+			processUploadedImageFile(request, item.getInputStream(), parameters);
 		} else if ("zipFile".equals(item.getFieldName())) {
 			final StringBuilder buff = importZip(request, item.getInputStream());
 			ServletUtil.writeResponse(response, buff);
 			return;
 		} else if ("categoryFile".equals(item.getFieldName())) {
-			final StringBuilder buff = processUploadedCategoryExcel(request, item);
+			final StringBuilder buff = processUploadedCategoryExcel(request, item.getInputStream());
 			ServletUtil.writeResponse(response, buff);
 			return;
 		} else if ("mastersFile".equals(item.getFieldName())) {
-			setNoticeInSession(getHttpSession(request), processUploadedMastersExcel(request, item));
+			setNoticeInSession(getHttpSession(request), processUploadedMastersExcel(request, item.getInputStream()));
 		}
 
 		redirectToMainPage(request, response);
 	}
 
-	private void processUploadedImageFile(final HttpServletRequest request, FileItem item,
+	private void processUploadedImageFile(final HttpServletRequest request, InputStream stream,
 			Map<String, String> parameters) throws IOException, SQLException {
-		final BufferedImage originalImage = ImageUtil.load(item.getInputStream());
+		final BufferedImage originalImage = ImageUtil.load(stream);
 		final BufferedImage resizedImage = ImageUtil.resize(originalImage, 800);
 
 		final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -1043,11 +1049,11 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.saveImage(modelID, new ByteArrayInputStream(output.toByteArray()));
 	}
 
-	private String processUploadedMastersExcel(final HttpServletRequest request, final FileItem item)
+	private String processUploadedMastersExcel(final HttpServletRequest request, final InputStream stream)
 			throws IOException {
 		final StringBuilder buff = new StringBuilder();
 
-		org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(item.getInputStream());
+		org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(stream);
 		Sheet s = wb.getSheetAt(0);
 
 		// skip first (header) row...
@@ -1098,16 +1104,18 @@ public class RegistrationServlet extends HttpServlet {
 		return buff.toString();
 	}
 
-	private StringBuilder processUploadedCategoryExcel(final HttpServletRequest request, final FileItem item)
+	private StringBuilder processUploadedCategoryExcel(final HttpServletRequest request, final InputStream stream)
 			throws IOException {
 		final StringBuilder buff = new StringBuilder();
 
-		org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(item.getInputStream());
+		org.apache.poi.ss.usermodel.Workbook wb = HSSFWorkbookFactory.create(stream);
 		Sheet s = wb.getSheetAt(0);
 
 		// skip first (header) row...
 		buff.append(s.getLastRowNum() + " sor feldolgozása.<p>");
-		for (int i = 1; i < s.getLastRowNum() + 1; i++) {
+		int i;
+		for (i = 1; i < s.getLastRowNum() + 1; i++) {
+			try {
 			Row row = s.getRow(i);
 
 			// 1. column
@@ -1170,6 +1178,10 @@ public class RegistrationServlet extends HttpServlet {
 				servletDAO.save(newCategory);
 				buff.append(categoryCode + " mentése.<br>");
 			}
+			} catch (IllegalStateException e) {
+				throw new IllegalStateException("row: " + i + ". "+ e.getMessage(), e);
+			}
+
 		}
 
 		return buff;
@@ -1177,11 +1189,12 @@ public class RegistrationServlet extends HttpServlet {
 
 	private StringBuilder importZip(final HttpServletRequest request, final InputStream stream)
 			throws IOException, SQLException, Exception, IOError {
+		final StringBuilder buff = new StringBuilder();
+		
 		final GZIPInputStream e = new GZIPInputStream(stream);
 		final List<List> data = (List<List>) Serialization.deserialize(e);
 		e.close();
 
-		final StringBuilder buff = new StringBuilder();
 
 		final List<CategoryGroup> categoryGroups = data.get(1);
 

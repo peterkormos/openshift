@@ -19,22 +19,22 @@
 	</tr>
 	<tr>
 		<th>Import</th>
-		<form accept-charset="UTF-8" action="../RegistrationServlet"
-			method="post" enctype="multipart/form-data" name="input">
-			<input type="hidden" name="command" value="importData">
-			<td>Legal&aacute;bb egy kateg&oacute;riacsoport felvitele
-				ut&aacute;n!<br> <input type="submit"
-				value="Excelb&#337;l kateg&oacute;ri&aacute;k import&aacute;l&aacute;sa">
-			</td>
-			<td><input type="file" name="categoryFile"></td>
-			<td colspan="2">Excel t&aacute;bl&aacute;ban: <br> 1.
-				oszlop: kateg&oacute;ria csoport <br> 2. oszlop:
-				kateg&oacute;ria k&oacute;d (regexp: ".*\d") <br> 3. oszlop:
-				kateg&oacute;ria le&iacute;r&aacute;s <br> 4. oszlop: mester
-				besorolás(?)<br> 5. oszlop: Szak&aacute;g <br> 6. oszlop:
-				Korcsoport <br>
-			</td>
-		</form>
+		<td>Legal&aacute;bb egy kateg&oacute;riacsoport felvitele
+			ut&aacute;n!<br> <input type="submit"
+			onClick="document.getElementById('command4').value='importData';document.getElementById('input4').enctype='multipart/form-data';"
+			value="Excelb&#337;l kateg&oacute;ri&aacute;k import&aacute;l&aacute;sa">
+			
+			<a href="#"
+				onClick="document.getElementById('command4').value='importData';document.getElementById('input4').enctype='multipart/form-data';document.getElementById('input4').submit();">Submit</a>
+		</td>
+		<td><input type="file" name="categoryFile"></td>
+		<td colspan="2">Excel t&aacute;bl&aacute;ban: <br> 1.
+			oszlop: kateg&oacute;ria csoport <br> 2. oszlop:
+			kateg&oacute;ria k&oacute;d (regexp: ".*\d") <br> 3. oszlop:
+			kateg&oacute;ria le&iacute;r&aacute;s <br> 4. oszlop: mester
+			besorolás(?)<br> 5. oszlop: Szak&aacute;g <br> 6. oszlop:
+			Korcsoport <br>
+		</td>
 	</tr>
 	<tr>
 		<th>Export</th>

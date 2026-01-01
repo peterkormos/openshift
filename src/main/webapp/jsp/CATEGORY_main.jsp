@@ -70,7 +70,7 @@ if (show == null) {
 			<td style="width: 40px; text-align: right; vertical-align: top;">
 				<form accept-charset="UTF-8" name="input" id="input"
 					action="../RegistrationServlet" method="post">
-					<input type="hidden" id="command" name="command" value="">
+					<input type="hidden" id="command" name="command" value="<%=language.getString("modify.user")%>">
 					<input type="hidden"
 						name="<%=RequestParameter.Language.getParameterName()%>"
 						value="<%=languageCode%>>">
@@ -98,7 +98,7 @@ if (show == null) {
 
 	<form accept-charset="UTF-8" name="input" id="input4"
 		action="../RegistrationServlet" method="post">
-		<input type="hidden" id="command4" name="command" value=""> 
+		<input type="hidden" id="command4" name="command" value="CATEGORY_main.jsp"> 
 		<input
 			type="hidden" id="paramName" name="paramName" value="">
 		<input
