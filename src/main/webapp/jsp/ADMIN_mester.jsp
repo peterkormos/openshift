@@ -18,7 +18,7 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 
 	<table style="border: 0px;">
 		<tr>
-			<th colspan="7" style='white-space: nowrap'>Mesterek rögzítése</th>
+			<th colspan="7" style='white-space: nowrap'>Mesterek r&ouml;z&iacute;t&eacute;se</th>
 		</tr>
 <form accept-charset="UTF-8" name="input" id="input5"
 	action="../RegistrationServlet/saveModelClass" method="post">

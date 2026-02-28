@@ -421,7 +421,7 @@ public class JDBCDAO {
 		final List<String[]> tablespaceStatas = new LinkedList<String[]>();
 		if (detailedStatistics) {
 			tablespaceStatas.add(new String[] { "&nbsp;", "" });
-			tablespaceStatas.add(new String[] { "Versenymunk&aacute;k helyig&eacute;nye (cm<sup>2</sup>):", "" });
+			tablespaceStatas.add(new String[] { language.getString("models.area") + " (cm<sup>2</sup>):", "" });
 		}
 
 		final PreparedStatement queryStatement = null;
@@ -514,7 +514,7 @@ public class JDBCDAO {
 
 			// nevezett makettek száma országonként
 			for (final String country : modelsPerCountrySet.keySet().stream().sorted().collect(Collectors.toList())) {
-				returned.add(new String[] { "Nevezett makettek sz&aacute;ma orsz&aacute;gonk&eacute;nt: <b>" + country + "</b>",
+				returned.add(new String[] { language.getString("models.number.per.country") + ": <b>" + country + "</b>",
 						String.valueOf(modelsPerCountrySet.get(country).size()) });
 			}
 
