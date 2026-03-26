@@ -12,8 +12,6 @@
 <%
 //input parameters	
 boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestAttribute(request, "directRegister"));
-if (directRegister)
-	session.removeAttribute(CommonSessionAttribute.User.name());
 
 String action = request.getParameter("action");
 if (action == null) {
@@ -25,7 +23,9 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 String languageCode = null;
 User user = null;
 try {
-	user = RegistrationServlet.getUser(request);
+	if (!directRegister) {
+		user = RegistrationServlet.getUser(request);
+	}
 	languageCode = user.language;
 } catch (Exception e) {
 	languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());

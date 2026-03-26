@@ -92,7 +92,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2026.01.01.";
+	public String VERSION = "2026.03.26.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -344,6 +344,7 @@ public class RegistrationServlet extends HttpServlet {
 				writeErrorResponse(request, response, message);
 				return;
 			} else if (UserNotLoggedInException.class.isInstance(throwable)) {
+				writeErrorResponse(request, response, "Error: <b>" + message + "</b>");
 				return;
 			} else if (CategoryModificationException.class.isInstance(throwable)) {
 				writeCategoryModificationErrorResponse(request, response);
@@ -731,7 +732,9 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void directRegister(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		if (!isAdminSession(getHttpSession(request))) {
+			authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		}
 
 		// set language library
 		final String languageCode = ServletUtil.getRequestAttribute(request,
@@ -743,7 +746,6 @@ public class RegistrationServlet extends HttpServlet {
 				: ServletUtil.getRequestAttribute(request, "fullname") + User.LOCAL_USER + System.currentTimeMillis();
 		final User user = directRegisterUser(request, language, "" /* httpParameterPostTag */, email,
 				StringEncoder.encode(ServletUtil.getOptionalRequestAttribute(request, "password")));
-		
 		initHttpSession(request, user, servletDAO.getShows().get(0));
 		setToAdminSession(getHttpSession(request));
 		

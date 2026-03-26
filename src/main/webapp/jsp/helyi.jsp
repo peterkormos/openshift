@@ -29,11 +29,14 @@
 	</p>
 	<p></p>
 	<p>
-		<b>Nevezni... </b> <a
-			href="./user.jsp?directRegister=true&action=directRegister&language=HU">1
-			ember makettjeit</a> - <a
-			href="../RegistrationServlet?command=getbatchAddModelPage&language=HU">t&ouml;bb
-			ember makettjeit</a>
+		<b>Nevezni... </b>
+		<%
+		addAdminLink(session, out, "./user.jsp?directRegister=true&action=directRegister&language=HU", "1 ember makettjeit");
+		%>
+
+<!-- 		- <a -->
+<!-- 			href="../RegistrationServlet?command=getbatchAddModelPage&language=HU">t&ouml;bb -->
+<!-- 			ember makettjeit</a> -->
 	</p>
 	<%
 	if (session.isNew()) {
@@ -53,11 +56,13 @@
 	<p>
 		<b>1 makettez&#337;... </b>
 		<%
-		addAdminLink(session, out, "../RegistrationServlet/inputForLoginUser?language=HU", "nev&eacute;ben bel&eacute;p&eacute;s");
+		addAdminLink(session, out, "../RegistrationServlet/inputForLoginUser?language=HU",
+				"nev&eacute;ben bel&eacute;p&eacute;s");
 		%>
 		-
 		<%
-		addAdminLink(session, out, "../RegistrationServlet/inputForPrint?language=HU", "nevez&eacute;si lapjainak nyomtat&aacute;sa");
+		addAdminLink(session, out, "../RegistrationServlet/inputForPrint?language=HU",
+				"nevez&eacute;si lapjainak nyomtat&aacute;sa");
 		%>
 	</p>
 	<p>
