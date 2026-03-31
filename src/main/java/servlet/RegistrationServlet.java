@@ -1351,10 +1351,15 @@ public class RegistrationServlet extends HttpServlet {
 					+ ": [" + newUser.email + "]");
 			return;
 		}
+		HttpSession session = getHttpSession(request);
+		
+		if(isAdminSession(session) && ServletUtil.encodePassword(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE).equals(newUser.getPassword())) {
+			logger.debug("modifyUser(): Regi jelszo hasznalata");
+			newUser.setPassword(oldUser.getPassword());
+		}
 
 		servletDAO.modifyUser(newUser, oldUser);
 
-		HttpSession session = getHttpSession(request);
 		session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
 		session.setAttribute(CommonSessionAttribute.User.name(), servletDAO.getUser(oldUser.getId()));
 
@@ -1461,7 +1466,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void addCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		User user = getUser(request);
-		authCheck(user, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 		if (isCategoryModificationDenied(request, user)) {
 			throw new CategoryModificationException();
 		}
@@ -1569,7 +1574,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void addCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		User user = getUser(request);
-		authCheck(user, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 		if (isCategoryModificationDenied(request, user)) {
 			throw new CategoryModificationException();
 		}
@@ -2465,7 +2470,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void deleteCategoryGroup(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		User user = getUser(request);
-		authCheck(user, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 		if (isCategoryModificationDenied(request, user)) {
 			throw new CategoryModificationException();
 		}
@@ -2483,7 +2488,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteCategory(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		User user = getUser(request);
-		authCheck(user, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 		if (isCategoryModificationDenied(request, user)) {
 			throw new CategoryModificationException();
 		}
@@ -2561,7 +2566,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void printCardsForAllModels(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final User user = getUser(request);
-		authCheck(user, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
 		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
@@ -2743,7 +2748,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void sendEmail(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
-		authCheck(user, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
 		if (!(isAdminSession(getHttpSession(request)) || user.isLocalUser())) {
 			sendEmailWithModels(user, false);
@@ -2976,10 +2981,10 @@ public class RegistrationServlet extends HttpServlet {
 
 	private User createUser(final HttpServletRequest request, final String email, final String httpParameterPostTag)
 			throws Exception {
-		final String passwordInRequest = ServletUtil
-				.encodeString(ServletUtil.getRequestAttribute(request, "password" + httpParameterPostTag));
-
-		return createUser(request, ServletUtil.sanitizeUserInput(email), StringEncoder.encode(passwordInRequest),
+		String passwordInRequest = isAdminSession(getHttpSession(request)) ? ServletUtil.getOptionalRequestAttribute(request, "password" + httpParameterPostTag) : 
+			ServletUtil.getRequestAttribute(request, "password" + httpParameterPostTag);
+		
+		return createUser(request, ServletUtil.sanitizeUserInput(email), ServletUtil.encodePassword(passwordInRequest),
 				httpParameterPostTag);
 	}
 
@@ -3206,15 +3211,16 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private final void authCheck(final HttpServletRequest request, AdminTypes... allowedAdmins) {
-		authCheck(getUser(request), allowedAdmins);
-	}
-
-	private final void authCheck(User user, AdminTypes... allowedAdmins) {
+		User user = getUser(request);
 		for (AdminTypes adminType : allowedAdmins) {
 			if(user.isAdminUser(adminType))
 				return;
 		}
 		
-		throw new AuthorizationException();
+		HttpSession httpSession = getHttpSession(request);
+		
+		if (!isAdminSession(httpSession)) {
+			throw new AuthorizationException();
+		}
 	}
 }

@@ -263,4 +263,8 @@ public class ServletUtil {
 
 	return buff.toString();
   }
+
+	public static String encodePassword(String passwordInRequest) {
+		return StringEncoder.encode(ServletUtil.encodeString(passwordInRequest));
+	}
 }

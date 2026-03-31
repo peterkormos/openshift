@@ -23,7 +23,7 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
   servletDAO.save(user);
 
-  servletDAO.save(new CategoryGroup(servletDAO.getNextID("CATEGORY_GROUP", "CATEGORY_group_ID"), "-", "-"));
+  servletDAO.save(new CategoryGroup(servletDAO.getNextID(CategoryGroup.class), "-", "-"));
 
   response.sendRedirect("index.jsp");
 %>

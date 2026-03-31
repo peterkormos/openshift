@@ -33,6 +33,8 @@ try {
 
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 session.setAttribute(CommonSessionAttribute.Language.name(), language);
+
+String passwordCheck = RegistrationServlet.isAdminSession(session) ? "" :  "&& checkPassword(this) ";
 %>
 
 <html>
@@ -111,7 +113,8 @@ function checkDeleteUserRequest()
 	<form autocomplete="fuckoffchrome" name="input" id="input"
 		action="../RegistrationServlet/<%=action%>" method="put"
 		accept-charset="UTF-8"
-		onSubmit="return checkEmail(this) && checkPassword(this) && checkName(this)">
+<%-- 		onSubmit='return checkEmail(this) <%= passwordCheck %> && checkName(this)'> --%>
+		onSubmit='return checkEmail(this) <%= passwordCheck %> && checkName(this)'>
 		<input type="hidden" id="command" name="command" value="">
 		<p>
 			<font color="#FF0000" size="+3">&#8226;</font>
@@ -149,7 +152,7 @@ function checkDeleteUserRequest()
 						<jsp:param name="inputType" value="password" />
 						<jsp:param name="label"
 							value='<%=language.getString("password")%>' />
-						<jsp:param name="mandatory" value="true" />
+						<jsp:param name="mandatory" value='<%=!RegistrationServlet.isAdminSession(session) %>' />
 					</jsp:include></td>
 			</tr>
 			<tr>
@@ -159,7 +162,7 @@ function checkDeleteUserRequest()
 						<jsp:param name="inputType" value="password" />
 						<jsp:param name="label"
 							value='<%=language.getString("password.again")%>' />
-						<jsp:param name="mandatory" value="true" />
+						<jsp:param name="mandatory" value='<%=!RegistrationServlet.isAdminSession(session) %>' />
 					</jsp:include></td>
 			</tr>
 			<%
