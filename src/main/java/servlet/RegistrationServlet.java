@@ -439,7 +439,6 @@ public class RegistrationServlet extends HttpServlet {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
-		setToAdminSession(getHttpSession(request));
 		loginSuccessful(request, response, servletDAO.getUser(userID),
 				StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"))));
 	}
@@ -549,7 +548,7 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 		if (user.isAdminUser()) {
-			setToAdminSession(session);
+			setToAdminSession(session, user.getAdminType());
 		}
 		
 		List<Model> models = servletDAO.getModelsForShow(show, user.getId());
@@ -562,8 +561,8 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	public static void setToAdminSession(HttpSession session) {
-		session.setAttribute(SessionAttribute.AdminSession.name(), true);
+	public static void setToAdminSession(HttpSession session, AdminTypes adminType) {
+		session.setAttribute(SessionAttribute.AdminSession.name(), adminType);
 	}
 
 	private void saveLoginConsentData(HttpServletRequest request, User user) {
@@ -732,7 +731,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void directRegister(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		if (!isAdminSession(getHttpSession(request))) {
+		if (!isAdminSession(getHttpSession(request), AdminTypes.SuperAdmin, AdminTypes.ShowAdmin)) {
 			authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 		}
 
@@ -747,7 +746,6 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = directRegisterUser(request, language, "" /* httpParameterPostTag */, email,
 				ServletUtil.encodePassword(ServletUtil.getOptionalRequestAttribute(request, "password")));
 		initHttpSession(request, user, servletDAO.getShows().get(0));
-		setToAdminSession(getHttpSession(request));
 		
 		redirectToMainPage(request, response);
 	}
@@ -2280,7 +2278,9 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void selectUser(final HttpServletRequest request, final HttpServletResponse response, final String command) throws Exception, IOException {
-		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		if (!isAdminSession(getHttpSession(request), AdminTypes.SuperAdmin, AdminTypes.ShowAdmin)) {
+			authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		}
 		HttpSession session = getHttpSession(request);
 		
 		final StringBuilder buff = new StringBuilder();
@@ -3200,27 +3200,41 @@ public class RegistrationServlet extends HttpServlet {
 		return systemParameters;
 	}
 
-	public static boolean isAdminSession(HttpSession session) {
-		if (session != null) {
-			Boolean adminSession = (Boolean) session
-					.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name());
-			return adminSession != null && Boolean.TRUE.equals(adminSession);
-		} else {
+	public static boolean isAdminSession(HttpSession session, AdminTypes... allowedAdmins) {
+		Optional<AdminTypes> adminType = getAdminType(session);
+		if(!adminType.isPresent()) {
 			return false;
 		}
+		
+		User userInSession = getUserInSession(session);
+		for (AdminTypes allowedAdminType : allowedAdmins) {
+			if (allowedAdminType.equals(adminType.get()))
+				return true;
+		}
+
+		return false;
+	}
+	
+	public static Optional<AdminTypes> getAdminType(HttpSession session) {
+		return session != null
+				? Optional.ofNullable(
+						(AdminTypes) session.getAttribute(RegistrationServlet.SessionAttribute.AdminSession.name()))
+				: Optional.empty();
 	}
 
+	public static boolean isAdminSession(HttpSession session) {
+		return getAdminType(session).isPresent();
+	}
+	
 	private final void authCheck(final HttpServletRequest request, AdminTypes... allowedAdmins) {
 		User user = getUser(request);
 		for (AdminTypes adminType : allowedAdmins) {
-			if(user.isAdminUser(adminType))
+			if (user.isAdminUser(adminType))
 				return;
 		}
-		
+
 		HttpSession httpSession = getHttpSession(request);
-		
-		if (!isAdminSession(httpSession)) {
-			throw new AuthorizationException();
-		}
+
+		throw new AuthorizationException();
 	}
 }

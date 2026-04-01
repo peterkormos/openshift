@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import org.apache.commons.text.StringEscapeUtils;
 
+import datatype.User.AdminTypes;
 import servlet.RegistrationServlet;
 import servlet.ServletUtil;
 
@@ -280,5 +281,9 @@ public class User extends Record {
 		}
 		setModelClasses(modelClasses);
 		return addedNewClass;
+	}
+
+	public AdminTypes getAdminType() {
+		return EnumGroup.of(AdminTypes.class, getLanguage(), (group, language) -> group.getLanguage().equals(language));
 	}
 }
