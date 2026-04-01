@@ -745,7 +745,7 @@ public class RegistrationServlet extends HttpServlet {
 				? ServletUtil.getRequestAttribute(request, "fullname")
 				: ServletUtil.getRequestAttribute(request, "fullname") + User.LOCAL_USER + System.currentTimeMillis();
 		final User user = directRegisterUser(request, language, "" /* httpParameterPostTag */, email,
-				StringEncoder.encode(ServletUtil.getOptionalRequestAttribute(request, "password")));
+				ServletUtil.encodePassword(ServletUtil.getOptionalRequestAttribute(request, "password")));
 		initHttpSession(request, user, servletDAO.getShows().get(0));
 		setToAdminSession(getHttpSession(request));
 		
