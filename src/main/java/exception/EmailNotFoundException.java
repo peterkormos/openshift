@@ -12,7 +12,7 @@ public class EmailNotFoundException extends IllegalArgumentException {
     
     @Override
     public String getMessage() {
-        return "email not found in DB. email: " + getMessage();
+        return "email not found in DB. email: " + super.getMessage();
     }
 
     private static final long serialVersionUID = -1917227317392689037L;
