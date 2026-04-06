@@ -92,7 +92,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2026.03.26.";
+	public String VERSION = "2026.04.06.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -320,7 +320,6 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 		} catch (Exception e) {
-			logger.fatal("!!!doPost(): ", e);
 
 			Throwable throwable = e;
 			if (e instanceof InvocationTargetException) {
@@ -329,6 +328,7 @@ public class RegistrationServlet extends HttpServlet {
 			addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
 			String message = throwable.getMessage();
+			logger.fatal("!!! doPost(): " + message);
 
 			if (EmailNotFoundException.class.isInstance(throwable)) {
 				EmailNotFoundException emailNotFoundException = EmailNotFoundException.class.cast(throwable);
@@ -494,7 +494,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final User user = servletDAO.getUser(email);
 
-		final String passwordInRequest = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "password"));
+		final String passwordInRequest = ServletUtil.encodePassword(ServletUtil.getRequestAttribute(request, "password"));
 
 		String show;
 
@@ -510,10 +510,10 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		if (!user.enabled || //
-				!StringEncoder.encode(passwordInRequest).equals(user.password) || //
+				!passwordInRequest.equals(user.password) || //
 				(user.isShowAdminUser() && !user.getEmail().equals(show))) {
 			logger.info("login(): Authentication failed. email: " + email + " user.password: [" + user.password
-					+ "] HTTP password: [" + StringEncoder.encode(passwordInRequest) + "] user.enabled: "
+					+ "] HTTP password: [" + passwordInRequest + "] user.enabled: "
 					+ user.enabled);
 
 			writeErrorResponse(request, response, language.getString("authentication.failed") + " " + language.getString("email")
@@ -652,8 +652,8 @@ public class RegistrationServlet extends HttpServlet {
 	public void reminder(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = servletDAO.getUser(ServletUtil.getRequestAttribute(request, "email"));
 		final String newPassword = UUID.randomUUID().toString().substring(0, 8);
-		user.setPassword(StringEncoder.encode(newPassword));
-		servletDAO.modifyUser(user, user);
+		user.setPassword(ServletUtil.encodePassword(newPassword));
+		servletDAO.update(user);
 
 		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
@@ -1356,7 +1356,7 @@ public class RegistrationServlet extends HttpServlet {
 			newUser.setPassword(oldUser.getPassword());
 		}
 
-		servletDAO.modifyUser(newUser, oldUser);
+		servletDAO.update(newUser);
 
 		session.setAttribute(CommonSessionAttribute.Language.name(), languageUtil.getLanguage(newUser.language));
 		session.setAttribute(CommonSessionAttribute.User.name(), servletDAO.getUser(oldUser.getId()));
@@ -2772,12 +2772,15 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private static String getStartPage(HttpServletRequest request) {
-		final HttpSession session = getHttpSession(request);
 		String showId = null;
-		if (session != null)
-			showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
-		if (showId == null)
-			showId = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
+		try {
+			final HttpSession session = getHttpSession(request);
+			if (session != null)
+				showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
+			if (showId == null)
+				showId = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
+		} catch (Exception e) {
+		}
 
 		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp"
 				+ (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)

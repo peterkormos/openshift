@@ -275,12 +275,6 @@ void deleteModels(final int categoryId) throws SQLException {
 	delete(User.class, "id = " + userID);
   }
 
-  public void modifyUser(final User newUser, final User oldUser) throws SQLException
-  {
-	  delete(User.class, "id = " +newUser.getId());
-	save(newUser);
-  }
-
   public List<User> getSimilarLastNames(final String lastname) throws SQLException
   {
 	  return getList(User.class, "lastName like '%" + lastname + "%'");
