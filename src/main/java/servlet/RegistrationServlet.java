@@ -2748,7 +2748,6 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void sendEmail(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
-		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
 		if (!(isAdminSession(getHttpSession(request)) || user.isLocalUser())) {
 			sendEmailWithModels(user, false);
