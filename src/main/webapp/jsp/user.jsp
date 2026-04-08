@@ -175,7 +175,14 @@ function checkDeleteUserRequest()
 							<input autocomplete="fuckoffchrome" name="fullname" type="text"
 								size="30" value="<%=user == null ? "" : user.lastName%>"
 								id="fullnameID"
-								onChange="sendRequest(); updateMandatoryFieldMark(this);">
+							<%
+							if (directRegister) {
+							%>
+								onChange="sendRequest(); updateMandatoryFieldMark(this);"
+							<%
+							}
+							%>
+								>
 							<%
 							if (directRegister) {
 							%>
