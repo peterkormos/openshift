@@ -281,8 +281,23 @@ public class RegistrationServlet extends HttpServlet {
 	@Override
 	public void doPost(final HttpServletRequest request, final HttpServletResponse response)
 			throws ServletException, IOException {
+		final long startTime = System.currentTimeMillis();
+		String command = null;
+		String userInfo = null;
+		
 		try {
-			final long startTime = System.currentTimeMillis();
+			if (logger.isTraceEnabled()) {
+				HttpSession httpSession = request.getSession(false);
+				if (httpSession != null) {
+					userInfo = httpSession.getId();
+					User userInSession = getUserInSession(httpSession);
+					if (userInSession != null) {
+						userInfo += " " + userInSession.getEmail();
+					}
+				} else
+					userInfo = "N/A";
+			}
+			
 //			debugRequest(request);
 
 			if (request.getCharacterEncoding() == null) {
@@ -295,7 +310,6 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			final String pathInfo = request.getPathInfo();
-			String command = null;
 			if (pathInfo != null) {
 				command = processRestful(request, response, pathInfo.substring(1));
 			} else {
@@ -303,24 +317,7 @@ public class RegistrationServlet extends HttpServlet {
 				handleRequest(request, response, command);
 			}
 
-			if (logger.isTraceEnabled()) {
-				String userInfo = null;
-				HttpSession httpSession = getHttpSession(request);
-				if (httpSession != null) {
-					userInfo = httpSession.getId();
-					User userInSession = getUserInSession(httpSession);
-					if (userInSession != null) {
-						userInfo += " " + userInSession.getEmail();
-					}
-				} else
-					userInfo = "N/A";
-
-				logger.trace("doPost() request arrived from " + request.getRemoteAddr() + " userInfo: " + userInfo
-						+ " command: " + command + " processTime: " + (System.currentTimeMillis() - startTime));
-			}
-
 		} catch (Exception e) {
-
 			Throwable throwable = e;
 			if (e instanceof InvocationTargetException) {
 				throwable = ((InvocationTargetException) e).getCause();
@@ -328,7 +325,7 @@ public class RegistrationServlet extends HttpServlet {
 			addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
 			String message = throwable.getMessage();
-			logger.fatal("!!! doPost(): " + message);
+			logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message);
 
 			if (EmailNotFoundException.class.isInstance(throwable)) {
 				EmailNotFoundException emailNotFoundException = EmailNotFoundException.class.cast(throwable);
@@ -356,6 +353,10 @@ public class RegistrationServlet extends HttpServlet {
 				return;
 			}
 			redirectToMainPage(request, response);
+		}
+		finally {
+			logger.trace("doPost() userInfo: " + userInfo + " command: " + command + " processTime: "
+					+ (System.currentTimeMillis() - startTime));
 		}
 	}
 
