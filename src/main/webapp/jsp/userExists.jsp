@@ -15,16 +15,38 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 <head>
 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Cache-Control"
 	content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="../jsp/base.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="../jsp/base.css" media="screen">
 </head>
 
-<%=language.getString("select.another.email")%>
-<br>
-<a
-	href="../jsp/reminder.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%>?</a>
+<body>
+	<div class="header"></div>
+	<table border="0" height="100%" width="100%">
+		<tr>
+			<td align="center" valign="middle">
+				<table border="0">
+					<tr>
+						<td class='flash error' colspan="3"><%=language.getString("select.another.email")%></td>
+					</tr>
+					<tr>
+						<td><a
+							href="../jsp/login.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("login")%>?</a></td>
+						<td>
+							<div align="center">-</div>
+						</td>
+						<td align="right"><a
+							href="../jsp/reminder.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%>?</a>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</body>
+

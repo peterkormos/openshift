@@ -441,7 +441,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
 		loginSuccessful(request, response, servletDAO.getUser(userID),
-				StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"))));
+				getShowFromRequest(request));
 	}
 
 	public void directPrintModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -489,7 +489,7 @@ public class RegistrationServlet extends HttpServlet {
 		ServletUtil.writeResponse(response, buff);
 	}
 
-	public void login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	private Optional<User> loginAttempt(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final String email = ServletUtil.getRequestAttribute(request, "email");
 		final ResourceBundle language = getLanguageFromRequest(request);
 
@@ -500,13 +500,13 @@ public class RegistrationServlet extends HttpServlet {
 		String show;
 
 		try {
-			show = StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show")));
+			show = getShowFromRequest(request);
 		} catch (final Exception e) {
 			if (user.isAdminUser())
 				show = null;
 			else {
 				writeErrorResponse(request, response, languageUtil.getLanguage(user.language).getString("select.show"));
-				return;
+				return Optional.empty();
 			}
 		}
 
@@ -519,8 +519,22 @@ public class RegistrationServlet extends HttpServlet {
 
 			writeErrorResponse(request, response, language.getString("authentication.failed") + " " + language.getString("email")
 					+ ": [" + email + "]");
-		} else {
-			loginSuccessful(request, response, user, show);
+			return Optional.empty();
+		}		
+		
+		return Optional.of(user);
+	}
+
+	private String getShowFromRequest(final HttpServletRequest request) {
+		return StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show")));
+	}
+	
+	public void login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		Optional<User> user = loginAttempt(request, response);
+		
+		if(user.isPresent()) {
+			String show = getShowFromRequest(request);
+			loginSuccessful(request, response, user.get(), show);
 		}
 	}
 
