@@ -36,7 +36,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=HU">Elfelejtette jelszav&aacute;t?</a></td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=HU">Elfelejtette jelszav&aacute;t?</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/gb.gif"></td>
@@ -50,7 +50,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=EN">Forgot Password?</a></td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=EN">Forgot Password?</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/sk.gif"></td>
@@ -65,7 +65,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=SK">Zabudli ste
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=SK">Zabudli ste
 									heslo?</a></td>
 						</tr>
 						<tr>
@@ -80,7 +80,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=CZ">Zapomneli
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=CZ">Zapomneli
 									jste heslo?</a></td>
 						</tr>
 						<tr>
@@ -94,7 +94,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=PL">Nie pami&#281;tam has&#322;a</a></td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=PL">Nie pami&#281;tam has&#322;a</a></td>
 						</tr>
 						<tr>
 							<td>
@@ -106,11 +106,11 @@
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=IT">Registrazione</a></td>
+								href="user.jsp?action=register&amp;<%= RequestParameter.Language.getParameterName()%>=IT">Creazione dell'account per i nuovi utenti</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=IT">Password dimenticato</a></td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=IT">Password dimenticato</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/de.gif"></td>
@@ -123,7 +123,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=DE">Passwort vergessen</a></td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=DE">Passwort vergessen</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/ru.png"></td>
@@ -137,7 +137,7 @@
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=RU">&#1047;&#1072;&#1073;&#1099;&#1083;&#1080; &#1087;&#1072;&#1088;&#1086;&#1083;&#1100;</a></td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=RU">&#1047;&#1072;&#1073;&#1099;&#1083;&#1080; &#1087;&#1072;&#1088;&#1086;&#1083;&#1100;</a></td>
 						</tr>
 					</tbody>
 				</table>
