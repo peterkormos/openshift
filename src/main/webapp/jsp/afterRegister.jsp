@@ -32,7 +32,9 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 			<td align="center" valign="middle">
 				<table border="0">
 					<tr>
-						<td class='flash error' colspan="3"><%=language.getString("select.another.email")%></td>
+						<td colspan="3">
+							<jsp:include page="notices.jsp" />
+						</td>
 					</tr>
 					<tr>
 						<td><a

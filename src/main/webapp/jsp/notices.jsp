@@ -5,11 +5,11 @@
 <%@page import="util.*"%>
 
 <%
-    List<MainPageNotice> notices = (List<MainPageNotice>) session.getAttribute(RegistrationServlet.SessionAttribute.Notices.name());
+List<PageNotice> notices = (List<PageNotice>) session.getAttribute(RegistrationServlet.SessionAttribute.Notices.name());
 
 if (notices != null)
 {
-	for (MainPageNotice notice : notices)
+	for (PageNotice notice : notices)
 	{
 %>
 	<div class="flash <%=notice.getType().name()%>"><%=notice.getText()%></div>

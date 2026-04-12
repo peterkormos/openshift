@@ -1,6 +1,6 @@
 package datatype;
 
-public class MainPageNotice {
+public class PageNotice {
 
     public enum NoticeType {
         OK, Error, Warning
@@ -10,7 +10,7 @@ public class MainPageNotice {
 
     private String text;
 
-    public MainPageNotice(NoticeType type, String text) {
+    public PageNotice(NoticeType type, String text) {
         this.type = type;
         this.text = text;
     }

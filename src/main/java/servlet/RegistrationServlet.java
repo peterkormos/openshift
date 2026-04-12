@@ -72,7 +72,7 @@ import datatype.EmailParameter;
 import datatype.Gender;
 import datatype.LoginConsent;
 import datatype.LoginConsent.LoginConsentType;
-import datatype.MainPageNotice;
+import datatype.PageNotice;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.PrintedModel;
@@ -606,9 +606,8 @@ public class RegistrationServlet extends HttpServlet {
 			session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
 			
 			if (user.getFullName().split(" ").length == 1) {
-				setNoticeInSession(session,
-						new MainPageNotice(MainPageNotice.NoticeType.Error, "<a href='user.jsp?action=modifyUser'>("
-								+ user.getFullName() + ") " + language.getString("name.too.short") + "</a>"));
+				setNoticeInSession(session, PageNotice.NoticeType.Error, "<a href='user.jsp?action=modifyUser'>("
+								+ user.getFullName() + ") " + language.getString("name.too.short") + "</a>");
 			}
 		}
 
@@ -1310,8 +1309,10 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		if (servletDAO.userExists(email)) {
-			final RequestDispatcher dispatcher = request.getRequestDispatcher("/jsp/userExists.jsp");
-			dispatcher.forward(request, response);
+			setNoticeInSession(getHttpSession(request),
+					PageNotice.NoticeType.Error, language.getString("select.another.email"));
+
+			request.getRequestDispatcher("/jsp/afterRegister.jsp").forward(request, response);
 			return;
 		}
 
@@ -1332,24 +1333,10 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void proceedToLoginResponse(final HttpServletRequest request, final HttpServletResponse response,
-			final ResourceBundle language) throws IOException {
-		ServletUtil.writeResponse(response, getEmailWasSentResponse(language, request));
-	}
+			final ResourceBundle language) throws IOException, ServletException {
+		setNoticeInSession(getHttpSession(request), PageNotice.NoticeType.OK, language.getString("email.was.sent"));
 
-	private StringBuilder getEmailWasSentResponse(final ResourceBundle language, HttpServletRequest request) {
-		final StringBuilder buff = new StringBuilder();
-		buff.append("<html>\n");
-		
-		buff.append("<head>\n");
-		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
-		buff.append("</head>\n");
-		buff.append("<body>\n");
-
-		buff.append(language.getString("email.was.sent"));
-		buff.append("<p>");
-		buff.append("<a href='../" + getStartPage(request) + "'>" + language.getString("proceed.to.login")
-				+ "</a></body></html>");
-		return buff;
+		request.getRequestDispatcher("/jsp/afterRegister.jsp").forward(request, response);
 	}
 
 	public void modifyUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2092,15 +2079,20 @@ public class RegistrationServlet extends HttpServlet {
 	private void setEmailSentNoticeInSession(final HttpServletRequest request, final User user)
 			throws UserNotLoggedInException, MissingRequestParameterException {
 		ResourceBundle language = getLanguageForCurrentUser(request);
-		setNoticeInSession(getHttpSession(request), language.getString("email") + ": <h2>" + user.email + "</h2>");
-		setNoticeInSession(getHttpSession(request),
-				new MainPageNotice(MainPageNotice.NoticeType.Warning, language.getString("email.warning")));
+		HttpSession session = getHttpSession(request);
+		setNoticeInSession(session, language.getString("email") + ": <h2>" + user.email + "</h2>");
+		setNoticeInSession(session,
+				PageNotice.NoticeType.Warning, language.getString("email.warning"));
 	}
 
-	private void setNoticeInSession(final HttpSession session, MainPageNotice notice) {
-		List<MainPageNotice> notices = (List<MainPageNotice>) session.getAttribute(SessionAttribute.Notices.name());
+	private void setNoticeInSession(final HttpSession session, PageNotice.NoticeType noticeType, String noticeText) {
+		setNoticeInSession(session, new PageNotice(noticeType, noticeText));
+	}
+	
+	private void setNoticeInSession(final HttpSession session, PageNotice notice) {
+		List<PageNotice> notices = (List<PageNotice>) session.getAttribute(SessionAttribute.Notices.name());
 		if (notices == null)
-			notices = new LinkedList<MainPageNotice>();
+			notices = new LinkedList<PageNotice>();
 
 		notices.add(notice);
 
@@ -2108,7 +2100,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void setNoticeInSession(final HttpSession session, String noticeText) {
-		setNoticeInSession(session, new MainPageNotice(MainPageNotice.NoticeType.OK, noticeText));
+		setNoticeInSession(session, PageNotice.NoticeType.OK, noticeText);
 	}
 
 	private Model createModel(final Model model, final HttpServletRequest request)
