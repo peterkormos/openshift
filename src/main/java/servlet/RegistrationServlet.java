@@ -92,7 +92,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2026.04.06.";
+	public String VERSION = "2026.04.13.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -1039,7 +1039,7 @@ public class RegistrationServlet extends HttpServlet {
 			ServletUtil.writeResponse(response, buff);
 			return;
 		} else if ("mastersFile".equals(item.getFieldName())) {
-			setNoticeInSession(getHttpSession(request), processUploadedMastersExcel(request, item.getInputStream()));
+			setOKNoticeInSession(getHttpSession(request), processUploadedMastersExcel(request, item.getInputStream()));
 		}
 
 		redirectToMainPage(request, response);
@@ -1991,7 +1991,7 @@ public class RegistrationServlet extends HttpServlet {
 			servletDAO.save(model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
-			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model") + ": "
+			setOKNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model") + ": "
 					+ model.scale + " - " + model.name + " - " + servletDAO.getCategory(model.categoryID).categoryCode);
 		}
 		session.removeAttribute(SessionAttribute.ModelID.name());
@@ -2031,7 +2031,7 @@ public class RegistrationServlet extends HttpServlet {
 		
 		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE
 				.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
-			setNoticeInSession(session, getLanguageForCurrentUser(request).getString("add") + ": "
+			setOKNoticeInSession(session, getLanguageForCurrentUser(request).getString("add") + ": "
 					+ model.scale + " - " + model.name + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
 			response.sendRedirect("jsp/modelForm.jsp");
@@ -2080,26 +2080,22 @@ public class RegistrationServlet extends HttpServlet {
 			throws UserNotLoggedInException, MissingRequestParameterException {
 		ResourceBundle language = getLanguageForCurrentUser(request);
 		HttpSession session = getHttpSession(request);
-		setNoticeInSession(session, language.getString("email") + ": <h2>" + user.email + "</h2>");
+		setOKNoticeInSession(session, language.getString("email") + ": <h2>" + user.email + "</h2>");
 		setNoticeInSession(session,
 				PageNotice.NoticeType.Warning, language.getString("email.warning"));
 	}
 
 	private void setNoticeInSession(final HttpSession session, PageNotice.NoticeType noticeType, String noticeText) {
-		setNoticeInSession(session, new PageNotice(noticeType, noticeText));
-	}
-	
-	private void setNoticeInSession(final HttpSession session, PageNotice notice) {
 		List<PageNotice> notices = (List<PageNotice>) session.getAttribute(SessionAttribute.Notices.name());
 		if (notices == null)
 			notices = new LinkedList<PageNotice>();
 
-		notices.add(notice);
+		notices.add(new PageNotice(noticeType, noticeText));
 
 		session.setAttribute(SessionAttribute.Notices.name(), notices);
 	}
 
-	private void setNoticeInSession(final HttpSession session, String noticeText) {
+	private void setOKNoticeInSession(final HttpSession session, String noticeText) {
 		setNoticeInSession(session, PageNotice.NoticeType.OK, noticeText);
 	}
 
@@ -2412,7 +2408,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
 			servletDAO.deleteModel(model);
-			setNoticeInSession(getHttpSession(request), getLanguageForCurrentUser(request).getString("delete") + ": "
+			setOKNoticeInSession(getHttpSession(request), getLanguageForCurrentUser(request).getString("delete") + ": "
 					+ model.scale + " - " + model.name + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
 		}
