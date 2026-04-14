@@ -13,7 +13,9 @@ boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 
 <div class="input-caption-container">
 	<select name='<%=request.getParameter("selectName")%>' id="country"
-		onchange="updateMandatoryFieldMark(this);">
+		onchange="updateMandatoryFieldMark(this);"
+		<%=mandatory ? "required='required'" : ""%>
+		>
 		<option value='<%=request.getParameter("defaultSelectedValue")%>'><%=request.getParameter("defaultSelectedLabel")%></option>
 		<optgroup label="<%=language.getString("highlighted.country")%>">
 			<option value='Hungary'>Magyarorsz&aacute;g</option>

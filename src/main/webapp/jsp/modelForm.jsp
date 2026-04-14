@@ -219,12 +219,16 @@ if(!servlet.isAdminSession(session))
 							<label><input
 								style="zoom: 2;" name='gluedToBase' type='radio' value='on'
 								<%=(model == null || !model.gluedToBase ? "" : "checked='checked'")%>
-								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);">
+								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);"
+								required='required'
+								>
 								<%=language.getString("yes")%> </label>
 							<label><input
 								style="zoom: 2;" name='gluedToBase' type='radio' value='off'
 								<%=(model == null || model.gluedToBase ? "" : "checked='checked'")%>
-								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);">
+								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);"
+								required='required'
+								>
 								<%=language.getString("no")%> </label>
 						</fieldset>
 						<label for="gluedToBaseGroup" class="input-caption"><%=language.getString("glued.to.base")%></label>

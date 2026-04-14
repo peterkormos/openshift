@@ -1,6 +1,8 @@
 <div class="input-caption-container">
 	<select name="yearofbirth" id="yearofbirth"
-		onchange="updateMandatoryFieldMark(this);">
+		onchange="updateMandatoryFieldMark(this);"
+		required='required'
+		>
 		<option value="<%=request.getParameter("selectValue")%>" selected><%=request.getParameter("selectLabel")%></option>
 		<%
 		int currentYear = java.time.LocalDate.now().getYear();

@@ -175,13 +175,8 @@ function checkDeleteUserRequest()
 							<input autocomplete="fuckoffchrome" name="fullname" type="text"
 								size="30" value="<%=user == null ? "" : user.lastName%>"
 								id="fullnameID"
-							<%
-							if (directRegister) {
-							%>
-								onChange="sendRequest(); updateMandatoryFieldMark(this);"
-							<%
-							}
-							%>
+								required='required'
+								onChange="<%=directRegister ? "sendRequest(); " : "" %> updateMandatoryFieldMark(this);"
 								>
 							<%
 							if (directRegister) {
@@ -201,7 +196,7 @@ function checkDeleteUserRequest()
 			<tr bgcolor="<%= highlight(user != null && user.getGender() == null)%>">
 				<td>
 					<div class="input-caption-container">
-						<fieldset id="genderGroup" style="display: inline; padding: 15px;">
+						<fieldset id="genderGroup" style="display: inline; padding: 15px;" >
 							<%
 							if (user != null && user.getGender() == null) {
 							%>
@@ -215,7 +210,9 @@ function checkDeleteUserRequest()
 							<label> <input type='radio' name='gender'
 								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode); checkSubmit(document.getElementById('inputForm'));"
 								value='<%=gender.name()%>'
-								<%=(user == null ? "" : gender.equals(user.getGender()) ? " checked='checked'" : "")%> />
+								<%=(user == null ? "" : gender.equals(user.getGender()) ? " checked='checked'" : "")%> 
+								required='required'
+								/>
 								<%=language.getString(gender.name())%>
 							</label><br>
 							<%
