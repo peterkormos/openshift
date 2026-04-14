@@ -193,7 +193,15 @@ function checkDeleteUserRequest()
 					</div>
 				</td>
 			</tr>
-			<tr bgcolor="<%= highlight(user != null && user.getGender() == null)%>">
+			<tr
+				<%
+				if (user != null && user.getGender() == null) {
+				%>
+				bgcolor="<%= highlight(true)%>"
+				<%
+				}
+				%>
+			>
 				<td>
 					<div class="input-caption-container">
 						<fieldset id="genderGroup" style="display: inline; padding: 15px;" >
