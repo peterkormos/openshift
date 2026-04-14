@@ -1307,19 +1307,19 @@ public class RegistrationServlet extends HttpServlet {
 					+ ": [" + email + "]");
 			return;
 		}
+		
+		final String password = ServletUtil.getRequestAttribute(request, "password");
+		
+		if (!password.equals(ServletUtil.getRequestAttribute(request, "password2"))) {
+			writeErrorResponse(request, response, language.getString("passwords.not.same"));
+			return;
+		}
 
 		if (servletDAO.userExists(email)) {
 			setNoticeInSession(getHttpSession(request),
 					PageNotice.NoticeType.Error, language.getString("select.another.email"));
 
 			request.getRequestDispatcher("/jsp/afterRegister.jsp").forward(request, response);
-			return;
-		}
-
-		final String password = ServletUtil.getRequestAttribute(request, "password");
-
-		if (!password.equals(ServletUtil.getRequestAttribute(request, "password2"))) {
-			writeErrorResponse(request, response, language.getString("passwords.not.same"));
 			return;
 		}
 
@@ -2981,16 +2981,11 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private User createUser(final HttpServletRequest request, final String email) throws Exception {
-		return createUser(request, email, "");
-	}
-
-	private User createUser(final HttpServletRequest request, final String email, final String httpParameterPostTag)
-			throws Exception {
-		String passwordInRequest = isAdminSession(getHttpSession(request)) ? ServletUtil.getOptionalRequestAttribute(request, "password" + httpParameterPostTag) : 
-			ServletUtil.getRequestAttribute(request, "password" + httpParameterPostTag);
+		String passwordInRequest = isAdminSession(getHttpSession(request)) ? ServletUtil.getOptionalRequestAttribute(request, "password") : 
+			ServletUtil.getRequestAttribute(request, "password");
 		
 		return createUser(request, ServletUtil.sanitizeUserInput(email), ServletUtil.encodePassword(passwordInRequest),
-				httpParameterPostTag);
+				"" /*httpParameterPostTag*/);
 	}
 
 	private User createUser(final HttpServletRequest request, final String email, final String password,
