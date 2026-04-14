@@ -19,7 +19,7 @@
     <div class="input-caption-container">
 	<select name='categoryID'
 	'<%= mandatory ? "required='required'" : "" %>' 
-onchange="updateMandatoryFieldMark(this);"
+onchange="updateMandatoryFieldMark(this); checkMandatoryElement(this);"
 	>
 
 		<option value='<%=selectedValue%>'><%=selectedLabel%></option>
