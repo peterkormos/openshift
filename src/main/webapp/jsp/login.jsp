@@ -11,19 +11,11 @@
 
 <%
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-ServletDAO servletDAO = servlet.getServletDAO();
 
 final String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 String showIdHttpParameter = request.getParameter(RequestParameter.ShowId.getParameterName());
-final List<String> shows = servletDAO.getShows();
-
-if (showIdHttpParameter != null)
-	try {
-		shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showIdHttpParameter) - 1)));
-	} catch (Exception ex) {
-	}
 %>
 
 <html>
@@ -98,23 +90,7 @@ if (showIdHttpParameter != null)
 							<td colspan="2"><FONT COLOR='#ffffff'>Verzi&oacute;:
 									<%=servlet.getVersion()%></FONT></td>
 						</tr>
-						<tr>
-							<td align="center">
-								<%
-								for (final String show : shows) {
-								%> <div></div><label> <input type='radio' name='show'
-									onchange="updateMandatoryFieldMark(this.parentNode); checkSubmit(document.getElementById('inputForm'));"
-									value='<%=StringEncoder.toBase64(show.getBytes())%>'
-									<%=(shows.size() == 1 ? " checked='checked'" : "")%> /> <img
-									style="height: 25mm; vertical-align: middle;"
-									src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
-									<span style="color: red"><b> <%=show%></b></span> 
-							</label></div><%
- }
- %>
-									<%=shows.isEmpty() || shows.size() == 1 ? "" : "<font color='#FF0000' size='+3'>&#8226;</font>"%>
-							</td>
-						</tr>
+							<jsp:include page="shows.jsp"></jsp:include>
 						<tr>
 							<td align="center">
 								<div class="input-caption-container" style="width: 200px">
@@ -138,24 +114,7 @@ if (showIdHttpParameter != null)
 										href="reminder.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
 							</td>
 						</tr>
-						<tr>
-							<td>
-								<%
-								for (LoginConsentType lc : LoginConsent.LoginConsentType.values()) {
-								%> <label <%=lc.isMandatory() ? "class='flash Warning'" : ""%>><input
-									type="checkbox" id="dataUsageConsent<%=lc.name()%>"
-									name="dataUsageConsent<%=lc.name()%>"
-									<%=lc.isMandatory() ? "required='required'" : ""%>
-									onchange="updateMandatoryFieldMark(this); checkSubmit(document.getElementById('inputForm'));">
-									<%=language.getString("login.consent." + lc.name())%> <%
- if (lc.isMandatory()) {
- %> <font color='#FF0000' size='+3'>&#8226;</font> <%
- }
- %> </label> <br> <%
- }
- %>
-							</td>
-						</tr>
+						<jsp:include page="loginConsent.jsp"></jsp:include>
 						<tr>
 							<td colspan="2" align="center"><input name="submit"
 								id="submitbutton" class="disabledClass" type="submit"

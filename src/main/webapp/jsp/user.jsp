@@ -110,7 +110,7 @@ function checkDeleteUserRequest()
 
 	<div class="header"></div>
 
-	<form autocomplete="fuckoffchrome" name="input" id="input"
+	<form autocomplete="off" name="input" id="input"
 		action="../RegistrationServlet/<%=action%>" method="put"
 		accept-charset="UTF-8"
 <%-- 		onSubmit='return checkEmail(this) <%= passwordCheck %> && checkName(this)'> --%>
@@ -120,6 +120,15 @@ function checkDeleteUserRequest()
 			<font color="#FF0000" size="+3">&#8226;</font>
 			<%=language.getString("mandatory.fields")%></p>
 		<table width="47%" border="0">
+		
+			<%
+			if (action.equals("register")) {
+			%>
+				<jsp:include page="shows.jsp"></jsp:include>
+				<jsp:include page="loginConsent.jsp"></jsp:include>
+			<%
+			}
+			%>
 
 			<%
 			if (!directRegister) {
@@ -172,7 +181,7 @@ function checkDeleteUserRequest()
 				<td>
 					<div id='fullnames'>
 						<div class="input-caption-container">
-							<input autocomplete="fuckoffchrome" name="fullname" type="text"
+							<input autocomplete="off" name="fullname" type="text"
 								size="30" value="<%=user == null ? "" : user.lastName%>"
 								id="fullnameID"
 								required='required'
@@ -316,7 +325,7 @@ function checkDeleteUserRequest()
 					</jsp:include></td>
 			</tr>
 			<tr>
-				<td><input autocomplete="fuckoffchrome" type="submit"
+				<td><input type="submit"
 					value="<%=language.getString("save")%>">
 					<p>
 					<div id="noticeDiv"></div></td>

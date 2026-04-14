@@ -325,7 +325,7 @@ public class RegistrationServlet extends HttpServlet {
 			addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
 			String message = throwable.getMessage();
-			logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message);
+			logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message, throwable);
 
 			if (EmailNotFoundException.class.isInstance(throwable)) {
 				EmailNotFoundException emailNotFoundException = EmailNotFoundException.class.cast(throwable);
@@ -533,8 +533,7 @@ public class RegistrationServlet extends HttpServlet {
 		Optional<User> user = loginAttempt(request, response);
 		
 		if(user.isPresent()) {
-			String show = getShowFromRequest(request);
-			loginSuccessful(request, response, user.get(), show);
+			loginSuccessful(request, response, user.get(), getShowFromRequest(request));
 		}
 	}
 
@@ -1316,11 +1315,13 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		if (servletDAO.userExists(email)) {
-			setNoticeInSession(getHttpSession(request),
-					PageNotice.NoticeType.Error, language.getString("select.another.email"));
-
-			request.getRequestDispatcher("/jsp/afterRegister.jsp").forward(request, response);
-			return;
+			Optional<User> user = loginAttempt(request, response);
+			
+			if(user.isPresent()) {
+				loginSuccessful(request, response, user.get(), getShowFromRequest(request));
+				modifyUser(request, response);
+				return;
+			}
 		}
 
 		final User user = createUser(request, email);
@@ -1329,7 +1330,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (!user.isLocalUser())
 			sendEmailWithModels(user, true);
 		
-		proceedToLoginResponse(request, response, language);
+		loginSuccessful(request, response, user, getShowFromRequest(request));
 	}
 
 	private void proceedToLoginResponse(final HttpServletRequest request, final HttpServletResponse response,
