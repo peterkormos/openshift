@@ -325,7 +325,7 @@ public class RegistrationServlet extends HttpServlet {
 			addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
 			String message = throwable.getMessage();
-			logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message, throwable);
+			logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message);
 
 			if (EmailNotFoundException.class.isInstance(throwable)) {
 				EmailNotFoundException emailNotFoundException = EmailNotFoundException.class.cast(throwable);
