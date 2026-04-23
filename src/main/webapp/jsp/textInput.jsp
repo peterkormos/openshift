@@ -33,7 +33,7 @@ boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 
 <div class="input-caption-container">
 <input type='text'
-	size="<%=ServletUtil.getOptionalRequestAttribute(request, "size")%>"
+	size="<%=ServletUtil.getOptionalRequestParameter(request, "size")%>"
 	maxlength='<%=maxlength%>'
 	name='<%=request.getParameter("name")%>'
 	type='<%=request.getParameter("inputType")%>'

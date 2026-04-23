@@ -10,12 +10,12 @@
 <%@include file="../util.jsp"%>
 
 <%
-	int maxlength = JudgingScore.MAX_COMMENT_LENGTH;
+int maxlength = JudgingScore.MAX_COMMENT_LENGTH;
 	String unjudgedCriteriaStyle = "background-color: lightgrey;";
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
 
 	JudgingResult judgingResult = (JudgingResult) session
-			.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
+	.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
 
 	String judge = Optional.ofNullable(judgingResult.getJudge()).orElse("");
 	List<JudgingCriteria> criteriaList = judgingResult.getCriterias();
@@ -24,8 +24,8 @@
 	JudgedModel judgedModel = judgingResult.isModelPresent() ? judgingResult : null;
 	
 	boolean listMode = Boolean.parseBoolean(
-			ServletUtil.getOptionalRequestAttribute(request, "listMode").
-			replaceAll(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE, "false"));
+	ServletUtil.getOptionalRequestParameter(request, "listMode").
+	replaceAll(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE, "false"));
 %>
 
 

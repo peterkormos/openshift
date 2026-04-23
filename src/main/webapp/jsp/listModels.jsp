@@ -9,21 +9,21 @@
 <%@include file="util.jsp"%>
 
 <%
-	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ServletDAO servletDAO = servlet.getServletDAO();
 
 	final ResourceBundle language = (ResourceBundle) session
-			.getAttribute(CommonSessionAttribute.Language.name());
+	.getAttribute(CommonSessionAttribute.Language.name());
 
-	String actionPathPrefix = ServletUtil.getOptionalAttribute(request, "actionPathPrefix").orElse("");
+	String actionPathPrefix = ServletUtil.getOptionalParameter(request, "actionPathPrefix").orElse("");
 	
 	boolean insertAwards = Boolean
-			.parseBoolean(ServletUtil.getRequestAttribute(request, "insertAwards", false));
+	.parseBoolean(ServletUtil.getRequestParameter(request, "insertAwards", false));
 	boolean withDetailing = Boolean
-			.parseBoolean(ServletUtil.getRequestAttribute(request, "withDetailing", false));
-	boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
+	.parseBoolean(ServletUtil.getRequestParameter(request, "withDetailing", false));
+	boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestParameter(request, "onlyPhotos", false));
 	boolean forJudges = Boolean.parseBoolean(
-			ServletUtil.getRequestAttribute(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
+	ServletUtil.getRequestParameter(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
 	boolean filterToOversized = ServletUtil.isCheckedIn(request, "filterToOversized");
   List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());

@@ -17,15 +17,15 @@ try {
 } catch (Exception ex) {
 }
 
-String parameterName = ServletUtil.getOptionalRequestAttribute(request, "parameterName");
+String parameterName = ServletUtil.getOptionalRequestParameter(request, "parameterName");
 if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameterName))
 	parameterName = RequestParameter.Language.getParameterName();
 %>
 
 <div class="input-caption-container" style="display: inline-block;">
 	<select name="<%=parameterName%>"
-		<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestAttribute(request, "required")) ? ""
-				: "required='" + ServletUtil.getOptionalRequestAttribute(request, "required") + "'"%>
+		<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestParameter(request, "required")) ? ""
+				: "required='" + ServletUtil.getOptionalRequestParameter(request, "required") + "'"%>
 		onchange="updateMandatoryFieldMark(this);"
 		required='required'
 		>

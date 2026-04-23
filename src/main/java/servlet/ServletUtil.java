@@ -95,15 +95,15 @@ public class ServletUtil {
   		charEncodeMap.put(255, "&yuml;");
     }
     
-    public static Optional<String> getOptionalAttribute(final HttpServletRequest request, final String name) {
-        final String value = ServletUtil.getOptionalRequestAttribute(request, name);
+    public static Optional<String> getOptionalParameter(final HttpServletRequest request, final String name) {
+        final String value = ServletUtil.getOptionalRequestParameter(request, name);
 
         return  RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(value) ? Optional.empty() : Optional.of(value);
     }
     
-    public static String getOptionalRequestAttribute(final HttpServletRequest request, final String name) {
+    public static String getOptionalRequestParameter(final HttpServletRequest request, final String name) {
         try {
-            final String value = ServletUtil.getRequestAttribute(request, name, false);
+            final String value = ServletUtil.getRequestParameter(request, name, false);
 
             return "".equals(value) ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : value;
         } catch (final MissingRequestParameterException e) {
@@ -112,11 +112,11 @@ public class ServletUtil {
         }
     }
 
-    public static String getRequestAttribute(final HttpServletRequest request, final String name) throws MissingRequestParameterException {
-        return getRequestAttribute(request, name, true);
+    public static String getRequestParameter(final HttpServletRequest request, final String name) throws MissingRequestParameterException {
+        return getRequestParameter(request, name, true);
     }
 
-    public static String getRequestAttribute(final HttpServletRequest request, final String name, final boolean throwException)
+    public static String getRequestParameter(final HttpServletRequest request, final String name, final boolean throwException)
             throws MissingRequestParameterException {
         String value;
         value = request.getParameter(name);
@@ -219,7 +219,7 @@ public class ServletUtil {
 	}
 
 	public static boolean isCheckedIn(final HttpServletRequest request, final String parameter) {
-			return "on".equalsIgnoreCase(getOptionalRequestAttribute(request, parameter));
+			return "on".equalsIgnoreCase(getOptionalRequestParameter(request, parameter));
 	}
 	
 	public static String sanitizeUserInput(String text) {

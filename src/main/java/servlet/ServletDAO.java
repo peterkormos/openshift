@@ -159,7 +159,7 @@ public class ServletDAO extends HibernateDAO
 
 	try
 	{
-	  if (ServletUtil.getRequestAttribute(request, httpParameter).length() != 0)
+	  if (ServletUtil.getRequestParameter(request, httpParameter).length() != 0)
 	  {
 		if (where.length() != 0)
 		{
@@ -168,11 +168,11 @@ public class ServletDAO extends HibernateDAO
 
 		if (stringParameter)
 		{
-		  where += sQLfield + " like '%" + ServletUtil.getRequestAttribute(request, httpParameter) + "%'";
+		  where += sQLfield + " like '%" + ServletUtil.getRequestParameter(request, httpParameter) + "%'";
 		}
 		else
 		{
-		  where += sQLfield + " = " + ServletUtil.getRequestAttribute(request, httpParameter);
+		  where += sQLfield + " = " + ServletUtil.getRequestParameter(request, httpParameter);
 		}
 	  }
 	}

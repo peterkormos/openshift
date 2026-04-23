@@ -13,9 +13,11 @@
 	scope="application" />
 
 <%
+p
+
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
-final String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
+final String languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 %>
 

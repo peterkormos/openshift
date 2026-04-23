@@ -58,7 +58,7 @@ function setModelInSession(value)
 <p id="resp" />
 
 <%
-	ResourceBundle language = JudgingServlet.getLanguage(session, response);
+ResourceBundle language = JudgingServlet.getLanguage(session, response);
 
 	JudgingResult judgingResult = (JudgingResult) session.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
 	
@@ -66,7 +66,7 @@ function setModelInSession(value)
     
     Boolean simpleJudging = (Boolean) session.getAttribute(JudgingServlet.SessionAttribute.SimpleJudging.name());
     if(simpleJudging == null) {
-        simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+        simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
     }
 %>
 

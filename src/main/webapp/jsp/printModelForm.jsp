@@ -7,11 +7,11 @@
 <%@page import="java.util.*"%>
 
 <%
-	final User user = RegistrationServlet.getUser(request);
+final User user = RegistrationServlet.getUser(request);
 
 	final RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	final ResourceBundle language = (ResourceBundle) session
-			.getAttribute(CommonSessionAttribute.Language.name());
+	.getAttribute(CommonSessionAttribute.Language.name());
 	final ServletDAO servletDAO = servlet.getServletDAO();
 
 	final Model model = (Model) session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
@@ -22,12 +22,12 @@
 	}
 
 	boolean insertAwards = Boolean
-			.parseBoolean(ServletUtil.getRequestAttribute(request, "insertAwards", false));
+	.parseBoolean(ServletUtil.getRequestParameter(request, "insertAwards", false));
 	boolean withDetailing = Boolean
-			.parseBoolean(ServletUtil.getRequestAttribute(request, "withDetailing", false));
-	boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestAttribute(request, "onlyPhotos", false));
+	.parseBoolean(ServletUtil.getRequestParameter(request, "withDetailing", false));
+	boolean onlyPhotos = Boolean.parseBoolean(ServletUtil.getRequestParameter(request, "onlyPhotos", false));
 	boolean forJudges = Boolean.parseBoolean(
-			ServletUtil.getRequestAttribute(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
+	ServletUtil.getRequestParameter(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
 	boolean firstModel = Boolean.parseBoolean(request.getParameter("firstModel"));
 %>

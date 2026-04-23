@@ -10,8 +10,10 @@
 <%@include file="util.jsp"%>
 
 <%
+p
+
 //input parameters	
-boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestAttribute(request, "directRegister"));
+boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestParameter(request, "directRegister"));
 
 String action = request.getParameter("action");
 if (action == null) {
@@ -28,13 +30,13 @@ try {
 	}
 	languageCode = user.language;
 } catch (Exception e) {
-	languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
+	languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
 }
 
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 session.setAttribute(CommonSessionAttribute.Language.name(), language);
 
-String passwordCheck = RegistrationServlet.isAdminSession(session) ? "" :  "&& checkPassword(this) ";
+String passwordCheck = RegistrationServlet.isAdminSession(session) ? "" :  "&& checkPassword(this) "
 %>
 
 <html>

@@ -317,10 +317,10 @@ public final class JudgingServlet extends HttpServlet {
 	}
     
     private void deleteJudgingForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
-        final String judge = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Judge.name());
-        final String modelId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ModelID.name());
-        final String modellerId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ModellerID.name());
+        final String category = ServletUtil.getRequestParameter(request, RequestParameter.Category.name());
+        final String judge = ServletUtil.getOptionalRequestParameter(request, RequestParameter.Judge.name());
+        final String modelId = ServletUtil.getOptionalRequestParameter(request, RequestParameter.ModelID.name());
+        final String modellerId = ServletUtil.getOptionalRequestParameter(request, RequestParameter.ModellerID.name());
 
         if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(category) && //
                 !RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(judge) && //
@@ -334,7 +334,7 @@ public final class JudgingServlet extends HttpServlet {
 
     private void deleteRecords(HttpServletRequest request, HttpServletResponse response) throws Exception {
     	@SuppressWarnings("unchecked")
-		Class<? extends Record> recordClass = (Class<? extends Record>) Class.forName(ServletUtil.getRequestAttribute(request, RequestParameter.Class.name()));
+		Class<? extends Record> recordClass = (Class<? extends Record>) Class.forName(ServletUtil.getRequestParameter(request, RequestParameter.Class.name()));
 		for (final Record record : dao.getAll(recordClass)) {
             dao.delete(record.getId(), recordClass);
         }
@@ -345,7 +345,7 @@ public final class JudgingServlet extends HttpServlet {
     private void getCategories(HttpServletRequest request, HttpServletResponse response) throws Exception {
     	List<String> categories;
     	
-        boolean simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+        boolean simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
         if(simpleJudging) {
         	categories = servletDAO.getCategoryList(null /* show */).stream().map(Category::getCategoryCode).collect(Collectors.toList());
         	categories.removeAll(getCategories());
@@ -374,20 +374,20 @@ public final class JudgingServlet extends HttpServlet {
 	}
 
     private void getModels(HttpServletRequest request, HttpServletResponse response) throws IOException, MissingRequestParameterException, SQLException {
-        final String forJudges = ServletUtil.getRequestAttribute(request, RequestParameter.ForJudges.name());
+        final String forJudges = ServletUtil.getRequestParameter(request, RequestParameter.ForJudges.name());
         List<Model> models = null;
         
-        Optional<String> category = ServletUtil.getOptionalAttribute(request, RequestParameter.Category.name());
+        Optional<String> category = ServletUtil.getOptionalParameter(request, RequestParameter.Category.name());
 		if (category.isPresent()) {
 			models = servletDAO.getModelsInCategory(servletDAO.getCategory(category.get()).getId());
 		}
 		
-        Optional<String> modelID = ServletUtil.getOptionalAttribute(request, RequestParameter.ModelID.name());
+        Optional<String> modelID = ServletUtil.getOptionalParameter(request, RequestParameter.ModelID.name());
 		if (modelID.isPresent()) {
 			models = Arrays.asList(servletDAO.getModel(Integer.parseInt(modelID.get())));
 		}
 		
-		Optional<String> userID = ServletUtil.getOptionalAttribute(request, RequestParameter.UserID.name());
+		Optional<String> userID = ServletUtil.getOptionalParameter(request, RequestParameter.UserID.name());
 		if (userID.isPresent()) {
 			models = servletDAO.getModels(Integer.parseInt(userID.get()));
 		}
@@ -408,23 +408,23 @@ public final class JudgingServlet extends HttpServlet {
     
     private void getJudgingForm(HttpServletRequest request, HttpServletResponse response, boolean setJudgingScoresInSession, String jspPage)
             throws Exception {
-        final String categoryCode = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
+        final String categoryCode = ServletUtil.getRequestParameter(request, RequestParameter.Category.name());
 
 		boolean simpleJudging = Boolean.valueOf(
-				ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+				ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
 		setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);
 
 		
 	    Model model = (Model) getSessionAttribute(request, CommonSessionAttribute.Model);
 	    if(model == null) {
-			String modelId = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.ModelID.name());
+			String modelId = ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.ModelID.name());
 			if(!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelId))
 				model = servletDAO.getModel(Integer.parseInt(modelId));
 		}
 
 	    JudgingResult judgingResult = model != null ? new JudgingResult(model) : new JudgingResult();
 		
-	    String modellerID = ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.ModellerID.name());
+	    String modellerID = ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.ModellerID.name());
 		if(!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerID))
 			judgingResult.setModellerID(Integer.parseInt(modellerID));
 		
@@ -434,7 +434,7 @@ public final class JudgingServlet extends HttpServlet {
 	    else
 	    	judgingResult.setCriterias(getCriteriaList(judgingResult.getCategory()));
 
-	    String judgeInRequestAttribute = ServletUtil.encodeString(ServletUtil.getOptionalRequestAttribute(request,
+	    String judgeInRequestAttribute = ServletUtil.encodeString(ServletUtil.getOptionalRequestParameter(request,
                 RequestParameter.Judge.name()));
         if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(judgeInRequestAttribute)) {
         	judgingResult.setJudge(judgeInRequestAttribute);
@@ -534,9 +534,9 @@ public final class JudgingServlet extends HttpServlet {
 
 	private void login(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, MissingRequestParameterException {
-		String judge = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
+		String judge = ServletUtil.encodeString(ServletUtil.getRequestParameter(request, RequestParameter.Judge.name()));
 		setSessionAttribute(request, SessionAttribute.Judge, judge);
-		String languageCode = ServletUtil.getRequestAttribute(request, RequestParameter.Language.name());
+		String languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.name());
 		setSessionAttribute(request, CommonSessionAttribute.Language,
 				languageUtil.getLanguage(languageCode));
 		
@@ -572,7 +572,7 @@ public final class JudgingServlet extends HttpServlet {
 			int categoryId = category.getId();
 			try {
 				final int judgingSheetId = Integer.parseInt(
-						ServletUtil.getRequestAttribute(request, RequestParameter.Category.name() + categoryId));
+						ServletUtil.getRequestParameter(request, RequestParameter.Category.name() + categoryId));
 
 				JudgingSheet judgingSheet = dao.get(judgingSheetId, JudgingSheet.class);
 
@@ -597,21 +597,21 @@ public final class JudgingServlet extends HttpServlet {
 	}
     
     private void saveJudging(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final String category = ServletUtil.getRequestAttribute(request, RequestParameter.Category.name());
-        final String judge = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, RequestParameter.Judge.name()));
-        final String modelsName = ServletUtil.getRequestAttribute(request, RequestParameter.ModelsName.name());
-        final int modelId = Integer.parseInt(ServletUtil.getRequestAttribute(request, RequestParameter.ModelID.name()));
+        final String category = ServletUtil.getRequestParameter(request, RequestParameter.Category.name());
+        final String judge = ServletUtil.encodeString(ServletUtil.getRequestParameter(request, RequestParameter.Judge.name()));
+        final String modelsName = ServletUtil.getRequestParameter(request, RequestParameter.ModelsName.name());
+        final int modelId = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModelID.name()));
         final int modellerId = Integer
-                .parseInt(ServletUtil.getRequestAttribute(request, RequestParameter.ModellerID.name()));
+                .parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModellerID.name()));
 
         final int judgingCriterias = Integer
-                .parseInt(ServletUtil.getRequestAttribute(request, RequestParameter.JudgingCriterias.name()));
-        final String comment = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Comment.name());
-        boolean simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+                .parseInt(ServletUtil.getRequestParameter(request, RequestParameter.JudgingCriterias.name()));
+        final String comment = ServletUtil.getOptionalRequestParameter(request, RequestParameter.Comment.name());
+        boolean simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
 
         dao.deleteJudgingScores(judge, category, modelId, modellerId);
         for (int i = 1; i <= judgingCriterias; i++) {
-            final String optionalRequestAttribute = ServletUtil.getOptionalRequestAttribute(request,
+            final String optionalRequestAttribute = ServletUtil.getOptionalRequestParameter(request,
                     RequestParameter.JudgingCriteria.name() + i);
             if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(optionalRequestAttribute)) {
                 continue;
@@ -629,7 +629,7 @@ public final class JudgingServlet extends HttpServlet {
     	session.removeAttribute(JudgingServlet.SessionAttribute.Judgings.name());
 
         if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE
-                .equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
+                .equals(ServletUtil.getOptionalRequestParameter(request, "finishRegistration"))) {
             if(getSessionAttribute(request, SessionAttribute.Judge) == null)
             	setSessionAttribute(request, SessionAttribute.Judge, judge);
             setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);

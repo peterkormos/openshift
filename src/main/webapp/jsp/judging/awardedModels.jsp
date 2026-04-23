@@ -31,14 +31,14 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 		<%
 		}
 
-		String categoryID = ServletUtil.getOptionalRequestAttribute(request, CATEGORY_ID);
+				String categoryID = ServletUtil.getOptionalRequestParameter(request, CATEGORY_ID);
 
-		if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(categoryID)) {
-		categories.clear();
-		categories.add(RegistrationServlet.servletDAO.getCategory(Integer.parseInt(categoryID)));
-		}
+				if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(categoryID)) {
+				categories.clear();
+				categories.add(RegistrationServlet.servletDAO.getCategory(Integer.parseInt(categoryID)));
+				}
 
-		for (Category category : categories) {
+				for (Category category : categories) {
 			if (!awardedModels.containsKey(category.getId()))
 				continue;
 		%>

@@ -17,12 +17,12 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 
 ResourceBundle language = languageUtil
-		.getLanguage(ServletUtil.getOptionalRequestAttribute(request, RequestParameter.Language.getParameterName()));
-boolean shortStatistics = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, "shortStatistics"));
+		.getLanguage(ServletUtil.getOptionalRequestParameter(request, RequestParameter.Language.getParameterName()));
+boolean shortStatistics = Boolean.valueOf(ServletUtil.getOptionalRequestParameter(request, "shortStatistics"));
 
 String show = RegistrationServlet.getShowFromSession(request);
 List<String> shows = show == null ? servletDAO.getShows() : Arrays.asList(new String[] { show });
-String showId = ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ShowId.getParameterName());
+String showId = ServletUtil.getOptionalRequestParameter(request, RequestParameter.ShowId.getParameterName());
 if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)) {
 	shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showId) - 1)));
 }

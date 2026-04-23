@@ -4,11 +4,11 @@
 
 
 <%
-	ResourceBundle language = JudgingServlet.getLanguage(session, response);
+ResourceBundle language = JudgingServlet.getLanguage(session, response);
 
     Boolean simpleJudging = (Boolean) session.getAttribute(JudgingServlet.SessionAttribute.SimpleJudging.name());
     if(simpleJudging == null) {
-        simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestAttribute(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+        simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
     }
 %>
 

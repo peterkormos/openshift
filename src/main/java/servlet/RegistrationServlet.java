@@ -313,7 +313,7 @@ public class RegistrationServlet extends HttpServlet {
 			if (pathInfo != null) {
 				command = processRestful(request, response, pathInfo.substring(1));
 			} else {
-				command = ServletUtil.getRequestAttribute(request, "command");
+				command = ServletUtil.getRequestParameter(request, "command");
 				handleRequest(request, response, command);
 			}
 
@@ -439,7 +439,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void directLogin(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
-		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
+		final int userID = Integer.parseInt(ServletUtil.getRequestParameter(request, "userID"));
 		loginSuccessful(request, response, servletDAO.getUser(userID),
 				getShowFromRequest(request));
 	}
@@ -448,7 +448,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
-		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
+		final int userID = Integer.parseInt(ServletUtil.getRequestParameter(request, "userID"));
 
 		StringBuilder printBuffer = getPrintBuffer(request);
 		printModelsForUser(request, response, getLanguageFromRequest(request), userID, printBuffer);
@@ -456,7 +456,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void getModelInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final String modelID = ServletUtil.getRequestAttribute(request, "modelID");
+		final String modelID = ServletUtil.getRequestParameter(request, "modelID");
 
 		final Model model = servletDAO.getModel(Integer.parseInt(modelID));
 
@@ -475,7 +475,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
-		final String lastname = ServletUtil.getRequestAttribute(request, "lastname");
+		final String lastname = ServletUtil.getRequestParameter(request, "lastname");
 
 		final StringBuilder buff = new StringBuilder();
 
@@ -490,12 +490,12 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private Optional<User> loginAttempt(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final String email = ServletUtil.getRequestAttribute(request, "email");
+		final String email = ServletUtil.getRequestParameter(request, "email");
 		final ResourceBundle language = getLanguageFromRequest(request);
 
 		final User user = servletDAO.getUser(email);
 
-		final String passwordInRequest = ServletUtil.encodePassword(ServletUtil.getRequestAttribute(request, "password"));
+		final String passwordInRequest = ServletUtil.encodePassword(ServletUtil.getRequestParameter(request, "password"));
 
 		String show;
 
@@ -526,7 +526,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private String getShowFromRequest(final HttpServletRequest request) {
-		return StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show")));
+		return StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestParameter(request, "show")));
 	}
 	
 	public void login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -540,7 +540,7 @@ public class RegistrationServlet extends HttpServlet {
 	public ResourceBundle getLanguageFromRequest(final HttpServletRequest request)
 			throws MissingRequestParameterException {
 		return languageUtil
-				.getLanguage(ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName()));
+				.getLanguage(ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName()));
 	}
 
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user,
@@ -597,7 +597,7 @@ public class RegistrationServlet extends HttpServlet {
 		ResourceBundle language = languageUtil.getLanguage(user.language);
 		session.setAttribute(CommonSessionAttribute.Language.name(), language);
 		session.setAttribute(SessionAttribute.ShowId.name(),
-				ServletUtil.getOptionalRequestAttribute(request, RequestParameter.ShowId.getParameterName()));
+				ServletUtil.getOptionalRequestParameter(request, RequestParameter.ShowId.getParameterName()));
 
 		if (user.isAdminUser())
 			session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + getDefaultMainPageFile());
@@ -652,7 +652,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		User user = getUser(request);
 		if (user.isAdminUser()) {
-			final StringBuilder buff = servletDAO.execute(ServletUtil.getRequestAttribute(request, "sql"));
+			final StringBuilder buff = servletDAO.execute(ServletUtil.getRequestParameter(request, "sql"));
 			if (buff != null) {
 				ServletUtil.writeResponse(response, buff);
 				return;
@@ -663,7 +663,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void reminder(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final User user = servletDAO.getUser(ServletUtil.getRequestAttribute(request, "email"));
+		final User user = servletDAO.getUser(ServletUtil.getRequestParameter(request, "email"));
 		final String newPassword = UUID.randomUUID().toString().substring(0, 8);
 		user.setPassword(ServletUtil.encodePassword(newPassword));
 		servletDAO.update(user);
@@ -685,7 +685,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final ResourceBundle language = getLanguageFromRequest(request);
 
-		final int rows = Integer.parseInt(ServletUtil.getRequestAttribute(request, "rows"));
+		final int rows = Integer.parseInt(ServletUtil.getRequestParameter(request, "rows"));
 
 		final List<Model> models = new LinkedList<Model>();
 		final List<User> users = new LinkedList<User>();
@@ -693,16 +693,16 @@ public class RegistrationServlet extends HttpServlet {
 		for (int i = 1; i <= rows; i++) {
 			final String httpParameterPostTag = String.valueOf(i);
 
-			if (ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag).trim().length() == 0) {
+			if (ServletUtil.getRequestParameter(request, "lastname" + httpParameterPostTag).trim().length() == 0) {
 				continue;
 			}
 
 			// register model for new user...
-			if (i == 1 || !(ServletUtil.getRequestAttribute(request, "lastname" + httpParameterPostTag))
-					.equals((ServletUtil.getRequestAttribute(request, "lastname" + String.valueOf(i - 1))))) {
+			if (i == 1 || !(ServletUtil.getRequestParameter(request, "lastname" + httpParameterPostTag))
+					.equals((ServletUtil.getRequestParameter(request, "lastname" + String.valueOf(i - 1))))) {
 
 				user = directRegisterUser(request, language, httpParameterPostTag,
-						ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag) + User.LOCAL_USER
+						ServletUtil.getRequestParameter(request, "fullname" + httpParameterPostTag) + User.LOCAL_USER
 								+ System.currentTimeMillis(),
 						RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE /* password */);
 				users.add(user);
@@ -749,15 +749,15 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		// set language library
-		final String languageCode = ServletUtil.getRequestAttribute(request,
+		final String languageCode = ServletUtil.getRequestParameter(request,
 				RequestParameter.Language.getParameterName());
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		String email = User.AdminTypes.ShowAdmin.getLanguage().equals(languageCode)
-				? ServletUtil.getRequestAttribute(request, "fullname")
-				: ServletUtil.getRequestAttribute(request, "fullname") + User.LOCAL_USER + System.currentTimeMillis();
+				? ServletUtil.getRequestParameter(request, "fullname")
+				: ServletUtil.getRequestParameter(request, "fullname") + User.LOCAL_USER + System.currentTimeMillis();
 		final User user = directRegisterUser(request, language, "" /* httpParameterPostTag */, email,
-				ServletUtil.encodePassword(ServletUtil.getOptionalRequestAttribute(request, "password")));
+				ServletUtil.encodePassword(ServletUtil.getOptionalRequestParameter(request, "password")));
 		initHttpSession(request, user, servletDAO.getShows().get(0));
 		
 		redirectToMainPage(request, response);
@@ -772,7 +772,7 @@ public class RegistrationServlet extends HttpServlet {
 		data.add(servletDAO.getCategoryList(null));
 		data.add(servletDAO.getModels(ServletDAO.INVALID_USERID));
 
-		if ("yes".equals(ServletUtil.getOptionalRequestAttribute(request, "photos"))) {
+		if ("yes".equals(ServletUtil.getOptionalRequestParameter(request, "photos"))) {
 			data.add(servletDAO.getPhotos());
 		}
 
@@ -1297,7 +1297,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void register(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final String email = ServletUtil.getRequestAttribute(request, "email");
+		final String email = ServletUtil.getRequestParameter(request, "email");
 		final ResourceBundle language = getLanguageFromRequest(request);
 
 		if (email.trim().length() == 0 || RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(email)
@@ -1307,9 +1307,9 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 		
-		final String password = ServletUtil.getRequestAttribute(request, "password");
+		final String password = ServletUtil.getRequestParameter(request, "password");
 		
-		if (!password.equals(ServletUtil.getRequestAttribute(request, "password2"))) {
+		if (!password.equals(ServletUtil.getRequestParameter(request, "password2"))) {
 			writeErrorResponse(request, response, language.getString("passwords.not.same"));
 			return;
 		}
@@ -1344,7 +1344,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User oldUser = getUser(request);
 		final ResourceBundle language = languageUtil.getLanguage(oldUser.language);
 
-		final User newUser = createUser(request, ServletUtil.getRequestAttribute(request, "email"));
+		final User newUser = createUser(request, ServletUtil.getRequestParameter(request, "email"));
 		newUser.setId(oldUser.getId());
 		if (!newUser.isAdminUser() && !newUser.isLocalUser() && (newUser.email.trim().length() == 0
 				|| RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(newUser.email) || newUser.email.indexOf("@") == -1)) {
@@ -1475,21 +1475,21 @@ public class RegistrationServlet extends HttpServlet {
 		Category modifyingCategory;
 		try {
 			modifyingCategory = servletDAO
-					.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
+					.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestParameter(request, "categoryID")));
 		} catch (Exception e) {
 			modifyingCategory = new Category(servletDAO.getNextID(Category.class));
 		}
 
 		modifyingCategory
-				.setCategoryCode(ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "categorycode")));
+				.setCategoryCode(ServletUtil.encodeString(ServletUtil.getRequestParameter(request, "categorycode")));
 		modifyingCategory.setCategoryDescription(
-				ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "categorydescription")));
+				ServletUtil.encodeString(ServletUtil.getRequestParameter(request, "categorydescription")));
 		modifyingCategory.setGroup(servletDAO.getCategoryGroup(
-				Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryGroupID")),
+				Integer.parseInt(ServletUtil.getRequestParameter(request, "categoryGroupID")),
 				servletDAO.getCategoryGroups()));
 		modifyingCategory.setMaster(ServletUtil.isCheckedIn(request, "master"));
-		modifyingCategory.setModelClass(ModelClass.of(ServletUtil.getRequestAttribute(request, "modelClass")));
-		modifyingCategory.setAgeGroup(AgeGroup.of(ServletUtil.getRequestAttribute(request, "ageGroup")));
+		modifyingCategory.setModelClass(ModelClass.of(ServletUtil.getRequestParameter(request, "modelClass")));
+		modifyingCategory.setAgeGroup(AgeGroup.of(ServletUtil.getRequestParameter(request, "ageGroup")));
 
 		servletDAO.save(modifyingCategory);
 
@@ -1551,7 +1551,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteMasterUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin);
-		final int userID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "userID"));
+		final int userID = Integer.valueOf(ServletUtil.getRequestParameter(request, "userID"));
 
 		User user = servletDAO.get(userID, User.class);
 		user.setModelClasses(null);
@@ -1564,10 +1564,10 @@ public class RegistrationServlet extends HttpServlet {
 	public void saveModelClass(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.MasterModelerAdmin);
 		
-		final int userID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "userID"));
+		final int userID = Integer.valueOf(ServletUtil.getRequestParameter(request, "userID"));
 		
 		servletDAO.saveModelClass(userID,
-				ModelClass.of(StringEscapeUtils.unescapeHtml4(ServletUtil.getRequestAttribute(request, "modelClass"))));
+				ModelClass.of(StringEscapeUtils.unescapeHtml4(ServletUtil.getRequestParameter(request, "modelClass"))));
 		
 		redirectToMainPage(request, response);
 	}
@@ -1580,10 +1580,10 @@ public class RegistrationServlet extends HttpServlet {
 			throw new CategoryModificationException();
 		}
 
-		String show = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "show"));
+		String show = ServletUtil.encodeString(ServletUtil.getRequestParameter(request, "show"));
 		final HttpSession session = getHttpSession(request);
 		session.setAttribute(SessionAttribute.Show.name(), show);
-		saveCategoryGroup(show, ServletUtil.getRequestAttribute(request, "group"));
+		saveCategoryGroup(show, ServletUtil.getRequestParameter(request, "group"));
 
 		redirectToMainPage(request, response);
 	}
@@ -1841,7 +1841,7 @@ public class RegistrationServlet extends HttpServlet {
 		Category category = null;
 		try {
 			category = servletDAO
-					.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestAttribute(request, "categoryID")));
+					.getCategory(Integer.valueOf(ServletUtil.getOptionalRequestParameter(request, "categoryID")));
 		} catch (Exception e) {
 			category = new Category(servletDAO.getNextID(Category.class));
 			category.setCategoryCode("");
@@ -1961,7 +1961,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void inputForModifyModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		User user = getUser(request);
-		final int modelID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "modelID"));
+		final int modelID = Integer.parseInt(ServletUtil.getRequestParameter(request, "modelID"));
 		final Model model = servletDAO.getModel(modelID);
 		if (user.isAdminUser() || user.getId() == model.getUserID()) {
 			getModelForm(request, response, Command.modifyModel.name(), "modify", model);
@@ -1983,7 +1983,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void modifyModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final HttpSession session = getHttpSession(request);
 
-		final int modelID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID"));
+		final int modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, "modelID"));
 
 		final Model model = servletDAO.getModel(modelID);
 		createModel(model, request);
@@ -2031,7 +2031,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		
 		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE
-				.equals(ServletUtil.getOptionalRequestAttribute(request, "finishRegistration"))) {
+				.equals(ServletUtil.getOptionalRequestParameter(request, "finishRegistration"))) {
 			setOKNoticeInSession(session, getLanguageForCurrentUser(request).getString("add") + ": "
 					+ model.scale + " - " + model.name + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
@@ -2108,14 +2108,14 @@ public class RegistrationServlet extends HttpServlet {
 	private Model createModel(final Model model, final HttpServletRequest request, final String httpParameterPostTag)
 			throws NumberFormatException, MissingRequestParameterException {
 		model.setCategoryID(
-				Integer.parseInt(ServletUtil.getRequestAttribute(request, "categoryID" + httpParameterPostTag)));
-		model.setScale(ServletUtil.getRequestAttribute(request, "modelscale" + httpParameterPostTag));
-		model.setName(ServletUtil.getRequestAttribute(request, "modelname" + httpParameterPostTag));
-		model.setProducer(ServletUtil.getRequestAttribute(request, "modelproducer" + httpParameterPostTag));
-		model.setComment(ServletUtil.getOptionalRequestAttribute(request, "modelcomment" + httpParameterPostTag));
+				Integer.parseInt(ServletUtil.getRequestParameter(request, "categoryID" + httpParameterPostTag)));
+		model.setScale(ServletUtil.getRequestParameter(request, "modelscale" + httpParameterPostTag));
+		model.setName(ServletUtil.getRequestParameter(request, "modelname" + httpParameterPostTag));
+		model.setProducer(ServletUtil.getRequestParameter(request, "modelproducer" + httpParameterPostTag));
+		model.setComment(ServletUtil.getOptionalRequestParameter(request, "modelcomment" + httpParameterPostTag));
 		model.setIdentification(
-				ServletUtil.getOptionalRequestAttribute(request, "identification" + httpParameterPostTag));
-		model.setMarkings(ServletUtil.getOptionalRequestAttribute(request, "markings" + httpParameterPostTag));
+				ServletUtil.getOptionalRequestParameter(request, "identification" + httpParameterPostTag));
+		model.setMarkings(ServletUtil.getOptionalRequestParameter(request, "markings" + httpParameterPostTag));
 		model.setGluedToBase(ServletUtil.isCheckedIn(request, "gluedToBase" + httpParameterPostTag));
 		model.setDetailing(getDetailing(request));
 
@@ -2125,9 +2125,9 @@ public class RegistrationServlet extends HttpServlet {
 	Model setDimensions(final Model model, final HttpServletRequest request, final String httpParameterPostTag) {
 		try {
 			int modelWidth = Integer
-					.parseInt(ServletUtil.getRequestAttribute(request, "modelWidth" + httpParameterPostTag));
+					.parseInt(ServletUtil.getRequestParameter(request, "modelWidth" + httpParameterPostTag));
 			int modelHeight = Integer
-					.parseInt(ServletUtil.getRequestAttribute(request, "modelHeight" + httpParameterPostTag));
+					.parseInt(ServletUtil.getRequestParameter(request, "modelHeight" + httpParameterPostTag));
 
 			model.setDimensions(modelWidth, modelHeight);
 			return model;
@@ -2277,7 +2277,7 @@ public class RegistrationServlet extends HttpServlet {
 			User user = getUser(request);
 			return user.isAdminUser() ? DEFAULT_LANGUAGE : user.getLanguage();
 		} catch (UserNotLoggedInException e) {
-			return ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
+			return ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
 		}
 	}
 
@@ -2362,7 +2362,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void deleteUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin);
 
-		final int userID = Integer.parseInt(ServletUtil.getRequestAttribute(request, "userID"));
+		final int userID = Integer.parseInt(ServletUtil.getRequestParameter(request, "userID"));
 		servletDAO.deleteUser(userID);
 		
 		redirectToMainPage(request, response);
@@ -2385,8 +2385,8 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
-		String paramName = ServletUtil.getRequestAttribute(request, "paramName");
-		String paramValue = ServletUtil.encodeString(ServletUtil.getRequestAttribute(request, "paramValue"));
+		String paramName = ServletUtil.getRequestParameter(request, "paramName");
+		String paramValue = ServletUtil.encodeString(ServletUtil.getRequestParameter(request, "paramValue"));
 
 		servletDAO.setSystemParameter(paramName, paramValue);
 
@@ -2404,7 +2404,7 @@ public class RegistrationServlet extends HttpServlet {
 	private void deleteModel(final HttpServletRequest request)
 			throws MissingRequestParameterException, NumberFormatException, SQLException, UserNotLoggedInException {
 		User user = getUser(request);
-		Integer modelID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID"));
+		Integer modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, "modelID"));
 		final Model model = servletDAO.getModel(modelID);
 
 		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
@@ -2424,7 +2424,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin);
 
-		servletDAO.deleteAwardedModel(Integer.valueOf(ServletUtil.getRequestAttribute(request, "modelID")));
+		servletDAO.deleteAwardedModel(Integer.valueOf(ServletUtil.getRequestParameter(request, "modelID")));
 
 		response.sendRedirect("jsp/judging/deleteAwardedModel.jsp");
 	}
@@ -2479,7 +2479,7 @@ public class RegistrationServlet extends HttpServlet {
 			throw new CategoryModificationException();
 		}
 
-		Integer categoryGroupID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryGroupID"));
+		Integer categoryGroupID = Integer.valueOf(ServletUtil.getRequestParameter(request, "categoryGroupID"));
 
 		for (final Category category : servletDAO.getCategoryList(categoryGroupID, null /* show */)) {
 			servletDAO.deleteModels(category.getId());
@@ -2497,7 +2497,7 @@ public class RegistrationServlet extends HttpServlet {
 			throw new CategoryModificationException();
 		}
 
-		Integer categoryID = Integer.valueOf(ServletUtil.getRequestAttribute(request, "categoryID"));
+		Integer categoryID = Integer.valueOf(ServletUtil.getRequestParameter(request, "categoryID"));
 		servletDAO.deleteModels(categoryID);
 		servletDAO.delete(servletDAO.getCategory(categoryID));
 
@@ -2510,7 +2510,7 @@ public class RegistrationServlet extends HttpServlet {
 		final ResourceBundle language = getLanguageForCurrentUser(request);
 
 		boolean pageBreak = Boolean.parseBoolean(
-				ServletUtil.getOptionalRequestAttribute(request, RegistrationServlet.SystemParameter.PageBreakAtPrint.name()));
+				ServletUtil.getOptionalRequestParameter(request, RegistrationServlet.SystemParameter.PageBreakAtPrint.name()));
 
 		StringBuilder printBuffer = getPrintBuffer(request);
 
@@ -2552,7 +2552,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void printModels(final HttpServletRequest request, final ResourceBundle language, StringBuilder printBuffer,
 			final StringBuilder buff, List<PrintedModel> models) throws SQLException, Exception, IOException {
-		Optional<String> maxModelsPerPage = ServletUtil.getOptionalAttribute(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
 		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
 		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 				+ getLogoIDForShow(getShowFromSession(request));
@@ -2609,7 +2609,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void printMyModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
 
-		final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID");
+		final String modelID = ServletUtil.getOptionalRequestParameter(request, "modelID");
 		StringBuilder printBuffer = getPrintBuffer(request);
 
 		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
@@ -2885,12 +2885,12 @@ public class RegistrationServlet extends HttpServlet {
 			throws MissingRequestParameterException, NumberFormatException, SQLException, IOException {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
-		final int rows = Integer.parseInt(ServletUtil.getRequestAttribute(request, "rows"));
+		final int rows = Integer.parseInt(ServletUtil.getRequestParameter(request, "rows"));
 
 		for (int i = 1; i <= rows; i++) {
 			final String httpParameterPostTag = String.valueOf(i);
 
-			final String modelID = ServletUtil.getOptionalRequestAttribute(request, "modelID" + httpParameterPostTag);
+			final String modelID = ServletUtil.getOptionalRequestParameter(request, "modelID" + httpParameterPostTag);
 			if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
 				continue;
 			}
@@ -2899,7 +2899,7 @@ public class RegistrationServlet extends HttpServlet {
 			final User user = servletDAO.getUser(model.getUserID());
 			// Category category = servletDAO.getCategory(model.categoryID);
 
-			final String award = ServletUtil.getRequestAttribute(request, "award" + httpParameterPostTag).trim();
+			final String award = ServletUtil.getRequestParameter(request, "award" + httpParameterPostTag).trim();
 
 			servletDAO.saveAwardedModel(new AwardedModel(model, award));
 		}
@@ -2935,7 +2935,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void getbatchAddModelPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
-		final String languageCode = ServletUtil.getRequestAttribute(request,
+		final String languageCode = ServletUtil.getRequestParameter(request,
 				RequestParameter.Language.getParameterName());
 		final ResourceBundle language = languageUtil.getLanguage(languageCode);
 
@@ -2982,8 +2982,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private User createUser(final HttpServletRequest request, final String email) throws Exception {
-		String passwordInRequest = isAdminSession(getHttpSession(request)) ? ServletUtil.getOptionalRequestAttribute(request, "password") : 
-			ServletUtil.getRequestAttribute(request, "password");
+		String passwordInRequest = isAdminSession(getHttpSession(request)) ? ServletUtil.getOptionalRequestParameter(request, "password") : 
+			ServletUtil.getRequestParameter(request, "password");
 		
 		return createUser(request, ServletUtil.sanitizeUserInput(email), ServletUtil.encodePassword(passwordInRequest),
 				"" /*httpParameterPostTag*/);
@@ -2992,30 +2992,30 @@ public class RegistrationServlet extends HttpServlet {
 	private User createUser(final HttpServletRequest request, final String email, final String password,
 			final String httpParameterPostTag) throws Exception {
 		// check if all data is sent
-		ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName());
+		ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
 
 		// ServletUtil.getRequestAttribute(request, "firstname" +
 		// httpParameterPostTag);
-		ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag);
-		ServletUtil.getRequestAttribute(request, "gender" + httpParameterPostTag);
-		ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag);
-		ServletUtil.getRequestAttribute(request, "city" + httpParameterPostTag);
-		ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag);
-		ServletUtil.getOptionalRequestAttribute(request, "telephone" + httpParameterPostTag);
+		ServletUtil.getRequestParameter(request, "fullname" + httpParameterPostTag);
+		ServletUtil.getRequestParameter(request, "gender" + httpParameterPostTag);
+		ServletUtil.getRequestParameter(request, "country" + httpParameterPostTag);
+		ServletUtil.getRequestParameter(request, "city" + httpParameterPostTag);
+		ServletUtil.getOptionalRequestParameter(request, "address" + httpParameterPostTag);
+		ServletUtil.getOptionalRequestParameter(request, "telephone" + httpParameterPostTag);
 
-		ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag);
+		ServletUtil.getRequestParameter(request, "yearofbirth" + httpParameterPostTag);
 
 		User user = new User(servletDAO.getNextID(User.class), password,
 				// ServletUtil.getRequestAttribute(request, "firstname" +
 				// httpParameterPostTag),
-				"-", ServletUtil.getRequestAttribute(request, "fullname" + httpParameterPostTag),
-				ServletUtil.getRequestAttribute(request, RequestParameter.Language.getParameterName()),
-				ServletUtil.getOptionalRequestAttribute(request, "address" + httpParameterPostTag),
-				ServletUtil.getOptionalRequestAttribute(request, "telephone" + httpParameterPostTag), email, true,
-				ServletUtil.getRequestAttribute(request, "country" + httpParameterPostTag),
-				Integer.parseInt(ServletUtil.getRequestAttribute(request, "yearofbirth" + httpParameterPostTag)),
-				ServletUtil.getOptionalRequestAttribute(request, "city" + httpParameterPostTag));
-		user.setGender(Gender.valueOf(ServletUtil.getRequestAttribute(request, "gender" + httpParameterPostTag)));
+				"-", ServletUtil.getRequestParameter(request, "fullname" + httpParameterPostTag),
+				ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName()),
+				ServletUtil.getOptionalRequestParameter(request, "address" + httpParameterPostTag),
+				ServletUtil.getOptionalRequestParameter(request, "telephone" + httpParameterPostTag), email, true,
+				ServletUtil.getRequestParameter(request, "country" + httpParameterPostTag),
+				Integer.parseInt(ServletUtil.getRequestParameter(request, "yearofbirth" + httpParameterPostTag)),
+				ServletUtil.getOptionalRequestParameter(request, "city" + httpParameterPostTag));
+		user.setGender(Gender.valueOf(ServletUtil.getRequestParameter(request, "gender" + httpParameterPostTag)));
 	
 		return user;
 	}
@@ -3143,7 +3143,7 @@ public class RegistrationServlet extends HttpServlet {
 		response.setContentType("image/jpeg");
 
 		try {
-			loadImage(Integer.parseInt(ServletUtil.getRequestAttribute(request, "modelID")),
+			loadImage(Integer.parseInt(ServletUtil.getRequestParameter(request, "modelID")),
 					response.getOutputStream());
 		} catch (final Exception e) {
 		}
@@ -3163,7 +3163,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void sendEmails(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin);
 
-		String message = ServletUtil.getRequestAttribute(request, "message");
+		String message = ServletUtil.getRequestParameter(request, "message");
 		int emailsSent = 0;
 		for (User user : servletDAO.getUsers())
 			if (!servletDAO.getModelsForShow(getShowFromSession(request), user.getId()).isEmpty())
