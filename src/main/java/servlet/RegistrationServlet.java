@@ -2561,8 +2561,8 @@ public class RegistrationServlet extends HttpServlet {
 			final List<PrintedModel> subList = new ArrayList<>(models.subList(0, currentModelsOnPage));
 			models.removeAll(subList);
 
-			boolean currentPageBreak = currentModelsOnPage > 0;
-			buff.append(printModels(language, subList, printBuffer, 1, modelsOnPage, currentPageBreak, logoURL));
+			boolean shouldPageBreak = currentModelsOnPage > 0;
+			buff.append(printModels(language, subList, printBuffer, 1, modelsOnPage, shouldPageBreak, logoURL));
 
 }
 	}
@@ -2650,14 +2650,14 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	StringBuilder printModels(final ResourceBundle language, final List<PrintedModel> models, final StringBuilder printBuffer,
-			final int rows, final int cols, boolean pageBreak, String logoURL) throws Exception, IOException {
+			final int rows, final int cols, boolean shouldPageBreak, String logoURL) throws Exception, IOException {
 
 		final int width = 100 / cols;
 		final int height = 100 / rows;
 
 		final StringBuilder buff = new StringBuilder();
 		buff.append("\n\n<table cellpadding='0' cellspacing='10' width='100%' height='100%' "
-				+ (pageBreak ? "style='page-break-after: always;' " : "") + "border='0' >");
+				+ (shouldPageBreak ? "style='page-break-after: always;' " : "") + "border='0' >");
 
 		int modelIndex = 0;
 		for (int row = 0; row < rows; row++) {
