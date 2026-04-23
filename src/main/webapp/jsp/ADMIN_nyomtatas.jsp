@@ -37,6 +37,14 @@ if (show == null) {
 <tr>
 	<td><a href="#"
 		onClick="document.getElementById('command4').value='printAllModels';document.getElementById('input4').submit();">
+			Sorok oldalank&eacute;nt: </a></td>
+	<td><input type="number"
+		name="<%=RegistrationServlet.SystemParameter.ModelRowsPerPage.name()%>"
+		size="1" value="1"></td>
+</tr>
+<tr>
+	<td><a href="#"
+		onClick="document.getElementById('command4').value='printAllModels';document.getElementById('input4').submit();">
 			Lapt&ouml;r&eacute;s nyomtat&aacute;skor</a></td>
 	<td><label>igen: <input type="radio"
 			name="<%=RegistrationServlet.SystemParameter.PageBreakAtPrint.name()%>"

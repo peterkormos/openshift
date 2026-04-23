@@ -2553,16 +2553,18 @@ public class RegistrationServlet extends HttpServlet {
 	private void printModels(final HttpServletRequest request, final ResourceBundle language, StringBuilder printBuffer,
 			final StringBuilder buff, List<PrintedModel> models) throws SQLException, Exception, IOException {
 		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
+		Optional<String> modelRowsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.ModelRowsPerPage.name());
 		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
 		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 				+ getLogoIDForShow(getShowFromSession(request));
+		int rows = modelRowsPerPage.isPresent() ? Integer.parseInt(modelRowsPerPage.get()) : 1;
 		while (!models.isEmpty()) {
 			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
 			final List<PrintedModel> subList = new ArrayList<>(models.subList(0, currentModelsOnPage));
 			models.removeAll(subList);
 
 			boolean shouldPageBreak = currentModelsOnPage > 0;
-			buff.append(printModels(language, subList, printBuffer, 1, modelsOnPage, shouldPageBreak, logoURL));
+			buff.append(printModels(language, subList, printBuffer, rows , (int) Math.ceil(modelsOnPage/rows), shouldPageBreak, logoURL));
 
 }
 	}
@@ -3068,7 +3070,7 @@ public class RegistrationServlet extends HttpServlet {
 	public enum SystemParameter
 	  {
 		REGISTRATION(true), SYSTEMMESSAGE, MaxModelsPerCategory, // 
-		PrintLanguage, MaxModelsPerPage, PageBreakAtPrint;
+		PrintLanguage, MaxModelsPerPage, PageBreakAtPrint, ModelRowsPerPage;
 	
 		private boolean booleanValue;
 		
