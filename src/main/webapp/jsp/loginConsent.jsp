@@ -13,8 +13,6 @@
 	scope="application" />
 
 <%
-p
-
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
 final String languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());

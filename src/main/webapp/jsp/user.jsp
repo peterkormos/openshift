@@ -10,8 +10,6 @@
 <%@include file="util.jsp"%>
 
 <%
-p
-
 //input parameters	
 boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestParameter(request, "directRegister"));
 
@@ -36,7 +34,7 @@ try {
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 session.setAttribute(CommonSessionAttribute.Language.name(), language);
 
-String passwordCheck = RegistrationServlet.isAdminSession(session) ? "" :  "&& checkPassword(this) "
+String passwordCheck = RegistrationServlet.isAdminSession(session) ? "" :  "&& checkPassword(this) ";
 %>
 
 <html>

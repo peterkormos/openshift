@@ -10,14 +10,12 @@
 	scope="application" />
 
 <%
-p
-
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
 final String languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 
-String showIdHttpParameter = request.getParameter(RequestParameter.ShowId.getParameterName())
+String showIdHttpParameter = request.getParameter(RequestParameter.ShowId.getParameterName());
 %>
 
 <html>
