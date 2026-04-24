@@ -28,7 +28,9 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "MAK_MODEL")
 public class Model extends Record {
-    private static final long serialVersionUID = -3161543148518903037L;
+    public static final int OversizedAreaInCm = 1000;
+
+	private static final long serialVersionUID = -3161543148518903037L;
 
     @Column(name = "CATEGORY_ID")
     public int categoryID;
@@ -276,6 +278,6 @@ public class Model extends Record {
 	}
 	
 	public boolean isOversized() {
-		return getArea() > 1000;
+		return getArea() > OversizedAreaInCm;
 	}
 }

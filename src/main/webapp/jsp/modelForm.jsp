@@ -81,6 +81,30 @@ if(!servlet.isAdminSession(session))
 		gluedToBaseImgElement.src = element.value == 'on' ? '../icons/glued.jpg'
 				: '../icons/notglued.jpg';
 	}
+	
+	function checkDimensions()
+	{
+	<%
+	if(!servlet.isAdminSession(session))
+	{
+	%>
+		var modelWidth = document.getElementById('modelWidth');
+		var modelHeight = document.getElementById('modelHeight');
+		
+    	var noticeDiv = document.getElementById('noticeDiv');
+		if(modelWidth?.value * modelHeight?.value > <%=Model.OversizedAreaInCm %>) {
+			noticeDiv.innerHTML = '<%=String.format(language.getString("models.oversized"), Model.OversizedAreaInCm)%>';
+			noticeDiv.className = "flash Warning";
+		}
+		else {
+			noticeDiv.innerHTML = '&nbsp;';
+			noticeDiv.className = "";
+		}
+	
+	<%
+	}
+	%>
+	}
 //-->
 </script>
 
@@ -307,9 +331,18 @@ if(!servlet.isAdminSession(session))
 						</fieldset>
 						<label for="spaceGroup" class="input-caption"><%=language.getString("models.space")%></label>
 					</div>
+					<div id="noticeDiv">&nbsp;</div>
 				</td>
 			</tr>
 
+			<script>
+				document.getElementById('modelWidth').onchange=function onchange(event) {
+					updateMandatoryFieldMark(this); checkDimensions();
+					};
+				document.getElementById('modelHeight').onchange=function onchange(event) {
+					updateMandatoryFieldMark(this); checkDimensions();
+					};
+			</script>
 			<!--	submit-->
 			<tr>
 
