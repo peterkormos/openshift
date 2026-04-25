@@ -347,7 +347,9 @@ public class RegistrationServlet extends HttpServlet {
 				writeCategoryModificationErrorResponse(request, response);
 				return;
 			} else if (AuthorizationException.class.isInstance(throwable)) {
+				logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message, throwable);
 			} else {
+				logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message, throwable);
 				checkHTTP(request);
 				writeErrorResponse(request, response, "Error: <b>" + message + "</b>");
 				return;
@@ -3209,7 +3211,6 @@ public class RegistrationServlet extends HttpServlet {
 			return false;
 		}
 		
-		User userInSession = getUserInSession(session);
 		for (AdminTypes allowedAdminType : allowedAdmins) {
 			if (allowedAdminType.equals(adminType.get()))
 				return true;
@@ -3237,7 +3238,10 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		HttpSession httpSession = getHttpSession(request);
-
+		if(isAdminSession(httpSession, allowedAdmins)) {
+			return ;
+		}
+		
 		throw new AuthorizationException();
 	}
 }
