@@ -453,7 +453,7 @@ public class RegistrationServlet extends HttpServlet {
 		final int userID = Integer.parseInt(ServletUtil.getRequestParameter(request, "userID"));
 
 		StringBuilder printBuffer = getPrintBuffer(request);
-		printModelsForUser(request, response, getLanguageFromRequest(request), userID, printBuffer);
+		printModelsForUser(request, response, userID, printBuffer);
 		showPrintDialog(response);
 	}
 
@@ -726,7 +726,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (!users.isEmpty()) {
 			StringBuilder printBuffer = getPrintBuffer(request);
 			for (final User user1 : users) {
-				printModelsForUser(request, response, language, user1.getId(), printBuffer);
+				printModelsForUser(request, response, user1.getId(), printBuffer);
 			}
 		}
 		showPrintDialog(response);
@@ -2513,8 +2513,6 @@ public class RegistrationServlet extends HttpServlet {
 	public void printAllModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
-		final ResourceBundle language = getLanguageForCurrentUser(request);
-
 		boolean pageBreak = Boolean.parseBoolean(
 				ServletUtil.getOptionalRequestParameter(request, RegistrationServlet.SystemParameter.PageBreakAtPrint.name()));
 
@@ -2523,7 +2521,7 @@ public class RegistrationServlet extends HttpServlet {
 		List<User> users = servletDAO.getUsersWithModel();
 		if(pageBreak) {
 			for (final User user : users) {
-				printModelsForUser(request, response, language, user.getId(), printBuffer);
+				printModelsForUser(request, response, user.getId(), printBuffer);
 			}
 		}
 		else {
@@ -2534,7 +2532,7 @@ public class RegistrationServlet extends HttpServlet {
 				models.addAll(toPrintModels(request, user.getId()));
 			}
 
-			printModels(request, language, printBuffer, buff, models);
+			printModels(request, printBuffer, buff, models);
 			ServletUtil.writeResponse(response, buff);
 		}
 		response.getOutputStream().write("<p>Itt a vege...".getBytes());
@@ -2556,8 +2554,8 @@ public class RegistrationServlet extends HttpServlet {
 		return pms;
 	}
 
-	private void printModels(final HttpServletRequest request, final ResourceBundle language, StringBuilder printBuffer,
-			final StringBuilder buff, List<PrintedModel> models) throws SQLException, Exception, IOException {
+	private void printModels(final HttpServletRequest request, StringBuilder printBuffer, final StringBuilder buff,
+			List<PrintedModel> models) throws SQLException, Exception, IOException {
 		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
 		Optional<String> modelRowsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.ModelRowsPerPage.name());
 		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
@@ -2570,7 +2568,7 @@ public class RegistrationServlet extends HttpServlet {
 			models.removeAll(subList);
 
 			boolean shouldPageBreak = currentModelsOnPage > 0;
-			buff.append(printModels(language, subList, printBuffer, rows , (int) Math.ceil(modelsOnPage/rows), shouldPageBreak, logoURL));
+			buff.append(printModels(subList, printBuffer, rows, (int) Math.ceil(modelsOnPage/rows) , shouldPageBreak, logoURL));
 
 }
 	}
@@ -2579,8 +2577,6 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		final User user = getUser(request);
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
-
-		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
 		final int cols = 2;
 		final int rows = 4;
@@ -2602,7 +2598,7 @@ public class RegistrationServlet extends HttpServlet {
 			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 					+ getLogoIDForShow(getShowFromSession(request));
 			ServletUtil.writeResponse(response,
-					printModels(language, toPrintModels(sublist), printCardBuffer, rows, cols, true, logoURL));
+					printModels(toPrintModels(sublist), printCardBuffer, rows, cols, true, logoURL));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
@@ -2621,8 +2617,7 @@ public class RegistrationServlet extends HttpServlet {
 		StringBuilder printBuffer = getPrintBuffer(request);
 
 		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
-			printModelsForUser(request, response, languageUtil.getLanguage(user.language), user.getId(),
-					printBuffer);
+			printModelsForUser(request, response, user.getId(), printBuffer);
 		} else {
 			final StringBuilder buff = new StringBuilder();
 
@@ -2631,8 +2626,8 @@ public class RegistrationServlet extends HttpServlet {
 			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 					+ getLogoIDForShow(getShowFromSession(request));
 
-			buff.append(printModels(languageUtil.getLanguage(user.language), toPrintModels(subList), printBuffer,
-					1, 3, false, logoURL));
+			buff.append(printModels(toPrintModels(subList), printBuffer, 1,
+					3, false, logoURL));
 
 			ServletUtil.writeResponse(response, buff);
 		}
@@ -2641,24 +2636,24 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void printModelsForUser(final HttpServletRequest request, final HttpServletResponse response,
-			final ResourceBundle language, final int userID, StringBuilder printBuffer)
+			final int userID, StringBuilder printBuffer)
 			throws Exception, IOException {
 		ServletUtil.writeResponse(response,
-				printModelsForUser(language, userID, request, printBuffer));
+				printModelsForUser(userID, request, printBuffer));
 	}
 
-	private StringBuilder printModelsForUser(final ResourceBundle language, final int userID,
-			final HttpServletRequest request, StringBuilder printBuffer)
+	private StringBuilder printModelsForUser(final int userID, final HttpServletRequest request,
+			StringBuilder printBuffer)
 			throws Exception, IOException {
 		final StringBuilder buff = new StringBuilder();
 
-		printModels(request, language, printBuffer, buff, toPrintModels(request, userID));
+		printModels(request, printBuffer, buff, toPrintModels(request, userID));
 		
 		return buff;
 	}
 
-	StringBuilder printModels(final ResourceBundle language, final List<PrintedModel> models, final StringBuilder printBuffer,
-			final int rows, final int cols, boolean shouldPageBreak, String logoURL) throws Exception, IOException {
+	StringBuilder printModels(final List<PrintedModel> models, final StringBuilder printBuffer, final int rows,
+			final int cols, boolean shouldPageBreak, String logoURL) throws Exception, IOException {
 
 		final int width = 100 / cols;
 		final int height = 100 / rows;
@@ -2697,7 +2692,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_IDENTIFICATION__", model.identification)
 							.replaceAll("__MODEL_PRODUCER__", model.producer)
 							.replaceAll("__MODEL_COMMENT__", model.comment)
-							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(language, model, "."))
+							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(getDefaultLanguage(), model, "."))
 							.replaceAll("__FEE__", String.valueOf(model.getFee())).replaceAll("__LOGO_URL__", logoURL)
 					;
 
@@ -3247,5 +3242,9 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		
 		throw new AuthorizationException();
+	}
+	
+	private ResourceBundle getDefaultLanguage() {
+		return getLanguage(DEFAULT_LANGUAGE);
 	}
 }
