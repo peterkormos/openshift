@@ -39,7 +39,7 @@ if (servlet.isAdminSession(session)) {
 	<jsp:include page="modelSelect.jsp">
 		<jsp:param name="action" value="printMyModels" />
 		<jsp:param name="submitLabel"
-			value='<%=language.getString("print.models")%>' />
+			value='<%=ServletUtil.getLabel(request, servlet, "print.models")%>' />
 	</jsp:include>
 	<%
 	}

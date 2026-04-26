@@ -44,8 +44,8 @@ final User user = RegistrationServlet.getUser(request);
 					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
 					<img src="../icons/modify2.png" height="30" align="center" 
 					/> <span
-					class="tooltiptext"> <%=language.getString("modify")%></span>
-					 <%=language.getString("modify")%>
+					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "modify")%></span>
+					 <%=ServletUtil.getLabel(request, servlet, "modify")%>
 				</a>
 			</div>
 
@@ -55,8 +55,8 @@ final User user = RegistrationServlet.getUser(request);
 					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
 					<img src="../icons/delete2.png" height="30" align="center" 
 					/> <span
-					class="tooltiptext"> <%=language.getString("delete")%></span>
-					 <%=language.getString("delete")%>
+					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "delete")%></span>
+					 <%=ServletUtil.getLabel(request, servlet, "delete")%>
 				</a>
 			</div> <%
  	}

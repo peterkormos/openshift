@@ -93,7 +93,7 @@ if(!servlet.isAdminSession(session))
 		
     	var noticeDiv = document.getElementById('noticeDiv');
 		if(modelWidth?.value * modelHeight?.value > <%=Model.OversizedAreaInCm %>) {
-			noticeDiv.innerHTML = '<%=String.format(language.getString("models.oversized"), Model.OversizedAreaInCm)%>';
+			noticeDiv.innerHTML = '<%=String.format(ServletUtil.getLabel(request, servlet, "models.oversized"), Model.OversizedAreaInCm)%>';
 			noticeDiv.className = "flash Warning";
 		}
 		else {
@@ -119,13 +119,13 @@ if(!servlet.isAdminSession(session))
 		<table style="border: 0px; box-shadow: none; width: 100%">
 			<tr>
 				<td style="white-space: nowrap;"><input class="main" type='submit'
-					value='<%=language.getString("proceed.to.main")%>'>
+					value='<%=ServletUtil.getLabel(request, servlet, "proceed.to.main")%>'>
 					
 					<div class="tooltip">
 						<a href="../RegistrationServlet/sendEmail"> <img
 							src="../icons/email.png" height="30" align="center" /> <span
-							class="tooltiptext"> <%=language.getString("send.email")%></span>
-							 <%=language.getString("send.email")%>
+							class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "send.email")%></span>
+							 <%=ServletUtil.getLabel(request, servlet, "send.email")%>
 						</a>
 					</div>
 					
@@ -139,7 +139,7 @@ if(!servlet.isAdminSession(session))
 					<div class="tooltip">
 						<a href="../RegistrationServlet/logout"> <img
 							src="../icons/exit.png" height="30" align="center" /> <span
-							class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
+							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "logout")%></span>
 						</a>
 					</div>
 				</td>
@@ -149,7 +149,7 @@ if(!servlet.isAdminSession(session))
 						<a href="#"
 							onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
 							<img src="../icons/modify2.png" height="30" align="center" /><span
-							class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
+							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "modify.user")%></span>
 						</a>
 					</div>
 				</td>
@@ -175,7 +175,7 @@ if(!servlet.isAdminSession(session))
 		%>
 		<p>
 			<font color='#FF0000' size='+3'>&#8226;</font>
-			<%=language.getString("mandatory.fields")%></p>
+			<%=ServletUtil.getLabel(request, servlet, "mandatory.fields")%></p>
 
 		<table border='0'>
 
@@ -187,9 +187,9 @@ if(!servlet.isAdminSession(session))
 					String scale = model == null ? "" : model.scale;
 					%> <jsp:include page="scales.jsp">
 						<jsp:param name="selectValue" value="<%=scale%>" />
-						<jsp:param name="label" value='<%=language.getString("scale")%>' />
+						<jsp:param name="label" value='<%=ServletUtil.getLabel(request, servlet, "scale")%>' />
 						<jsp:param name="frequentlyUsed"
-							value='<%=language.getString("frequently.used")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "frequently.used")%>' />
 					</jsp:include>
 				</td>
 				<td rowspan="3"><img style="height: 25mm" src='<%=logoURL%>'>
@@ -206,7 +206,7 @@ if(!servlet.isAdminSession(session))
 						<jsp:param name="name" value="modelname" />
 						<jsp:param name="value" value="<%=modelname%>" />
 						<jsp:param name="label"
-							value='<%=language.getString("models.name")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "models.name")%>' />
 						<jsp:param name="mandatory" value="true" />
 						<jsp:param name="maxlength" value="60" />
 						<jsp:param name="size" value="60" />
@@ -223,10 +223,10 @@ if(!servlet.isAdminSession(session))
 					%> <jsp:include page="modelProducers.jsp">
 						<jsp:param name="selectValue" value="<%=modelproducer%>" />
 						<jsp:param name="label"
-							value='<%=language.getString("models.producer")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "models.producer")%>' />
 						<jsp:param name="mandatory" value="true" />
 						<jsp:param name="frequentlyUsed"
-							value='<%=language.getString("frequently.used")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "frequently.used")%>' />
 					</jsp:include>
 				</td>
 			</tr>
@@ -246,16 +246,16 @@ if(!servlet.isAdminSession(session))
 								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);"
 								required='required'
 								>
-								<%=language.getString("yes")%> </label>
+								<%=ServletUtil.getLabel(request, servlet, "yes")%> </label>
 							<label><input
 								style="zoom: 2;" name='gluedToBase' type='radio' value='off'
 								<%=(model == null || model.gluedToBase ? "" : "checked='checked'")%>
 								onchange="updateMandatoryFieldMark(this.parentNode.parentNode.parentNode);updateGluedToBaseImg(this);"
 								required='required'
 								>
-								<%=language.getString("no")%> </label>
+								<%=ServletUtil.getLabel(request, servlet, "no")%> </label>
 						</fieldset>
-						<label for="gluedToBaseGroup" class="input-caption"><%=language.getString("glued.to.base")%></label>
+						<label for="gluedToBaseGroup" class="input-caption"><%=ServletUtil.getLabel(request, servlet, "glued.to.base")%></label>
 						<font color='#FF0000' size='+3'>&#8226;</font> 
 					</div>
 						<img
@@ -273,13 +273,13 @@ if(!servlet.isAdminSession(session))
 					<%
 					final Category category = model == null ? null : servletDAO.getCategory(model.categoryID);
 
-					String categoryLabel = model == null ? language.getString("select")
+					String categoryLabel = model == null ? ServletUtil.getLabel(request, servlet, "select")
 							: category.categoryCode + " - " + category.categoryDescription;
 
 					String categoryLabelValue = model == null ? "" : String.valueOf(category.getId());
 					%> <jsp:include page="categories.jsp">
 						<jsp:param name="label"
-							value='<%=language.getString("category")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "category")%>' />
 						<jsp:param name="selectedLabel" value="<%=categoryLabel%>" />
 						<jsp:param name="selectedValue" value="<%=categoryLabelValue%>" />
 						<jsp:param name="mandatory" value="true" />
@@ -290,7 +290,7 @@ if(!servlet.isAdminSession(session))
 			<!--	comment-->
 			<!-- <tr> -->
 			<!-- <td> -->
-			<%-- <%=language.getString("comment")%> --%>
+			<%-- <%=ServletUtil.getLabel(request, servlet, "comment")%> --%>
 			<!-- :  -->
 			<!-- </td> -->
 			<%-- <td><textarea name='modelcomment' cols='50' rows='10' maxlength="250" placeholder="Max. 250 char."><%=  (model != null) ? model.comment : "" %></textarea></td> --%>
@@ -310,7 +310,7 @@ if(!servlet.isAdminSession(session))
 								<jsp:param name="name" value="modelWidth" />
 								<jsp:param name="value" value="<%=modelWidth%>" />
 								<jsp:param name="label"
-									value='<%=language.getString("models.width")%>' />
+									value='<%=ServletUtil.getLabel(request, servlet, "models.width")%>' />
 								<jsp:param name="mandatory" value="<%=!servlet.isAdminSession(session)%>" />
 								<jsp:param name="maxlength" value="3" />
 								<jsp:param name="size" value="15" />
@@ -323,13 +323,13 @@ if(!servlet.isAdminSession(session))
 								<jsp:param name="name" value="modelHeight" />
 								<jsp:param name="value" value="<%=modelHeight%>" />
 								<jsp:param name="label"
-									value='<%=language.getString("models.length")%>' />
+									value='<%=ServletUtil.getLabel(request, servlet, "models.length")%>' />
 								<jsp:param name="mandatory" value="<%=!servlet.isAdminSession(session)%>" />
 								<jsp:param name="maxlength" value="3" />
 								<jsp:param name="size" value="15" />
 							</jsp:include>
 						</fieldset>
-						<label for="spaceGroup" class="input-caption"><%=language.getString("models.space")%></label>
+						<label for="spaceGroup" class="input-caption"><%=ServletUtil.getLabel(request, servlet, "models.space")%></label>
 					</div>
 					<div id="noticeDiv">&nbsp;</div>
 				</td>
@@ -347,10 +347,10 @@ if(!servlet.isAdminSession(session))
 			<tr>
 
 				<td><input name='<%=action%>' type='submit'
-					value='<%=language.getString(submitLabel)%>'> <%
+					value='<%=ServletUtil.getLabel(request, servlet, submitLabel)%>'> <%
  if (action == RegistrationServlet.Command.addModel.name()) {
  %> <input name='finishRegistration' type='submit'
-					value='<%=language.getString("finish.model.registration")%>'>
+					value='<%=ServletUtil.getLabel(request, servlet, "finish.model.registration")%>'>
 					<%
 					}
 					%></td>
@@ -361,12 +361,12 @@ if(!servlet.isAdminSession(session))
 
 				<td>
 					<%
-					String markingsLabel = model == null ? language.getString("select") : model.markings;
+					String markingsLabel = model == null ? ServletUtil.getLabel(request, servlet, "select") : model.markings;
 					String markingsLabelValue = model == null ? "-" : model.markings;
 					%> <jsp:include page="countries.jsp">
 						<jsp:param name="defaultSelectedLabel" value="<%=markingsLabel%>" />
 						<jsp:param name="label"
-							value='<%=language.getString("models.markings")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "models.markings")%>' />
 						<jsp:param name="defaultSelectedValue"
 							value="<%=markingsLabelValue%>" />
 						<jsp:param name="selectName" value="markings" />
@@ -384,7 +384,7 @@ if(!servlet.isAdminSession(session))
 						<jsp:param name="name" value="identification" />
 						<jsp:param name="value" value="<%=modelidentification%>" />
 						<jsp:param name="label"
-							value='<%=language.getString("models.identification")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "models.identification")%>' />
 						<jsp:param name="mandatory" value="false" />
 						<jsp:param name="size" value="60" />
 					</jsp:include>
@@ -395,14 +395,14 @@ if(!servlet.isAdminSession(session))
 			<tr>
 
 
-				<td><%=language.getString("models.detailing")%>: <br>
+				<td><%=ServletUtil.getLabel(request, servlet, "models.detailing")%>: <br>
 					<table cellpadding='5' style='border-collapse: collapse' border='1'>
 						<tr>
 							<td>&nbsp;</td>
 							<%
 							for (DetailingGroup group : DetailingGroup.values()) {
 							%>
-							<td><%=language.getString("detailing." + group.name())%></td>
+							<td><%=ServletUtil.getLabel(request, servlet, "detailing." + group.name())%></td>
 							<%
 							}
 							%>
@@ -413,7 +413,7 @@ if(!servlet.isAdminSession(session))
 								continue;
 						%>
 						<tr>
-							<td><%=language.getString("detailing." + criteria.name())%>
+							<td><%=ServletUtil.getLabel(request, servlet, "detailing." + criteria.name())%>
 							</td>
 							<%
 							for (DetailingGroup group : DetailingGroup.values()) {
@@ -436,10 +436,10 @@ if(!servlet.isAdminSession(session))
 			<tr>
 
 				<td><input name='<%=action%>' type='submit'
-					value='<%=language.getString(submitLabel)%>'> <%
+					value='<%=ServletUtil.getLabel(request, servlet, submitLabel)%>'> <%
  if (action == RegistrationServlet.Command.addModel.name()) {
  %> <input name='finishRegistration' type='submit'
-					value='<%=language.getString("finish.model.registration")%>'>
+					value='<%=ServletUtil.getLabel(request, servlet, "finish.model.registration")%>'>
 					<%
 					}
 					%></td>
@@ -458,7 +458,7 @@ if(!servlet.isAdminSession(session))
 		<a href="#bottom" class='pulseBtn'
 			> <img
 			src="../icons/list.png" height="60"> <span class="tooltiptext">
-				<%=language.getString("list.models")%></span></a>
+				<%=ServletUtil.getLabel(request, servlet, "list.models")%></span></a>
 	</div>
 	<jsp:include page="listMyModels.jsp" />
 

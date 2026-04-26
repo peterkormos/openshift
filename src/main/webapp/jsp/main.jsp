@@ -85,8 +85,8 @@ else {
 						<%= models.isEmpty() ? "class='pulseBtn'" : ""%>
 						> <img
 							src="../icons/add.png" height="30" align="center" /> <span
-							class="tooltiptext"> <%=language.getString("add")%></span>
-							 <%=language.getString("add")%>
+							class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "add")%></span>
+							 <%=ServletUtil.getLabel(request, servlet, "add")%>
 						</a>
 					</div>
 				</td>
@@ -98,8 +98,8 @@ else {
 					<div class="tooltip">
 						<a href="../RegistrationServlet/sendEmail"> <img
 							src="../icons/email.png" height="30" align="center" /> <span
-							class="tooltiptext"> <%=language.getString("send.email")%></span>
-							 <%=language.getString("send.email")%>
+							class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "send.email")%></span>
+							 <%=ServletUtil.getLabel(request, servlet, "send.email")%>
 						</a>
 					</div>
 				</td>
@@ -110,7 +110,7 @@ else {
 					<div class="tooltip">
 						<a href="../RegistrationServlet/logout"> <img
 							src="../icons/exit.png" height="30" align="center" /> <span
-							class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
+							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "logout")%></span>
 						</a>
 					</div>
 				</td>
@@ -120,7 +120,7 @@ else {
 						<a href="#"
 							onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
 							<img src="../icons/modify2.png" height="30" align="center" /><span
-							class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
+							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "modify.user")%></span>
 						</a>
 					</div>
 				</td>
@@ -132,7 +132,7 @@ else {
 	<%
 	if (!(servlet.isPreRegistrationAllowed(show) || servlet.isAdminSession(session))) {
 	%>
-	<strong><font color='#FF0000'><%=language.getString("pre-registration.closed")%></font></strong>
+	<strong><font color='#FF0000'><%=ServletUtil.getLabel(request, servlet, "pre-registration.closed")%></font></strong>
 	<%
 	}
 	%>
@@ -143,7 +143,7 @@ else {
 	<p></p>
 	<!--
   <a href="#" onClick="document.getElementById('command').value='inputForPhotoUpload';document.getElementById('input').submit();">
-  <img src="../icons/photo.png" height="30" align="center">language.getString("photo")to")%>
+  <img src="../icons/photo.png" height="30" align="center">ServletUtil.getLabel(request, servlet, "photo")to")%>
   </a>
  
 <p></p>
@@ -151,7 +151,7 @@ else {
 
 	<%-- 
   <a href="#" onClick="document.getElementById('command').value='listMyModels';document.getElementById('input').submit();">
-  <img src="../icons/list.png" height="30" align="center"> <%=language.getString("list.models")%></a>
+  <img src="../icons/list.png" height="30" align="center"> <%=ServletUtil.getLabel(request, servlet, "list.models")%></a>
 
 <p></p>
  --%>

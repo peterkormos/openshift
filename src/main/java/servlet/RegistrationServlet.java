@@ -753,7 +753,7 @@ public class RegistrationServlet extends HttpServlet {
 		// set language library
 		final String languageCode = ServletUtil.getRequestParameter(request,
 				RequestParameter.Language.getParameterName());
-		final ResourceBundle language = languageUtil.getLanguage(languageCode);
+		final ResourceBundle language = getLanguage(languageCode);
 
 		String email = User.AdminTypes.ShowAdmin.getLanguage().equals(languageCode)
 				? ServletUtil.getRequestParameter(request, "fullname")
@@ -1369,7 +1369,7 @@ public class RegistrationServlet extends HttpServlet {
 		redirectToMainPage(request, response);
 	}
 
-	private static HttpSession getHttpSession(final HttpServletRequest request) {
+	static HttpSession getHttpSession(final HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
 		if(session == null) {
 			throw new UserNotLoggedInException("HTTP session is null!");
@@ -2312,7 +2312,7 @@ public class RegistrationServlet extends HttpServlet {
 		final List<User> users = servletDAO.getUsers();
 		buff.append("<input type='hidden' name='rows' value='" + users.size() + "'>");
 
-		ResourceBundle languageBundle = languageUtil.getLanguage(language);
+		ResourceBundle languageBundle = getLanguage(language);
 		
 		try {
 			User loggedInUser = getUser(request);
@@ -2359,6 +2359,10 @@ public class RegistrationServlet extends HttpServlet {
 			redirectToMainPage(request, response);
 			return;
 		}
+	}
+
+	ResourceBundle getLanguage(final String language) {
+		return languageUtil.getLanguage(language);
 	}
 
 	public void deleteUsers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2851,7 +2855,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final StringBuilder buff = new StringBuilder();
 		String languageCode = getLanguageCodeWithDefault(request);
-		final ResourceBundle language = languageUtil.getLanguage(languageCode);
+		final ResourceBundle language = getLanguage(languageCode);
 
 		buff.append(awardedModelsBuffer.toString().replaceAll("__ADDNEWROW__", language.getString("add.new.row"))
 				.replaceAll("__SAVE__", language.getString("save"))
@@ -2941,7 +2945,7 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 		final String languageCode = ServletUtil.getRequestParameter(request,
 				RequestParameter.Language.getParameterName());
-		final ResourceBundle language = languageUtil.getLanguage(languageCode);
+		final ResourceBundle language = getLanguage(languageCode);
 
 		final StringBuilder categoriesBuff = new StringBuilder();
 		// getHTMLCodeForCategorySelect(categoriesBuff,

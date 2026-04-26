@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -266,5 +267,19 @@ public class ServletUtil {
 
 	public static String encodePassword(String passwordInRequest) {
 		return StringEncoder.encode(ServletUtil.encodeString(passwordInRequest));
+	}
+	
+	public static String getLabel(final HttpServletRequest request, final RegistrationServlet servlet, String key) {
+		String label = servlet.getLanguageForCurrentUser(request).getString(key);
+		
+
+		if(RegistrationServlet.isAdminSession(RegistrationServlet.getHttpSession(request))) {
+			ResourceBundle adminLanguage = servlet.getLanguage(RegistrationServlet.DEFAULT_LANGUAGE);
+			
+			return adminLanguage.getString(key) + " / " + label;
+		}
+		else {
+			return label;
+		}
 	}
 }
