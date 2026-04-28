@@ -2947,7 +2947,7 @@ public class RegistrationServlet extends HttpServlet {
 		// language.getString("select"), "", true, language, request);
 		// final StringBuilder countryBuff = new StringBuilder();
 		// getHTMLCodeForCountrySelect(countryBuff, language,
-		// language.getString("select"), "HU", "country");
+		// language.getString("select"), "Hungary", "country");
 
 		buff.append(batchAddModelBuffer.toString().replaceAll("__ADDNEWROW__", language.getString("add.new.row"))
 				.replaceAll("__ADD__", language.getString("add"))

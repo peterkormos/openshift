@@ -284,7 +284,7 @@ function checkDeleteUserRequest()
 
 					if (user == null) {
 						if (directRegister)
-							country = "HU";
+							country = "Hungary";
 					} else
 						country = user.country;
 					%> <jsp:include page="countries.jsp">
