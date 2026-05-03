@@ -1,3 +1,9 @@
+<%@page import="servlet.*"%>
+
+<%
+RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+%>
+
 	<tr>
 		<th>Kateg&oacute;riacsoport</th>
 		<td><a href="addCategoryGroup.jsp">&uacute;j
@@ -16,6 +22,13 @@
 				m&oacute;dos&iacute;t&aacute;s</a></td>
 		<td><a href="../RegistrationServlet/listCategories">t&ouml;rl&eacute;se</a></td>
 		<td><a href="../RegistrationServlet/listCategories">list&aacute;z&aacute;sa</a></td>
+	</tr>
+	<tr>
+		<th>Max. makettek kateg&oacute;ri&aacute;nk&eacute;nt</th>
+		<td><input
+			onClick="document.getElementById('paramName').value='<%=RegistrationServlet.SystemParameter.MaxModelsPerCategory.name()%>';document.getElementById('command4').value='setSystemParameter';document.getElementById('paramValue').value=document.getElementById('maxModelsPerCategoryParam').value;document.getElementById('input4').submit();"
+			type="number" id="maxModelsPerCategoryParam" size="2"
+			value="<%=servlet.getMaxModelsPerCategory(request)%>"></td>
 	</tr>
 	<tr>
 		<th>Import</th>

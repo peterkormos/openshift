@@ -18,10 +18,3 @@ if (show == null) {
 		onClick="document.getElementById('paramName').value='<%=RegistrationServlet.SystemParameter.REGISTRATION.name()%>';document.getElementById('paramValue').value='0';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">El&ouml;nevez&eacute;s
 			v&eacute;ge</a></td>
 </tr>
-<tr>
-	<td>Max. makettek kateg&oacute;ri&aacute;nk&eacute;nt:</td>
-	<td><input
-		onClick="document.getElementById('paramName').value='<%=RegistrationServlet.SystemParameter.MaxModelsPerCategory.name()%>';document.getElementById('command4').value='setSystemParameter';document.getElementById('paramValue').value=document.getElementById('maxModelsPerCategoryParam').value;document.getElementById('input4').submit();"
-		type="number" id="maxModelsPerCategoryParam" size="2"
-		value="<%=servlet.getMaxModelsPerCategory(request)%>"></td>
-</tr>
