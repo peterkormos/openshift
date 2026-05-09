@@ -104,7 +104,7 @@ if (show == null) {
 		<input
 			type="hidden" id="paramValue" name="paramValue" value="">
 
-		<table style="box-shadow: none; border: 0px;">
+		<table style="box-shadow: none; border: 0px; width:100%">
 			<tr>
 				<td colspan="5">
 <a href='helyi.jsp'>Helyi bel&eacute;p&eacute;si oldal
@@ -135,34 +135,31 @@ if (show == null) {
 				<td colspan="5">&nbsp;</td>
 			</tr>
 
-			<tr>
-				<th colspan="5">Nyomtat&aacute;s</th>
-			</tr>
-			<jsp:include page="ADMIN_nyomtatas.jsp" />
+			<jsp:include page="ADMIN_NNF.jsp" />
 
-			<tr>
-				<td colspan="5">&nbsp;</td>
-			</tr>
+<!-- 			<tr> -->
+<!-- 				<td colspan="5">&nbsp;</td> -->
+<!-- 			</tr> -->
 
-			<tr>
-				<th colspan="5">El&otilde;nevez&eacute;s</th>
-			</tr>
-			<jsp:include page="ADMIN_elonevezes.jsp" />
+<%-- 			<jsp:include page="ADMIN_nyomtatas.jsp" /> --%>
 
-			<tr>
-				<td colspan="5">&nbsp;</td>
-			</tr>
+<!-- 			<tr> -->
+<!-- 				<td colspan="5">&nbsp;</td> -->
+<!-- 			</tr> -->
 
-			<jsp:include page="ADMIN_uzenet.jsp" />
+<%-- 			<jsp:include page="ADMIN_elonevezes.jsp" /> --%>
 
-			<tr>
-				<td colspan="5">&nbsp;</td>
-			</tr>
+<!-- 			<tr> -->
+<!-- 				<td colspan="5">&nbsp;</td> -->
+<!-- 			</tr> -->
 
-			<tr>
-				<th colspan="5">Kateg&oacute;ri&aacute;k</th>
-			</tr>
-			<jsp:include page="ADMIN_kategoria.jsp" />
+<%-- 			<jsp:include page="ADMIN_uzenet.jsp" /> --%>
+
+<!-- 			<tr> -->
+<!-- 				<td colspan="5">&nbsp;</td> -->
+<!-- 			</tr> -->
+
+<%-- 			<jsp:include page="ADMIN_kategoria.jsp" /> --%>
 
 			<tr>
 				<td colspan="5">&nbsp;</td>

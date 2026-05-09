@@ -9,6 +9,9 @@ if (show == null) {
 %>
 
 <tr>
+	<th colspan="5">Nyomtat&aacute;s</th>
+</tr>
+<tr>
 	<td colspan="2"><a href="#"
 		onClick="document.getElementById('command4').value='printAllModels';document.getElementById('paramName').name='printPreRegisteredModels';document.getElementById('paramName').value='true';document.getElementById('input4').submit();">
 			Nevez&eacute;si lapok nyomtat&aacute;sa (El&ouml;nevezettek) </a></td>

@@ -7,6 +7,9 @@ if (show == null) {
 	show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 }
 %>
+<tr>
+	<th colspan="5">El&otilde;nevez&eacute;s</th>
+</tr>
 
 <tr>
 	<td><a href="#"

@@ -4,6 +4,9 @@
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 %>
 
+<tr>
+	<th colspan="5">Kateg&oacute;ri&aacute;k</th>
+</tr>
 	<tr>
 		<th>Kateg&oacute;riacsoport</th>
 		<td><a href="addCategoryGroup.jsp">&uacute;j
@@ -23,9 +26,9 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 		<td><a href="../RegistrationServlet/listCategories">t&ouml;rl&eacute;se</a></td>
 		<td><a href="../RegistrationServlet/listCategories">list&aacute;z&aacute;sa</a></td>
 	</tr>
-	<tr>
+	<tr class="flash Warning">
 		<th>Max. makettek kateg&oacute;ri&aacute;nk&eacute;nt</th>
-		<td><input
+		<td colspan="4"><input
 			onClick="document.getElementById('paramName').value='<%=RegistrationServlet.SystemParameter.MaxModelsPerCategory.name()%>';document.getElementById('command4').value='setSystemParameter';document.getElementById('paramValue').value=document.getElementById('maxModelsPerCategoryParam').value;document.getElementById('input4').submit();"
 			type="number" id="maxModelsPerCategoryParam" size="2"
 			value="<%=servlet.getMaxModelsPerCategory(request)%>"></td>
