@@ -236,6 +236,11 @@ public class ServletDAO extends HibernateDAO
 	return get(Category.class, " r.categoryCode = '" + categoryCode + "'");
   }
   
+  public Category getCategory(final String categoryCode, final String show)
+  {
+	  return get(Category.class, " r.categoryCode = '" + categoryCode + "' and r.group.show = '" + show + "'");
+  }
+  
   public void deleteEntries(final String table) throws SQLException
   {
 	  jdbcDAO.deleteEntry(table, null, 0);
