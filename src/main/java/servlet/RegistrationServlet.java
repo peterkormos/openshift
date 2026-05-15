@@ -91,7 +91,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2026.04.13.";
+	public String VERSION = "2026.05.12.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -304,7 +304,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			if (ServletFileUpload.isMultipartContent(request)) {
-				importData(request, response);
+				command = importData(request, response);
 				return;
 			}
 
@@ -1001,7 +1001,7 @@ public class RegistrationServlet extends HttpServlet {
 		}).collect(Collectors.toList());
 	}
 
-	public void importData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	public String importData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
 		final DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -1011,38 +1011,47 @@ public class RegistrationServlet extends HttpServlet {
 
 		final List<FileItem> iter = upload.parseRequest(request);
 
+		Optional<String> command = Optional.empty();
 		for (final FileItem item : iter) {
 			if (item.isFormField()) {
 				parameters.put(item.getFieldName(), item.getString());
 			} else {
-				processUploadedFile(request, response, item, parameters);
+				Optional<String> newCommand = processUploadedFile(request, response, item, parameters);
+				if(!command.isPresent()) {
+					command = newCommand;
+				}
 			}
 		}
+		
+		return command.orElse("N/A");
 	}
 
-	private void processUploadedFile(final HttpServletRequest request, final HttpServletResponse response,
+	private Optional<String> processUploadedFile(final HttpServletRequest request, final HttpServletResponse response,
 			FileItem item, Map<String, String> parameters) throws IOException, SQLException, Exception {
 		
 		if(item.getInputStream().available() == 0) {
 //			ServletUtil.writeResponse(response, new StringBuilder(item.getFieldName() + ": stream.available() == 0"));
-			return;
+			return Optional.empty();
 		};
-
-		if ("imageFile".equals(item.getFieldName())) {
+		
+		Optional<String> command = Optional.of(item.getFieldName());
+		switch (command.get()) {
+		case "imageFile":
 			processUploadedImageFile(request, item.getInputStream(), parameters);
-		} else if ("zipFile".equals(item.getFieldName())) {
-			final StringBuilder buff = importZip(request, item.getInputStream());
-			ServletUtil.writeResponse(response, buff);
-			return;
-		} else if ("categoryFile".equals(item.getFieldName())) {
-			final StringBuilder buff = processUploadedCategoryExcel(request, item.getInputStream());
-			ServletUtil.writeResponse(response, buff);
-			return;
-		} else if ("mastersFile".equals(item.getFieldName())) {
+			break;
+		case "zipFile":
+			ServletUtil.writeResponse(response, importZip(request, item.getInputStream()));
+			return command;
+		case "categoryFile":
+			ServletUtil.writeResponse(response, processUploadedCategoryExcel(request, item.getInputStream()));
+			return command;
+		case "mastersFile":
 			setOKNoticeInSession(getHttpSession(request), processUploadedMastersExcel(request, item.getInputStream()));
+			break;
 		}
 
 		redirectToMainPage(request, response);
+		return command;
 	}
 
 	private void processUploadedImageFile(final HttpServletRequest request, InputStream stream,
@@ -1176,10 +1185,11 @@ public class RegistrationServlet extends HttpServlet {
 			AgeGroup ageGroup = stringCellValue.length() == 0 ? AgeGroup.ALL : AgeGroup.of(stringCellValue);
 
 			try {
-				servletDAO.getCategory(categoryCode);
-//				buff.append(categoryCode + " már létezik.<p>");
+				servletDAO.getCategory(categoryCode, categoryGroup.getShow());
+				buff.append(categoryCode + " " + categoryGroup.getShow() + " már létezik.<p>");
 				continue;
 			} catch (Exception e) {
+				e.printStackTrace();
 				Category newCategory = new Category(servletDAO.getNextID(Category.class));
 
 				newCategory.setCategoryCode(categoryCode);

@@ -39,9 +39,6 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 			ut&aacute;n!<br> <input type="submit"
 			onClick="document.getElementById('command4').value='importData';document.getElementById('input4').enctype='multipart/form-data';"
 			value="Excelb&#337;l kateg&oacute;ri&aacute;k import&aacute;l&aacute;sa">
-			
-			<a href="#"
-				onClick="document.getElementById('command4').value='importData';document.getElementById('input4').enctype='multipart/form-data';document.getElementById('input4').submit();">Submit</a>
 		</td>
 		<td><input type="file" name="categoryFile"></td>
 		<td colspan="2">Excel t&aacute;bl&aacute;ban: <br> 1.
