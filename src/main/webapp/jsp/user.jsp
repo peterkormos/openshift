@@ -46,7 +46,7 @@ String passwordCheck = RegistrationServlet.isAdminSession(session) ? "" :  "&& c
 <script type="text/javascript">
 function checkDeleteUserRequest()
 {
-	confirmed = confirm('<%=language.getString("delete.confirm")%>'); 
+	confirmed = confirm('<%=ServletUtil.getLabel(request, servlet, "delete.confirm")%>'); 
 	
 	if(confirmed)
 	{
@@ -61,7 +61,7 @@ function checkDeleteUserRequest()
 	
 	        if (password1 == '' || password2 == '' || password1 != password2)
 	        {  
-	        	document.getElementById('noticeDiv').innerHTML = '<%=language.getString("passwords.not.same")%>';
+	        	document.getElementById('noticeDiv').innerHTML = '<%=ServletUtil.getLabel(request, servlet, "passwords.not.same")%>';
 				document.getElementById('noticeDiv').className ="flash ERROR";
 				return false; 
 	        } 
@@ -76,7 +76,7 @@ function checkDeleteUserRequest()
 	
 	        if (email1 == '' || email2 == '' || email1 != email2)
 	        {  
-	        	document.getElementById('noticeDiv').innerHTML = '<%=language.getString("emails.not.same")%>';
+	        	document.getElementById('noticeDiv').innerHTML = '<%=ServletUtil.getLabel(request, servlet, "emails.not.same")%>';
 				document.getElementById('noticeDiv').className ="flash ERROR";
 				return false; 
 	        } 
@@ -88,7 +88,7 @@ function checkDeleteUserRequest()
 
 	    function checkName(form) {
 			if(form.fullname.value.split(' ').length == 1) {
-				document.getElementById('noticeDiv').innerHTML = '<%=language.getString("name.too.short")%>';
+				document.getElementById('noticeDiv').innerHTML = '<%=ServletUtil.getLabel(request, servlet, "name.too.short")%>';
 			document.getElementById('noticeDiv').className = "flash ERROR";
 			return false;
 		} else {
@@ -118,7 +118,7 @@ function checkDeleteUserRequest()
 		<input type="hidden" id="command" name="command" value="">
 		<p>
 			<font color="#FF0000" size="+3">&#8226;</font>
-			<%=language.getString("mandatory.fields")%></p>
+			<%=ServletUtil.getLabel(request, servlet, "mandatory.fields")%></p>
 		<table width="47%" border="0">
 		
 			<%
@@ -139,7 +139,7 @@ function checkDeleteUserRequest()
 						<jsp:param name="size" value="30" />
 						<jsp:param name="value"
 							value='<%=user == null ? "" : user.email%>' />
-						<jsp:param name="label" value='<%=language.getString("email")%>' />
+						<jsp:param name="label" value='<%=ServletUtil.getLabel(request, servlet, "email")%>' />
 						<jsp:param name="mandatory" value="true" />
 					</jsp:include></td>
 			</tr>
@@ -150,7 +150,7 @@ function checkDeleteUserRequest()
 						<jsp:param name="value"
 							value='<%=user == null ? "" : user.email%>' />
 						<jsp:param name="label"
-							value='<%=language.getString("email.again")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "email.again")%>' />
 						<jsp:param name="mandatory" value="true" />
 					</jsp:include></td>
 			</tr>
@@ -160,7 +160,7 @@ function checkDeleteUserRequest()
 						<jsp:param name="size" value="30" />
 						<jsp:param name="inputType" value="password" />
 						<jsp:param name="label"
-							value='<%=language.getString("password")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "password")%>' />
 						<jsp:param name="mandatory" value='<%=!RegistrationServlet.isAdminSession(session) %>' />
 					</jsp:include></td>
 			</tr>
@@ -170,7 +170,7 @@ function checkDeleteUserRequest()
 						<jsp:param name="size" value="30" />
 						<jsp:param name="inputType" value="password" />
 						<jsp:param name="label"
-							value='<%=language.getString("password.again")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "password.again")%>' />
 						<jsp:param name="mandatory" value='<%=!RegistrationServlet.isAdminSession(session) %>' />
 					</jsp:include></td>
 			</tr>
@@ -196,7 +196,7 @@ function checkDeleteUserRequest()
 							<%
 							}
 							%>
-							<label for="fullname" class="input-caption"><%=language.getString("name")%></label>
+							<label for="fullname" class="input-caption"><%=ServletUtil.getLabel(request, servlet, "name")%></label>
 							<font color="#FF0000" size="+3">&#8226;</font>
 						</div>
 					</div>
@@ -230,13 +230,13 @@ function checkDeleteUserRequest()
 								<%=(user == null ? "" : gender.equals(user.getGender()) ? " checked='checked'" : "")%> 
 								required='required'
 								/>
-								<%=language.getString(gender.name())%>
+								<%=ServletUtil.getLabel(request, servlet, gender.name())%>
 							</label><br>
 							<%
 							}
 							%>
 						</fieldset>
-						<label for="genderGroup" class="input-caption"><%=language.getString("gender")%></label>
+						<label for="genderGroup" class="input-caption"><%=ServletUtil.getLabel(request, servlet, "gender")%></label>
 						<font color='#FF0000' size='+3'>&#8226;</font>
 					</div>
 				</td>
@@ -253,7 +253,7 @@ function checkDeleteUserRequest()
 						yearOfBirth = String.valueOf(user.yearOfBirth);
 					%> <jsp:include page="year.jsp">
 						<jsp:param name="label"
-							value='<%=language.getString("year.of.birth")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "year.of.birth")%>' />
 						<jsp:param name="selectLabel" value="<%=yearOfBirth%>" />
 						<jsp:param name="selectValue" value="<%=yearOfBirth%>" />
 					</jsp:include>
@@ -270,9 +270,10 @@ function checkDeleteUserRequest()
 					} else
 						languageCode = user.language;
 					%> <jsp:include page="language.jsp">
+						<jsp:param name="mandatory" value="true" />
 						<jsp:param name="label"
-							value='<%=language.getString("language")%>' />
-						<jsp:param name="selectLabel" value="<%=languageCode%>" />
+							value='<%=ServletUtil.getLabel(request, servlet, "language")%>' />
+						<jsp:param name="selectLabel" value="<%=LanguageUtil.getLanguages().get(languageCode)%>" />
 						<jsp:param name="selectValue" value="<%=languageCode%>" />
 					</jsp:include>
 				</td>
@@ -289,7 +290,7 @@ function checkDeleteUserRequest()
 						country = user.country;
 					%> <jsp:include page="countries.jsp">
 						<jsp:param name="mandatory" value="true" />
-						<jsp:param name="label" value='<%=language.getString("country")%>' />
+						<jsp:param name="label" value='<%=ServletUtil.getLabel(request, servlet, "country")%>' />
 						<jsp:param name="defaultSelectedLabel" value="<%=country%>" />
 						<jsp:param name="defaultSelectedValue" value="<%=country%>" />
 						<jsp:param name="selectName" value="country" />
@@ -300,7 +301,7 @@ function checkDeleteUserRequest()
 				<td><jsp:include page="textInput.jsp">
 						<jsp:param name="name" value="city" />
 						<jsp:param name="size" value="30" />
-						<jsp:param name="label" value='<%=language.getString("city")%>' />
+						<jsp:param name="label" value='<%=ServletUtil.getLabel(request, servlet, "city")%>' />
 						<jsp:param name="value" value='<%=user == null ? "" : user.city%>' />
 						<jsp:param name="mandatory" value="true" />
 					</jsp:include></td>
@@ -309,7 +310,7 @@ function checkDeleteUserRequest()
 				<td><jsp:include page="textInput.jsp">
 						<jsp:param name="name" value="address" />
 						<jsp:param name="size" value="30" />
-						<jsp:param name="label" value='<%=language.getString("address")%>' />
+						<jsp:param name="label" value='<%=ServletUtil.getLabel(request, servlet, "address")%>' />
 						<jsp:param name="value"
 							value='<%=user == null ? "" : user.address%>' />
 					</jsp:include></td>
@@ -319,14 +320,14 @@ function checkDeleteUserRequest()
 						<jsp:param name="name" value="telephone" />
 						<jsp:param name="size" value="30" />
 						<jsp:param name="label"
-							value='<%=language.getString("telephone")%>' />
+							value='<%=ServletUtil.getLabel(request, servlet, "telephone")%>' />
 						<jsp:param name="value"
 							value='<%=user == null ? "" : user.telephone%>' />
 					</jsp:include></td>
 			</tr>
 			<tr>
 				<td><input type="submit"
-					value="<%=language.getString("save")%>">
+					value="<%=ServletUtil.getLabel(request, servlet, "save")%>">
 					<p>
 					<div id="noticeDiv"></div></td>
 			</tr>
@@ -337,7 +338,7 @@ function checkDeleteUserRequest()
 		<p>
 			<a href="#" onClick="checkDeleteUserRequest();"
 				style="color: rgb(255, 0, 0); font-weight: bold"> <img
-				src="../icons/delete.png" height="30" align="center"> <%=language.getString("delete.user")%></a>
+				src="../icons/delete.png" height="30" align="center"> <%=ServletUtil.getLabel(request, servlet, "delete.user")%></a>
 		</p>
 
 		<%
