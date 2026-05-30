@@ -1,5 +1,6 @@
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="servlet.RegistrationServlet.*"%>
 
 <%@page import="java.util.*"%>
 
@@ -7,7 +8,8 @@
 
 <%
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	ResourceBundle language = servlet.getLanguageFromRequest(request);
+	final String languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
+	ResourceBundle language = languageUtil.getLanguage(languageCode);
 %>
 
 <html>
@@ -24,7 +26,7 @@
 
 				<form name="input" action="../RegistrationServlet/reminder"
 					method="put" accept-charset="UTF-8">
-
+					<input type="hidden" name="language" value="<%=languageCode %>>" >
 					<table border="0">
 						<tr>
 							<td><%=language.getString("email")%>:</td>

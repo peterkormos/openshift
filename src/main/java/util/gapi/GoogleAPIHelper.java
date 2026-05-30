@@ -19,6 +19,11 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.Gmail;
 
 //https://developers.google.com/gmail/api/guides?authuser=2
+//https://console.cloud.google.com/auth/clients?project=hybrid-entropy-198811
+//szerver induláskor a konzolon megjelenik egy hosszú google link, azt kell megnyitni.
+//A böngészőben jóvá hell hagyni az makett alkalmazást (go to safety lenyílón belül)
+//A http://localhost:8888/... szerű linket a szerveren futtatni kell.
+
 public class GoogleAPIHelper {
     private static final String APPLICATION_NAME = "form-modelregistration-application";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
