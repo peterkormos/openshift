@@ -208,7 +208,7 @@ public class ServletDAO extends HibernateDAO
 
   public List<Model> getModels(final int userID)
   {
-	return userID == INVALID_USERID ? getAll(Model.class) : getModels("user.id = " + userID);
+	return userID == INVALID_USERID ? getModels("") : getModels("user.id = " + userID);
   }
 
   public List<Model> getModelsInCategory(final int categoryID)
@@ -218,7 +218,7 @@ public class ServletDAO extends HibernateDAO
 
   public List<Model> getModels(final String where)
   {
-	  return where.isEmpty() ?  getAll(Model.class) : getList(Model.class, where);
+	  return where.isEmpty() ? getList(Model.class, "order by categoryID") : getList(Model.class, where + " order by categoryID");
   }
 
   public Model getModel(final int modelID) 
