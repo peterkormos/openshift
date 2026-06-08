@@ -273,7 +273,8 @@ public class ServletUtil {
 		String label = servlet.getLanguageForCurrentUser(request).getString(key);
 		
 
-		if(RegistrationServlet.isAdminSession(RegistrationServlet.getHttpSession(request))) {
+		if(RegistrationServlet.isAdminSession(RegistrationServlet.getHttpSession(request)) && 
+				!RegistrationServlet.DEFAULT_LANGUAGE.equals(RegistrationServlet.getLanguage(request))) {
 			ResourceBundle adminLanguage = servlet.getLanguage(RegistrationServlet.DEFAULT_LANGUAGE);
 			
 			return adminLanguage.getString(key) + " / " + label;
