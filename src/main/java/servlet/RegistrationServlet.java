@@ -2283,7 +2283,7 @@ public class RegistrationServlet extends HttpServlet {
 		selectUser(request, response, "directPrintModels");
 	}
 
-	private String getLanguage(final HttpServletRequest request) throws MissingRequestParameterException {
+	public static String getLanguage(final HttpServletRequest request) throws MissingRequestParameterException {
 		try {
 			User user = getUser(request);
 			return user.isAdminUser() ? DEFAULT_LANGUAGE : user.getLanguage();
@@ -2685,6 +2685,8 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(getDefaultLanguage(), model, "."))
 							.replaceAll("__LOGO_URL__", logoURL)
+							.replaceAll("__BORDER-WIDTH__", "1px")
+							.replaceAll("__BORDER-COLOR__", "black")
 					;
 
 					for (DetailingGroup group : DetailingGroup.values()) {
@@ -2851,7 +2853,7 @@ public class RegistrationServlet extends HttpServlet {
 		ServletUtil.writeResponse(response, buff);
 	}
 
-	private String getLanguageCodeWithDefault(final HttpServletRequest request) {
+	public static String getLanguageCodeWithDefault(final HttpServletRequest request) {
 		String languageCode;
 		try {
 			languageCode = getUser(request).language;
