@@ -35,6 +35,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -73,6 +74,7 @@ import datatype.Gender;
 import datatype.LoginConsent;
 import datatype.LoginConsent.LoginConsentType;
 import datatype.PageNotice;
+import datatype.PrintedModel;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
@@ -2550,22 +2552,49 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void printModels(final HttpServletRequest request, StringBuilder printBuffer, final StringBuilder buff,
-			List<Model> models) throws SQLException, Exception, IOException {
+			List<Model> model) throws SQLException, Exception, IOException {
 		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
 		Optional<String> modelRowsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.ModelRowsPerPage.name());
 		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
 		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 				+ getLogoIDForShow(getShowFromSession(request));
 		int rows = modelRowsPerPage.isPresent() ? Integer.parseInt(modelRowsPerPage.get()) : 1;
-		while (!models.isEmpty()) {
-			int currentModelsOnPage = Math.min(modelsOnPage, models.size());
-			final List<Model> subList = new ArrayList<>(models.subList(0, currentModelsOnPage));
-			models.removeAll(subList);
+		List<? extends Model> printedModel = toPrintedModel(model);
+		while (!printedModel.isEmpty()) {
+			int currentModelsOnPage = Math.min(modelsOnPage, printedModel.size());
+			final List<Model> subList = new ArrayList<>(printedModel.subList(0, currentModelsOnPage));
+			printedModel.removeAll(subList);
 
 			boolean shouldPageBreak = currentModelsOnPage > 0;
 			buff.append(printModels(subList, printBuffer, rows, (int) Math.ceil(modelsOnPage/rows) , shouldPageBreak, logoURL));
+		}
+	}
+		
+	private List<? extends Model> toPrintedModel(List<Model> models) {
+		final AtomicReference<Model> previousModel = new AtomicReference<Model>();
+		
+		return models.stream().map(model -> {
 
-}
+			int nextModelsIndex = models.indexOf(model) + 1;
+
+			Optional<Model> nextModel = Optional
+					.ofNullable(nextModelsIndex < models.size() ? models.get(nextModelsIndex) : null);
+
+			PrintedModel printedModel = new PrintedModel(model,
+					shouldHighlightBorder(Optional.ofNullable(previousModel.get()), model, nextModel));
+			previousModel.set(model);
+			return printedModel;
+		}).collect(Collectors.toList());
+	}
+
+	boolean shouldHighlightBorder(Optional<Model> previousModel, Model currentModel, Optional<Model> nextModel) {
+		return sameUserAndCategory(previousModel, currentModel) || 
+				sameUserAndCategory(nextModel, currentModel);
+	}
+
+	boolean sameUserAndCategory(Optional<Model> anotherModel, Model currentModel) {
+		return anotherModel.isEmpty() ? false : anotherModel.get().getUserID() == currentModel.getUserID() && 
+				anotherModel.get().getCategoryID() == currentModel.getCategoryID();
 	}
 
 	public void printCardsForAllModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -2611,12 +2640,12 @@ public class RegistrationServlet extends HttpServlet {
 		} else {
 			final StringBuilder buff = new StringBuilder();
 
-			final List<Model> subList = new LinkedList<Model>();
+			final List<Model> subList = new LinkedList<>();
 			subList.add(servletDAO.getModel(Integer.parseInt(modelID)));
 			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 					+ getLogoIDForShow(getShowFromSession(request));
 
-			buff.append(printModels(subList, printBuffer, 1,
+			buff.append(printModels(toPrintedModel(subList), printBuffer, 1,
 					3, false, logoURL));
 
 			ServletUtil.writeResponse(response, buff);
@@ -2643,7 +2672,7 @@ public class RegistrationServlet extends HttpServlet {
 		return buff;
 	}
 
-	StringBuilder printModels(final List<Model> models, final StringBuilder printBuffer, final int rows,
+	StringBuilder printModels(final List<? extends Model> models, final StringBuilder printBuffer, final int rows,
 			final int cols, boolean shouldPageBreak, String logoURL) throws Exception, IOException {
 
 		final int width = 100 / cols;
@@ -2685,8 +2714,8 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(getDefaultLanguage(), model, "."))
 							.replaceAll("__LOGO_URL__", logoURL)
-							.replaceAll("__BORDER-WIDTH__", "1px")
-							.replaceAll("__BORDER-COLOR__", "black")
+							.replaceAll("__BORDER-WIDTH__", shouldHighlightModel(model) ? "3px" : "1px")
+							.replaceAll("__BORDER-COLOR__", shouldHighlightModel(model) ? "orange" : "black")
 					;
 
 					for (DetailingGroup group : DetailingGroup.values()) {
@@ -2710,6 +2739,10 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</table>");
 
 		return buff;
+	}
+
+	boolean shouldHighlightModel(final Model model) {
+		return PrintedModel.class.isInstance(model) && PrintedModel.class.cast(model).shouldHighlightBorder();
 	}
 
 	public static String getGluedToBaseHTMLCode(final ResourceBundle language, final Model model, String imageBaseDir) {
