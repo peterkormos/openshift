@@ -35,6 +35,13 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   }
 %>
 
+Sz&iacute;nk&oacute;dok:
+<table style='width: 100%; border-collapse: collapse;' border='1'>
+<tr bgcolor="<%=highlight(true)%>">
+	<td>T&uacute;lm&eacute;retes makett h&aacute;tt&eacute;rsz&iacute;ne...</td>
+</tr>
+</table>
+<p>
 <table style='width: 100%; border-collapse: collapse;' border='1'>
 	<tr>
 		<th align='center' style='white-space: nowrap'></th>
