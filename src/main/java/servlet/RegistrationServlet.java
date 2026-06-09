@@ -2571,20 +2571,20 @@ public class RegistrationServlet extends HttpServlet {
 	}
 		
 	private List<? extends Model> toPrintedModel(List<Model> models) {
-		final AtomicReference<Model> previousModel = new AtomicReference<Model>();
-		
-		return models.stream().map(model -> {
+		List<PrintedModel> returned = new ArrayList<PrintedModel>(models.size());
 
-			int nextModelsIndex = models.indexOf(model) + 1;
+		for (int i = 0; i < models.size(); i++) {
+			Model model = models.get(i);
 
-			Optional<Model> nextModel = Optional
-					.ofNullable(nextModelsIndex < models.size() ? models.get(nextModelsIndex) : null);
+			Optional<Model> previousModel = Optional.ofNullable(i - 1 >= 0 ? models.get(i - 1) : null);
+			Optional<Model> nextModel = Optional.ofNullable(i + 1 < models.size() ? models.get(i + 1) : null);
 
-			PrintedModel printedModel = new PrintedModel(model,
-					shouldHighlightBorder(Optional.ofNullable(previousModel.get()), model, nextModel));
-			previousModel.set(model);
-			return printedModel;
-		}).collect(Collectors.toList());
+			PrintedModel printedModel = new PrintedModel(model, shouldHighlightBorder(previousModel, model, nextModel));
+
+			returned.add(printedModel);
+		}
+
+		return returned;
 	}
 
 	boolean shouldHighlightBorder(Optional<Model> previousModel, Model currentModel, Optional<Model> nextModel) {
@@ -2593,8 +2593,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	boolean sameUserAndCategory(Optional<Model> anotherModel, Model currentModel) {
-		return anotherModel.isEmpty() ? false : anotherModel.get().getUserID() == currentModel.getUserID() && 
-				anotherModel.get().getCategoryID() == currentModel.getCategoryID();
+		return anotherModel.isPresent() ? anotherModel.get().getUserID() == currentModel.getUserID() && 
+				anotherModel.get().getCategoryID() == currentModel.getCategoryID() : false;
 	}
 
 	public void printCardsForAllModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -2714,8 +2714,8 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(getDefaultLanguage(), model, "."))
 							.replaceAll("__LOGO_URL__", logoURL)
-							.replaceAll("__BORDER-WIDTH__", shouldHighlightModel(model) ? "3px" : "1px")
-							.replaceAll("__BORDER-COLOR__", shouldHighlightModel(model) ? "orange" : "black")
+							.replaceAll("__BORDER-WIDTH__", shouldHighlightBorder(model) ? "3px" : "1px")
+							.replaceAll("__BORDER-COLOR__", shouldHighlightBorder(model) ? "orange" : "black")
 					;
 
 					for (DetailingGroup group : DetailingGroup.values()) {
@@ -2741,7 +2741,7 @@ public class RegistrationServlet extends HttpServlet {
 		return buff;
 	}
 
-	boolean shouldHighlightModel(final Model model) {
+	boolean shouldHighlightBorder(final Model model) {
 		return PrintedModel.class.isInstance(model) && PrintedModel.class.cast(model).shouldHighlightBorder();
 	}
 
