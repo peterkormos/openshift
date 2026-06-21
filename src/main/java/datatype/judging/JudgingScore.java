@@ -26,7 +26,7 @@ public class JudgingScore extends JudgedModel
   private JudgingCriteria criteria; 
   
   @Column
-  private int score;
+  private String score;
   @Column(length = MAX_COMMENT_LENGTH, nullable = true)
   private String comment;
   
@@ -35,7 +35,7 @@ public class JudgingScore extends JudgedModel
       
   }
   
-  public JudgingScore(int id, String category, String judge, int modelID, int modellerID, int criteriaID, int score,
+  public JudgingScore(int id, String category, String judge, int modelID, int modellerID, int criteriaID, String score,
 	  String comment,String modelsName)
   {
 	super(id, modelID, modellerID, modelsName);
@@ -77,12 +77,12 @@ public class JudgingScore extends JudgedModel
 	this.criteriaID = criteriaID;
   }
 
-  public int getScore()
+  public String getScore()
   {
 	return score;
   }
 
-  public void setScore(int score)
+  public void setScore(String score)
   {
 	this.score = score;
   }

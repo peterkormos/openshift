@@ -30,34 +30,46 @@ boolean isNormalUser = !"admin".equals(judge);
 </head>
 <body>
 
-	<!-- 	<a href="login.jsp">Login</a> -->
-	<form name='input' accept-charset="UTF-8"
-		action="../../JudgingServlet/<%=JudgingServlet.RequestType.Login.name()%>"
-		method='POST' accept-charset="UTF-8"
-		style="background: LightGrey; padding: 5px;">
-		<jsp:include page="fillableFormField.jsp">
-			<jsp:param name="name"
-				value="<%=JudgingServlet.RequestParameter.Judge.name()%>" />
-			<jsp:param name="caption" value='<%=language.getString("judge")%>' />
-			<jsp:param name="value"
-				value='<%=Optional.ofNullable(judge).orElse("")%>' />
-		</jsp:include>
+<table style="border: 0px; width: 100%">
+	<tr>
+		<td style="width: 100%; white-space: nowrap">
+			<form name='input' accept-charset="UTF-8"
+				action="../../JudgingServlet/<%=JudgingServlet.RequestType.Login.name()%>"
+				method='POST' accept-charset="UTF-8"
+				>
+				<jsp:include page="fillableFormField.jsp">
+					<jsp:param name="name"
+						value="<%=JudgingServlet.RequestParameter.Judge.name()%>" />
+					<jsp:param name="caption" value='<%=language.getString("judge")%>' />
+					<jsp:param name="value"
+						value='<%=Optional.ofNullable(judge).orElse("")%>' />
+				</jsp:include>
+			
+				<%=language.getString("language")%>:
+				<jsp:include page="../language.jsp">
+					<jsp:param name="parameterName"
+						value="<%=JudgingServlet.RequestParameter.Language.name()%>" />
+								<jsp:param name="label"
+									value='<%=language.getString("language")%>' />
+					<jsp:param name="selectLabel" value="<%=languageCode%>" />
+					<jsp:param name="selectValue" value="<%=languageCode%>" />
+					<jsp:param name="required" value="required" />
+				</jsp:include>
+			
+				<input type="submit" value='<%=language.getString("login")%>'>
+				<span style="color: white; text-align: right;"> <%=JudgingServlet.VERSION%>
+				</span>
+			</form>
+		</td>
+		<td style="width: 40px; text-align: right; vertical-align: top;">
+			<a href="../../JudgingServlet/<%=JudgingServlet.RequestType.Logout.name()%>"> <img
+				src="../../icons/exit.png" height="30" align="center" /> <span
+				class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
+			</a>
+		</td>
+	</tr>
+</table>
 
-		<%=language.getString("language")%>:
-		<jsp:include page="../language.jsp">
-			<jsp:param name="parameterName"
-				value="<%=JudgingServlet.RequestParameter.Language.name()%>" />
-						<jsp:param name="label"
-							value='<%=language.getString("language")%>' />
-			<jsp:param name="selectLabel" value="<%=languageCode%>" />
-			<jsp:param name="selectValue" value="<%=languageCode%>" />
-			<jsp:param name="required" value="required" />
-		</jsp:include>
-
-		<input type="submit" value='<%=language.getString("login")%>'>
-		<span style="color: LightGrey; text-align: right;"> <%=JudgingServlet.VERSION%>
-		</span>
-	</form>
 	<p>
 		<a
 			href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>">
@@ -86,8 +98,8 @@ boolean isNormalUser = !"admin".equals(judge);
 	
 	<p>
 		<a href="verseny_eredmenyek.jsp"><img src="../../icons/add.png"
-			height="30" align="center"> <%=language.getString("judging.type.looking")%> - egyszer&#369;s&iacute;tett
-			eredm&eacute;nyfelvitel</a>
+			height="30" align="center">Egyszer&#369;s&iacute;tett
+			eredm&eacute;nyfelvitel -  <%=language.getString("judging.type.looking")%> - (Régi RegServlet funkciok!)</a>
 	</p>
 
 	<jsp:include page="judging_admin.jsp" />

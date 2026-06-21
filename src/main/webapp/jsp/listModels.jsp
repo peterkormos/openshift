@@ -26,7 +26,7 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ServletUtil.getRequestParameter(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
 	boolean filterToOversized = ServletUtil.isCheckedIn(request, "filterToOversized");
-  List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
+  List<? extends Model> models = (List<? extends Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
   
   String show = RegistrationServlet.getShowFromSession(session);
   if (show == null)
@@ -35,11 +35,17 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   }
 %>
 
+<link href="base.css" rel="stylesheet" type="text/css">
+
 Sz&iacute;nk&oacute;dok:
 <table style='width: 100%; border-collapse: collapse;' border='1'>
 <tr bgcolor="<%=highlight(true)%>">
-	<td>T&uacute;lm&eacute;retes makett h&aacute;tt&eacute;rsz&iacute;ne...</td>
+	<td>H&aacute;tt&eacute;rsz&iacute;n: t&uacute;lm&eacute;retes makett</td>
 </tr>
+<tr style="border-style: solid; border-width: 3px; border-color: orange;">
+	<td>Keret: egy makettez&#337;t&#337;l egyn&eacute;l t&ouml;bb makettet nevezett egy adott kateg&oacute;ri&aacute;ban</td>
+</tr>
+
 </table>
 <p>
 <table style='width: 100%; border-collapse: collapse;' border='1'>
@@ -169,7 +175,14 @@ Sz&iacute;nk&oacute;dok:
 				}
 			}
 	%>
-	<tr bgcolor="<%= highlight(model.isOversized())%>">
+	
+	
+	
+	<tr bgcolor="<%= highlight(model.isOversized())%>"
+	style="border-style: solid; 
+	border-width: <%= RegistrationServlet.shouldHighlightBorder(model) ? "3px" : "1px"%>; 
+	border-color: <%= RegistrationServlet.shouldHighlightBorder(model) ? "orange" : "black"%>;"
+	>
 		<td>
 <%
   if (servlet.isRegistrationAllowed(show, session))

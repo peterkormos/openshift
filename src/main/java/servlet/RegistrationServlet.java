@@ -2099,7 +2099,7 @@ public class RegistrationServlet extends HttpServlet {
 				PageNotice.NoticeType.Warning, language.getString("email.warning"));
 	}
 
-	private void setNoticeInSession(final HttpSession session, PageNotice.NoticeType noticeType, String noticeText) {
+	public static void setNoticeInSession(final HttpSession session, PageNotice.NoticeType noticeType, String noticeText) {
 		List<PageNotice> notices = (List<PageNotice>) session.getAttribute(SessionAttribute.Notices.name());
 		if (notices == null)
 			notices = new LinkedList<PageNotice>();
@@ -2570,7 +2570,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 		
-	private List<? extends Model> toPrintedModel(List<Model> models) {
+	public static List<? extends Model> toPrintedModel(List<Model> models) {
 		List<PrintedModel> returned = new ArrayList<PrintedModel>(models.size());
 
 		for (int i = 0; i < models.size(); i++) {
@@ -2587,12 +2587,12 @@ public class RegistrationServlet extends HttpServlet {
 		return returned;
 	}
 
-	boolean shouldHighlightBorder(Optional<Model> previousModel, Model currentModel, Optional<Model> nextModel) {
+	static boolean shouldHighlightBorder(Optional<Model> previousModel, Model currentModel, Optional<Model> nextModel) {
 		return sameUserAndCategory(previousModel, currentModel) || 
 				sameUserAndCategory(nextModel, currentModel);
 	}
 
-	boolean sameUserAndCategory(Optional<Model> anotherModel, Model currentModel) {
+	static boolean sameUserAndCategory(Optional<Model> anotherModel, Model currentModel) {
 		return anotherModel.isPresent() ? anotherModel.get().getUserID() == currentModel.getUserID() && 
 				anotherModel.get().getCategoryID() == currentModel.getCategoryID() : false;
 	}
@@ -2741,7 +2741,7 @@ public class RegistrationServlet extends HttpServlet {
 		return buff;
 	}
 
-	boolean shouldHighlightBorder(final Model model) {
+	public static boolean shouldHighlightBorder(final Model model) {
 		return PrintedModel.class.isInstance(model) && PrintedModel.class.cast(model).shouldHighlightBorder();
 	}
 

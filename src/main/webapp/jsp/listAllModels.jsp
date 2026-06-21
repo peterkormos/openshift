@@ -13,9 +13,9 @@ ServletDAO servletDAO = servlet.getServletDAO();
 User user = servlet.getUser(request);
 final String show = RegistrationServlet.getShowFromSession(session);
 
-final List<Model> models = servletDAO.getModelsForShow(show, ServletDAO.INVALID_USERID);
+final List<? extends Model> models = RegistrationServlet.toPrintedModel(servletDAO.getModelsForShow(show, ServletDAO.INVALID_USERID));
 
-final Iterator<Model> it = models.iterator();
+final Iterator<? extends Model> it = models.iterator();
 while (it.hasNext()) {
 	final Model model = it.next();
 

@@ -72,6 +72,21 @@ td {
 	padding: 3px;
   }
 
+/* Remove standard text-decoration to avoid double-lines */
+.strikeout td {
+  position: relative; /* Required for the absolute positioning below */
+}
+
+/* Draw a continuous line across the middle of every cell */
+.strikeout td::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  border-bottom: 1px solid; /* Match this to your text color */
+}
+
 a,
 label {
 	border-color: transparent;

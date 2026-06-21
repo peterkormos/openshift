@@ -1,5 +1,6 @@
 <%@page import="java.util.*"%>
 <%@page import="servlet.*"%>
+<%@page import="datatype.*"%>
 <%@page import="util.*"%>
 
 
@@ -16,6 +17,8 @@ ResourceBundle language = JudgingServlet.getLanguage(session, response);
 <link href="../base.css" rel="stylesheet" type="text/css">
 </head>
 
+<jsp:include page="../notices.jsp" />
+
 <form
 	action="../../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingForm.name()%>"
 	method="post">
@@ -23,24 +26,33 @@ ResourceBundle language = JudgingServlet.getLanguage(session, response);
         name="<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>"
         value="<%=simpleJudging%>">
 
-	<%= language.getString("category.code") %>:
-	<p>
+<table style='width: 100%; border-collapse: collapse;' border='1'>
+	<tr>
+		<th align='center' style='white-space: nowrap'><%= language.getString("category") %></th>
+		<th align='center' style='white-space: nowrap'>Action</th>
+	</tr>
+	
 	<%
-		List<String> categories = (List<String>) session.getAttribute(JudgingServlet.SessionAttribute.Categories.name());
+		List<Category> categories = (List<Category>) session.getAttribute(JudgingServlet.SessionAttribute.Categories.name());
 
-	  for (String category : categories)
+	  for (Category category : categories)
 	  {
 	%>
+	<tr>
+		<td>
 			<label>
-			<%= category %>
-			<input type="radio" name="<%=JudgingServlet.RequestParameter.Category.name()%>" value="<%= category %>" onclick="submit()">
+			<input type="radio" name="<%=JudgingServlet.RequestParameter.Category.name()%>" value="<%= category.getCategoryCode() %>" onclick="submit()">
+			<%= category.getCategoryCode()%> - <%= category.getCategoryDescription()%>
 			</label>
-		<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.Category %>=<%=category%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
-		<%= language.getString("list.models") %>
-		</a>
-			<br>
+		</td>
+		<td>
+			<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.Category %>=<%=category.getCategoryCode()%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
+			<%= language.getString("list.models") %>
+			</a>
+		</td>
+	</tr>
 	<%
 	  }
 	%>
-	
-</form>
+	</table>
+</form

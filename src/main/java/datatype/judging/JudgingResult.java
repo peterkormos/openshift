@@ -14,7 +14,7 @@ public class JudgingResult extends JudgedModel{
     private String judge;
 
     // value:count
-    private final Map<Integer, AtomicInteger> scoresSummary = new LinkedHashMap<Integer, AtomicInteger>();
+    private final Map<String, AtomicInteger> scoresSummary = new LinkedHashMap<String, AtomicInteger>();
     private int maxScore;
     
     //criteriaID, JudgingScore
@@ -72,7 +72,7 @@ public class JudgingResult extends JudgedModel{
         this.judge = judge;
     }
 
-    public Map<Integer, AtomicInteger> getScoresSummary() {
+    public Map<String, AtomicInteger> getScoresSummary() {
         return scoresSummary;
     }
 
@@ -80,7 +80,7 @@ public class JudgingResult extends JudgedModel{
         return getScoresSummary().values().stream().mapToInt(AtomicInteger::get).sum();
     }
 
-    public int getCountForScore(int score) {
+    public int getCountForScore(String score) {
         try 
         {
             return scoresSummary.get(score).get();

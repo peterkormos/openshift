@@ -35,7 +35,8 @@ language = languageUtil.getLanguage(languageCode);
 			</a></td>
 			<td><a href="deleteAwardedModel.jsp"> <img
 					src="../../icons/delete2.png" height="30" align="center"> <%=language.getString("judging.type.form")%>
-					t&ouml;rl&eacute;se
+					t&ouml;rl&eacute;se (RegServlet
+					admin belepes utan !)
 			</a></td>
 		</tr>
 		<tr>

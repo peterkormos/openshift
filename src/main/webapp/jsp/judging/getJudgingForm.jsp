@@ -63,11 +63,6 @@ ResourceBundle language = JudgingServlet.getLanguage(session, response);
 	JudgingResult judgingResult = (JudgingResult) session.getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
 	
 	int criteriaListSize = judgingResult.getCriterias().size();
-    
-    Boolean simpleJudging = (Boolean) session.getAttribute(JudgingServlet.SessionAttribute.SimpleJudging.name());
-    if(simpleJudging == null) {
-        simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
-    }
 %>
 
 <form accept-charset='UTF-8'
@@ -77,11 +72,6 @@ ResourceBundle language = JudgingServlet.getLanguage(session, response);
     <input type="hidden"
         name="<%=JudgingServlet.RequestParameter.JudgingCriterias.name()%>"
         value="<%=criteriaListSize%>">
-
-    <input type="hidden"
-        name="<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>"
-        value="<%=simpleJudging%>">
-
 
 	<jsp:include page="getJudgingSheet.jsp" />
 	<p>

@@ -26,6 +26,11 @@ int maxlength = JudgingScore.MAX_COMMENT_LENGTH;
 	boolean listMode = Boolean.parseBoolean(
 	ServletUtil.getOptionalRequestParameter(request, "listMode").
 	replaceAll(RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE, "false"));
+    
+    Boolean simpleJudging = (Boolean) session.getAttribute(JudgingServlet.SessionAttribute.SimpleJudging.name());
+    if(simpleJudging == null) {
+        simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
+    }
 %>
 
 
@@ -46,18 +51,38 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 }
 		%>
 <link href="../base.css" rel="stylesheet" type="text/css">
+
+<input type="hidden"
+    name="<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>"
+    value="<%=simpleJudging%>">
+
 <table style="border: 1px solid black;">
 	<tr>
-		<td colspan="3"><jsp:include page="fillableFormField.jsp">
+		<th>
+			<%=language.getString("userID")%>
+		</th>
+		<th>
+			<%=language.getString("modelID")%>
+		</th>
+		<th>
+			<%=language.getString("category.code")%>
+		</th>
+	</tr>
+	
+	<tr>
+		<td align="center"> 
+			<font style="border: 1px solid black; padding: 1mm;">
+			<jsp:include page="fillableFormField.jsp">
 				<jsp:param name="name"
 					value="<%=JudgingServlet.RequestParameter.ModellerID.name()%>" />
 				<jsp:param name="value"
 					value='<%=judgedModel == null ? "" : judgedModel.getModellerID()%>' />
-				<jsp:param name="disabled"
-					value='<%=judgedModel == null ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : "disabled"%>' />
+				<jsp:param name="disabled" value='true' />
 				<jsp:param name="size" value='3' />
-				<jsp:param name="caption" value='<%=language.getString("userID")%>' />
-			</jsp:include> <%-- 			  <jsp:param name="disabled" value='<%= judgedModel == null ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : "disabled" %>'/> --%>
+			</jsp:include> 
+			</font>
+		</td>
+		<td align="center"> 
 			<jsp:include page="fillableFormField.jsp">
 				<jsp:param name="name"
 					value="<%=JudgingServlet.RequestParameter.ModelID.name()%>" />
@@ -65,43 +90,53 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 					value='<%=judgedModel == null ? "" : judgedModel.getModelID()%>' />
 				<jsp:param name="size" value='3' />
 				<jsp:param name="onChange" value='setModelInSession(this.value);' />
-				<jsp:param name="caption" value='<%=language.getString("modelID")%>' />
-			</jsp:include> <input type="button" value=">"></td>
-	</tr>
-	<tr>
-		<td colspan="3"><jsp:include page="fillableFormField.jsp">
-				<jsp:param name="name"
-					value="<%=JudgingServlet.RequestParameter.ModelsName.name()%>" />
-				<jsp:param name="value"
-					value='<%=judgedModel == null ? "" : judgedModel.getModelsName()%>' />
-				<jsp:param name="caption"
-					value='<%=language.getString("models.name")%>' />
-			</jsp:include></td>
-	</tr>
-
-	<tr>
-		<td colspan="3"><jsp:include page="fillableFormField.jsp">
+			</jsp:include> <input type="button" value=">">
+		</td>
+		<td align="center"> 
+			<font style="border: 1px solid black; padding: 1mm;">
+			<jsp:include page="fillableFormField.jsp">
 				<jsp:param name="name"
 					value="<%=JudgingServlet.RequestParameter.Category.name()%>" />
 				<jsp:param name="value"
 					value='<%=category == null ? "" : category%>' />
+				<jsp:param name="disabled" value='true' />
 				<jsp:param name="size" value='5' />
+			</jsp:include> 
+			</font>
+		</td>
+	</tr>
+
+	<tr>
+		<td
+			<jsp:include page="fillableFormField.jsp">
+				<jsp:param name="name"
+					value="<%=JudgingServlet.RequestParameter.ModelsName.name()%>" />
+				<jsp:param name="value"
+					value='<%=judgedModel == null ? "" : judgedModel.getModelsName()%>' />
+				<jsp:param name="disabled" value='true' />
 				<jsp:param name="caption"
-					value='<%=language.getString("category.code")%>' />
-			</jsp:include> <jsp:include page="fillableFormField.jsp">
+					value='<%=language.getString("models.name")%>' />
+			</jsp:include>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<jsp:include page="fillableFormField.jsp">
 				<jsp:param name="name"
 					value="<%=JudgingServlet.RequestParameter.Judge.name()%>" />
 				<jsp:param name="value" value='<%=judge%>' />
-				<jsp:param name="disabled"
-					value='<%=judge == null ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : judge%>' />
+				<jsp:param name="disabled" value='true' />
 				<jsp:param name="caption" value='<%=language.getString("judge")%>' />
-			</jsp:include></td>
+			</jsp:include>
+		</td>
 	</tr>
 
 	<tr height="20px">
 	</tr>
 
 	<tr bgcolor="#ddddff">
+		<th></th>
 		<th><%=language.getString("judging.criteria")%></th>
 		<th><%=language.getString("judging.criteria.description")%></th>
 		<th><%=language.getString("judging.criteria.score")%></th>
@@ -112,22 +147,44 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 	%>
 	<tr
 		style="border: 1px solid; <%=hasScore ? "" : unjudgedCriteriaStyle%>">
-		<td><%=criteria.getCriteriaId()%></td>
-		<td><%=criteria.getDescription()%></td>
-		<td><label> <input type="radio"
-				name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%=criteria.getCriteriaId()%>"
-				value="<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE%>"
-				onchange="parentNode.parentNode.parentNode.style = '<%=unjudgedCriteriaStyle%>';"><%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE%>
-		</label> <%
+		<td>
+			<label style="color: brown;"> <input type="radio"
+					name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%=criteria.getCriteriaId()%>"
+					value="<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE%>"
+					onchange="parentNode.parentNode.parentNode.className='strikeout'; parentNode.parentNode.parentNode.style='background-color: lightgrey;'">
+					Kih&uacute;zom a sort
+			</label> 
+		</td>
+		<td align="center">
+			<%=criteria.getCriteriaId()%>
+		</td>
+		<td align="center"><%=criteria.getDescription()%></td>
+		<td>
+		<%
+		
+		if(simpleJudging) {
+			for(String customScore : JudgingCriteria.customScores) {
+				 %> 
+	<label> <input type="radio"
+				name="<%=getJudgingCriteriaName(criteria, judgingResult, listMode)%>"
+				value="<%=customScore%>"
+				<%=hasScore && scores.get(criteria.getCriteriaId()).getScore().equals(String.valueOf(customScore)) ? "checked='checked'"
+							: ""%>
+				onchange="parentNode.parentNode.parentNode.className=''; parentNode.parentNode.parentNode.style='border: 1px solid; ';"><%=customScore%>
+		</label>			 
+				 	<%			
+			}
+		}
+		
  	for (int i = 0; i < criteria.getMaxScore() + 1; i++) {
 
  			// 								judgingScores.get(i)
  %> <label> <input type="radio"
 				name="<%=getJudgingCriteriaName(criteria, judgingResult, listMode)%>"
 				value="<%=i%>"
-				<%=hasScore && scores.get(criteria.getCriteriaId()).getScore() == i ? "checked='checked'"
+				<%=hasScore && scores.get(criteria.getCriteriaId()).getScore().equals(String.valueOf(i)) ? "checked='checked'"
 							: ""%>
-				onchange="parentNode.parentNode.parentNode.style = 'border: 1px solid; ';"><%=i%>
+				onchange="parentNode.parentNode.parentNode.className=''; parentNode.parentNode.parentNode.style='border: 1px solid; ';"><%=i%>
 		</label> <%
  	}
  %></td>

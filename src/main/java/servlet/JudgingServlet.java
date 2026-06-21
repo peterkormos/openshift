@@ -39,6 +39,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 import datatype.Category;
 import datatype.Model;
+import datatype.PageNotice;
 import datatype.Record;
 import datatype.User;
 import datatype.judging.JudgingCategoryToSheetMapping;
@@ -54,7 +55,7 @@ import util.CommonSessionAttribute;
 import util.LanguageUtil;
 
 public final class JudgingServlet extends HttpServlet {
-	public static final String VERSION = "2024.12.02.";
+	public static final String VERSION = "2026.06.21.";
 
 	public enum RequestParameter {
         Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, 
@@ -64,7 +65,7 @@ public final class JudgingServlet extends HttpServlet {
 	public enum RequestType {
 		GetCategories, GetModels, GetJudgingSheet, GetJudgingForm, SaveJudging, ListJudgings, DeleteRecords, 
 		ListJudgingSummary, ListJudgingSheets, DeleteJudgingForm, Login, ExportExcel, ImportData, JoinCategoryWithForm, 
-		SaveCategoryWithForm, SetModelInSession
+		SaveCategoryWithForm, SetModelInSession, Logout
 	}
 
     public enum SessionAttribute {
@@ -275,6 +276,9 @@ public final class JudgingServlet extends HttpServlet {
                 case Login:
                     login(request, response);
                     break;
+                case Logout:
+                	logout(request, response);
+                	break;
                 case ExportExcel:
                 	exportExcel(request, response);
                     break;
@@ -343,15 +347,21 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     private void getCategories(HttpServletRequest request, HttpServletResponse response) throws Exception {
-    	List<String> categories;
+    	List<Category> categories;
     	
         boolean simpleJudging = Boolean.valueOf(ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
         if(simpleJudging) {
-        	categories = servletDAO.getCategoryList(null /* show */).stream().map(Category::getCategoryCode).collect(Collectors.toList());
+        	categories = servletDAO.getCategoryList(null /* show */).stream().
+        	collect(Collectors.toList());
         	categories.removeAll(getCategories());
         }
         else {
         	categories = getCategories();
+        }
+        
+        if(categories.isEmpty()) {
+            final HttpSession session = request.getSession(true);
+        	RegistrationServlet.setNoticeInSession(session, PageNotice.NoticeType.Error, "servletDAO.getCategoryList() üres listát ad vissza! Az admin oldalon össze kell rendelni a kategóriákat és a pontozólapokat.?.");
         }
 
 		setSessionAttribute(request, SessionAttribute.SimpleJudging, simpleJudging);
@@ -359,14 +369,14 @@ public final class JudgingServlet extends HttpServlet {
         redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + "getCategories.jsp");
     }
 
-	private List<String> getCategories() throws Exception {
-		List<String> categories = dao.getAll(JudgingCategoryToSheetMapping.class).stream()
+	private List<Category> getCategories() throws Exception {
+		List<Category> categories = dao.getAll(JudgingCategoryToSheetMapping.class).stream()
 				.sorted((jc1, jc2) -> Integer.compare(jc1.getCategoryId(), jc2.getCategoryId()))
 				.map(judgingCategory -> {
 					try {
-						return servletDAO.getCategory(judgingCategory.getCategoryId()).getCategoryCode();
+						return servletDAO.getCategory(judgingCategory.getCategoryId());
 					} catch (Exception e) {
-						return e.getMessage();
+						return null;
 					}
 				}).collect(Collectors.toList());
 
@@ -485,7 +495,7 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     private void listJudgingSummary(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<String> categories = getCategories();
+		List<String> categories = getCategories().stream().map(Category::getCategoryCode).collect(Collectors.toList());
         setSessionAttribute(request, SessionAttribute.Categories, categories);
 
         Collection<JudgingResult> judgings = getJudgingResults(true /* withCriterias */);
@@ -548,9 +558,14 @@ public final class JudgingServlet extends HttpServlet {
 				
 		redirectToMainPage(request, response);
 	}
+	
+	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final HttpSession session = request.getSession(false);
+        session.invalidate();
+        redirectToMainPage(request, response);
+	}
 
-    private void redirectRequest(HttpServletRequest request, HttpServletResponse response, String path)
-            throws IOException {
+    private void redirectRequest(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
         String requestURL = request.getRequestURL().toString();
         while (requestURL.indexOf(getClass().getSimpleName()) > -1) {
             requestURL = requestURL.substring(0, requestURL.lastIndexOf("/"));
@@ -611,13 +626,11 @@ public final class JudgingServlet extends HttpServlet {
 
         dao.deleteJudgingScores(judge, category, modelId, modellerId);
         for (int i = 1; i <= judgingCriterias; i++) {
-            final String optionalRequestAttribute = ServletUtil.getOptionalRequestParameter(request,
+            final String score = ServletUtil.getOptionalRequestParameter(request,
                     RequestParameter.JudgingCriteria.name() + i);
-            if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(optionalRequestAttribute)) {
+            if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(score)) {
                 continue;
             }
-
-            final int score = Integer.parseInt(optionalRequestAttribute);
 
             JudgingScore record = new JudgingScore(dao.getNextID(JudgingScore.class), category, judge, modelId,
                     modellerId, i, score, comment, modelsName);
@@ -735,7 +748,7 @@ public final class JudgingServlet extends HttpServlet {
             returned.add(StringEscapeUtils.unescapeHtml4(judgingResult.getModelsName()));
             for (int i = 0; i <= maxScore; i++)
             {
-            	int count = judgingResult.getCountForScore(i);
+            	int count = judgingResult.getCountForScore(String.valueOf(i));
                 returned.add(count);
             }
             returned.add(judgingResult.getTotalScores());

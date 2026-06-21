@@ -1,17 +1,15 @@
 package datatype.judging;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import datatype.Record;
-import servlet.ServletDAO;
 import servlet.ServletUtil;
 
 @Entity
@@ -28,9 +26,12 @@ public class JudgingCriteria extends Record
 	public JudgingCriteria() {
 	}
 	
+	@Transient
+	public static final Collection<String> customScores = Arrays.asList("Arany", "Ez&uuml;st", "Bronz");
+	
   public static final JudgingCriteria getDefault()
   {
-      JudgingCriteria judgingCriteria = new JudgingCriteria(0, 1, "", 10);
+      JudgingCriteria judgingCriteria = new JudgingCriteria(0, 1, "", 4);
       judgingCriteria.setId(judgingCriteria.getCriteriaId());
 	return judgingCriteria;
   }

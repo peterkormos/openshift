@@ -104,7 +104,13 @@
 		<th><%= language.getString("models.name") %></th>
 		<th><%= language.getString("judge") %></th>
 		<%
-		  for (int i = 0; i <= maxScore; i++)
+		for(String customScore : JudgingCriteria.customScores) {
+		 %> 
+			<th><%=customScore%></th>
+	 	<%			
+		}
+
+		for (int i = 0; i <= maxScore; i++)
 		  {
 		%>
 		<th><%=i%></th>
@@ -172,11 +178,18 @@
         </a>
 		</td>
 		<%
-			int total = 0;
+		for(String customScore : JudgingCriteria.customScores) {
+			  int count = judgingResult.getCountForScore(customScore);
+		 %> 
+			<td><%= count %></td>
+	 	<%			
+		}
+
+		int total = 0;
 		  for (int i = 0; i <= maxScore; i++)
 				{
 
-				  int count = judgingResult.getCountForScore(i);
+				  int count = judgingResult.getCountForScore(String.valueOf(i));
 				  	total += count; 
 					%>
 					<td><%= count %></td>
