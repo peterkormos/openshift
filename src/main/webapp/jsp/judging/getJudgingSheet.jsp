@@ -162,7 +162,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 		<td>
 		<%
 		
-		if(simpleJudging) {
+		if(simpleJudging || criteria.getDescription().isEmpty()) {
 			for(String customScore : JudgingCriteria.customScores) {
 				 %> 
 	<label> <input type="radio"
