@@ -152,7 +152,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 					name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%=criteria.getCriteriaId()%>"
 					value="<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE%>"
 					onchange="parentNode.parentNode.parentNode.className='strikeout'; parentNode.parentNode.parentNode.style='background-color: lightgrey;'">
-					Kih&uacute;zom a sort
+					Nem &eacute;rt&eacute;kelem
 			</label> 
 		</td>
 		<td align="center">
