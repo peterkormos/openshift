@@ -152,7 +152,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 					name="<%=JudgingServlet.RequestParameter.JudgingCriteria.name()%><%=criteria.getCriteriaId()%>"
 					value="<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE%>"
 					onchange="parentNode.parentNode.parentNode.className='strikeout'; parentNode.parentNode.parentNode.style='background-color: lightgrey;'">
-					Nem &eacute;rt&eacute;kelem
+					<img src="../../icons/delete.png" height="15" align="center" /> Nem &eacute;rt&eacute;kelem
 			</label> 
 		</td>
 		<td align="center">
@@ -194,9 +194,10 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 	%>
 
 	<tr>
-		<td colspan="3" style="vertical-align: top;"><%=language.getString("comment")%>:
+		<td colspan="4" style="vertical-align: top;">
 			<textarea name='<%=JudgingServlet.RequestParameter.Comment.name()%>'
-				maxlength='<%=maxlength%>' cols='50' rows='3'
-				placeholder="<%=String.format(language.getString("input.text.maxlength"), maxlength)%>"><%=judgedModel != null ? getComment(judgedModel, scores) : ""%></textarea></td>
+				style="width: 100%;"
+				maxlength='<%=maxlength%>' rows='3'
+				placeholder="<%=language.getString("comment")%>: <%=String.format(language.getString("input.text.maxlength"), maxlength)%>"><%=judgedModel != null ? getComment(judgedModel, scores) : ""%></textarea></td>
 	</tr>
 </table>
