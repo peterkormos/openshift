@@ -22,16 +22,17 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
 String languageCode = null;
 User user = null;
-if (!directRegister) {
-	user = RegistrationServlet.getUser(request);
-	languageCode = user.language;
+try {
+	if (!directRegister) {
+		user = RegistrationServlet.getUser(request);
+		languageCode = user.language;
+	}
 }
-else{
-	languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
+catch(Exception ex) {
 }
 
 if (languageCode == null) {
-		languageCode = RegistrationServlet.DEFAULT_LANGUAGE;
+	languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
 }
 
 
