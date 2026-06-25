@@ -22,14 +22,18 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
 String languageCode = null;
 User user = null;
-try {
-	if (!directRegister) {
-		user = RegistrationServlet.getUser(request);
-	}
+if (!directRegister) {
+	user = RegistrationServlet.getUser(request);
 	languageCode = user.language;
-} catch (Exception e) {
+}
+else{
 	languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
 }
+
+if (languageCode == null) {
+		languageCode = RegistrationServlet.DEFAULT_LANGUAGE;
+}
+
 
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 session.setAttribute(CommonSessionAttribute.Language.name(), language);
@@ -261,19 +265,11 @@ function checkDeleteUserRequest()
 			</tr>
 			<tr>
 				<td>
-					<%
-					languageCode = "";
-
-					if (user == null) {
-						if (directRegister)
-							languageCode = RegistrationServlet.DEFAULT_LANGUAGE;
-					} else
-						languageCode = user.language;
-					%> <jsp:include page="language.jsp">
+					<jsp:include page="language.jsp">
 						<jsp:param name="mandatory" value="true" />
 						<jsp:param name="label"
 							value='<%=ServletUtil.getLabel(request, servlet, "language")%>' />
-						<jsp:param name="selectLabel" value="<%=LanguageUtil.getLanguages().get(languageCode)%>" />
+						<jsp:param name="selectLabel" value="<%=LanguageUtil.getLanguages().containsKey(languageCode) ? LanguageUtil.getLanguages().get(languageCode) : languageCode%>" />
 						<jsp:param name="selectValue" value="<%=languageCode%>" />
 					</jsp:include>
 				</td>

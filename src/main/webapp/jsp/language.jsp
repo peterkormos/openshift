@@ -35,7 +35,7 @@ Map<String, String> languages = LanguageUtil.getLanguages();
 		<option value="<%=request.getParameter("selectValue")%>" selected><%=request.getParameter("selectLabel")%></option>
 		<hr>
 		<%
-		if (user != null && RegistrationServlet.isAdminSession(session)) {
+		if (user != null && RegistrationServlet.isAdminSession(session, User.AdminTypes.SuperAdmin)) {
 		%>
 
 		<option value="<%=User.AdminTypes.SuperAdmin.getLanguage()%>"><%=User.AdminTypes.SuperAdmin%></option>
