@@ -8,6 +8,7 @@
 
 <%
 ResourceBundle language = (ResourceBundle) session.getAttribute(CommonSessionAttribute.Language.name());
+
 String languageCode = null;
 
 if (language == null) {
@@ -19,7 +20,10 @@ if (language == null) {
 
 	session.setAttribute(CommonSessionAttribute.Language.name(), language);
 } else
-	languageCode = language.getLocale().getLanguage();
+	languageCode = language.getLocale().getLanguage().toUpperCase();
+if(languageCode.isEmpty()) {
+	languageCode = "EN";
+}
 
 String judge = (String) session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
 boolean isNormalUser = !"admin".equals(judge);
@@ -37,20 +41,22 @@ boolean isNormalUser = !"admin".equals(judge);
 				action="../../JudgingServlet/<%=JudgingServlet.RequestType.Login.name()%>"
 				method='POST' accept-charset="UTF-8"
 				>
-				<jsp:include page="fillableFormField.jsp">
-					<jsp:param name="name"
-						value="<%=JudgingServlet.RequestParameter.Judge.name()%>" />
-					<jsp:param name="caption" value='<%=language.getString("judge")%>' />
-					<jsp:param name="value"
-						value='<%=Optional.ofNullable(judge).orElse("")%>' />
-				</jsp:include>
-			
+				<jsp:include page="../textInput.jsp">
+						<jsp:param name="name" value="<%=JudgingServlet.RequestParameter.Judge.name()%>" />
+						<jsp:param name="value" value='<%=Optional.ofNullable(judge).orElse("")%>' />
+						<jsp:param name="label" value='<%=language.getString("judge")%>' />
+						<jsp:param name="mandatory" value="true" />
+						<jsp:param name="maxlength" value="60" />
+						<jsp:param name="size" value="15" />
+					</jsp:include>
+					
 				<jsp:include page="../language.jsp">
 					<jsp:param name="parameterName" value="<%=JudgingServlet.RequestParameter.Language.name()%>" />
 					<jsp:param name="label" value='<%=language.getString("language")%>' />
 					<jsp:param name="selectLabel" value="<%=languageCode%>" />
 					<jsp:param name="selectValue" value="<%=languageCode%>" />
 					<jsp:param name="required" value="required" />
+					<jsp:param name="pathOffset" value="../" />
 				</jsp:include>
 			
 				<input type="submit" value='<%=language.getString("login")%>'>

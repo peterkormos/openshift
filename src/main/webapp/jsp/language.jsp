@@ -22,33 +22,58 @@ String parameterName = ServletUtil.getOptionalRequestParameter(request, "paramet
 if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameterName))
 	parameterName = RequestParameter.Language.getParameterName();
 
-Map<String, String> languages = LanguageUtil.getLanguages();
+Map<String, String> languageIcons = LanguageUtil.getLanguageIcons();
 %>
 
 <div class="input-caption-container" style="display: inline-block;">
-	<select name="<%=parameterName%>"
-		<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestParameter(request, "required")) ? ""
-				: "required='" + ServletUtil.getOptionalRequestParameter(request, "required") + "'"%>
-		onchange="updateMandatoryFieldMark(this);"
-		required='required'
-		>
-		<option value="<%=request.getParameter("selectValue")%>" selected><%=request.getParameter("selectLabel")%></option>
-		<hr>
+	<fieldset
+		id="languageGroup"
+		style="display: inline; padding: 15px;">
+
 		<%
 		if (user != null && RegistrationServlet.isAdminSession(session, User.AdminTypes.SuperAdmin)) {
 		%>
 
-		<option value="<%=User.AdminTypes.SuperAdmin.getLanguage()%>"><%=User.AdminTypes.SuperAdmin%></option>
-		<option value="<%=User.AdminTypes.ShowAdmin.getLanguage()%>"><%=User.AdminTypes.ShowAdmin%></option>
+		<label>
+			<input
+			name='<%=parameterName%>' type='radio' 
+			onchange="updateMandatoryFieldMark(this);"
+		<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestParameter(request, "required")) ? ""
+				: "required='" + ServletUtil.getOptionalRequestParameter(request, "required") + "'"%>
+				value="<%=User.AdminTypes.SuperAdmin.getLanguage()%>"
+			>
+			<%=User.AdminTypes.SuperAdmin%> 
+		</label>
+		<label>
+			<input
+			name='<%=parameterName%>' type='radio' 
+			onchange="updateMandatoryFieldMark(this);"
+		<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestParameter(request, "required")) ? ""
+				: "required='" + ServletUtil.getOptionalRequestParameter(request, "required") + "'"%>
+				value="<%=User.AdminTypes.ShowAdmin.getLanguage()%>"
+			>
+			<%=User.AdminTypes.ShowAdmin%> 
+		</label>
 		<%
 		}
 		
-		for(Entry<String, String> language : languages.entrySet()) {
+		for(Entry<String, String> language : languageIcons.entrySet()) {
 		%>
-			<option value="<%=language.getKey() %>"><%=language.getValue() %></option>
+		<label>
+			<input
+			name='<%=parameterName%>' type='radio' 
+			onchange="updateMandatoryFieldMark(this);"
+		<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(ServletUtil.getOptionalRequestParameter(request, "required")) ? ""
+				: "required='" + ServletUtil.getOptionalRequestParameter(request, "required") + "'"%>
+				value="<%=language.getKey() %>"
+				<%=language.getKey().equals(request.getParameter("selectValue")) ? "checked='checked'" : "" %>
+			>
+			<img src="<%=request.getParameter("pathOffset") != null ? request.getParameter("pathOffset") : ""%>../icons/<%=language.getValue() %>">
+		</label>
 		<%
 		}		
 		%>
-	</select> <label for="<%=parameterName%>" class="input-caption"><%=request.getParameter("label")%></label>
+	</fieldset>
+	<label for="languageGroup" class="input-caption"><%=request.getParameter("label")%></label>
 	<font color="#FF0000" size="+3">&#8226;</font>
 </div>

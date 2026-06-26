@@ -52,4 +52,19 @@ public class LanguageUtil {
 
 		return languages;
 	}
+	
+	public static Map<String, String> getLanguageIcons() {
+		Map<String, String> languages = new LinkedHashMap<>();
+		
+		languages.put("HU", "hu.gif");
+		languages.put("EN", "gb.gif");
+		languages.put("SK", "sk.gif");
+		languages.put("CZ", "cz.gif");
+		languages.put("PL", "pl.png");
+		languages.put("IT", "it.png");
+		languages.put("DE", "de.gif");
+		languages.put("RU", "ru.png");
+		
+		return languages;
+	}
 }
