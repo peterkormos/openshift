@@ -27,7 +27,7 @@ public class JudgingCriteria extends Record
 	}
 	
 	@Transient
-	public static final Collection<String> customScores = Arrays.asList("Arany", "Ez&uuml;st", "Bronz");
+	public static final Collection<String> customScores = Arrays.asList("Arany", "Ez&uuml;st", "Bronz", "Kiemelt");
 	
   public static final JudgingCriteria getDefault()
   {

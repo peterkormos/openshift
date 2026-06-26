@@ -67,6 +67,9 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 		<th>
 			<%=language.getString("category.code")%>
 		</th>
+		<th>
+			<%=language.getString("judge")%>
+		</th>
 	</tr>
 	
 	<tr>
@@ -104,18 +107,12 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 			</jsp:include> 
 			</font>
 		</td>
-	</tr>
-
-	<tr>
-		<td
+		<td align="center">
 			<jsp:include page="fillableFormField.jsp">
 				<jsp:param name="name"
-					value="<%=JudgingServlet.RequestParameter.ModelsName.name()%>" />
-				<jsp:param name="value"
-					value='<%=judgedModel == null ? "" : judgedModel.getModelsName()%>' />
+					value="<%=JudgingServlet.RequestParameter.Judge.name()%>" />
+				<jsp:param name="value" value='<%=judge%>' />
 				<jsp:param name="disabled" value='true' />
-				<jsp:param name="caption"
-					value='<%=language.getString("models.name")%>' />
 			</jsp:include>
 		</td>
 	</tr>
@@ -124,10 +121,12 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 		<td>
 			<jsp:include page="fillableFormField.jsp">
 				<jsp:param name="name"
-					value="<%=JudgingServlet.RequestParameter.Judge.name()%>" />
-				<jsp:param name="value" value='<%=judge%>' />
+					value="<%=JudgingServlet.RequestParameter.ModelsName.name()%>" />
+				<jsp:param name="value"
+					value='<%=judgedModel == null ? "" : judgedModel.getModelsName()%>' />
 				<jsp:param name="disabled" value='true' />
-				<jsp:param name="caption" value='<%=language.getString("judge")%>' />
+				<jsp:param name="caption"
+					value='<%=language.getString("models.name")%>' />
 			</jsp:include>
 		</td>
 	</tr>

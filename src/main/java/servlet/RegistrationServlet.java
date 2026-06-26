@@ -1086,16 +1086,16 @@ public class RegistrationServlet extends HttpServlet {
 		for (int i = 1; i < s.getLastRowNum() + 1; i++) {
 			Row row = s.getRow(i);
 
-			// 1. column
+			// 1. column - A
 			final String fullNameName = ServletUtil.encodeString(row.getCell(0).getStringCellValue());
-			// 2. column
+			// 2. column - B
 			final String yearOfBirth = row.getCell(1).getStringCellValue();
-			// 3. column
+			// 3. column - C
 			final String country  = ServletUtil.encodeString(row.getCell(2).getStringCellValue());
-			// 4. column
+			// 4. column - D
 			final String city  = ServletUtil.encodeString(row.getCell(3).getStringCellValue());
 
-			// 5. column
+			// 5. column - E
 			Cell userIdCell = row.getCell(4);
 			int userID;
 					
@@ -1106,7 +1106,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 			final int userIDFinal = userID;
 			
-			// 6. column
+			// 6. column - F
 			String stringCellValue = row.getCell(5).getStringCellValue().trim();
 			if(stringCellValue.isEmpty()) {
 				continue;

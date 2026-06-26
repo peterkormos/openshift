@@ -32,7 +32,8 @@ public enum ModelClass implements Serializable
 	}
 
 	public static String getHTMLModelClasses(List<ModelClass> modelClasses) {
-		return modelClasses.stream().map(mc -> ServletUtil.encodeString(mc.toString())).collect(Collectors.toList()).toString();
+		return modelClasses.size() == 1 ? ServletUtil.encodeString(modelClasses.get(0).toString()) :
+				modelClasses.stream().map(mc -> ServletUtil.encodeString(mc.toString())).collect(Collectors.toList()).toString();
 	}
 
 	public static List<ModelClass> fromHTMLModelClasses(String modelClassesInHTML) {
