@@ -4,6 +4,8 @@
 <%@page import="servlet.*"%>
 <%@page import="util.*"%>
 
+<%@include file="util.jsp"%>
+
 <jsp:useBean id="languageUtil" class="util.LanguageUtil"
 	scope="application" />
 
@@ -48,6 +50,13 @@ final ResourceBundle language = servlet.getLanguageForCurrentUser(request);
 			</td>
 		</tr>
 	</table>
+
+	<p>
+		<%
+		addAdminLink(session, out, "./user.jsp?directRegister=true&action=directRegister&language=Mester", "Fi&oacute;k l&eacute;trehoz&aacute;sa &uacute;j felhaszn&aacute;l&oacute;knak");
+		%>
+	</p>
+
 	<p>
 		<jsp:include page="ADMIN_mester.jsp" />
 	</p>

@@ -93,7 +93,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2026.05.19.";
+	public String VERSION = "2026.06.25.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -747,16 +747,15 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void directRegister(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		if (!isAdminSession(getHttpSession(request), AdminTypes.SuperAdmin, AdminTypes.ShowAdmin)) {
-			authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
-		}
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
 		// set language library
 		final String languageCode = ServletUtil.getRequestParameter(request,
 				RequestParameter.Language.getParameterName());
 		final ResourceBundle language = getLanguage(languageCode);
 
-		String email = User.AdminTypes.ShowAdmin.getLanguage().equals(languageCode)
+		String email = Arrays.asList(User.AdminTypes.ShowAdmin.getLanguage(), 
+				User.AdminTypes.MasterModelerAdmin.getLanguage()).contains(languageCode)
 				? ServletUtil.getRequestParameter(request, "fullname")
 				: ServletUtil.getRequestParameter(request, "fullname") + User.LOCAL_USER + System.currentTimeMillis();
 		final User user = directRegisterUser(request, language, "" /* httpParameterPostTag */, email,
