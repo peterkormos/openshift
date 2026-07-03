@@ -520,8 +520,7 @@ public class RegistrationServlet extends HttpServlet {
 					+ "] HTTP password: [" + passwordInRequest + "] user.enabled: "
 					+ user.enabled);
 
-			writeErrorResponse(request, response, language.getString("authentication.failed") + " " + language.getString("email")
-					+ ": [" + email + "]");
+			loginAuthenticationFailed(request, response, email, language);
 			return Optional.empty();
 		}		
 		
@@ -1314,8 +1313,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (email.trim().length() == 0 || RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(email)
 				|| email.indexOf("@") == -1 || email.indexOf(".") == -1) {
-			writeErrorResponse(request, response, language.getString("authentication.failed") + " " + language.getString("email")
-					+ ": [" + email + "]");
+			loginAuthenticationFailed(request, response, email, language);
 			return;
 		}
 		
@@ -1334,6 +1332,9 @@ public class RegistrationServlet extends HttpServlet {
 				modifyUser(request, response);
 				return;
 			}
+			else {
+				return;
+			}
 		}
 
 		final User user = createUser(request, email);
@@ -1343,6 +1344,12 @@ public class RegistrationServlet extends HttpServlet {
 			sendEmailWithModels(user, true);
 		
 		loginSuccessful(request, response, user, getShowFromRequest(request));
+	}
+
+	void loginAuthenticationFailed(final HttpServletRequest request, final HttpServletResponse response,
+			final String email, final ResourceBundle language) throws IOException {
+		writeErrorResponse(request, response, language.getString("authentication.failed") + " " + language.getString("email")
+				+ ": [" + email + "]");
 	}
 
 	private void proceedToLoginResponse(final HttpServletRequest request, final HttpServletResponse response,
@@ -1360,8 +1367,7 @@ public class RegistrationServlet extends HttpServlet {
 		newUser.setId(oldUser.getId());
 		if (!newUser.isAdminUser() && !newUser.isLocalUser() && (newUser.email.trim().length() == 0
 				|| RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(newUser.email) || newUser.email.indexOf("@") == -1)) {
-			writeErrorResponse(request, response, language.getString("authentication.failed") + " " + language.getString("email")
-					+ ": [" + newUser.email + "]");
+			loginAuthenticationFailed(request, response, newUser.email, language);
 			return;
 		}
 		HttpSession session = getHttpSession(request);
