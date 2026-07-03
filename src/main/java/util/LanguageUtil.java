@@ -37,6 +37,10 @@ public class LanguageUtil {
 
 		return languages.get(language);
 	}
+	
+	public static String getLanguage(final ResourceBundle language) {
+		return language.getLocale().getLanguage().toUpperCase();
+	}
 
 	public static Map<String, String> getLanguages() {
 		Map<String, String> languages = new LinkedHashMap<>();

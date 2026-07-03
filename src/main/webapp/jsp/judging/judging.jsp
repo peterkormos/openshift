@@ -20,7 +20,7 @@ if (language == null) {
 
 	session.setAttribute(CommonSessionAttribute.Language.name(), language);
 } else
-	languageCode = language.getLocale().getLanguage().toUpperCase();
+	languageCode = languageUtil.getLanguage(language);
 if(languageCode.isEmpty()) {
 	languageCode = "EN";
 }

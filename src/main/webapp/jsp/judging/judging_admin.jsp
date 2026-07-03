@@ -19,7 +19,7 @@ if (language == null) {
 
 	session.setAttribute(CommonSessionAttribute.Language.name(), language);
 } else
-	languageCode = language.getLocale().getLanguage();
+	languageCode = languageUtil.getLanguage(language);
 %>
 
 <hr>

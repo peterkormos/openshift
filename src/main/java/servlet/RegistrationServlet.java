@@ -1348,8 +1348,13 @@ public class RegistrationServlet extends HttpServlet {
 
 	void loginAuthenticationFailed(final HttpServletRequest request, final HttpServletResponse response,
 			final String email, final ResourceBundle language) throws IOException {
-		writeErrorResponse(request, response, language.getString("authentication.failed") + " " + language.getString("email")
-				+ ": [" + email + "]");
+		boolean goToParentDir = request.getPathInfo() != null;
+
+		writeErrorResponse(request, response,
+				language.getString("authentication.failed") + " " + language.getString("email") + ": [" + email
+						+ "]. <a href='" + (goToParentDir ? ".." : ".") + "/jsp/reminder.jsp?"
+						+ RequestParameter.Language.getParameterName() + "=" + LanguageUtil.getLanguage(language) + "'>"
+						+ language.getString("forgot.password") + "</a>");
 	}
 
 	private void proceedToLoginResponse(final HttpServletRequest request, final HttpServletResponse response,
