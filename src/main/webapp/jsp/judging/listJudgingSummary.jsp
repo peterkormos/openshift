@@ -9,6 +9,8 @@
 <%@include file="../util.jsp"%>
 
 <%
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
 	
 	String judge = (String)session.getAttribute(JudgingServlet.SessionAttribute.Judge.name());
@@ -17,7 +19,7 @@
 	final List<String> categories = (List<String>)session
 			  .getAttribute(JudgingServlet.SessionAttribute.Categories.name());
     
-    Map<String, AtomicInteger> scoredModelsByCategory = new LinkedHashMap<String, AtomicInteger>();
+    Map<Integer, AtomicInteger> scoredModelsByCategory = new LinkedHashMap<Integer, AtomicInteger>();
 
   Collection<JudgingResult> scoresByCategory = (Collection<JudgingResult>) session
 		  .getAttribute(JudgingServlet.SessionAttribute.Judgings.name());
@@ -73,10 +75,11 @@
 	<%
 	  for (Map.Entry entry : scoredModelsByCategory.entrySet())
 	  {
-	      categories.remove(entry.getKey());
+		  String scoredCategory = servletDAO.getCategory(entry.getKey()).getCategoryCode();		  
+	      categories.remove(scoredCategory);
 	%>
 	<tr bgcolor="<%=highlight()%>">
-		<td align="center"><%=entry.getKey()%></td>
+		<td align="center"><%=scoredCategory%></td>
 		<td align="center"><%=entry.getValue()%></td>
 	</tr>
 	<%

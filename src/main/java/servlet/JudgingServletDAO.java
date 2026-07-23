@@ -77,7 +77,7 @@ public class JudgingServletDAO extends HibernateDAO {
 	}
 
     @SuppressWarnings("unchecked")
-    public List<JudgingScore> getJudgingScores(String judge, String category, int modelId, int modellerId) throws Exception
+    public List<JudgingScore> getJudgingScores(String judge, int category, int modelId, int modellerId) throws Exception
     {
         Session session = null;
         
@@ -89,7 +89,7 @@ public class JudgingServletDAO extends HibernateDAO {
 
             Query query = session.createQuery("From JudgingScore js join fetch js.criteria where js.judge = :judge and js.category = :category and js.modelID = :modelId and js.modellerID = :modellerId order by js.id asc");
             query.setString("judge", judge);
-            query.setString("category", category);
+            query.setInteger("category", category);
             query.setInteger("modelId", modelId);
             query.setInteger("modellerId", modellerId);
             
@@ -124,7 +124,7 @@ public class JudgingServletDAO extends HibernateDAO {
         }
     }
 
-    public void deleteJudgingScores(String judge, String category, int modelId, int modellerId) throws Exception
+    public void deleteJudgingScores(String judge, int category, int modelId, int modellerId) throws Exception
     {
         Session session = null;
         
@@ -136,7 +136,7 @@ public class JudgingServletDAO extends HibernateDAO {
             
             Query query = session.createQuery("delete JudgingScore where judge = :judge and category = :category and modelID = :modelId and modellerID = :modellerId");
             query.setString("judge", judge);
-            query.setString("category", category);
+            query.setInteger("category", category);
             query.setInteger("modelId", modelId);
             query.setInteger("modellerId", modellerId);
             

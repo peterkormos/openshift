@@ -41,7 +41,7 @@ ResourceBundle language = JudgingServlet.getLanguage(session, response);
 	<tr>
 		<td>
 			<label>
-			<input type="radio" name="<%=JudgingServlet.RequestParameter.Category.name()%>" value="<%= category.getCategoryCode() %>" onclick="submit()">
+			<input type="radio" name="<%=JudgingServlet.RequestParameter.Category.name()%>" value="<%= category.getId() %>" onclick="submit()">
 			<%= category.getCategoryCode()%> - <%= category.getCategoryDescription()%>
 			</label>
 		</td>

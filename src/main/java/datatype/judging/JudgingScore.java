@@ -15,7 +15,7 @@ public class JudgingScore extends JudgedModel
 {
     public final static int MAX_COMMENT_LENGTH = 1000;
   @Column
-  private String category;
+  private int category;
   @Column
   private String judge;
   @Column
@@ -35,7 +35,7 @@ public class JudgingScore extends JudgedModel
       
   }
   
-  public JudgingScore(int id, String category, String judge, int modelID, int modellerID, int criteriaID, String score,
+  public JudgingScore(int id, int category, String judge, int modelID, int modellerID, int criteriaID, String score,
 	  String comment,String modelsName)
   {
 	super(id, modelID, modellerID, modelsName);
@@ -47,12 +47,12 @@ public class JudgingScore extends JudgedModel
 	this.comment = comment;
   }
 
-  public String getCategory()
+  public int getCategory()
   {
 	return category;
   }
 
-  public void setCategory(String category)
+  public void setCategory(int category)
   {
 	this.category = category;
   }

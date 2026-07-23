@@ -167,13 +167,13 @@ public final class JudgingServlet extends HttpServlet {
     }
 
     private static List<JudgingError> checkJudgedModelsPerCategory(Collection<JudgingResult> collection) {
-        Map<String, List<JudgingResult>> judgingResultsByCategory = collection.stream()
+        Map<Integer, List<JudgingResult>> judgingResultsByCategory = collection.stream()
                 .collect(Collectors.groupingBy(JudgingResult::getCategory));
 
         List<JudgingError> returned = new LinkedList<>();
 
-        for (Entry<String, List<JudgingResult>> judgingResults : judgingResultsByCategory.entrySet()) {
-            String category = judgingResults.getKey();
+        for (Entry<Integer, List<JudgingResult>> judgingResults : judgingResultsByCategory.entrySet()) {
+        	Integer category = judgingResults.getKey();
 
             Map<String, List<JudgingResult>> judgedModelsPerJudge = judgingResults.getValue().stream()
                     .collect(Collectors.groupingBy(JudgingResult::getJudge));
@@ -321,7 +321,7 @@ public final class JudgingServlet extends HttpServlet {
 	}
     
     private void deleteJudgingForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final String category = ServletUtil.getRequestParameter(request, RequestParameter.Category.name());
+        final int category = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.Category.name()));
         final String judge = ServletUtil.getOptionalRequestParameter(request, RequestParameter.Judge.name());
         final String modelId = ServletUtil.getOptionalRequestParameter(request, RequestParameter.ModelID.name());
         final String modellerId = ServletUtil.getOptionalRequestParameter(request, RequestParameter.ModellerID.name());
@@ -418,7 +418,7 @@ public final class JudgingServlet extends HttpServlet {
     
     private void getJudgingForm(HttpServletRequest request, HttpServletResponse response, boolean setJudgingScoresInSession, String jspPage)
             throws Exception {
-        final String categoryCode = ServletUtil.getRequestParameter(request, RequestParameter.Category.name());
+        final int categoryId = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.Category.name()));
 
 		boolean simpleJudging = Boolean.valueOf(
 				ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.SimpleJudging.name()));
@@ -438,7 +438,7 @@ public final class JudgingServlet extends HttpServlet {
 		if(!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modellerID))
 			judgingResult.setModellerID(Integer.parseInt(modellerID));
 		
-		judgingResult.setCategory(categoryCode);
+		judgingResult.setCategory(categoryId);
 	    if (simpleJudging)
 	    	judgingResult.setCriterias(Arrays.asList(JudgingCriteria.getDefault()));
 	    else
@@ -465,8 +465,8 @@ public final class JudgingServlet extends HttpServlet {
     	redirectRequest(request, response, JSP_URL_BASE_DIR_JUDGING + jspPage);
     }
 
-    private List<JudgingCriteria> getCriteriaList(String categoryCode) throws Exception {
-    	Category category = servletDAO.getCategory(categoryCode);
+    private List<JudgingCriteria> getCriteriaList(int categoryId) throws Exception {
+    	Category category = servletDAO.getCategory(categoryId);
     	return dao.getJudgingCriteria(category.getId());
 	}
 
@@ -477,7 +477,7 @@ public final class JudgingServlet extends HttpServlet {
             @Override
             public int compare(JudgingScore result1, JudgingScore result2) {
 
-                int compareTo = result1.getCategory().compareTo(result2.getCategory());
+                int compareTo = Integer.compare(result1.getCategory(), result2.getCategory());
                 if (compareTo == 0) {
                     compareTo = result1.getJudge().compareTo(result2.getJudge());
                     if (compareTo == 0) {
@@ -518,7 +518,7 @@ public final class JudgingServlet extends HttpServlet {
         Collections.sort(allScores, new Comparator<JudgingScore>() {
             @Override
             public int compare(JudgingScore result1, JudgingScore result2) {
-                int compareToResult = result1.getCategory().compareTo(result2.getCategory());
+                int compareToResult = Integer.compare(result1.getCategory(), result2.getCategory());
                 if (compareToResult == 0) {
                     compareToResult = Integer.compare(result1.getModelID(), result2.getModelID());
                 }
@@ -612,7 +612,7 @@ public final class JudgingServlet extends HttpServlet {
 	}
     
     private void saveJudging(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final String category = ServletUtil.getRequestParameter(request, RequestParameter.Category.name());
+        final Integer category = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.Category.name()));
         final String judge = ServletUtil.encodeString(ServletUtil.getRequestParameter(request, RequestParameter.Judge.name()));
         final String modelsName = ServletUtil.getRequestParameter(request, RequestParameter.ModelsName.name());
         final int modelId = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModelID.name()));
@@ -727,9 +727,9 @@ public final class JudgingServlet extends HttpServlet {
         if(Objects.isNull(servletDAO))
         	throw new IllegalStateException("Nevezesi rendszerbe be kell eloszor lepni!");
         
-        List<String> masterCategoryList = servletDAO.getCategoryList(null).stream().
+        List<Integer> masterCategoryList = servletDAO.getCategoryList(null).stream().
         	filter(Category::isMaster).
-        		map(Category::getCategoryCode).collect(Collectors.toList());
+        		map(Category::getId).collect(Collectors.toList());
         
         final HttpSession session = request.getSession(false);
         ResourceBundle language = getLanguage(session, response);
@@ -739,9 +739,11 @@ public final class JudgingServlet extends HttpServlet {
     					judgings.stream().mapToInt(JudgingResult::getMaxScore).max().orElse(0);
         List<List<Object>> modelsForExcel = judgings.stream().map(judgingResult -> {
             ArrayList<Object> returned = new ArrayList<>();
+            
+            Category category = servletDAO.getCategory(judgingResult.getCategory());
 
     		returned.add(isMasterCategory(judgingResult.getCategory(), masterCategoryList));
-    		returned.add(StringEscapeUtils.unescapeHtml4(judgingResult.getCategory()));
+    		returned.add(StringEscapeUtils.unescapeHtml4(category.getCategoryCode()));
             returned.add(StringEscapeUtils.unescapeHtml4(judgingResult.getJudge()));
             returned.add(judgingResult.getModellerID());
             returned.add(judgingResult.getModelID());
@@ -775,7 +777,7 @@ public final class JudgingServlet extends HttpServlet {
         u.writeTo(response.getOutputStream());
     }
 
-	private boolean isMasterCategory(String category, List<String> masterCategoryList) {
+	private boolean isMasterCategory(Integer category, List<Integer> masterCategoryList) {
 		return masterCategoryList.contains(category);
 	}
 

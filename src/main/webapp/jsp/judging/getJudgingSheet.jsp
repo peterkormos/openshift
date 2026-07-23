@@ -10,7 +10,10 @@
 <%@include file="../util.jsp"%>
 
 <%
-int maxlength = JudgingScore.MAX_COMMENT_LENGTH;
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	ServletDAO servletDAO = RegistrationServlet.getServletDAO();
+	
+	int maxlength = JudgingScore.MAX_COMMENT_LENGTH;
 	String unjudgedCriteriaStyle = "background-color: lightgrey;";
 	ResourceBundle language = JudgingServlet.getLanguage(session, response);
 
@@ -19,7 +22,8 @@ int maxlength = JudgingScore.MAX_COMMENT_LENGTH;
 
 	String judge = Optional.ofNullable(judgingResult.getJudge()).orElse("");
 	List<JudgingCriteria> criteriaList = judgingResult.getCriterias();
-	String category = judgingResult.getCategory();
+	int categoryId = judgingResult.getCategory();
+    String category = servletDAO.getCategory(categoryId).getCategoryCode();
 	Map<Integer, JudgingScore> scores = judgingResult.getScores();
 	JudgedModel judgedModel = judgingResult.isModelPresent() ? judgingResult : null;
 	
@@ -55,6 +59,10 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 <input type="hidden"
     name="<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>"
     value="<%=simpleJudging%>">
+
+<input type="hidden"
+	name="<%=JudgingServlet.RequestParameter.Category.name()%>" />
+    value="<%=category == null ? "" : category%>">
 
 <table style="border: 1px solid black;">
 	<tr>
@@ -99,7 +107,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 			<font style="border: 1px solid black; padding: 1mm;">
 			<jsp:include page="fillableFormField.jsp">
 				<jsp:param name="name"
-					value="<%=JudgingServlet.RequestParameter.Category.name()%>" />
+					value="categoryCode" />
 				<jsp:param name="value"
 					value='<%=category == null ? "" : category%>' />
 				<jsp:param name="disabled" value='true' />

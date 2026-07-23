@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import datatype.Model; 
 
 public class JudgingResult extends JudgedModel{
-    private String category;
+    private int category;
     private String judge;
 
     // value:count
@@ -56,11 +56,11 @@ public class JudgingResult extends JudgedModel{
     }
 
 
-    public String getCategory() {
+    public int getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(int category) {
         this.category = category;
     }
 
