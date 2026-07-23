@@ -75,7 +75,7 @@
 	<%
 	  for (Map.Entry entry : scoredModelsByCategory.entrySet())
 	  {
-		  String scoredCategory = servletDAO.getCategory(entry.getKey()).getCategoryCode();		  
+		  String scoredCategory = servletDAO.getCategory((Integer)entry.getKey()).getCategoryCode();		  
 	      categories.remove(scoredCategory);
 	%>
 	<tr bgcolor="<%=highlight()%>">

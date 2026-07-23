@@ -61,8 +61,8 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
     value="<%=simpleJudging%>">
 
 <input type="hidden"
-	name="<%=JudgingServlet.RequestParameter.Category.name()%>" />
-    value="<%=category == null ? "" : category%>">
+	name="<%=JudgingServlet.RequestParameter.Category.name()%>" 
+    value="<%=categoryId%>">
 
 <table style="border: 1px solid black;">
 	<tr>
