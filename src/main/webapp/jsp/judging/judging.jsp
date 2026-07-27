@@ -80,7 +80,7 @@ boolean isNormalUser = !"admin".equals(judge);
 	<p>
 		<a
 			href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>?<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>=true">
-			<img src="../../icons/add.png" height="30" align="center"> <%=language.getString("judging.type.looking")%></a>
+			<img src="../../icons/stare.png" height="30" align="center"> <%=language.getString("judging.type.looking")%></a>
 		<%
 		if (judge != null) {
 		%>
