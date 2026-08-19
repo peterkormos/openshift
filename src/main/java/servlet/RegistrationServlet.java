@@ -378,6 +378,9 @@ public class RegistrationServlet extends HttpServlet {
 
 	private String processRestful(HttpServletRequest request, HttpServletResponse response, String pathInfo)
 			throws Exception {
+		
+		logger.debug("HTTP pathinfo: " + pathInfo);
+
 		if (pathInfo.indexOf('/') > -1) {
 			final String[] splitText = pathInfo.split("/");
 			final String command = splitText[0];
