@@ -452,9 +452,12 @@ public class RegistrationServlet extends HttpServlet {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
 		final int userID = Integer.parseInt(ServletUtil.getRequestParameter(request, "userID"));
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
+		Optional<String> modelRowsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.ModelRowsPerPage.name());
+
 
 		StringBuilder printBuffer = getPrintBuffer(request);
-		printModelsForUser(request, response, userID, printBuffer);
+		printModelsForUser(request, response, userID, printBuffer, maxModelsPerPage, modelRowsPerPage);
 		showPrintDialog(response);
 	}
 
@@ -686,6 +689,9 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final ResourceBundle language = getLanguageFromRequest(request);
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
+		Optional<String> modelRowsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.ModelRowsPerPage.name());
+
 
 		final int rows = Integer.parseInt(ServletUtil.getRequestParameter(request, "rows"));
 
@@ -726,7 +732,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (!users.isEmpty()) {
 			StringBuilder printBuffer = getPrintBuffer(request);
 			for (final User user1 : users) {
-				printModelsForUser(request, response, user1.getId(), printBuffer);
+				printModelsForUser(request, response, user1.getId(), printBuffer, maxModelsPerPage, modelRowsPerPage);
 			}
 		}
 		showPrintDialog(response);
@@ -2536,13 +2542,15 @@ public class RegistrationServlet extends HttpServlet {
 
 		boolean pageBreak = Boolean.parseBoolean(
 				ServletUtil.getOptionalRequestParameter(request, RegistrationServlet.SystemParameter.PageBreakAtPrint.name()));
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
+		Optional<String> modelRowsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.ModelRowsPerPage.name());
 
 		StringBuilder printBuffer = getPrintBuffer(request);
 
 		List<User> users = servletDAO.getUsersWithModel();
 		if(pageBreak) {
 			for (final User user : users) {
-				printModelsForUser(request, response, user.getId(), printBuffer);
+				printModelsForUser(request, response, user.getId(), printBuffer, maxModelsPerPage, modelRowsPerPage);
 			}
 		}
 		else {
@@ -2554,7 +2562,7 @@ public class RegistrationServlet extends HttpServlet {
 				models.addAll(usersModels);
 			}
 
-			printModels(request, printBuffer, buff, models);
+			printModels(request, printBuffer, buff, models, maxModelsPerPage, modelRowsPerPage);
 			ServletUtil.writeResponse(response, buff);
 		}
 		response.getOutputStream().write("<p>Itt a vege...".getBytes());
@@ -2562,9 +2570,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void printModels(final HttpServletRequest request, StringBuilder printBuffer, final StringBuilder buff,
-			List<Model> model) throws SQLException, Exception, IOException {
-		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
-		Optional<String> modelRowsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.ModelRowsPerPage.name());
+			List<Model> model, final Optional<String> maxModelsPerPage, final Optional<String> modelRowsPerPage) throws SQLException, Exception, IOException {
 		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
 		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 				+ getLogoIDForShow(getShowFromSession(request));
@@ -2643,10 +2649,13 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = getUser(request);
 
 		final String modelID = ServletUtil.getOptionalRequestParameter(request, "modelID");
+		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
+		Optional<String> modelRowsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.ModelRowsPerPage.name());
+
 		StringBuilder printBuffer = getPrintBuffer(request);
 
 		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelID)) {
-			printModelsForUser(request, response, user.getId(), printBuffer);
+			printModelsForUser(request, response, user.getId(), printBuffer, maxModelsPerPage, modelRowsPerPage);
 		} else {
 			final StringBuilder buff = new StringBuilder();
 
@@ -2665,21 +2674,14 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void printModelsForUser(final HttpServletRequest request, final HttpServletResponse response,
-			final int userID, StringBuilder printBuffer)
-			throws Exception, IOException {
-		ServletUtil.writeResponse(response,
-				printModelsForUser(userID, request, printBuffer));
-	}
-
-	private StringBuilder printModelsForUser(final int userID, final HttpServletRequest request,
-			StringBuilder printBuffer)
+			final int userID, StringBuilder printBuffer, final Optional<String> maxModelsPerPage, final Optional<String> modelRowsPerPage)
 			throws Exception, IOException {
 		final StringBuilder buff = new StringBuilder();
 
 		final List<Model> usersModels = servletDAO.getModelsForShow(getShowFromSession(request), userID);
-		printModels(request, printBuffer, buff, usersModels);
+		printModels(request, printBuffer, buff, usersModels, maxModelsPerPage, modelRowsPerPage);
 		
-		return buff;
+		ServletUtil.writeResponse(response, buff);
 	}
 
 	StringBuilder printModels(final List<? extends Model> models, final StringBuilder printBuffer, final int rows,
