@@ -22,7 +22,6 @@
 </head>
 <body>
 	<div class="header"></div>
-
 	<p>
 		<a href="./login.jsp?language=HU"><b>F&#337;oldali
 				bejelentkez&eacute;s</b></a>
@@ -38,21 +37,6 @@
 <!-- 			href="../RegistrationServlet?command=getbatchAddModelPage&language=HU">t&ouml;bb -->
 <!-- 			ember makettjeit</a> -->
 	</p>
-	<%
-	if (session.isNew()) {
-		String show = RegistrationServlet.getShowFromSession(session);
-		ServletDAO servletDAO = RegistrationServlet.getServletDAO();
-		if (show == null) {
-			final List<String> shows = servletDAO.getShows();
-			if (shows.isEmpty())
-		show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
-			else {
-		show = shows.get(0);
-		session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
-			}
-		}
-	}
-	%>
 	<p>
 		<b>1 makettez&#337;... </b>
 		<%

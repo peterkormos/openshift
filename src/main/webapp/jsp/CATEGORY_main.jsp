@@ -24,17 +24,7 @@ if (user == null || !user.isAdminUser()) {
 
 String languageCode = RegistrationServlet.DEFAULT_LANGUAGE;
 ResourceBundle language = languageUtil.getLanguage(languageCode);
-
 String show = RegistrationServlet.getShowFromSession(session);
-if (show == null) {
-	final List<String> shows = servletDAO.getShows();
-	if (shows.isEmpty())
-		show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
-	else {
-		show = shows.get(0);
-	}
-	session.setAttribute(RegistrationServlet.SessionAttribute.Show.name(), show);
-}
 %>
 
 <link rel="stylesheet" href="base.css" media="screen" />
