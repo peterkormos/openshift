@@ -8,5 +8,6 @@ email: <input name="email">
 <br>
 password: <input name="password">
 <br>
+<input name="show" value="1" type="hidden">
 <input type="submit">
 </form>
