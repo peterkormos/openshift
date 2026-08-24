@@ -28,9 +28,8 @@
 	</p>
 	<p></p>
 	<p>
-		<b>Nevezni... </b>
 		<%
-		addAdminLink(session, out, "./user.jsp?directRegister=true&action=directRegister&language=HU", "1 ember makettjeit");
+		addAdminLink(session, out, "./user.jsp?directRegister=true&action=directRegister&language=HU", "Regisztr&aacute;lni egy (tal&aacute;n) ismeretlen makettez&#337;t &eacute;s makettjeit");
 		%>
 
 <!-- 		- <a -->
@@ -38,7 +37,7 @@
 <!-- 			ember makettjeit</a> -->
 	</p>
 	<p>
-		<b>1 makettez&#337;... </b>
+		<b>Egy m&aacute;r regisztr&aacute;lt makettez&#337;... </b>
 		<%
 		addAdminLink(session, out, "../RegistrationServlet/inputForLoginUser?language=HU",
 				"nev&eacute;ben bel&eacute;p&eacute;s");

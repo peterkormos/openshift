@@ -447,7 +447,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final int userID = Integer.parseInt(ServletUtil.getRequestParameter(request, "userID"));
 		loginSuccessful(request, response, servletDAO.getUser(userID),
-				getShowFromRequest(request));
+				getShowFromSession(request));
 	}
 
 	public void directPrintModels(final HttpServletRequest request, final HttpServletResponse response)
