@@ -23,5 +23,8 @@
 		<servlet-name>JudgingServlet</servlet-name>
 		<url-pattern>/JudgingServlet/*</url-pattern>
 	</servlet-mapping>
-    
+
+	<error-page>
+		<location>/jsp/error.jsp</location>
+	</error-page>
 </web-app>
