@@ -162,6 +162,26 @@ try {
 				</form>
 			</td>
 		</tr>
+		<tr>
+			<td align="center" valign="middle">
+			They chose us:
+				<p></p>
+				<table border="0" style="box-shadow: none">
+						<tr>
+							<td><a href="https://www.facebook.com/SlovakOpenRS/"><img style="height: 25mm; vertical-align: middle;" src="../clubs/slovakopen.jpg"></a></td>
+							<td><a href=""><img style="height: 25mm; vertical-align: middle;" src="../clubs/szolnok.jpg"></a></td>
+							<td><a href="https://www.mosonshow.hu/"><img style="height: 25mm; vertical-align: middle;" src="../clubs/moson.png"></a></td>
+							<td><a href="http://cellmakett.cellkabel.hu/"><img style="height: 25mm; vertical-align: middle;" src="../clubs/cell.jpg"></a></td>
+							<td><a href="https://wolfpackmakettklub.hu/"><img style="height: 25mm; vertical-align: middle;" src="../clubs/wolfpack.jpg"></a></td>
+							<td><a href="https://www.scalebalaton.com/"><img style="height: 25mm; vertical-align: middle;" src="../clubs/scalebalaton.jpg"></a></td>
+							<td><a href="https://www.facebook.com/share/1B8eedTcyM/"><img style="height: 25mm; vertical-align: middle;" src="../clubs/koros.jpg"></a></td>
+							<td><a href="http://www.bolyaimk.hu/"><img style="height: 25mm; vertical-align: middle;" src="../clubs/bolyai.png"></a></td>
+							<td><a href="https://pelikanklub.hu/"><img style="height: 25mm; vertical-align: middle;" src="../clubs/godollo.png"></a></td>
+						</tr>
+						</table>
+			
+			</td>
+		</tr>
 	</table>
 </body>
 </html>
