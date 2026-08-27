@@ -14,18 +14,18 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 
 final List<String> shows = servletDAO.getShows();
-String showIdHttpParameter = request.getParameter(RequestParameter.ShowId.getParameterName());
+String showInRequest = null;
 
-if (showIdHttpParameter != null)
-	try {
-		shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showIdHttpParameter) - 1)));
-	} catch (Exception ex) {
-	}
+try {
+	showInRequest = RegistrationServlet.getShowFromRequest(request);
+	shows.retainAll(Arrays.asList(showInRequest));
+} catch (final Exception e) {
+}
 
 for (final String show : shows) {
 %>
 <tr>
-	<td align="center"><label> <input type='radio' name='show'
+	<td align="center"><label> <input type='radio' name='<%=RequestParameter.Show.getParameterName() %>'
 			onchange="updateMandatoryFieldMark(this.parentNode); checkSubmit(document.getElementById('inputForm'));"
 			value='<%=StringEncoder.toBase64(show.getBytes())%>'
 			<%=(shows.size() == 1 ? " checked='checked'" : "")%> 

@@ -21,11 +21,15 @@ ResourceBundle language = languageUtil
 boolean shortStatistics = Boolean.valueOf(ServletUtil.getOptionalRequestParameter(request, "shortStatistics"));
 
 String show = RegistrationServlet.getShowFromSession(request);
-List<String> shows = show == null ? servletDAO.getShows() : Arrays.asList(new String[] { show });
-String showId = ServletUtil.getOptionalRequestParameter(request, RequestParameter.ShowId.getParameterName());
-if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)) {
-	shows.retainAll(Arrays.asList(shows.get(Integer.parseInt(showId) - 1)));
+
+try {
+	if(show == null) {
+		show = RegistrationServlet.getShowFromRequest(request);
+	}
+} catch (final Exception e) {
 }
+
+List<String> shows = show == null ? servletDAO.getShows() : Arrays.asList(show);
 %>
 
 <!DOCTYPE html>
@@ -43,7 +47,7 @@ if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)) {
 		<tr>
 			<th><b><%=language.getString("show")%></b></th>
 			<th align='center'><img style="height: 25mm" src='<%=logoURL%>'>
-				<br> <%=currentShow%></th>
+				<br> <%=ServletUtil.encodeString(currentShow)%></th>
 		</tr>
 		<%
 		for (final String[] stat : servletDAO.getStatistics(currentShow, language, !shortStatistics)) {

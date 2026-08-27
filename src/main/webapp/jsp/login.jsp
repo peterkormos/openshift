@@ -14,8 +14,6 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
 final String languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
 ResourceBundle language = languageUtil.getLanguage(languageCode);
-
-String showIdHttpParameter = request.getParameter(RequestParameter.ShowId.getParameterName());
 %>
 
 <html>
@@ -26,7 +24,7 @@ String showIdHttpParameter = request.getParameter(RequestParameter.ShowId.getPar
 
 <script> 
 	    function checkSubmit(form) {
-	    	var showNotSet = form.show == null || form.show.value == '';
+	    	var showNotSet = form.<%=RequestParameter.Language.getParameterName()%> == null || form.<%=RequestParameter.Language.getParameterName()%>.value == '';
 	    	var dataUsageNoConsent = !document.getElementById('dataUsageConsentCompetition').checked;
 	    	var submitDisabled = (showNotSet || dataUsageNoConsent);
 	    	var noticeDiv = document.getElementById('noticeDiv');
@@ -72,15 +70,6 @@ String showIdHttpParameter = request.getParameter(RequestParameter.ShowId.getPar
 			type="hidden"
 			name="<%=RequestParameter.Language.getParameterName()%>"
 			value="<%=languageCode%>">
-		<%
-		if (showIdHttpParameter != null) {
-		%>
-		<input type="hidden"
-			name="<%=RequestParameter.ShowId.getParameterName()%>"
-			value="<%=showIdHttpParameter%>">
-		<%
-		}
-		%>
 
 		<table border="0" height="100%" width="100%">
 			<tr>

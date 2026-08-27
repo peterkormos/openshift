@@ -123,7 +123,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static enum RequestParameter {
-		ShowId, Language("language");
+		Show, Language("language");
 
 		private RequestParameter() {
 			parameterName = name();
@@ -533,8 +533,8 @@ public class RegistrationServlet extends HttpServlet {
 		return Optional.of(user);
 	}
 
-	private String getShowFromRequest(final HttpServletRequest request) {
-		return StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestParameter(request, "show")));
+	public static String getShowFromRequest(final HttpServletRequest request) {
+		return StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestParameter(request, RequestParameter.Show.getParameterName())));
 	}
 	
 	public void login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -604,8 +604,6 @@ public class RegistrationServlet extends HttpServlet {
 		session.setAttribute(CommonSessionAttribute.User.name(), user);
 		ResourceBundle language = languageUtil.getLanguage(user.language);
 		session.setAttribute(CommonSessionAttribute.Language.name(), language);
-		session.setAttribute(SessionAttribute.ShowId.name(),
-				ServletUtil.getOptionalRequestParameter(request, RequestParameter.ShowId.getParameterName()));
 
 		if (user.isAdminUser())
 			session.setAttribute(SessionAttribute.MainPageFile.name(), user.language + "_" + getDefaultMainPageFile());
@@ -1613,7 +1611,7 @@ public class RegistrationServlet extends HttpServlet {
 			throw new CategoryModificationException();
 		}
 
-		String show = ServletUtil.encodeString(ServletUtil.getRequestParameter(request, "show"));
+		String show = ServletUtil.encodeString(ServletUtil.getRequestParameter(request, RequestParameter.Show.getParameterName()));
 		final HttpSession session = getHttpSession(request);
 		session.setAttribute(SessionAttribute.Show.name(), show);
 		saveCategoryGroup(show, ServletUtil.getRequestParameter(request, "group"));
@@ -2820,20 +2818,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private static String getStartPage(HttpServletRequest request) {
-		String showId = null;
-		try {
-			final HttpSession session = getHttpSession(request);
-			if (session != null)
-				showId = (String) session.getAttribute(SessionAttribute.ShowId.name());
-			if (showId == null)
-				showId = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
-		} catch (Exception e) {
-		}
-
-		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp"
-				+ (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(showId)
-						? "?" + RequestParameter.ShowId.getParameterName() + "=" + showId
-						: "");
+		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp?" + RequestParameter.Show.getParameterName() + "=" + StringEncoder.toBase64(getShowFromSession(request).getBytes());
 	}
 
 	private void deleteDataForShow(final HttpServletRequest request) throws SQLException {
