@@ -2818,7 +2818,17 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private static String getStartPage(HttpServletRequest request) {
-		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp?" + RequestParameter.Show.getParameterName() + "=" + StringEncoder.toBase64(getShowFromSession(request).getBytes());
+		String show = null;
+		try {
+			show = ServletUtil.getRequestParameter(request, RequestParameter.Show.getParameterName());
+		} catch (final Exception e) {
+		}
+
+		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp?" + addHTMLShowReference(show);
+	}
+
+	public static String addHTMLShowReference(String show){
+		return show == null ? "" : RequestParameter.Show.getParameterName() + "=" + show + "&";
 	}
 
 	private void deleteDataForShow(final HttpServletRequest request) throws SQLException {
