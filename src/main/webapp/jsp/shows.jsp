@@ -27,7 +27,7 @@ for (final String show : shows) {
 <tr>
 	<td align="center"><label> <input type='radio' name='<%=RequestParameter.Show.getParameterName() %>'
 			onchange="updateMandatoryFieldMark(this.parentNode); checkSubmit(document.getElementById('inputForm'));"
-			value='<%=StringEncoder.toBase64(show.getBytes())%>'
+			value='<%=RegistrationServlet.encodeShowName(show)%>'
 			<%=(shows.size() == 1 ? " checked='checked'" : "")%> 
 			required='required'
 			/> <img

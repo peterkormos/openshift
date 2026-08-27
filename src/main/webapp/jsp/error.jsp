@@ -10,7 +10,10 @@
 </head>
 
 <body>
-	<div class='flash error'>Something funny happened. Please get in
-		touch with the show organizers...</div>
+	<div class='flash error'>
+	<b><%= new java.util.Date() %>:</b>
+	<br>Dear Diary,
+	<br>Something fishy happened today! 
+	<p>By the way: please send this message to the show organizers...</div>
 </body>
 </html>

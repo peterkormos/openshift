@@ -2332,7 +2332,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("<form accept-charset='UTF-8' name='input' action='../RegistrationServlet' method='put' >");
 		buff.append("<input type='hidden' name='command' value='" + command + "'>");
 		if (show != null) {
-			buff.append("<input type='hidden' name='show' value='" + StringEncoder.toBase64(show.getBytes()) + "'>");
+			buff.append("<input type='hidden' name='show' value='" + encodeShowName(show) + "'>");
 		}
 		
 		final String language = getLanguage(request);
@@ -2818,13 +2818,13 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private static String getStartPage(HttpServletRequest request) {
-		String show = null;
-		try {
-			show = ServletUtil.getRequestParameter(request, RequestParameter.Show.getParameterName());
-		} catch (final Exception e) {
-		}
+		String show = RegistrationServlet.getShowFromSession(request);
 
-		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp?" + addHTMLShowReference(show);
+		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp?" + addHTMLShowReference(encodeShowName(show));
+	}
+
+	public static String encodeShowName(String show) {
+		return StringEncoder.toBase64(show.getBytes());
 	}
 
 	public static String addHTMLShowReference(String show){
