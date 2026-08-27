@@ -93,7 +93,7 @@ import util.LanguageUtil;
 import util.gapi.EmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2026.06.25.";
+	public String VERSION = "2026.08.27.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
