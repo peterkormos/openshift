@@ -106,7 +106,6 @@ public class RegistrationServlet extends HttpServlet {
 	StringBuilder printCardBuffer;
 
 	private Map<String, EnumMap<RegistrationServlet.SystemParameter, String>> systemParameters = new HashMap<>();
-	private String systemMessage = "";
 
 	private final List<ExceptionData> exceptionHistory = new LinkedList<ExceptionData>();
 
@@ -2824,7 +2823,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static String encodeShowName(String show) {
-		return StringEncoder.toBase64(show.getBytes());
+		return show == null ? null : StringEncoder.toBase64(show.getBytes());
 	}
 
 	public static String addHTMLShowReference(String show){
