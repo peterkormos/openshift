@@ -355,25 +355,15 @@ void deleteModels(final int categoryId) throws SQLException {
 	}
 
 	public void setSystemParameter(String show, String paramName, String paramValue) {
-		Session session = null;
-		try
-		{
-		  session = getHibernateSession();
-		  session.beginTransaction();
-		  SystemParameter systemParameter = new SystemParameter(paramValue, paramName, show);
-		  session.saveOrUpdate(systemParameter);
-		  session.getTransaction().commit();
-		  
-		  logger.debug("save(): " + systemParameter);
-		}
-		finally
-		{
-		  closeSession(session);
-		}
+		  save(new SystemParameter(paramValue, paramName, show));
 	}
 	
 	public String getSystemParameter(final String show, final RegistrationServlet.SystemParameter parameter) {
-		return get(SystemParameter.class, " r.name = '" + parameter.name() + "' and r.show = '" + show + "'").getValue();
+		try {
+			return get(SystemParameter.class, " r.name = '" + parameter.name() + "' and r.show = '" + show + "'").getValue();
+		} catch (IllegalArgumentException e) {
+			return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE; 
+		} 
 	}
 
 	public String getSystemParameterWithDefault(final String show, final RegistrationServlet.SystemParameter parameter, String defaultValue) {

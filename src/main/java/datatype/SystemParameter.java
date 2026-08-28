@@ -2,11 +2,12 @@ package datatype;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "MAK_SYSTEM")
-public class SystemParameter {
+public class SystemParameter extends Record{
 
 	  @Column(name = "PARAM_VALUE")
 	  private String value;
@@ -17,7 +18,21 @@ public class SystemParameter {
 	  @Column
 	  private String show;
 
-	  public SystemParameter(String value, String name, String show) {
+		@Id
+		@Column
+		public int id;
+
+		@Override
+		public int getId() {
+			return id;
+		}
+
+		@Override
+		public void setId(int id) {
+			this.id = id;
+		}
+		
+		public SystemParameter(String value, String name, String show) {
 		this.value = value;
 		this.name = name;
 		this.show = show;

@@ -75,6 +75,7 @@ import datatype.LoginConsent;
 import datatype.LoginConsent.LoginConsentType;
 import datatype.PageNotice;
 import datatype.PrintedModel;
+import datatype.SystemParameter;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.User;
@@ -2841,10 +2842,11 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.deleteEntries("MAK_AWARDEDMODELS");
 
 		deleteModelsForShow(show);
+		
+		systemParameters.remove(show);
+		servletDAO.get(SystemParameter.class, " r.show = '" + show + "'");
 
 		servletDAO.deleteEntry("MAK_PICTURES", "ID", getLogoIDForShow(show));
-
-		systemParameters.remove(show);
 	}
 
 	private void deleteModelsForShow(final String show) {

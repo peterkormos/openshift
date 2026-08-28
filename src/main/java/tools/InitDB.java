@@ -25,10 +25,7 @@ public class InitDB
 ////	    + "scratch_externalSurface numeric(1), scratch_cockpit numeric(1), scratch_engine numeric(1), scratch_undercarriage numeric(1), scratch_gearBay numeric(1), scratch_armament numeric(1), scratch_conversion numeric(1), resin_externalSurface numeric(1), resin_cockpit numeric(1), resin_engine numeric(1), resin_undercarriage numeric(1), resin_gearBay numeric(1), resin_armament numeric(1), resin_conversion numeric(1), photoEtched_externalSurface numeric(1), photoEtched_cockpit numeric(1), photoEtched_engine numeric(1), photoEtched_undercarriage numeric(1), photoEtched_gearBay numeric(1), photoEtched_armament numeric(1), photoEtched_conversion numeric(1), documentation_externalSurface numeric(1), documentation_cockpit numeric(1), documentation_engine numeric(1), documentation_undercarriage numeric(1), documentation_gearBay numeric(1), documentation_armament numeric(1), documentation_conversion numeric(1)"
 //	    + ")");
 
-	s.execute("create table MAK_SYSTEM (PARAM_NAME VARCHAR(20) not null, PARAM_VALUE VARCHAR(5000) not null)");
-	s.execute("INSERT INTO MAK_SYSTEM ( PARAM_NAME, PARAM_VALUE ) VALUES ('ONSITEUSE','0')");
-	s.execute("INSERT INTO MAK_SYSTEM ( PARAM_NAME, PARAM_VALUE ) VALUES ('REGISTRATION','1')");
-	s.execute("INSERT INTO MAK_SYSTEM ( PARAM_NAME, PARAM_VALUE ) VALUES ('SYSTEMMESSAGE','-')");
+	s.execute("create table MAK_SYSTEM (PARAM_NAME VARCHAR(20) not null, PARAM_VALUE VARCHAR(5000) not null, show varchar (1000), id numeric(6))");
 
 	s.execute("CREATE TABLE MAK_PICTURES (ID numeric(6) not null,PHOTO  BLOB not null)");
 
