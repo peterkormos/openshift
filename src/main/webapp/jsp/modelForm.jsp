@@ -37,7 +37,6 @@
 <script type="text/javascript" src="util.js"></script>
 
 <script type="text/javascript">
-// <!--
 function checkMandatory(form)
 {
 	var returned = true;
@@ -93,7 +92,7 @@ if(!servlet.isAdminSession(session))
 		
     	var noticeDiv = document.getElementById('noticeDiv');
 		if(modelWidth?.value * modelHeight?.value > <%=Model.OversizedAreaInCm %>) {
-			noticeDiv.innerHTML = '<%=String.format(ServletUtil.getLabel(request, servlet, "models.oversized"), Model.OversizedAreaInCm)%>';
+			noticeDiv.innerHTML = "<%=String.format(ServletUtil.getLabel(request, servlet, "models.oversized"), Model.OversizedAreaInCm)%>";
 			noticeDiv.className = "flash Warning";
 		}
 		else {
@@ -105,7 +104,6 @@ if(!servlet.isAdminSession(session))
 	}
 	%>
 	}
-//-->
 </script>
 
 </head>
