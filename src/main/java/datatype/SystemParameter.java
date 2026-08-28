@@ -32,6 +32,10 @@ public class SystemParameter extends Record{
 			this.id = id;
 		}
 		
+		public SystemParameter() {
+			
+		}
+		
 		public SystemParameter(String value, String name, String show) {
 		this.value = value;
 		this.name = name;
