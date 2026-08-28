@@ -59,6 +59,7 @@
         <mapping class="datatype.Detailing" />
         <mapping class="datatype.Category" />
         <mapping class="datatype.CategoryGroup" />
+        <mapping class="datatype.SystemParameter" />
 
     </session-factory>
 </hibernate-configuration>

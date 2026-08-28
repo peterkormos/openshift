@@ -193,10 +193,10 @@ public class RegistrationServlet extends HttpServlet {
 					EnumMap<RegistrationServlet.SystemParameter, String> enumMap = new EnumMap<>(RegistrationServlet.SystemParameter.class);
 					systemParameters.put(show, enumMap);
 					enumMap.put(RegistrationServlet.SystemParameter.REGISTRATION, String
-							.valueOf(servletDAO.getYesNoSystemParameter(RegistrationServlet.SystemParameter.REGISTRATION)));
+							.valueOf(servletDAO.getYesNoSystemParameter(show, RegistrationServlet.SystemParameter.REGISTRATION)));
 					enumMap.put(RegistrationServlet.SystemParameter.MaxModelsPerCategory, String
-							.valueOf(servletDAO.getSystemParameter(RegistrationServlet.SystemParameter.MaxModelsPerCategory)));
-					enumMap.put(RegistrationServlet.SystemParameter.PrintLanguage, servletDAO.getSystemParameterWithDefault(
+							.valueOf(servletDAO.getSystemParameter(show, RegistrationServlet.SystemParameter.MaxModelsPerCategory)));
+					enumMap.put(RegistrationServlet.SystemParameter.PrintLanguage, servletDAO.getSystemParameterWithDefault(show, 
 							RegistrationServlet.SystemParameter.PrintLanguage, PrintLanguages.Hu.name()));
 				}
 			} catch (Exception e) {
@@ -2097,7 +2097,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		String value =  enumMap.get(parameter);
 		if(value == null) {
-			value = servletDAO.getSystemParameter(parameter);
+			value = servletDAO.getSystemParameter(show, parameter);
 			enumMap.put(parameter, value);
 		}
 		return value; 
@@ -2422,11 +2422,11 @@ public class RegistrationServlet extends HttpServlet {
 		String paramName = ServletUtil.getRequestParameter(request, "paramName");
 		String paramValue = ServletUtil.encodeString(ServletUtil.getRequestParameter(request, "paramValue"));
 
-		servletDAO.setSystemParameter(paramName, paramValue);
 
 		String show = getShowFromSession(request);
 		if (show != null) {
 			RegistrationServlet.SystemParameter param = RegistrationServlet.SystemParameter.valueOf(paramName);
+			servletDAO.setSystemParameter(show, paramName, paramValue);
 			systemParameters.get(show).put(param,
 					param.isBooleanValue() ? String.valueOf(ServletDAO.getYesNoSystemParameter(paramValue))
 							: paramValue);

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import datatype.CategoryGroup;
 import datatype.LoginConsent;
 import datatype.Model;
 import datatype.ModelClass;
+import datatype.SystemParameter;
 import datatype.User;
 import exception.EmailNotFoundException;
 
@@ -139,10 +139,9 @@ public class ServletDAO extends HibernateDAO
 		return user;
 	}
 
-  public boolean getYesNoSystemParameter(final RegistrationServlet.SystemParameter parameter) 
+  public boolean getYesNoSystemParameter(final String show, final RegistrationServlet.SystemParameter parameter) 
   {
-	final String value = jdbcDAO.getSystemParameter(parameter);
-	return getYesNoSystemParameter(value);
+	return getYesNoSystemParameter(getSystemParameter(show, parameter));
   }
 
 	public static boolean getYesNoSystemParameter(final String value) {
@@ -354,17 +353,31 @@ void deleteModels(final int categoryId) throws SQLException {
 	public String getAward(Model model) throws SQLException {
 		return jdbcDAO.getAward(model);
 	}
+
+	public void setSystemParameter(String show, String paramName, String paramValue) {
+		Session session = null;
+		try
+		{
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  SystemParameter systemParameter = new SystemParameter(paramValue, paramName, show);
+		  session.saveOrUpdate(systemParameter);
+		  session.getTransaction().commit();
+		  
+		  logger.debug("save(): " + systemParameter);
+		}
+		finally
+		{
+		  closeSession(session);
+		}
+	}
 	
-	public void setSystemParameter(final String parameterName, final String parameterValue) throws SQLException {
-		jdbcDAO.setSystemParameter(parameterName, parameterValue);
+	public String getSystemParameter(final String show, final RegistrationServlet.SystemParameter parameter) {
+		return get(SystemParameter.class, " r.name = '" + parameter.name() + "' and r.show = '" + show + "'").getValue();
 	}
 
-	public String getSystemParameter(final RegistrationServlet.SystemParameter parameter) {
-		return jdbcDAO.getSystemParameter(parameter);
-	}
-
-	public String getSystemParameterWithDefault(final RegistrationServlet.SystemParameter parameter, String defaultValue) {
-		String systemParameter = getSystemParameter(parameter);
+	public String getSystemParameterWithDefault(final String show, final RegistrationServlet.SystemParameter parameter, String defaultValue) {
+		String systemParameter = getSystemParameter(show, parameter);
 		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemParameter) ? defaultValue : systemParameter;
 	}
 
