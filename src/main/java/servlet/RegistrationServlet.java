@@ -123,7 +123,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static enum RequestParameter {
-		Show, Language("language");
+		Show("s"), Language("l");
 
 		private RequestParameter() {
 			parameterName = name();
@@ -534,7 +534,13 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static String getShowFromRequest(final HttpServletRequest request) {
-		return StringEncoder.fromBase64(ServletUtil.encodeString(ServletUtil.getRequestParameter(request, RequestParameter.Show.getParameterName())));
+		String show;
+		try {
+			show = ServletUtil.getRequestParameter(request, RequestParameter.Show.getParameterName());
+		} catch (MissingRequestParameterException e) {
+			show = ServletUtil.getRequestParameter(request, "Show");
+		}
+		return StringEncoder.fromBase64(ServletUtil.encodeString(show));
 	}
 	
 	public void login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -548,7 +554,7 @@ public class RegistrationServlet extends HttpServlet {
 	public ResourceBundle getLanguageFromRequest(final HttpServletRequest request)
 			throws MissingRequestParameterException {
 		return languageUtil
-				.getLanguage(ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName()));
+				.getLanguage(getLanguageCodeInRequest(request));
 	}
 
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user,
@@ -756,8 +762,7 @@ public class RegistrationServlet extends HttpServlet {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
 		// set language library
-		final String languageCode = ServletUtil.getRequestParameter(request,
-				RequestParameter.Language.getParameterName());
+		final String languageCode = getLanguageCodeInRequest(request);
 		final ResourceBundle language = getLanguage(languageCode);
 
 		String email = Arrays.asList(User.AdminTypes.ShowAdmin.getLanguage(), 
@@ -770,6 +775,16 @@ public class RegistrationServlet extends HttpServlet {
 		initHttpSession(request, user, getShowFromSession(request));
 		
 		redirectToMainPage(request, response);
+	}
+
+	static String getLanguageCodeInRequest(final HttpServletRequest request) {
+		try {
+			return ServletUtil.getRequestParameter(request,
+					RequestParameter.Language.getParameterName());
+		} catch (MissingRequestParameterException e) {
+			return ServletUtil.getRequestParameter(request,
+					"language");
+		}
 	}
 
 	public void exportData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2308,7 +2323,7 @@ public class RegistrationServlet extends HttpServlet {
 			User user = getUser(request);
 			return user.isAdminUser() ? DEFAULT_LANGUAGE : user.getLanguage();
 		} catch (UserNotLoggedInException e) {
-			return ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
+			return getLanguageCodeInRequest(request);
 		}
 	}
 
@@ -2976,8 +2991,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void getbatchAddModelPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		final StringBuilder buff = new StringBuilder();
-		final String languageCode = ServletUtil.getRequestParameter(request,
-				RequestParameter.Language.getParameterName());
+		final String languageCode = getLanguageCodeInRequest(request);
 		final ResourceBundle language = getLanguage(languageCode);
 
 		final StringBuilder categoriesBuff = new StringBuilder();
@@ -3033,7 +3047,7 @@ public class RegistrationServlet extends HttpServlet {
 	private User createUser(final HttpServletRequest request, final String email, final String password,
 			final String httpParameterPostTag) throws Exception {
 		// check if all data is sent
-		ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
+		getLanguageCodeInRequest(request);
 
 		// ServletUtil.getRequestAttribute(request, "firstname" +
 		// httpParameterPostTag);
@@ -3050,7 +3064,7 @@ public class RegistrationServlet extends HttpServlet {
 				// ServletUtil.getRequestAttribute(request, "firstname" +
 				// httpParameterPostTag),
 				"-", ServletUtil.getRequestParameter(request, "fullname" + httpParameterPostTag),
-				ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName()),
+				getLanguageCodeInRequest(request),
 				ServletUtil.getOptionalRequestParameter(request, "address" + httpParameterPostTag),
 				ServletUtil.getOptionalRequestParameter(request, "telephone" + httpParameterPostTag), email, true,
 				ServletUtil.getRequestParameter(request, "country" + httpParameterPostTag),
