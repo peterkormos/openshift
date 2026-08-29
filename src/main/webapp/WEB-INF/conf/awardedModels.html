@@ -77,7 +77,7 @@ function addRow()
 </head>
 <form name="input" id="input" method="put"
 	action="../RegistrationServlet">
-	<input type="hidden" name="language" value="__LANGUAGE__"> <input
+	<input type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="__LANGUAGE__"> <input
 		type="hidden" name="rows" value="0"> <input type='hidden'
 		name='command' value='-'> <input type="text" id='modelID'
 		name='modelID' style='visibility: hidden'

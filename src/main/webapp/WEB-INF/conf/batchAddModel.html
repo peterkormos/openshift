@@ -128,7 +128,7 @@ function addRow()
 	hideTemplates()
 //-->
 </script>
-    <input type="hidden" name="language" value="__LANGUAGE__" >
+    <input type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="__LANGUAGE__" >
     <input type="hidden" name="rows" value="0" >
     <input type='hidden' name='command' value='batchAddModel'>
   </p>

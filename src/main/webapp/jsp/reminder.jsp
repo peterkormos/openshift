@@ -26,7 +26,7 @@
 
 				<form name="input" action="../RegistrationServlet/reminder"
 					method="put" accept-charset="UTF-8">
-					<input type="hidden" name="language" value="<%=languageCode %>>" >
+					<input type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="<%=languageCode %>>" >
 					<table border="0">
 						<tr>
 							<td><%=language.getString("email")%>:</td>
