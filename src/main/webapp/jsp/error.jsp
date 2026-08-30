@@ -1,3 +1,4 @@
+<%@page import="exception.UserNotLoggedInException"%>
 <%@page import="java.io.StringWriter"%>
 <%@page import="java.io.PrintWriter"%>
 <%@page import="java.util.*"%>
@@ -54,6 +55,9 @@
 	    Throwable rootCause = throwable;
 	    while (rootCause.getCause() != null) {
 	        rootCause = rootCause.getCause();
+	    }
+	    if(UserNotLoggedInException.class.isInstance(rootCause)) {
+	    	return;
 	    }
 	    messageBody.append("<p><b>Root Cause:</b> " + rootCause.getClass().getName() + ": " + rootCause.getMessage() + "</p>");
 
