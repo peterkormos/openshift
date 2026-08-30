@@ -2865,7 +2865,10 @@ public class RegistrationServlet extends HttpServlet {
 		deleteModelsForShow(show);
 		
 		systemParameters.remove(show);
-		servletDAO.get(SystemParameter.class, " r.show = '" + show + "'");
+		try {
+			servletDAO.get(SystemParameter.class, " r.show = '" + show + "'");
+		} catch (Exception e) {
+		}
 
 		servletDAO.deleteEntry("MAK_PICTURES", "ID", getLogoIDForShow(show));
 	}
