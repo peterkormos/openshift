@@ -238,7 +238,7 @@ public class RegistrationServlet extends HttpServlet {
 		return buffer;
 	}
 
-	private String getServerConfigParamter(final String parameter) throws MissingServletConfigException {
+	public String getServerConfigParamter(final String parameter) throws MissingServletConfigException {
 		final String value = servletConfig.getProperty(parameter);
 
 		if (value == null) {
@@ -535,12 +535,18 @@ public class RegistrationServlet extends HttpServlet {
 
 	public static String getShowFromRequest(final HttpServletRequest request) {
 		String show;
+		show = getShowFromRequestAsIs(request);
+		return StringEncoder.fromBase64(ServletUtil.encodeString(show));
+	}
+
+	public static String getShowFromRequestAsIs(final HttpServletRequest request) {
+		String show;
 		try {
 			show = ServletUtil.getRequestParameter(request, RequestParameter.Show.getParameterName());
 		} catch (MissingRequestParameterException e) {
 			show = ServletUtil.getRequestParameter(request, "Show");
 		}
-		return StringEncoder.fromBase64(ServletUtil.encodeString(show));
+		return show;
 	}
 	
 	public void login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -777,7 +783,7 @@ public class RegistrationServlet extends HttpServlet {
 		redirectToMainPage(request, response);
 	}
 
-	static String getLanguageCodeInRequest(final HttpServletRequest request) {
+	public static String getLanguageCodeInRequest(final HttpServletRequest request) {
 		try {
 			return ServletUtil.getRequestParameter(request,
 					RequestParameter.Language.getParameterName());
@@ -1500,7 +1506,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	private void sendEmail(final String to, final String subject, final StringBuilder message) {
+	public void sendEmail(final String to, final String subject, final StringBuilder message) {
 		if (to.trim().length() == 0 || to.equals("-") || to.indexOf("@") == -1) {
 			return;
 		}
@@ -2442,7 +2448,7 @@ public class RegistrationServlet extends HttpServlet {
 		String show = getShowFromSession(request);
 		if (show != null) {
 			RegistrationServlet.SystemParameter param = RegistrationServlet.SystemParameter.valueOf(paramName);
-			servletDAO.setSystemParameter(show, paramName, paramValue);
+			servletDAO.setSystemParameter(show, param, paramValue);
 			systemParameters.get(show).put(param,
 					param.isBooleanValue() ? String.valueOf(ServletDAO.getYesNoSystemParameter(paramValue))
 							: paramValue);

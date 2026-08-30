@@ -8,7 +8,7 @@
 
 <%
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	final String languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
+	final String languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
 	ResourceBundle language = languageUtil.getLanguage(languageCode);
 %>
 

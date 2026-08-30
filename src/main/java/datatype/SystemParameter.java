@@ -36,7 +36,8 @@ public class SystemParameter extends Record{
 			
 		}
 		
-		public SystemParameter(String value, String name, String show) {
+		public SystemParameter(int id, String value, String name, String show) {
+			super(id);
 		this.value = value;
 		this.name = name;
 		this.show = show;

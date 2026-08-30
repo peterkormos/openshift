@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -354,18 +356,34 @@ void deleteModels(final int categoryId) throws SQLException {
 		return jdbcDAO.getAward(model);
 	}
 
-	public void setSystemParameter(String show, String paramName, String paramValue) {
-		  save(new SystemParameter(paramValue, paramName, show));
+	public void setSystemParameter(String show, final RegistrationServlet.SystemParameter parameter, String paramValue) {
+		Optional<SystemParameter> systemParameterOptional = getSystemParameterOptional(show, parameter);
+		if(systemParameterOptional.isPresent()) {
+			SystemParameter systemParameter = systemParameterOptional.get();
+			systemParameter.setValue(paramValue);
+			save(systemParameter);
+		}
+		else {
+			save(new SystemParameter(getNextID(SystemParameter.class), paramValue, parameter.name(), show));
+		}
 	}
 	
-	public String getSystemParameter(final String show, final RegistrationServlet.SystemParameter parameter) {
+	public Optional<SystemParameter> getSystemParameterOptional(final String show, final RegistrationServlet.SystemParameter parameter) {
 		try {
-			return get(SystemParameter.class, " r.name = '" + parameter.name() + "' and r.show = '" + show + "'").getValue();
+			return Optional.of(get(SystemParameter.class, " r.name = '" + parameter.name() + "' and r.show = '" + show + "'"));
 		} catch (IllegalArgumentException e) {
-			return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE; 
+			return Optional.empty(); 
 		} 
 	}
 
+	public String getSystemParameter(final String show, final RegistrationServlet.SystemParameter parameter) {
+		try {
+			return getSystemParameterOptional(show, parameter).get().getValue();
+		} catch (NoSuchElementException e) {
+			return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE; 
+		} 
+	}
+	
 	public String getSystemParameterWithDefault(final String show, final RegistrationServlet.SystemParameter parameter, String defaultValue) {
 		String systemParameter = getSystemParameter(show, parameter);
 		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemParameter) ? defaultValue : systemParameter;

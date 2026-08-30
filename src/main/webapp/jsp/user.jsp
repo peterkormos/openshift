@@ -32,7 +32,7 @@ catch(Exception ex) {
 }
 
 if (languageCode == null) {
-	languageCode = ServletUtil.getRequestParameter(request, RequestParameter.Language.getParameterName());
+	languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
 }
 
 

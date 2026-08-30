@@ -16,7 +16,7 @@
 <%
 String show = null;
 try {
-	show = ServletUtil.getRequestParameter(request, RequestParameter.Show.getParameterName());
+	show = RegistrationServlet.getShowFromRequestAsIs(request);
 } catch (final Exception e) {
 }
 %>
