@@ -55,8 +55,7 @@ function checkDeleteUserRequest()
 	
 	if(confirmed)
 	{
-		document.getElementById('command').value='deleteUser';
-		document.getElementById('input').action="../RegistrationServlet";
+		document.getElementById('input').action="../RegistrationServlet/deleteUser";
 		document.getElementById('input').submit();
 	}
 }

@@ -144,8 +144,8 @@ if(!servlet.isAdminSession(session))
 
 				<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">
-						<a href="#"
-							onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
+						<a href="user.jsp?action=modifyUser"
+							>
 							<img src="../icons/modify2.png" height="30" align="center" /><span
 							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "modify.user")%></span>
 						</a>

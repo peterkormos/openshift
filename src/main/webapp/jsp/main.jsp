@@ -117,7 +117,7 @@ else {
 
 				<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">
-						<a href="user.jsp?action=modifyUser"
+						<a href="user.jsp?action=modifyUser" >
 							<img src="../icons/modify2.png" height="30" align="center" /><span
 							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "modify.user")%></span>
 						</a>
@@ -140,20 +140,6 @@ else {
 	<jsp:include page="notices.jsp" />
 
 	<p></p>
-	<!--
-  <a href="#" onClick="document.getElementById('command').value='inputForPhotoUpload';document.getElementById('input').submit();">
-  <img src="../icons/photo.png" height="30" align="center">ServletUtil.getLabel(request, servlet, "photo")to")%>
-  </a>
- 
-<p></p>
-   -->
-
-	<%-- 
-  <a href="#" onClick="document.getElementById('command').value='listMyModels';document.getElementById('input').submit();">
-  <img src="../icons/list.png" height="30" align="center"> <%=ServletUtil.getLabel(request, servlet, "list.models")%></a>
-
-<p></p>
- --%>
 
 	<jsp:include page="ADMIN_helyi.jsp" />
 

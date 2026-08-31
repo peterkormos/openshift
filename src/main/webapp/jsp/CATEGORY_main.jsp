@@ -65,8 +65,8 @@ String show = RegistrationServlet.getShowFromSession(session);
 						name="<%=RequestParameter.Language.getParameterName()%>"
 						value="<%=languageCode%>>">
 					<div class="tooltip">
-						<a href="#"
-							onClick="document.getElementById('command').name='action';document.getElementById('command').value='modifyUser';document.getElementById('input').action='user.jsp';document.getElementById('input').submit();">
+						<a href="user.jsp?action=modifyUser"
+							>
 							<img src="../icons/modify2.png" height="30" align="center" /><span
 							class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
 						</a>
