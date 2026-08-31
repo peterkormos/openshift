@@ -10,7 +10,17 @@
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 ServletDAO servletDAO = servlet.getServletDAO();
 
-User user = servlet.getUser(request);
+User user = null;
+try {
+	user = servlet.getUser(request);
+} catch (Exception ex) {
+}
+
+if (user == null || !user.isAdminUser()) {
+	response.sendRedirect(RegistrationServlet.getStartPage(request));
+	return;
+}
+
 final String show = RegistrationServlet.getShowFromSession(session);
 
 final List<? extends Model> models = RegistrationServlet.toPrintedModel(servletDAO.getModelsForShow(show, ServletDAO.INVALID_USERID));

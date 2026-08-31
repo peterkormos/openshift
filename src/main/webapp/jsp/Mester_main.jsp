@@ -19,7 +19,7 @@ try {
 }
 
 if (user == null || !user.isAdminUser()) {
-	response.sendRedirect("index.jsp");
+	response.sendRedirect(RegistrationServlet.getStartPage(request));
 	return;
 }
 
