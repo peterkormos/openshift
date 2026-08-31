@@ -2832,7 +2832,7 @@ public class RegistrationServlet extends HttpServlet {
 			boolean goToParentDir = request.getPathInfo() != null;
 			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/helyi.jsp");
 		} else {
-			response.sendRedirect("../" + getStartPage(request));
+			response.sendRedirect(getStartPage(request));
 		}
 		
 		session.invalidate();
@@ -2840,8 +2840,11 @@ public class RegistrationServlet extends HttpServlet {
 
 	private static String getStartPage(HttpServletRequest request) {
 		String show = RegistrationServlet.getShowFromSession(request);
-
-		return (request.getRequestURI().contains("jsp") ? "" : "jsp/") + "index.jsp?" + addHTMLShowReference(encodeShowName(show));
+		boolean goToParentDir = request.getPathInfo() != null;
+		return (goToParentDir ? "../" : "") + //
+				(request.getRequestURI().contains("jsp") ? "" : "jsp/") + // 
+				"index.jsp?" + //
+				addHTMLShowReference(encodeShowName(show));
 	}
 
 	public static String encodeShowName(String show) {
