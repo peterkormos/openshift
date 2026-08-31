@@ -12,7 +12,7 @@ User user = null;
 try {
 	user = RegistrationServlet.getUser(request);
 } catch (Exception ex) {
-	out.print(ex.getMessage());
+	response.sendRedirect(RegistrationServlet.getStartPage(request));
 	return;
 }
 

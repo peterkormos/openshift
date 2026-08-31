@@ -8,6 +8,15 @@
 <%@page import="java.util.*"%>
 
 <%
+	User user = null;
+	try {
+		user = RegistrationServlet.getUser(request);
+	}
+	catch(Exception ex) {
+		response.sendRedirect(RegistrationServlet.getStartPage(request));
+		return;
+	}
+	
 	String show = RegistrationServlet.getShowFromSession(session);
 	
 	//input parameters	
@@ -15,8 +24,6 @@
 	String action = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name()); 
 	Model model = (Model)session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
  		
-	User user = RegistrationServlet.getUser(request);
-	
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
 	ServletDAO servletDAO = servlet.getServletDAO();

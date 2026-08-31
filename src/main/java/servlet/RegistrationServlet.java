@@ -2838,7 +2838,7 @@ public class RegistrationServlet extends HttpServlet {
 		session.invalidate();
 	}
 
-	private static String getStartPage(HttpServletRequest request) {
+	public static String getStartPage(HttpServletRequest request) {
 		String show = RegistrationServlet.getShowFromSession(request);
 		boolean goToParentDir = request.getPathInfo() != null;
 		return (goToParentDir ? "../" : "") + //

@@ -29,8 +29,11 @@ try {
 	}
 }
 catch(Exception ex) {
+	response.sendRedirect(RegistrationServlet.getStartPage(request));
+	return;
 }
 
+// In case of user registration
 if (languageCode == null) {
 	languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
 }
