@@ -3,6 +3,7 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="util.*"%>
 
 <%@include file="util.jsp"%>
@@ -23,7 +24,7 @@
 <body>
 	<div class="header"></div>
 	<p>
-		<a href="./login.jsp?language=HU"><b>F&#337;oldali
+		<a href="./login.jsp?<%=RequestParameter.Language.getParameterName()%>=HU"><b>F&#337;oldali
 				bejelentkez&eacute;s</b></a>
 	</p>
 	<p></p>

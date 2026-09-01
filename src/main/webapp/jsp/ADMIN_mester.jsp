@@ -12,7 +12,7 @@ try {
 }
 
 if (user == null || !user.isAdminUser()) {
-	response.sendRedirect(RegistrationServlet.getStartPage(request));
+	RegistrationServlet.redirectToStartPage(request, response);
 	return;
 }
 

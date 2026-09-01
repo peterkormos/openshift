@@ -7,8 +7,14 @@
 <jsp:useBean id="languageUtil" class="util.LanguageUtil" scope="application"/>
 
 <%
+	final String languageCode;
+	try {
+		languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
+	} catch (Exception ex) {
+		RegistrationServlet.redirectToStartPage(request, response);
+		return;
+	}
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	final String languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
 	ResourceBundle language = languageUtil.getLanguage(languageCode);
 %>
 

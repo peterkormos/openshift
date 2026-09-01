@@ -25,5 +25,5 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
   servletDAO.save(new CategoryGroup(servletDAO.getNextID(CategoryGroup.class), "-", "-"));
 
-	response.sendRedirect(RegistrationServlet.getStartPage(request));
+	RegistrationServlet.redirectToStartPage(request, response);
 %>
