@@ -36,11 +36,27 @@
 
 	messageBody.append("<h2>Error Details</h2>");
 	
+	for(Cookie c : request.getCookies()) {
+		messageBody.append("<br><b>HTTP Cookie:</b> " + c.getName() + " <b>value:</b> " + c.getValue() + "</br>");
+	}
+	
+	Enumeration<String> e = request.getHeaderNames();
+	while (e.hasMoreElements()) {
+		final String param = e.nextElement();
+		messageBody.append("<br><b>HTTP Header:</b> " + param + " <b>value:</b> " + request.getHeader(param) + "</br>");
+	}
+	
+	e = request.getAttributeNames();
+	while (e.hasMoreElements()) {
+		final String param = e.nextElement();
+		messageBody.append("<br><b>HTTP attribute:</b> " + param + " <b>value:</b> " + request.getAttribute(param) + "</br>");
+	}
+	
 	messageBody.append("<p><b>Date:</b> " + new Date() + "</p>");
 	messageBody.append("<p><b>Status Code:</b> " + statusCode + "</p>");
 	messageBody.append("<br><b>Failed URI:</b> " + requestUri + "</br>");
 	
-	final Enumeration<String> e = request.getParameterNames();
+	e = request.getParameterNames();
 	while (e.hasMoreElements()) {
 		final String param = e.nextElement();
 		messageBody.append("<br><b>HTTP parameter:</b> " + param + " <b>value:</b> " + request.getParameter(param) + "</br>");
