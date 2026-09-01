@@ -25,6 +25,11 @@
 	</servlet-mapping>
 
 	<error-page>
+	<error-code>404</error-code>
+		<location>/jsp/index.jsp</location>
+	</error-page>
+
+	<error-page>
 		<location>/jsp/error.jsp</location>
 	</error-page>
 </web-app>
