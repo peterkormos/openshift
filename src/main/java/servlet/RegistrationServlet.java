@@ -563,6 +563,20 @@ public class RegistrationServlet extends HttpServlet {
 				.getLanguage(getLanguageCodeInRequest(request));
 	}
 
+	public ResourceBundle getLanguageFromSessionOrRequest(final HttpServletRequest request)
+			throws MissingRequestParameterException {
+		ResourceBundle language = null;
+		try {
+			language = (ResourceBundle) getHttpSession(request).getAttribute(CommonSessionAttribute.Language.name());
+			if (language != null) {
+				return language;
+			}
+		} catch (Exception e) {
+		}
+
+		return languageUtil.getLanguage(getLanguageCodeInRequest(request));
+	}
+	
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user,
 			final String show) throws IOException, UserNotLoggedInException {
 		logger.info("loginSuccessful(): email: " + user.email + " user.language: " + user.language + " show: "
@@ -614,7 +628,7 @@ public class RegistrationServlet extends HttpServlet {
 			 {
 		final HttpSession session = request.getSession(true);
 		session.setAttribute(CommonSessionAttribute.User.name(), user);
-		ResourceBundle language = languageUtil.getLanguage(user.language);
+		ResourceBundle language = getLanguageForCurrentUser(request);
 		session.setAttribute(CommonSessionAttribute.Language.name(), language);
 
 		if (user.isAdminUser())
@@ -2053,7 +2067,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public ResourceBundle getLanguageForCurrentUser(final HttpServletRequest request) throws UserNotLoggedInException, MissingRequestParameterException {
-		return languageUtil.getLanguage(getLanguage(request));
+		return languageUtil.getLanguage(getLanguageCodeForCurrentUser(request));
 	}
 
 	public synchronized void addModel(final HttpServletRequest request, final HttpServletResponse response) throws IOException
@@ -2324,7 +2338,7 @@ public class RegistrationServlet extends HttpServlet {
 		selectUser(request, response, "directPrintModels");
 	}
 
-	public static String getLanguage(final HttpServletRequest request) throws MissingRequestParameterException {
+	public static String getLanguageCodeForCurrentUser(final HttpServletRequest request) throws MissingRequestParameterException {
 		try {
 			User user = getUser(request);
 			return user.isAdminUser() ? DEFAULT_LANGUAGE : user.getLanguage();
@@ -2356,7 +2370,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("<input type='hidden' name='show' value='" + encodeShowName(show) + "'>");
 		}
 		
-		final String language = getLanguage(request);
+		final String language = getLanguageCodeForCurrentUser(request);
 		buff.append("<input type='hidden' name='language' value='" + language + "'>");
 
 		final List<User> users = servletDAO.getUsers();
@@ -2919,7 +2933,7 @@ public class RegistrationServlet extends HttpServlet {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
 		final StringBuilder buff = new StringBuilder();
-		String languageCode = getLanguageCodeWithDefault(request);
+		String languageCode = getLanguageCodeForCurrentUserWithDefault(request);
 		final ResourceBundle language = getLanguage(languageCode);
 
 		buff.append(awardedModelsBuffer.toString().replaceAll("__ADDNEWROW__", language.getString("add.new.row"))
@@ -2930,7 +2944,7 @@ public class RegistrationServlet extends HttpServlet {
 		ServletUtil.writeResponse(response, buff);
 	}
 
-	public static String getLanguageCodeWithDefault(final HttpServletRequest request) {
+	public static String getLanguageCodeForCurrentUserWithDefault(final HttpServletRequest request) {
 		String languageCode;
 		try {
 			languageCode = getUser(request).language;
@@ -2982,7 +2996,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void printAwardedModels(final HttpServletRequest request, final HttpServletResponse response,
 			final StringBuilder buffer) throws Exception, IOException {
-		final ResourceBundle language = languageUtil.getLanguage(getLanguageCodeWithDefault(request));
+		final ResourceBundle language = languageUtil.getLanguage(getLanguageCodeForCurrentUserWithDefault(request));
 
 		final StringBuilder buff = new StringBuilder();
 		RegistrationServlet.servletDAO.getAwardedModels().forEach(am -> {
