@@ -342,7 +342,7 @@ public class RegistrationServlet extends HttpServlet {
 				writeErrorResponse(request, response, message);
 				return;
 			} else if (UserNotLoggedInException.class.isInstance(throwable)) {
-				writeErrorResponse(request, response, "Error: <b>" + message + "</b>");
+				response.sendRedirect(getStartPage(request));
 				return;
 			} else if (CategoryModificationException.class.isInstance(throwable)) {
 				writeCategoryModificationErrorResponse(request, response);
