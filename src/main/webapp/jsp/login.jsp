@@ -89,22 +89,22 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 							<jsp:include page="shows.jsp"></jsp:include>
 						<tr>
 							<td align="center">
-								<div class="input-caption-container" style="width: 200px">
-									<input type="text" name="email" id="email" placeholder=" "
-										onchange="updateMandatoryFieldMark(this);" /> <label
-										for="email" class="input-caption"><%=language.getString("email")%></label>
-									<font color='#FF0000' size='+3'>&#8226;</font>
-								</div>
+								<jsp:include page="textInput.jsp">
+									<jsp:param name="name" value="email" />
+									<jsp:param name="label"
+										value='<%=ServletUtil.getLabel(request, servlet, "email")%>' />
+									<jsp:param name="mandatory" value="true" />
+								</jsp:include>
 							</td>
 						</tr>
 						<tr>
 							<td align="center">
-								<div class="input-caption-container" style="width: 200px">
-									<input type="password" name="password" id="password"
-										placeholder=" " onchange="updateMandatoryFieldMark(this);" />
-									<label for="password" class="input-caption"><%=language.getString("password")%></label>
-									<font color='#FF0000' size='+3'>&#8226;</font>
-								</div>
+								<jsp:include page="textInput.jsp">
+									<jsp:param name="name" value="password" />
+									<jsp:param name="label"
+										value='<%=ServletUtil.getLabel(request, servlet, "password")%>' />
+									<jsp:param name="mandatory" value="true" />
+								</jsp:include>
 								<p>
 									<a
 										href="reminder.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>

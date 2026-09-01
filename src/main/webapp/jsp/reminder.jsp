@@ -32,14 +32,19 @@
 
 				<form name="input" action="../RegistrationServlet/reminder"
 					method="put" accept-charset="UTF-8">
-					<input type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="<%=languageCode %>>" >
+					<input type="hidden" name="<%=RequestParameter.Language.getParameterName()%>" value="<%=languageCode %>" >
 					<table border="0">
 						<tr>
-							<td><%=language.getString("email")%>:</td>
-							<td><input type="text" name="email"></td>
+							<td>
+								<jsp:include page="textInput.jsp">
+									<jsp:param name="name" value="email" />
+									<jsp:param name="label"
+										value='<%=ServletUtil.getLabel(request, servlet, "email")%>' />
+									<jsp:param name="mandatory" value="true" />
+								</jsp:include>
+							</td>
 						</tr>
 						<tr>
-							<td></td>
 							<td><input type="submit"
 								value="<%=language.getString("send.reminder")%>"></td>
 						</tr>

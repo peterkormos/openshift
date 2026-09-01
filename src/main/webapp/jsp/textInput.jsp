@@ -10,7 +10,7 @@ if (Boolean.parseBoolean(request.getParameter("loginRequired"))) {
 }
 
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-final ResourceBundle language = (ResourceBundle) session.getAttribute(CommonSessionAttribute.Language.name());
+final ResourceBundle language = servlet.getLanguageFromSessionOrRequest(request);
 
 int maxlength = 60;
 if (request.getParameter("maxlength") != null)
