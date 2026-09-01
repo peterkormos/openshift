@@ -224,7 +224,7 @@ Sz&iacute;nk&oacute;dok:
 		%>
 		<td align='center'>
 			<%
-				for (String judge : servlet.judgingServletDAO.getJudges(category.categoryCode, model.getId(),
+				for (String judge : servlet.judgingServletDAO.getJudges(category.getId(), model.getId(),
 									model.getUserID())) {
 			%> <a
 			href="<%=actionPathPrefix%>../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=JudgingServlet.RequestParameter.UserID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>

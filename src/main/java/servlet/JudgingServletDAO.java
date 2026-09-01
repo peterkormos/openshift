@@ -101,7 +101,7 @@ public class JudgingServletDAO extends HibernateDAO {
         }
     }
 
-    public List<String> getJudges(String category, int modelId, int modellerId) throws Exception
+    public List<String> getJudges(int categoryId, int modelId, int modellerId) throws Exception
     {
         Session session = null;
         
@@ -112,7 +112,7 @@ public class JudgingServletDAO extends HibernateDAO {
             session.beginTransaction();
 
             Query query = session.createQuery("select distinct judge From JudgingScore where category = :category and modelID = :modelId and modellerID = :modellerId order by judge");
-            query.setString("category", category);
+            query.setInteger("category", categoryId);
             query.setInteger("modelId", modelId);
             query.setInteger("modellerId", modellerId);
             

@@ -61,7 +61,7 @@ final User user = RegistrationServlet.getUser(request);
 			</div> <%
  	}
  %> <%
- 	List<String> judges = servlet.judgingServletDAO.getJudges(category.categoryCode, model.getId(),
+ 	List<String> judges = servlet.judgingServletDAO.getJudges(category.getId(), model.getId(),
  			model.getUserID());
  	if (!judges.isEmpty()) {
  %><p> <%=language.getString("judge")%>: <%
