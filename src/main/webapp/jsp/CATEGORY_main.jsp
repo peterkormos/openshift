@@ -22,8 +22,7 @@ if (user == null || !user.isAdminUser()) {
 	return;
 }
 
-String languageCode = RegistrationServlet.DEFAULT_LANGUAGE;
-ResourceBundle language = languageUtil.getLanguage(languageCode);
+ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 String show = RegistrationServlet.getShowFromSession(session);
 %>
 
@@ -58,12 +57,6 @@ String show = RegistrationServlet.getShowFromSession(session);
 			if (user.isSuperAdminUser()) {
 			%>
 			<td style="width: 40px; text-align: right; vertical-align: top;">
-				<form accept-charset="UTF-8" name="input" id="input"
-					action="../RegistrationServlet" method="post">
-					<input type="hidden" id="command" name="command" value="<%=language.getString("modify.user")%>">
-					<input type="hidden"
-						name="<%=RequestParameter.Language.getParameterName()%>"
-						value="<%=languageCode%>>">
 					<div class="tooltip">
 						<a href="user.jsp?action=modifyUser"
 							>
@@ -71,7 +64,6 @@ String show = RegistrationServlet.getShowFromSession(session);
 							class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
 						</a>
 					</div>
-				</form>
 			</td>
 			<%
 			}

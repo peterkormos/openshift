@@ -28,7 +28,7 @@ if (servlet.isAdminSession(session)) {
 		return;
 	}
 
-	ResourceBundle language = languageUtil.getLanguage(user.language);
+	ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 %>
 
 <a href='helyi.jsp'>Helyi bel&eacute;p&eacute;si oldal

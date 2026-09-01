@@ -32,11 +32,11 @@ boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 %>
 
 <div class="input-caption-container">
-<input type='text'
+<input
 	size="<%=ServletUtil.getOptionalRequestParameter(request, "size")%>"
 	maxlength='<%=maxlength%>'
 	name='<%=request.getParameter("name")%>'
-	type='<%=request.getParameter("inputType")%>'
+	type='<%=inputType%>'
 	id='<%=id%>'
 	placeholder="<%=String.format(language.getString("input.text.maxlength"), maxlength)%>"
 	<%String value = request.getParameter("value");

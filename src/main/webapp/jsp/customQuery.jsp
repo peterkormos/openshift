@@ -4,7 +4,7 @@
 <%@page import="java.util.*"%>
 
 <%
-final ResourceBundle language = (ResourceBundle) session.getAttribute(CommonSessionAttribute.Language.name());
+final ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 %>
 
 <html>

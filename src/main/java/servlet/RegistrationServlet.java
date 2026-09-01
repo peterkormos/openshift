@@ -567,7 +567,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws MissingRequestParameterException {
 		ResourceBundle language = null;
 		try {
-			language = (ResourceBundle) getHttpSession(request).getAttribute(CommonSessionAttribute.Language.name());
+			language = getLanguageFromSession(request);
 			if (language != null) {
 				return language;
 			}
@@ -575,6 +575,10 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		return languageUtil.getLanguage(getLanguageCodeInRequest(request));
+	}
+
+	public static ResourceBundle getLanguageFromSession(final HttpServletRequest request) {
+		return (ResourceBundle) getHttpSession(request).getAttribute(CommonSessionAttribute.Language.name());
 	}
 	
 	private void loginSuccessful(final HttpServletRequest request, final HttpServletResponse response, final User user,
@@ -868,7 +872,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		response.setContentType("application/vnd.ms-excel");
 
-		ResourceBundle language = getLanguageForCurrentUser(request);
+		ResourceBundle language = getLanguageFromSession(request);
 		final List<Model> models = servletDAO.getModels(ServletDAO.INVALID_USERID);
 		Map<Integer, User> userIDs = models.stream().mapToInt(Model::getUserID).distinct().mapToObj(userID -> {
 			try {
@@ -959,7 +963,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		}).collect(Collectors.toList());
 
-		ResourceBundle language = getLanguageForCurrentUser(request);
+		ResourceBundle language = getLanguageFromSession(request);
 
 		Workbook workbook = ExcelUtil.generateExcelTableWithHeaders("model",
 				Arrays.asList(StringEscapeUtils.unescapeHtml4(language.getString("name")),
@@ -993,7 +997,7 @@ public class RegistrationServlet extends HttpServlet {
 			return returned;
 
 		}).collect(Collectors.toList());
-		ResourceBundle language = getLanguageForCurrentUser(request);
+		ResourceBundle language = getLanguageFromSession(request);
 		Workbook workbook = ExcelUtil.generateExcelTableWithHeaders("model",
 				Arrays.asList(StringEscapeUtils.unescapeHtml4(language.getString("group")),
 						StringEscapeUtils.unescapeHtml4(language.getString("category.code")),
@@ -1674,7 +1678,7 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 
 		getCategoryTable(buff, servletDAO.getCategoryList(getShowFromSession(request)),
-				getLanguageForCurrentUser(request));
+				getLanguageFromSession(request));
 
 		ServletUtil.writeResponse(response, buff);
 	}
@@ -1902,7 +1906,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
-		final ResourceBundle language = getLanguageForCurrentUser(request);
+		final ResourceBundle language = getLanguageFromSession(request);
 
 		Category category = null;
 		try {
@@ -2058,7 +2062,7 @@ public class RegistrationServlet extends HttpServlet {
 			servletDAO.save(model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
-			setOKNoticeInSession(session, getLanguageForCurrentUser(request).getString("modify.model") + ": "
+			setOKNoticeInSession(session, getLanguageFromSession(request).getString("modify.model") + ": "
 					+ model.scale + " - " + model.name + " - " + servletDAO.getCategory(model.categoryID).categoryCode);
 		}
 		session.removeAttribute(SessionAttribute.ModelID.name());
@@ -2098,7 +2102,7 @@ public class RegistrationServlet extends HttpServlet {
 		
 		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE
 				.equals(ServletUtil.getOptionalRequestParameter(request, "finishRegistration"))) {
-			setOKNoticeInSession(session, getLanguageForCurrentUser(request).getString("add") + ": "
+			setOKNoticeInSession(session, getLanguageFromSession(request).getString("add") + ": "
 					+ model.scale + " - " + model.name + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
 			response.sendRedirect("jsp/modelForm.jsp");
@@ -2145,7 +2149,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void setEmailSentNoticeInSession(final HttpServletRequest request, final User user)
 			throws UserNotLoggedInException, MissingRequestParameterException {
-		ResourceBundle language = getLanguageForCurrentUser(request);
+		ResourceBundle language = getLanguageFromSession(request);
 		HttpSession session = getHttpSession(request);
 		setOKNoticeInSession(session, language.getString("email") + ": <h2>" + user.email + "</h2>");
 		setNoticeInSession(session,
@@ -2479,7 +2483,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
 			servletDAO.deleteModel(model);
-			setOKNoticeInSession(getHttpSession(request), getLanguageForCurrentUser(request).getString("delete") + ": "
+			setOKNoticeInSession(getHttpSession(request), getLanguageFromSession(request).getString("delete") + ": "
 					+ model.scale + " - " + model.name + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
 		}
@@ -2504,7 +2508,7 @@ public class RegistrationServlet extends HttpServlet {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
 
 		final StringBuilder buff = new StringBuilder();
-		final ResourceBundle language = getLanguageForCurrentUser(request);
+		final ResourceBundle language = getLanguageFromSession(request);
 
 		buff.append("<head>\n");
 		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");

@@ -101,6 +101,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 							<td align="center">
 								<jsp:include page="textInput.jsp">
 									<jsp:param name="name" value="password" />
+									<jsp:param name="inputType" value="password" />
 									<jsp:param name="label"
 										value='<%=ServletUtil.getLabel(request, servlet, "password")%>' />
 									<jsp:param name="mandatory" value="true" />

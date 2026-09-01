@@ -19,7 +19,7 @@ try {
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 
-ResourceBundle language = languageUtil.getLanguage(user.language);
+ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 
 String show = RegistrationServlet.getShowFromSession(session);
 if (show == null) {

@@ -8,7 +8,7 @@
     User user = RegistrationServlet.getUser(request);
 	
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-  final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
+  final ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 %>
 
     <div class="input-caption-container">

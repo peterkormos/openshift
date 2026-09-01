@@ -7,7 +7,7 @@
 <%
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
-ResourceBundle language = (ResourceBundle) session.getAttribute(CommonSessionAttribute.Language.name());
+ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 %>
 

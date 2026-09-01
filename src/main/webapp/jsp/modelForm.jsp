@@ -25,7 +25,7 @@
 	Model model = (Model)session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
  		
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
+	ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 	ServletDAO servletDAO = servlet.getServletDAO();
 
 	if(model == null && RegistrationServlet.Command.modifyModel.name().equals(action) ) {

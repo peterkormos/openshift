@@ -13,7 +13,7 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
   final String languageCode = "ADMIN";
 	
-  final ResourceBundle language = (ResourceBundle)session.getAttribute(CommonSessionAttribute.Language.name());
+  final ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 
   final User user = new User(languageCode);
   user.setEmail("admin");

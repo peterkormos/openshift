@@ -12,8 +12,7 @@
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ServletDAO servletDAO = servlet.getServletDAO();
 
-	final ResourceBundle language = (ResourceBundle) session
-	.getAttribute(CommonSessionAttribute.Language.name());
+	final ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 
 	String actionPathPrefix = ServletUtil.getOptionalParameter(request, "actionPathPrefix").orElse("");
 	

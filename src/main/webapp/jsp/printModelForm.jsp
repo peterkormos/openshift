@@ -10,8 +10,7 @@
 final User user = RegistrationServlet.getUser(request);
 
 	final RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	final ResourceBundle language = (ResourceBundle) session
-	.getAttribute(CommonSessionAttribute.Language.name());
+	final ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 	final ServletDAO servletDAO = servlet.getServletDAO();
 
 	final Model model = (Model) session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
