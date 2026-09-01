@@ -16,7 +16,7 @@ final String languageCode;
 try {
 	languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
 } catch (Exception ex) {
-	response.sendRedirect(RegistrationServlet.getStartPage(request));
+	RegistrationServlet.redirectToStartPage(request, response);
 	return;
 }
 

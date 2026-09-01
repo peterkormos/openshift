@@ -13,7 +13,7 @@
 		user = RegistrationServlet.getUser(request);
 	}
 	catch(Exception ex) {
-		response.sendRedirect(RegistrationServlet.getStartPage(request));
+		RegistrationServlet.redirectToStartPage(request, response);
 		return;
 	}
 	

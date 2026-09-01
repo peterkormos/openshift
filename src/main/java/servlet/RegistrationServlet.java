@@ -342,7 +342,7 @@ public class RegistrationServlet extends HttpServlet {
 				writeErrorResponse(request, response, message);
 				return;
 			} else if (UserNotLoggedInException.class.isInstance(throwable)) {
-				response.sendRedirect(getStartPage(request));
+				redirectToStartPage(request, response);
 				return;
 			} else if (CategoryModificationException.class.isInstance(throwable)) {
 				writeCategoryModificationErrorResponse(request, response);
@@ -1431,7 +1431,7 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = getUser(request);
 		servletDAO.deleteUser(user.getId());
 
-		response.sendRedirect(getStartPage(request));
+		redirectToStartPage(request, response);
 	}
 
 	private void sendEmailWithModels(final User user, final boolean insertUserDetails) {
@@ -2832,10 +2832,15 @@ public class RegistrationServlet extends HttpServlet {
 			boolean goToParentDir = request.getPathInfo() != null;
 			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/helyi.jsp");
 		} else {
-			response.sendRedirect(getStartPage(request));
+			redirectToStartPage(request, response);
 		}
 		
 		session.invalidate();
+	}
+
+	public static void redirectToStartPage(final HttpServletRequest request, final HttpServletResponse response)
+			throws IOException {
+		response.sendRedirect(getStartPage(request));
 	}
 
 	public static String getStartPage(HttpServletRequest request) {
