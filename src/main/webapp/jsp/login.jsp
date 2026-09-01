@@ -12,7 +12,14 @@
 <%
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
-final String languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
+final String languageCode;
+try {
+	languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
+} catch (Exception ex) {
+	response.sendRedirect(RegistrationServlet.getStartPage(request));
+	return;
+}
+
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 %>
 
