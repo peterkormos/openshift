@@ -154,10 +154,11 @@
 		 	class="flash ERROR"	
 		 <%
 		 }
+		  String scoredCategory = servletDAO.getCategory(judgingResult.getCategory()).getCategoryCode();		  
 	%>
 		>
         <a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.Category %>=<%=judgingResult.getCategory()%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
-        <%= judgingResult.getCategory() %>
+        <%= scoredCategory %>
         </a>
 		</td>
 		<td>

@@ -378,7 +378,9 @@ public final class JudgingServlet extends HttpServlet {
 					} catch (Exception e) {
 						return null;
 					}
-				}).collect(Collectors.toList());
+				})
+				.filter(c -> c != null)
+				.collect(Collectors.toList());
 
 		return categories;
 	}
@@ -389,7 +391,7 @@ public final class JudgingServlet extends HttpServlet {
         
         Optional<String> category = ServletUtil.getOptionalParameter(request, RequestParameter.Category.name());
 		if (category.isPresent()) {
-			models = servletDAO.getModelsInCategory(servletDAO.getCategory(category.get()).getId());
+			models = servletDAO.getModelsInCategory(Integer.parseInt(category.get()));
 		}
 		
         Optional<String> modelID = ServletUtil.getOptionalParameter(request, RequestParameter.ModelID.name());

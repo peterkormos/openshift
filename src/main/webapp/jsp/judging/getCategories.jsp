@@ -46,7 +46,7 @@ ResourceBundle language = JudgingServlet.getLanguage(session, response);
 			</label>
 		</td>
 		<td>
-			<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.Category %>=<%=category.getCategoryCode()%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
+			<a href="../../JudgingServlet/<%= JudgingServlet.RequestType.GetModels.name() %>?<%= JudgingServlet.RequestParameter.Category %>=<%=category.getId()%>&<%= JudgingServlet.RequestParameter.ForJudges %>=true">
 			<%= language.getString("list.models") %>
 			</a>
 		</td>
