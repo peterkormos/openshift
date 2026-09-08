@@ -788,15 +788,15 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public String getPrintLanguage(final HttpServletRequest request) {
-		return getPrintOrder(request, RegistrationServlet.SystemParameter.PrintLanguage, PrintLanguages.Hu.name());
+		return getSystemParameterForShow(request, RegistrationServlet.SystemParameter.PrintLanguage, PrintLanguages.Hu.name());
 	}
 
 	public PrintOrder getPrintOrder(final HttpServletRequest request) {
-		return PrintOrder.valueOf(getPrintOrder(request, RegistrationServlet.SystemParameter.PrintOrder, PrintOrder.RegistrationNumber.name()));
+		return PrintOrder.valueOf(getSystemParameterForShow(request, RegistrationServlet.SystemParameter.PrintOrder, RegistrationServlet.PrintOrder.RegistrationNumber.name()));
 	}
 	
 	
-	public String getPrintOrder(final HttpServletRequest request, RegistrationServlet.SystemParameter systemParameter, String defaultValue) {
+	private String getSystemParameterForShow(final HttpServletRequest request, RegistrationServlet.SystemParameter systemParameter, String defaultValue) {
 		String parameter = getSystemParameterForShow(getShowFromSession(request), systemParameter);
 		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameter) ? defaultValue : parameter;
 	}
