@@ -1015,7 +1015,7 @@ public class RegistrationServlet extends HttpServlet {
 			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
 			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
 			returned.add(category.isMaster());
-			returned.add(category.getModelClass().toString());
+			returned.add(category.getModelClass().getTitle());
 			returned.add(category.getAgeGroup().toString());
 			return returned;
 
