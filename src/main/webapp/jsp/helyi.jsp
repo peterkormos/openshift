@@ -30,27 +30,27 @@
 	<p></p>
 	<p>
 		<%
-		addAdminLink(session, out, "./user.jsp?directRegister=true&action=directRegister&language=HU", "Regisztr&aacute;lni egy (tal&aacute;n) ismeretlen makettez&#337;t &eacute;s makettjeit");
+		addAdminLink(session, out, "./user.jsp?directRegister=true&action=directRegister&" + RequestParameter.Language.getParameterName() + "=HU", "Regisztr&aacute;lni egy (tal&aacute;n) ismeretlen makettez&#337;t &eacute;s makettjeit");
 		%>
 
 <!-- 		- <a -->
-<!-- 			href="../RegistrationServlet?command=getbatchAddModelPage&language=HU">t&ouml;bb -->
+<!-- 			href="../RegistrationServlet?command=getbatchAddModelPage&" + RequestParameter.Language.getParameterName() + "=HU">t&ouml;bb -->
 <!-- 			ember makettjeit</a> -->
 	</p>
 	<p>
 		<b>Egy m&aacute;r regisztr&aacute;lt makettez&#337;... </b>
 		<%
-		addAdminLink(session, out, "../RegistrationServlet/inputForLoginUser?language=HU",
+		addAdminLink(session, out, "../RegistrationServlet/inputForLoginUser?" + RequestParameter.Language.getParameterName() + "=HU",
 				"nev&eacute;ben bel&eacute;p&eacute;s");
 		%>
 		-
 		<%
-		addAdminLink(session, out, "../RegistrationServlet/inputForPrint?language=HU",
+		addAdminLink(session, out, "../RegistrationServlet/inputForPrint?" + RequestParameter.Language.getParameterName() + "=HU",
 				"nevez&eacute;si lapjainak nyomtat&aacute;sa");
 		%>
 	</p>
 	<p>
-		<a href="./judging/judging.jsp?language=HU"><b>Zs&utilde;riz&eacute;s</b></a>
+		<a href="./judging/judging.jsp?" + RequestParameter.Language.getParameterName() + "=HU"><b>Zs&utilde;riz&eacute;s</b></a>
 	</p>
 </body>
 </html>

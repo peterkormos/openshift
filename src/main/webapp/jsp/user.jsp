@@ -20,27 +20,18 @@ if (action == null) {
 
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
-String languageCode = null;
 User user = null;
 try {
 	if (!directRegister) {
 		user = RegistrationServlet.getUser(request);
-		languageCode = user.language;
 	}
 }
 catch(Exception ex) {
-	RegistrationServlet.redirectToStartPage(request, response);
-	return;
 }
 
-// In case of user registration
-if (languageCode == null) {
-	languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
-}
-
-
-ResourceBundle language = languageUtil.getLanguage(languageCode);
+ResourceBundle language = servlet.getLanguageFromSessionOrRequest(request);
 session.setAttribute(CommonSessionAttribute.Language.name(), language);
+String languageCode = LanguageUtil.getLanguage(language);
 
 String passwordCheck = RegistrationServlet.isAdminSession(session) ? "" :  "&& checkPassword(this) ";
 %>
@@ -272,7 +263,6 @@ function checkDeleteUserRequest()
 						<jsp:param name="mandatory" value="true" />
 						<jsp:param name="label"
 							value='<%=ServletUtil.getLabel(request, servlet, "language")%>' />
-						<jsp:param name="selectLabel" value="<%=LanguageUtil.getLanguages().containsKey(languageCode) ? LanguageUtil.getLanguages().get(languageCode) : languageCode%>" />
 						<jsp:param name="selectValue" value="<%=languageCode%>" />
 					</jsp:include>
 				</td>
