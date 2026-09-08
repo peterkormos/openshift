@@ -2923,11 +2923,13 @@ public class RegistrationServlet extends HttpServlet {
 		
 		systemParameters.remove(show);
 		try {
-			servletDAO.get(SystemParameter.class, " r.show = '" + show + "'");
+			servletDAO.delete(SystemParameter.class, " r.show = '" + show + "'");
 		} catch (Exception e) {
 		}
 
-		servletDAO.deleteEntry("MAK_PICTURES", "ID", getLogoIDForShow(show));
+		int logoIDForShow = getLogoIDForShow(show);
+		servletDAO.deleteEntry("MAK_PICTURES", "ID", logoIDForShow);
+		servletDAO.execute("update MAK_PICTURES set id = id + 1 where id < " + logoIDForShow);
 	}
 
 	private void deleteModelsForShow(final String show) {
