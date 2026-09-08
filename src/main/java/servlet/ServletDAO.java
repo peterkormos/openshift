@@ -29,6 +29,7 @@ import datatype.ModelClass;
 import datatype.SystemParameter;
 import datatype.User;
 import exception.EmailNotFoundException;
+import servlet.RegistrationServlet.PrintOrder;
 
 public class ServletDAO extends HibernateDAO
 {
@@ -401,7 +402,7 @@ void deleteModels(final int categoryId) throws SQLException {
 		return jdbcDAO.getStatistics(show, language, detailedStatistics);
 	}
 
-	public List<User> getUsersWithModel() {
+	public List<User> getUsersWithModel(PrintOrder printOrder) {
 	      Session session = null;
 	      
 	      try
@@ -410,7 +411,8 @@ void deleteModels(final int categoryId) throws SQLException {
 	          
 	          session.beginTransaction();
 
-	          Query query = session.createQuery("select distinct u from Model m, User u where m.user.id = u.id order by u.id");
+	          Query query = session.createQuery("select distinct u from Model m, User u where m.user.id = u.id order by " 
+	        		  + (PrintOrder.RegistrationNumber.equals(printOrder) ? "u.id" : "u.lastName"));
 	          
 	        return new LinkedList<User>(query.list());
 	      }

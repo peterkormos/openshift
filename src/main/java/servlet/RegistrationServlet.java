@@ -18,9 +18,11 @@ import java.nio.file.Files;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Enumeration;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -35,13 +38,11 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -73,11 +74,10 @@ import datatype.EmailParameter;
 import datatype.Gender;
 import datatype.LoginConsent;
 import datatype.LoginConsent.LoginConsentType;
-import datatype.PageNotice;
-import datatype.PrintedModel;
-import datatype.SystemParameter;
 import datatype.Model;
 import datatype.ModelClass;
+import datatype.PageNotice;
+import datatype.PrintedModel;
 import datatype.User;
 import datatype.User.AdminTypes;
 import exception.AuthorizationException;
@@ -146,6 +146,20 @@ public class RegistrationServlet extends HttpServlet {
 
 	public static enum PrintLanguages {
 		Hu, En
+	};
+
+	public static enum PrintOrder {
+		Name("Név"), RegistrationNumber("Regisztrációs szám");
+
+		private PrintOrder(final String parameterName) {
+			this.parameterName = parameterName;
+		}
+
+		private String parameterName;
+
+		public String getParameterName() {
+			return parameterName;
+		}
 	};
 
 	public RegistrationServlet() throws Exception {
@@ -774,10 +788,19 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public String getPrintLanguage(final HttpServletRequest request) {
-		String printLanguage = getSystemParameter(getShowFromSession(request), RegistrationServlet.SystemParameter.PrintLanguage);
-		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(printLanguage) ? PrintLanguages.Hu.name() : printLanguage;
+		return getPrintOrder(request, RegistrationServlet.SystemParameter.PrintLanguage, PrintLanguages.Hu.name());
 	}
 
+	public PrintOrder getPrintOrder(final HttpServletRequest request) {
+		return PrintOrder.valueOf(getPrintOrder(request, RegistrationServlet.SystemParameter.PrintOrder, PrintOrder.RegistrationNumber.name()));
+	}
+	
+	
+	public String getPrintOrder(final HttpServletRequest request, RegistrationServlet.SystemParameter systemParameter, String defaultValue) {
+		String parameter = getSystemParameterForShow(getShowFromSession(request), systemParameter);
+		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(parameter) ? defaultValue : parameter;
+	}
+	
 	private void showPrintDialog(final HttpServletResponse response) throws IOException {
 		response.getOutputStream().write("<script>window.print();</script>".getBytes());
 	}
@@ -1449,6 +1472,8 @@ public class RegistrationServlet extends HttpServlet {
 		final User user = getUser(request);
 		servletDAO.deleteUser(user.getId());
 
+		getHttpSession(request).invalidate();
+
 		redirectToStartPage(request, response);
 	}
 
@@ -2118,13 +2143,13 @@ public class RegistrationServlet extends HttpServlet {
 
 	public int getMaxModelsPerCategory(final HttpServletRequest request) {
 		try {
-			return Integer.parseInt(getSystemParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerCategory));
+			return Integer.parseInt(getSystemParameterForShow(request, RegistrationServlet.SystemParameter.MaxModelsPerCategory));
 		} catch (Exception e) {
 			return 3;
 		}
 	}
 
-	private String getSystemParameter(String show, RegistrationServlet.SystemParameter parameter) {
+	private String getSystemParameterForShow(String show, RegistrationServlet.SystemParameter parameter) {
 		if (show == null) {
 			return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
 		}
@@ -2143,8 +2168,8 @@ public class RegistrationServlet extends HttpServlet {
 		return value; 
 	}
 
-	private String getSystemParameter(HttpServletRequest request, RegistrationServlet.SystemParameter parameter) {
-		return getSystemParameter(getShowFromSession(request), parameter);
+	private String getSystemParameterForShow(HttpServletRequest request, RegistrationServlet.SystemParameter parameter) {
+		return getSystemParameterForShow(getShowFromSession(request), parameter);
 	}
 
 	private void setEmailSentNoticeInSession(final HttpServletRequest request, final User user)
@@ -2588,7 +2613,13 @@ public class RegistrationServlet extends HttpServlet {
 
 		StringBuilder printBuffer = getPrintBuffer(request);
 
-		List<User> users = servletDAO.getUsersWithModel();
+		final PrintOrder printOrder = getPrintOrder(request);
+		List<User> users = servletDAO.getUsersWithModel(printOrder);
+        Collator collator = Collator.getInstance(new Locale("hu", "HU"));
+        collator.setStrength(Collator.PRIMARY);
+
+		users.sort(printOrder.equals(PrintOrder.RegistrationNumber) ? Comparator.comparingInt(User::getId) : Comparator.comparing(u -> StringEscapeUtils.unescapeHtml4(u.getLastName()), collator));
+		
 		if(pageBreak) {
 			for (final User user : users) {
 				printModelsForUser(request, response, user.getId(), printBuffer, maxModelsPerPage, modelRowsPerPage);
@@ -3158,7 +3189,7 @@ public class RegistrationServlet extends HttpServlet {
 	public enum SystemParameter
 	  {
 		REGISTRATION(true), SYSTEMMESSAGE, MaxModelsPerCategory, // 
-		PrintLanguage, MaxModelsPerPage, PageBreakAtPrint, ModelRowsPerPage;
+		PrintLanguage, PrintOrder, MaxModelsPerPage, PageBreakAtPrint, ModelRowsPerPage;
 	
 		private boolean booleanValue;
 		
@@ -3185,7 +3216,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public String getSystemMessage(String show) {
-		String systemMessage = getSystemParameter(show, RegistrationServlet.SystemParameter.SYSTEMMESSAGE);
+		String systemMessage = getSystemParameterForShow(show, RegistrationServlet.SystemParameter.SYSTEMMESSAGE);
 		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemMessage) ? "" : systemMessage; 
 	}
 
@@ -3225,7 +3256,7 @@ public class RegistrationServlet extends HttpServlet {
 	public boolean isPreRegistrationAllowed(String show) {
 		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(show))
 			return true;
-		Boolean allowed = Boolean.parseBoolean(getSystemParameter(show, RegistrationServlet.SystemParameter.REGISTRATION));
+		Boolean allowed = Boolean.parseBoolean(getSystemParameterForShow(show, RegistrationServlet.SystemParameter.REGISTRATION));
 		return allowed == null ? false : allowed;
 	}
 
