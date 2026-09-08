@@ -30,6 +30,19 @@ if (show == null) {
 	</td>
 </tr>
 <tr>
+	<td>Rendez&eacute;s megad&aacute;sa:</td>
+	<td>
+		<%
+		for (RegistrationServlet.PrintOrder p : RegistrationServlet.PrintOrder.values()) {
+		%> <a href="#"
+		class='<%=p.equals(servlet.getPrintOrder(request)) ? "flash OK" : ""%> %>'
+		onClick="document.getElementById('paramName').value='<%=RegistrationServlet.SystemParameter.PrintOrder.name()%>';document.getElementById('paramValue').value='<%=p.name()%>';document.getElementById('command4').value='setSystemParameter';document.getElementById('input4').submit();">
+			<%=p.getParameterName()%></a> <%
+ }
+ %>
+	</td>
+</tr>
+<tr>
 	<td><a href="#"
 		onClick="document.getElementById('command4').value='printAllModels';document.getElementById('input4').submit();">
 			Max. makettek oldalank&eacute;nt: </a></td>
