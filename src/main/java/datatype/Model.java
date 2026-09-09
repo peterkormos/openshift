@@ -1,6 +1,7 @@
 package datatype;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -55,6 +56,9 @@ public class Model extends Record {
     @JoinTable(name = "MAK_MAK_DETAILING")
     @Nullable
     public Collection<Detailing> detailing;
+
+    @Column(name = "crd")
+    public Date creationDate = new Date();
 
     @Transient
     public Map<DetailingGroup, Map<DetailingCriteria, Boolean>> details;
