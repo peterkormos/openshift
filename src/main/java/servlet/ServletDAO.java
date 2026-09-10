@@ -425,4 +425,14 @@ void deleteModels(final int categoryId) throws SQLException {
 	public List<Model> getModelsForShow(final String show, final int userID) {
 		return RegistrationServlet.getModelsForShow(show, getModels(userID), getCategoryMap(show));
 	}
+
+	public boolean userExists(String lastName, int yearOfBirth) {
+		try {
+			List<User> list = getList(User.class, "r.lastName = '" + lastName + "' and r.yearOfBirth = " + yearOfBirth);
+			
+			return !list.isEmpty();
+		} catch (Exception e) {
+		}
+		return false;
+	}
 }
