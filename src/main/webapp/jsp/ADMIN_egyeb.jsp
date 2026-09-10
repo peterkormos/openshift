@@ -44,7 +44,7 @@ if (show == null) {
 		type="hidden" name="<%=RequestParameter.Language.getParameterName()%>"
 		value="<%=User.AdminTypes.ShowAdmin.getLanguage()%>"> <input
 		type="hidden" name="country" value="Hungary"> <input type="hidden"
-		name="city" value="<%=show%>"> <input type="hidden"
+		name="city" value="city <input type="hidden"
 		name="gender" value="<%=Gender.Male.name()%>"> <input
 		type="hidden" name="yearofbirth" value="1977"> <input
 		type="submit" name="" value="Helyi admin felv&eacute;tele">
