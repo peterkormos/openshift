@@ -601,6 +601,9 @@ public class RegistrationServlet extends HttpServlet {
 				+ show);
 
 		saveLoginConsentData(request, user);
+		
+		user.setLastLogin(new Date());
+		servletDAO.save(user);		
 
 		HttpSession session = initHttpSession(request, user, show);
 
@@ -729,7 +732,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		sendEmail(user.email, language.getString("email.subject"), buff);
 
-		proceedToLoginResponse(request, response, language);
+		proceedToLoginResponse(request, response, language, "email.was.sent");
 	}
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1408,6 +1411,10 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		final User user = createUser(request, email);
+		if (servletDAO.userExists(user.getLastName(), user.getYearOfBirth())) {
+			proceedToLoginResponse(request, response, language, "user.exist");
+			return;
+		}
 		servletDAO.save(user);
 		
 		if (!user.isLocalUser())
@@ -1428,8 +1435,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void proceedToLoginResponse(final HttpServletRequest request, final HttpServletResponse response,
-			final ResourceBundle language) throws IOException, ServletException {
-		setNoticeInSession(getHttpSession(request), PageNotice.NoticeType.OK, language.getString("email.was.sent"));
+			final ResourceBundle language, String noiceLabel) throws IOException, ServletException {
+		setNoticeInSession(getHttpSession(request), PageNotice.NoticeType.OK, language.getString(noiceLabel));
 
 		request.getRequestDispatcher("/jsp/afterRegister.jsp").forward(request, response);
 	}

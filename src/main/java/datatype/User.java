@@ -2,6 +2,7 @@ package datatype;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -14,11 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.apache.commons.text.StringEscapeUtils;
-
-import datatype.User.AdminTypes;
 import servlet.RegistrationServlet;
-import servlet.ServletUtil;
 
 @Entity
 @Table(name = "MAK_USERS")
@@ -65,6 +62,9 @@ public class User extends Record {
 	public String country;
 	@Column(name = "MODEL_CLASS")
 	private String modelClasses;
+
+	@Column(name = "lastLogin")
+	private Date lastLogin;
 
 	@Column
 	@Enumerated(EnumType.STRING)
@@ -285,5 +285,13 @@ public class User extends Record {
 
 	public AdminTypes getAdminType() {
 		return EnumGroup.of(AdminTypes.class, getLanguage(), (group, language) -> group.getLanguage().equals(language));
+	}
+
+	public Date getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
 	}
 }
