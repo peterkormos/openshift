@@ -77,6 +77,7 @@ import datatype.LoginConsent.LoginConsentType;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.PageNotice;
+import datatype.PageNotice.NoticeType;
 import datatype.PrintedModel;
 import datatype.User;
 import datatype.User.AdminTypes;
@@ -732,7 +733,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		sendEmail(user.email, language.getString("email.subject"), buff);
 
-		proceedToLoginResponse(request, response, language, "email.was.sent");
+		proceedToLoginResponse(request, response, language, "email.was.sent", PageNotice.NoticeType.OK);
 	}
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1412,7 +1413,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		final User user = createUser(request, email);
 		if (servletDAO.userExists(user.getLastName(), user.getYearOfBirth())) {
-			proceedToLoginResponse(request, response, language, "user.exist");
+			proceedToLoginResponse(request, response, language, "user.exist", PageNotice.NoticeType.Warning);
 			return;
 		}
 		servletDAO.save(user);
@@ -1435,8 +1436,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void proceedToLoginResponse(final HttpServletRequest request, final HttpServletResponse response,
-			final ResourceBundle language, String noiceLabel) throws IOException, ServletException {
-		setNoticeInSession(getHttpSession(request), PageNotice.NoticeType.OK, language.getString(noiceLabel));
+			final ResourceBundle language, final String noiceLabel, final NoticeType noticeType) throws IOException, ServletException {
+		setNoticeInSession(getHttpSession(request), noticeType, language.getString(noiceLabel));
 
 		request.getRequestDispatcher("/jsp/afterRegister.jsp").forward(request, response);
 	}
