@@ -913,7 +913,9 @@ public class RegistrationServlet extends HttpServlet {
 		Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
 				SessionAttribute.Categories.name());
 
-		List<List<Object>> modelsForExcel = getModelsForShow(show, models, categories).stream().map(model -> {
+		List<List<Object>> modelsForExcel = getModelsForShow(show, models, categories).stream()
+				.sorted(Comparator.comparingInt(Model::getId).reversed())
+				.map(model -> {
 			ArrayList<Object> returned = new ArrayList<>();
 			Category category = categories.get(model.categoryID);
 			final User modelsUser = userIDs.get(model.getUserID());

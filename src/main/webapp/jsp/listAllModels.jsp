@@ -1,4 +1,5 @@
 <%@page import="java.util.*"%>
+<%@page import="java.util.function.*"%>
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
@@ -24,6 +25,12 @@ if (user == null || !user.isAdminUser()) {
 final String show = RegistrationServlet.getShowFromSession(session);
 
 final List<? extends Model> models = RegistrationServlet.toPrintedModel(servletDAO.getModelsForShow(show, ServletDAO.INVALID_USERID));
+models.sort(new Comparator<Model>() {
+	@Override
+	public int compare(Model o1, Model o2) {
+		return Integer.compare(o2.getId(), o1.getId());
+	}
+});
 
 final Iterator<? extends Model> it = models.iterator();
 while (it.hasNext()) {
