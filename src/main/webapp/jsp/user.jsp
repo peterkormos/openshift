@@ -20,18 +20,19 @@ if (action == null) {
 
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
+ResourceBundle language = servlet.getLanguageFromSessionOrRequest(request);
+session.setAttribute(CommonSessionAttribute.Language.name(), language);
+String languageCode = LanguageUtil.getLanguage(language);
+
 User user = null;
 try {
 	if (!directRegister) {
 		user = RegistrationServlet.getUser(request);
+		languageCode = user.getLanguage();
 	}
 }
 catch(Exception ex) {
 }
-
-ResourceBundle language = servlet.getLanguageFromSessionOrRequest(request);
-session.setAttribute(CommonSessionAttribute.Language.name(), language);
-String languageCode = LanguageUtil.getLanguage(language);
 
 String passwordCheck = RegistrationServlet.isAdminSession(session) ? "" :  "&& checkPassword(this) ";
 %>
