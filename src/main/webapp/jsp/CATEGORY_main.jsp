@@ -58,7 +58,7 @@ String show = RegistrationServlet.getShowFromSession(session);
 			%>
 			<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">
-						<a href="user.jsp?action=modifyUser"
+						<a href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=modifyUser"
 							>
 							<img src="../icons/modify2.png" height="30" align="center" /><span
 							class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>

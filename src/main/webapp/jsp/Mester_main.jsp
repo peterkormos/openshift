@@ -2,6 +2,7 @@
 
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="util.*"%>
 
 <%@include file="util.jsp"%>
@@ -53,7 +54,7 @@ final ResourceBundle language = servlet.getLanguageForCurrentUser(request);
 
 	<p>
 		<%
-		addAdminLink(session, out, "./user.jsp?directRegister=true&action=directRegister&language=Mester", "Fi&oacute;k l&eacute;trehoz&aacute;sa &uacute;j felhaszn&aacute;l&oacute;knak");
+		addAdminLink(session, out, "./user.jsp?directRegister=true&"+RequestParameter.Action.getParameterName()+"=directRegister&language=Mester", "Fi&oacute;k l&eacute;trehoz&aacute;sa &uacute;j felhaszn&aacute;l&oacute;knak");
 		%>
 	</p>
 

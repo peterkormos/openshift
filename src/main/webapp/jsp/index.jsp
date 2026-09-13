@@ -37,7 +37,7 @@ try {
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?action=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=HU">Fi&oacute;k l&eacute;trehoz&aacute;sa &uacute;j felhaszn&aacute;l&oacute;knak</a></td>
+								href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=HU">Fi&oacute;k l&eacute;trehoz&aacute;sa &uacute;j felhaszn&aacute;l&oacute;knak</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -50,7 +50,7 @@ try {
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?action=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=EN">Create account
+								href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=EN">Create account
 									for new users</a></td>
 							<td>
 								<div align="center">-</div>
@@ -65,7 +65,7 @@ try {
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?action=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=SK">Nov&aacute;
+								href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=SK">Nov&aacute;
 									registr&aacute;cia</a></td>
 							<td>
 								<div align="center">-</div>
@@ -80,7 +80,7 @@ try {
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?action=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=CZ">Nov&aacute;
+								href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=CZ">Nov&aacute;
 									registrace</a></td>
 							<td>
 								<div align="center">-</div>
@@ -95,7 +95,7 @@ try {
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?action=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=PL">Zarejestruj si&#281;</a></td>
+								href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=PL">Zarejestruj si&#281;</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -111,7 +111,7 @@ try {
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?action=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=IT">Creazione dell'account per i nuovi utenti</a></td>
+								href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=IT">Creazione dell'account per i nuovi utenti</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -124,7 +124,7 @@ try {
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?action=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=DE">Registration</a></td>
+								href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=DE">Registration</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
@@ -137,7 +137,7 @@ try {
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?action=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=RU">&#1056;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1103;
+								href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=RU">&#1056;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1103;
 &#1085;&#1086;&#1074;&#1086;&#1075;&#1086; &#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1077;&#1083;&#1103;</a></td>
 							<td>
 								<div align="center">-</div>

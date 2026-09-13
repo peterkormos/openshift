@@ -124,7 +124,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static enum RequestParameter {
-		Show("s"), Language("l");
+		Show("s"), Language("l"), Action("a");
 
 		private RequestParameter() {
 			parameterName = name();
@@ -659,7 +659,7 @@ public class RegistrationServlet extends HttpServlet {
 			session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
 			
 			if (user.getFullName().split(" ").length == 1) {
-				setNoticeInSession(session, PageNotice.NoticeType.Error, "<a href='user.jsp?action=modifyUser'>("
+				setNoticeInSession(session, PageNotice.NoticeType.Error, "<a href='user.jsp?"+RequestParameter.Action.getParameterName()+"=modifyUser'>("
 								+ user.getFullName() + ") " + language.getString("name.too.short") + "</a>");
 			}
 		}

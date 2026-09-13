@@ -30,7 +30,7 @@
 	<p></p>
 	<p>
 		<%
-		addAdminLink(session, out, "./user.jsp?directRegister=true&action=directRegister&" + RequestParameter.Language.getParameterName() + "=HU", "Regisztr&aacute;lni egy (tal&aacute;n) ismeretlen makettez&#337;t &eacute;s makettjeit");
+		addAdminLink(session, out, "./user.jsp?directRegister=true&"+RequestParameter.Action.getParameterName()+"=directRegister&" + RequestParameter.Language.getParameterName() + "=HU", "Regisztr&aacute;lni egy (tal&aacute;n) ismeretlen makettez&#337;t &eacute;s makettjeit");
 		%>
 
 <!-- 		- <a -->

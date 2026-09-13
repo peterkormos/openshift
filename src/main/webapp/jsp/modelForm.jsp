@@ -3,6 +3,7 @@
 <%@page import="datatype.DetailingGroup"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
@@ -151,7 +152,7 @@ if(!servlet.isAdminSession(session))
 
 				<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">
-						<a href="user.jsp?action=modifyUser"
+						<a href="user.jsp?<%=RequestParameter.Action.getParameterName()%>=modifyUser"
 							>
 							<img src="../icons/modify2.png" height="30" align="center" /><span
 							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "modify.user")%></span>
