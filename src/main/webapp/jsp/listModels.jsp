@@ -1,7 +1,6 @@
 <%@page import="datatype.DetailingCriteria"%>
 <%@page import="datatype.DetailingGroup"%>
 <%@page import="servlet.*"%>
-<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="java.util.*"%>
 
 <%@page import="datatype.*"%>
@@ -190,7 +189,7 @@ Sz&iacute;nk&oacute;dok:
 %>
 			<div class="tooltip">
 				<a
-					href="<%=actionPathPrefix%>../RegistrationServlet?command=inputForModifyModel&<%=RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=inputForModifyModel&<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
 					<img src="<%=actionPathPrefix%>../icons/add.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 				</a>
@@ -198,7 +197,7 @@ Sz&iacute;nk&oacute;dok:
 
 			<div class="tooltip">
 				<a
-					href="<%=actionPathPrefix%>../RegistrationServlet?command=deleteModel&<%=RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=deleteModel&<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
 					<img src="<%=actionPathPrefix%>../icons/delete2.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
@@ -355,7 +354,7 @@ Sz&iacute;nk&oacute;dok:
 %>
 			<div class="tooltip">
 				<a
-					href="<%=actionPathPrefix%>../RegistrationServlet?command=inputForModifyModel&<%=RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=inputForModifyModel&<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
 					<img src="<%=actionPathPrefix%>../icons/add.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("modify")%></span>
 				</a>
@@ -363,7 +362,7 @@ Sz&iacute;nk&oacute;dok:
 
 			<div class="tooltip">
 				<a
-					href="<%=actionPathPrefix%>../RegistrationServlet?command=deleteModel&<%=RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
+					href="<%=actionPathPrefix%>../RegistrationServlet?command=deleteModel&<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
 					<img src="<%=actionPathPrefix%>../icons/delete2.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>

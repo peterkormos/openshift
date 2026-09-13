@@ -3,7 +3,6 @@
 <%@page import="datatype.DetailingGroup"%>
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
-<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
@@ -174,7 +173,7 @@ if(!servlet.isAdminSession(session))
 		<%
 		if (model != null) {
 		%>
-		<input type='hidden' name='<%=RequestParameter.ModelId.getParameterName() %>' value='<%=model.getId()%>'>
+		<input type='hidden' name='<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>' value='<%=model.getId()%>'>
 		<%
 		}
 		%>

@@ -1,4 +1,3 @@
-<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="java.util.*"%>
 
 <%@page import="datatype.*"%>
@@ -16,7 +15,7 @@
 	{
 %>
 <label>
-		<input type='radio' name='<%=RequestParameter.ModelId.getParameterName() %>' value='<%=model.getId()%>'/>
+		<input type='radio' name='<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>' value='<%=model.getId()%>'/>
 		<%=model.scale%>
 		-
 		<%=model.producer%> 
