@@ -40,12 +40,12 @@ if (user == null || !user.isAdminUser()) {
 	</tr>
 	<tr>
 		<td><a
-			href="statistics.jsp?<%=RequestParameter.Language.getParameterName()%>=HU&shortStatistics=true"><strong>Egyszer&#369;
+			href="statistics.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU&shortStatistics=true"><strong>Egyszer&#369;
 					statisztika k&eacute;sz&iacute;t&eacute;se</strong></a></td>
 		<td><a
-			href="statistics.jsp?<%=RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
+			href="statistics.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
 					statisztika k&eacute;sz&iacute;t&eacute;se</strong></a></td>
 		<td><a
-			href="../RegistrationServlet/exportStatistics?<%=RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
+			href="../RegistrationServlet/exportStatistics?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
 					Statisztika Excelbe</strong></a></td>
 	</tr>

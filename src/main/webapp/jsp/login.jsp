@@ -31,7 +31,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 <script> 
 	    function checkSubmit(form) {
-	    	var showNotSet = form.<%=RequestParameter.Language.getParameterName()%> == null || form.<%=RequestParameter.Language.getParameterName()%>.value == '';
+	    	var showNotSet = form.<%=RegistrationServlet.RequestParameter.Language.getParameterName()%> == null || form.<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>.value == '';
 	    	var dataUsageNoConsent = !document.getElementById('dataUsageConsentCompetition').checked;
 	    	var submitDisabled = (showNotSet || dataUsageNoConsent);
 	    	var noticeDiv = document.getElementById('noticeDiv');
@@ -75,7 +75,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 		<input type="hidden" name="command" value="login"> <input
 			type="hidden"
-			name="<%=RequestParameter.Language.getParameterName()%>"
+			name="<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>"
 			value="<%=languageCode%>">
 
 		<table border="0" height="100%" width="100%">
@@ -108,7 +108,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 								</jsp:include>
 								<p>
 									<a
-										href="reminder.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
+										href="reminder.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
 							</td>
 						</tr>
 						<jsp:include page="loginConsent.jsp"></jsp:include>

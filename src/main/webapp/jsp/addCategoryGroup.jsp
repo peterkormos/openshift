@@ -23,7 +23,7 @@ String show = (String) session.getAttribute(RegistrationServlet.SessionAttribute
 			</tr>
 			<tr>
 				<td>Verseny:</td>
-				<td><input name="<%=RequestParameter.Show.getParameterName() %>" type="text" size="50" value="<%=show%>"></td>
+				<td><input name="<%=RegistrationServlet.RequestParameter.Show.getParameterName() %>" type="text" size="50" value="<%=show%>"></td>
 			</tr>
 			<tr>
 				<td>Kateg&oacute;ria csoport (Pl. Feln&otilde;tt, gyerek, ifi,

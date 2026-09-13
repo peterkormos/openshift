@@ -41,7 +41,7 @@ if (show == null) {
 <form accept-charset="UTF-8" name="input" id="input6"
 	action="../RegistrationServlet" method="post">
 	<input type="hidden" name="command" value="directRegister"> <input
-		type="hidden" name="<%=RequestParameter.Language.getParameterName()%>"
+		type="hidden" name="<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>"
 		value="<%=User.AdminTypes.ShowAdmin.getLanguage()%>"> <input
 		type="hidden" name="country" value="Hungary"> <input type="hidden"
 		name="city" value="city <input type="hidden"

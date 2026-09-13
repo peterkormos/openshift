@@ -38,12 +38,12 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 					</tr>
 					<tr>
 						<td><a
-							href="../jsp/login.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("login")%>?</a></td>
+							href="../jsp/login.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("login")%>?</a></td>
 						<td>
 							<div align="center">-</div>
 						</td>
 						<td align="right"><a
-							href="../jsp/reminder.jsp?<%=RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%>?</a>
+							href="../jsp/reminder.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%>?</a>
 						</td>
 					</tr>
 				</table>
