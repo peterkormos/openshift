@@ -58,7 +58,7 @@ public final class JudgingServlet extends HttpServlet {
 	public static final String VERSION = "2026.06.21.";
 
 	public enum RequestParameter {
-        Category, ModelID, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, 
+        Category, ModellerID, Judge, JudgingCriteria, JudgingCriterias, Comment, ModelsName, Language, ForJudges, 
         Class, SimpleJudging, UserID
     }
 
@@ -129,7 +129,7 @@ public final class JudgingServlet extends HttpServlet {
     private static String getJudgingFormLink(JudgingResult judgingResult)
     {
         return "<a href='../../JudgingServlet/" + JudgingServlet.RequestType.GetJudgingForm.name() + "?"
-                + JudgingServlet.RequestParameter.ModelID + "=" + judgingResult.getModelID() + "&"
+                + RegistrationServlet.RequestParameter.ModelId.getParameterName() + "=" + judgingResult.getModelID() + "&"
                 + JudgingServlet.RequestParameter.ModellerID + "=" + judgingResult.getModellerID() + "&"
                 + JudgingServlet.RequestParameter.Category + "=" + judgingResult.getCategory() + "&"
                 + JudgingServlet.RequestParameter.Judge + "=" + java.net.URLEncoder.encode(judgingResult.getJudge())
@@ -323,7 +323,7 @@ public final class JudgingServlet extends HttpServlet {
     private void deleteJudgingForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final int category = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.Category.name()));
         final String judge = ServletUtil.getOptionalRequestParameter(request, RequestParameter.Judge.name());
-        final String modelId = ServletUtil.getOptionalRequestParameter(request, RequestParameter.ModelID.name());
+        final String modelId = ServletUtil.getOptionalRequestParameter(request, RegistrationServlet.RequestParameter.ModelId.getParameterName());
         final String modellerId = ServletUtil.getOptionalRequestParameter(request, RequestParameter.ModellerID.name());
 
         if (!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(category) && //
@@ -394,7 +394,7 @@ public final class JudgingServlet extends HttpServlet {
 			models = servletDAO.getModelsInCategory(Integer.parseInt(category.get()));
 		}
 		
-        Optional<String> modelID = ServletUtil.getOptionalParameter(request, RequestParameter.ModelID.name());
+        Optional<String> modelID = ServletUtil.getOptionalParameter(request, RegistrationServlet.RequestParameter.ModelId.getParameterName());
 		if (modelID.isPresent()) {
 			models = Arrays.asList(servletDAO.getModel(Integer.parseInt(modelID.get())));
 		}
@@ -429,7 +429,7 @@ public final class JudgingServlet extends HttpServlet {
 		
 	    Model model = (Model) getSessionAttribute(request, CommonSessionAttribute.Model);
 	    if(model == null) {
-			String modelId = ServletUtil.getOptionalRequestParameter(request, JudgingServlet.RequestParameter.ModelID.name());
+			String modelId = ServletUtil.getOptionalRequestParameter(request, RegistrationServlet.RequestParameter.ModelId.getParameterName());
 			if(!RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(modelId))
 				model = servletDAO.getModel(Integer.parseInt(modelId));
 		}
@@ -617,7 +617,7 @@ public final class JudgingServlet extends HttpServlet {
         final Integer category = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.Category.name()));
         final String judge = ServletUtil.encodeString(ServletUtil.getRequestParameter(request, RequestParameter.Judge.name()));
         final String modelsName = ServletUtil.getRequestParameter(request, RequestParameter.ModelsName.name());
-        final int modelId = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModelID.name()));
+        final int modelId = Integer.parseInt(ServletUtil.getRequestParameter(request, RegistrationServlet.RequestParameter.ModelId.getParameterName()));
         final int modellerId = Integer
                 .parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModellerID.name()));
 

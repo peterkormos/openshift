@@ -96,7 +96,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 		<td align="center"> 
 			<jsp:include page="fillableFormField.jsp">
 				<jsp:param name="name"
-					value="<%=JudgingServlet.RequestParameter.ModelID.name()%>" />
+					value="<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>" />
 				<jsp:param name="value"
 					value='<%=judgedModel == null ? "" : judgedModel.getModelID()%>' />
 				<jsp:param name="size" value='3' />
