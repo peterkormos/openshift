@@ -57,7 +57,6 @@ else {
 
 	<form name="input" id="input" onsubmit="myFunction()"
 		action="../RegistrationServlet" method="put" accept-charset="UTF-8">
-		<input type="hidden" id="command" name="command" value="">
 		<table style="border: 0px; width: 100%">
 			<tr>
 				<td rowspan="2"><img style="height: 25mm"
