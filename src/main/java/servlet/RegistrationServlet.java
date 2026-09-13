@@ -2410,7 +2410,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		
 		final String language = getLanguageCodeForCurrentUser(request);
-		buff.append("<input type='hidden' name='language' value='" + language + "'>");
+		buff.append("<input type='hidden' name='"+RequestParameter.Language.getParameterName()+"' value='" + language + "'>");
 
 		final List<User> users = servletDAO.getUsers();
 		buff.append("<input type='hidden' name='rows' value='" + users.size() + "'>");
