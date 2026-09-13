@@ -35,7 +35,7 @@ if (servlet.isAdminSession(session)) {
 	bet&ouml;lt&eacute;se...</a>
 <p>
 
-	Egy makett nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa:
+	Egy makettez&#337; nevez&eacute;si lapj&aacute;nak nyomtat&aacute;sa:
 	<jsp:include page="modelSelect.jsp">
 		<jsp:param name="action" value="printMyModels" />
 		<jsp:param name="submitLabel"
