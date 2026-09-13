@@ -114,7 +114,6 @@ function checkDeleteUserRequest()
 		accept-charset="UTF-8"
 <%-- 		onSubmit='return checkEmail(this) <%= passwordCheck %> && checkName(this)'> --%>
 		onSubmit='return checkEmail(this) <%= passwordCheck %> && checkName(this)'>
-		<input type="hidden" id="command" name="command" value="">
 		<p>
 			<font color="#FF0000" size="+3">&#8226;</font>
 			<%=ServletUtil.getLabel(request, servlet, "mandatory.fields")%></p>
