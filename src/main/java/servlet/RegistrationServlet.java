@@ -2135,12 +2135,12 @@ public class RegistrationServlet extends HttpServlet {
 			session.setAttribute(SessionAttribute.Models.name(), models);
 		}
 		
-		if (RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE
-				.equals(ServletUtil.getOptionalRequestParameter(request, "finishRegistration"))) {
+		if (ServletUtil.getOptionalParameter(request, "finishRegistration").isEmpty()) {
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("add") + ": "
 					+ model.scale + " - " + model.name + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
-			response.sendRedirect("jsp/modelForm.jsp");
+			boolean goToParentDir = request.getPathInfo() != null;
+			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/modelForm.jsp");
 		} else {
 			if (!(isAdminSession(session) || user.isLocalUser())) {
 				sendEmailWithModels(user, false /* insertUserDetails */);

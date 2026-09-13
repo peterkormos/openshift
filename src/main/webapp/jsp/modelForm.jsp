@@ -165,11 +165,10 @@ if(!servlet.isAdminSession(session))
 
 	<jsp:include page="ADMIN_helyi.jsp" />
 
-	<form name='input' id='input' action='../RegistrationServlet'
+	<form name='input' id='input' action='../RegistrationServlet/<%=action%>'
 		method='POST' accept-charset="UTF-8"
 		onkeypress="return event.keyCode != 13;"
 		onsubmit="return checkMandatory(this);">
-		<input type='hidden' name='command' id='command' value='<%=action%>'>
 
 		<!-- modelID for modify...-->
 		<%

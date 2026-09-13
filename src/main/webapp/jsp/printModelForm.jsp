@@ -40,7 +40,7 @@ final User user = RegistrationServlet.getUser(request);
 			<div class="tooltip">
 				<a
 											<%= firstModel ? "class='pulseBtn'" : ""%>
-					href="../RegistrationServlet?command=inputForModifyModel&modelID=<%=model.getId()%>">
+					href="../RegistrationServlet/inputForModifyModel?modelID=<%=model.getId()%>">
 					<img src="../icons/modify2.png" height="30" align="center" 
 					/> <span
 					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "modify")%></span>
@@ -51,7 +51,7 @@ final User user = RegistrationServlet.getUser(request);
 			<div class="tooltip">
 				<a
 											<%= firstModel ? "class='pulseBtn'" : ""%>
-					href="../RegistrationServlet?command=deleteModel&modelID=<%=model.getId()%>">
+					href="../RegistrationServlet/deleteModel?modelID=<%=model.getId()%>">
 					<img src="../icons/delete2.png" height="30" align="center" 
 					/> <span
 					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "delete")%></span>
