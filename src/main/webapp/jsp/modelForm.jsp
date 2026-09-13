@@ -174,7 +174,7 @@ if(!servlet.isAdminSession(session))
 		<%
 		if (model != null) {
 		%>
-		<input type='hidden' name='modelID' value='<%=model.getId()%>'>
+		<input type='hidden' name='<%=RequestParameter.ModelId.getParameterName() %>' value='<%=model.getId()%>'>
 		<%
 		}
 		%>

@@ -124,7 +124,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static enum RequestParameter {
-		Show("s"), Language("l"), Action("a");
+		Show("s"), Language("l"), Action("a"), ModelId("m");
 
 		private RequestParameter() {
 			parameterName = name();
@@ -480,7 +480,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void getModelInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		final String modelID = ServletUtil.getRequestParameter(request, "modelID");
+		final String modelID = ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName());
 
 		final Model model = servletDAO.getModel(Integer.parseInt(modelID));
 
@@ -1141,7 +1141,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		int modelID;
 		try {
-			modelID = Integer.parseInt(parameters.get("modelID"));
+			modelID = Integer.parseInt(parameters.get(RequestParameter.ModelId.getParameterName()));
 		} catch (NumberFormatException e) {
 			modelID = getLogoIDForShow(getShowFromSession(request));
 		}
@@ -2066,7 +2066,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void inputForModifyModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		User user = getUser(request);
-		final int modelID = Integer.parseInt(ServletUtil.getRequestParameter(request, "modelID"));
+		final int modelID = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
 		final Model model = servletDAO.getModel(modelID);
 		if (user.isAdminUser() || user.getId() == model.getUserID()) {
 			getModelForm(request, response, Command.modifyModel.name(), "modify", model);
@@ -2088,7 +2088,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void modifyModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final HttpSession session = getHttpSession(request);
 
-		final int modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, "modelID"));
+		final int modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
 
 		final Model model = servletDAO.getModel(modelID);
 		createModel(model, request);
@@ -2301,7 +2301,7 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(
 				"<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='post'  enctype='multipart/form-data'>");
 		for (final Model model : models) {
-			buff.append("<input type='radio' name='modelID' value='" + model.getId() + "'/>");
+			buff.append("<input type='radio' name='"+RequestParameter.ModelId.getParameterName()+"' value='" + model.getId() + "'/>");
 			buff.append(model.scale + " - " + model.producer + " - " + model.name + "<br>");
 		}
 		buff.append("<p><input type='file' name='imageFile' />");
@@ -2352,7 +2352,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		for (final Model model : models) {
 			buff.append("<label>\n");
-			buff.append("<input type='radio' name='modelID' value='" + model.getId() + "' "
+			buff.append("<input type='radio' name='"+RequestParameter.ModelId.getParameterName()+"' value='" + model.getId() + "' "
 					+ (models.size() == 1 ? "checked" : "") + "/>\n");
 			buff.append(model.scale + " - " + model.producer + " - " + model.name + "<br>");
 			buff.append("</label>\n");
@@ -2513,7 +2513,7 @@ public class RegistrationServlet extends HttpServlet {
 	private void deleteModel(final HttpServletRequest request)
 			throws MissingRequestParameterException, NumberFormatException, SQLException, UserNotLoggedInException {
 		User user = getUser(request);
-		Integer modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, "modelID"));
+		Integer modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
 		final Model model = servletDAO.getModel(modelID);
 
 		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
@@ -2730,7 +2730,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void printMyModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
 
-		final String modelID = ServletUtil.getOptionalRequestParameter(request, "modelID");
+		final String modelID = ServletUtil.getOptionalRequestParameter(request, RequestParameter.ModelId.getParameterName());
 		Optional<String> maxModelsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.MaxModelsPerPage.name());
 		Optional<String> modelRowsPerPage = ServletUtil.getOptionalParameter(request, RegistrationServlet.SystemParameter.ModelRowsPerPage.name());
 
@@ -3276,7 +3276,7 @@ public class RegistrationServlet extends HttpServlet {
 		response.setContentType("image/jpeg");
 
 		try {
-			loadImage(Integer.parseInt(ServletUtil.getRequestParameter(request, "modelID")),
+			loadImage(Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName())),
 					response.getOutputStream());
 		} catch (final Exception e) {
 		}

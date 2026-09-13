@@ -108,7 +108,7 @@ String show = RegistrationServlet.getShowFromSession(session);
 					onClick="document.getElementById('command4').value='inputForModifyModel';document.getElementById('input4').submit();">Makett
 						&aacute;tsorol&aacute;sa: </a></td>
 				<td><input placeholder="Makett sorsz&aacute;ma" type="number"
-					name="modelID"
+					name="<%=RequestParameter.ModelId.getParameterName() %>>"
 					onchange="document.getElementById('command4').value='inputForModifyModel'">
 				</td>
 			</tr>

@@ -1,4 +1,5 @@
 <%@page import="datatype.*"%>
+<%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="util.*"%>
 
 <%@page import="java.util.*"%>
@@ -40,7 +41,7 @@ final ResourceBundle language = RegistrationServlet.getLanguageFromSession(reque
 
 			<tr>
 				<td><jsp:include page="textInput.jsp">
-						<jsp:param name="name" value="modelID" />
+						<jsp:param name="name" value="<%=RequestParameter.ModelId.getParameterName() %>>" />
 						<jsp:param name="label" value='<%=language.getString("modelID")%>' />
 					</jsp:include></td>
 			</tr>
