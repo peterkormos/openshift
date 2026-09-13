@@ -353,7 +353,7 @@ if(!servlet.isAdminSession(session))
 
 				<td><input name='<%=action%>' type='submit'
 					value='<%=ServletUtil.getLabel(request, servlet, submitLabel)%>'> <%
- if (action == RegistrationServlet.Command.addModel.name()) {
+ if (RegistrationServlet.Command.addModel.name().equals(action)) {
  %> <input name='finishRegistration' type='submit'
 					value='<%=ServletUtil.getLabel(request, servlet, "finish.model.registration")%>'>
 					<%
@@ -442,7 +442,7 @@ if(!servlet.isAdminSession(session))
 
 				<td><input name='<%=action%>' type='submit'
 					value='<%=ServletUtil.getLabel(request, servlet, submitLabel)%>'> <%
- if (action == RegistrationServlet.Command.addModel.name()) {
+ if (RegistrationServlet.Command.addModel.name().equals(action)) {
  %> <input name='finishRegistration' type='submit'
 					value='<%=ServletUtil.getLabel(request, servlet, "finish.model.registration")%>'>
 					<%
