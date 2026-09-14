@@ -1862,6 +1862,11 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("Login consent");
 		buff.append("</th>");
 
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append(language.getString("last.login"));
+		buff.append("</th>");
+
+
 		buff.append("</tr>");
 
 		for (final User user : users) {
@@ -1922,6 +1927,10 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("<td align='center' >");
 			buff.append(servletDAO.getLoginConsents(user.getId()).stream().map(lc -> lc.getType().name())
 					.collect(Collectors.joining(", ")));
+			buff.append("</td>");
+			
+			buff.append("<td align='center' >");
+			buff.append(user.getLastLogin());
 			buff.append("</td>");
 
 			buff.append("</tr>");
@@ -2135,7 +2144,7 @@ public class RegistrationServlet extends HttpServlet {
 			session.setAttribute(SessionAttribute.Models.name(), models);
 		}
 		
-		if (ServletUtil.getOptionalParameter(request, "finishRegistration").isEmpty()) {
+		if (!ServletUtil.getOptionalParameter(request, "finishRegistration").isPresent()) {
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("add") + ": "
 					+ model.scale + " - " + model.name + " - "
 					+ servletDAO.getCategory(model.categoryID).categoryCode);
@@ -2430,6 +2439,7 @@ public class RegistrationServlet extends HttpServlet {
 				buff.append("<th></th>");				
 			}
 			buff.append("<th>"+languageBundle.getString("userID") + "</th>");
+			buff.append("<th>"+languageBundle.getString("last.login") + "</th>");
 			buff.append("</tr>");
 
 			for (int i = 0; i < users.size(); i++) {
@@ -2450,6 +2460,7 @@ public class RegistrationServlet extends HttpServlet {
 					buff.append("<td>" + String.join(" - ", user.email, user.address, user.telephone) + "</td>");
 				}
 				buff.append("<td>" + user.getId() + "</td>");
+				buff.append("<td>" + user.getLastLogin() + "</td>");
 				buff.append("</tr>");
 				
 			}
