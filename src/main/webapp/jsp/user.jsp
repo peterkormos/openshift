@@ -13,10 +13,8 @@
 //input parameters	
 boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestParameter(request, "directRegister"));
 
-String action = ServletUtil.getRequestParameter(request, RequestParameter.Action.getParameterName());
-if (action == null) {
-	action = (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name());
-}
+Optional<String> actionInRequest = ServletUtil.getOptionalParameter(request, RequestParameter.Action.getParameterName());
+String action = actionInRequest.isPresent() ? actionInRequest.get() : (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name());
 
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
