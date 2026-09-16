@@ -13,14 +13,27 @@
 //input parameters	
 boolean directRegister = Boolean.parseBoolean(ServletUtil.getOptionalRequestParameter(request, "directRegister"));
 
-Optional<String> actionInRequest = ServletUtil.getOptionalParameter(request, RequestParameter.Action.getParameterName());
-String action = actionInRequest.isPresent() ? actionInRequest.get() : (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name());
-
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
-ResourceBundle language = servlet.getLanguageFromSessionOrRequest(request);
-session.setAttribute(CommonSessionAttribute.Language.name(), language);
-String languageCode = LanguageUtil.getLanguage(language);
+ResourceBundle language = null;
+String languageCode = null;
+
+try {
+	language = servlet.getLanguageFromSessionOrRequest(request);
+	session.setAttribute(CommonSessionAttribute.Language.name(), language);
+	languageCode = LanguageUtil.getLanguage(language);
+}
+catch(Exception ex) {
+	RegistrationServlet.redirectToStartPage(request, response);
+	return;
+}
+
+Optional<String> actionInRequest = ServletUtil.getOptionalParameter(request, RequestParameter.Action.getParameterName());
+String action = actionInRequest.isPresent() ? actionInRequest.get() : (String)session.getAttribute(RegistrationServlet.SessionAttribute.Action.name());
+if(action == null) {
+	RegistrationServlet.redirectToStartPage(request, response);
+	return;
+}
 
 User user = null;
 try {
@@ -118,7 +131,7 @@ function checkDeleteUserRequest()
 		<table width="47%" border="0">
 		
 			<%
-			if (action.equals("register")) {
+			if ("register".equals(action)) {
 			%>
 				<jsp:include page="shows.jsp"></jsp:include>
 				<jsp:include page="loginConsent.jsp"></jsp:include>
