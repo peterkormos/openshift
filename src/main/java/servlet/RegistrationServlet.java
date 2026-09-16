@@ -659,7 +659,7 @@ public class RegistrationServlet extends HttpServlet {
 			session.setAttribute(SessionAttribute.MainPageFile.name(), getDefaultMainPageFile());
 			
 			if (user.getFullName().split(" ").length == 1) {
-				setNoticeInSession(session, PageNotice.NoticeType.Error, "<a href='user.jsp?"+RequestParameter.Action.getParameterName()+"=modifyUser'>("
+				setErrorNoticeInSession(session, "<a href='user.jsp?"+RequestParameter.Action.getParameterName()+"=modifyUser'>("
 								+ user.getFullName() + ") " + language.getString("name.too.short") + "</a>");
 			}
 		}
@@ -731,9 +731,13 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append(language.getString("password.change"));
 		buff.append("</body></html>");
 
-		sendEmail(user.email, language.getString("email.subject"), buff);
-
-		proceedToLoginResponse(request, response, language, "email.was.sent", PageNotice.NoticeType.OK);
+		if(!sendEmail(user.email, language.getString("email.subject"), buff)) {
+			writeErrorResponse(request, response, "Error: <b>" + language.getString("email.not.sent") + "</b>");
+			return;
+		} 
+		else {
+			proceedToLoginResponse(request, response, language, "email.was.sent", PageNotice.NoticeType.OK);
+		}
 	}
 
 	public void batchAddModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -775,7 +779,10 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		if (user != null && user.email != null && !user.isLocalUser()) {
-			sendEmailWithModels(user, true);
+			if(!sendEmailWithModels(user, true))
+			 {
+				setErrorNoticeInSession(getHttpSession(request), language.getString("email.not.sent"));
+			}
 		}
 
 		if (!users.isEmpty()) {
@@ -1419,11 +1426,14 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 		servletDAO.save(user);
-		
-		if (!user.isLocalUser())
-			sendEmailWithModels(user, true);
-		
 		loginSuccessful(request, response, user, getShowFromRequest(request));
+		
+		if (!user.isLocalUser()) {
+			if (!sendEmailWithModels(user, true)) {
+				setErrorNoticeInSession(getHttpSession(request), language.getString("email.not.sent"));
+			}
+		}
+		
 	}
 
 	void loginAuthenticationFailed(final HttpServletRequest request, final HttpServletResponse response,
@@ -1487,7 +1497,7 @@ public class RegistrationServlet extends HttpServlet {
 		redirectToStartPage(request, response);
 	}
 
-	private void sendEmailWithModels(final User user, final boolean insertUserDetails) {
+	private boolean sendEmailWithModels(final User user, final boolean insertUserDetails) {
 		final StringBuilder message = new StringBuilder();
 		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
@@ -1545,7 +1555,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		message.append("\n\r</body></html>");
 
-		sendEmail(user.email, language.getString("email.subject"), message);
+		return sendEmail(user.email, language.getString("email.subject"), message);
 	}
 
 	private void addEmailParameters(final StringBuilder message, List<EmailParameter> modelerParameters) {
@@ -1559,14 +1569,17 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 
-	public void sendEmail(final String to, final String subject, final StringBuilder message) {
+	public boolean sendEmail(final String to, final String subject, final StringBuilder message) {
 		if (to.trim().length() == 0 || to.equals("-") || to.indexOf("@") == -1) {
-			return;
+			return false;
 		}
 		try {
 			emailUtil.sendEmail(getServerConfigParamter("email.from"), to, subject, message.toString());
+			return true;
 		} catch (Exception e) {
 			logger.error("", e);
+			
+			return false;
 		}
 	}
 
@@ -2126,10 +2139,11 @@ public class RegistrationServlet extends HttpServlet {
 		model.setUser(user);
 		createModel(model, request);
 
+		ResourceBundle language = languageUtil.getLanguage(user.language);
 		final int maxModelsPerCategory = getMaxModelsPerCategory(request);
 		if (servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
 			writeErrorResponse(request,
-					response, "Maximum " + languageUtil.getLanguage(user.language).getString("models.number.per.category") + ": "
+					response, "Maximum " + language.getString("models.number.per.category") + ": "
 							+ maxModelsPerCategory + "!");
 			return;
 		}
@@ -2152,8 +2166,12 @@ public class RegistrationServlet extends HttpServlet {
 			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/modelForm.jsp");
 		} else {
 			if (!(isAdminSession(session) || user.isLocalUser())) {
-				sendEmailWithModels(user, false /* insertUserDetails */);
-				setEmailSentNoticeInSession(request, user);
+				if(!sendEmailWithModels(user, false /* insertUserDetails */)) {
+					setErrorNoticeInSession(session, language.getString("email.not.sent"));
+				}
+				else {
+					setEmailSentNoticeInSession(request, user);
+				}
 			}
 			session.removeAttribute(SessionAttribute.Action.name());
 			redirectToMainPage(request, response);
@@ -2214,6 +2232,11 @@ public class RegistrationServlet extends HttpServlet {
 		setNoticeInSession(session, PageNotice.NoticeType.OK, noticeText);
 	}
 
+	
+	private void setErrorNoticeInSession(final HttpSession session, String noticeText) {
+		setNoticeInSession(session, PageNotice.NoticeType.Error, noticeText);
+	}
+	
 	private Model createModel(final Model model, final HttpServletRequest request)
 			throws NumberFormatException, MissingRequestParameterException {
 		return createModel(model, request, "");
@@ -2887,9 +2910,14 @@ public class RegistrationServlet extends HttpServlet {
 	public void sendEmail(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		final User user = getUser(request);
 
-		if (!(isAdminSession(getHttpSession(request)) || user.isLocalUser())) {
-			sendEmailWithModels(user, false);
-			setEmailSentNoticeInSession(request, user);
+		HttpSession session = getHttpSession(request);
+		if (!(isAdminSession(session) || user.isLocalUser())) {
+			if (!sendEmailWithModels(user, false)) {
+				setErrorNoticeInSession(session, getLanguageFromSession(request).getString("email.not.sent"));
+			}
+			else {
+				setEmailSentNoticeInSession(request, user);
+			}
 		}
 
 		redirectToMainPage(request, response);
