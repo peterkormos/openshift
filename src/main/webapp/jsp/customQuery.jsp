@@ -24,8 +24,8 @@ final ResourceBundle language = RegistrationServlet.getLanguageFromSession(reque
 					%> <jsp:include page="categories.jsp">
 						<jsp:param name="label"
 							value='<%=language.getString("category.code")%>' />
-						<jsp:param name="selectedLabel" value="<%=categoryLabel%>" />
-						<jsp:param name="selectedValue" value="<%=categoryLabelValue%>" />
+						<jsp:param name="selectedLabel" value='<%=categoryLabel%>' />
+						<jsp:param name="selectedValue" value='<%=categoryLabelValue%>' />
 						<jsp:param name="mandatory" value="false" />
 					</jsp:include>
 
@@ -41,7 +41,7 @@ final ResourceBundle language = RegistrationServlet.getLanguageFromSession(reque
 
 			<tr>
 				<td><jsp:include page="textInput.jsp">
-						<jsp:param name="name" value="<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>>" />
+						<jsp:param name="name" value='<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>' />
 						<jsp:param name="label" value='<%=language.getString("modelID")%>' />
 					</jsp:include></td>
 			</tr>
@@ -60,9 +60,9 @@ final ResourceBundle language = RegistrationServlet.getLanguageFromSession(reque
 				%> <jsp:include page="countries.jsp">
 					<jsp:param name="label"
 						value='<%=language.getString("models.markings")%>' />
-					<jsp:param name="defaultSelectedLabel" value="<%=markingsLabel%>" />
+					<jsp:param name="defaultSelectedLabel" value='<%=markingsLabel%>' />
 					<jsp:param name="defaultSelectedValue"
-						value="<%=markingsLabelValue%>" />
+						value='<%=markingsLabelValue%>' />
 					<jsp:param name="selectName" value="markings" />
 				</jsp:include>
 			</td>

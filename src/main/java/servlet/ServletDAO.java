@@ -191,7 +191,7 @@ public class ServletDAO extends HibernateDAO
 
 	where = createWhereStatement(request, where, "categoryID", "categoryID", false);
 	where = createWhereStatement(request, where, "user.id", "userID", false);
-	where = createWhereStatement(request, where, "ID", "modelID", false);
+	where = createWhereStatement(request, where, "id", RegistrationServlet.RequestParameter.ModelId.getParameterName() , false);
 	where = createWhereStatement(request, where, "name", "modelname", true);
 	where = createWhereStatement(request, where, "markings", "markings", true);
 	where = createWhereStatement(request, where, "producer", "modelproducer", true);
