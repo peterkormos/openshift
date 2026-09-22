@@ -1382,6 +1382,14 @@ public class RegistrationServlet extends HttpServlet {
 		redirectToMainPage(request, response);
 	}
 
+	public void deleteModelForShow(final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin);
+		
+		deleteModelsForShow(getShowFromSession(request));
+		redirectToMainPage(request, response);
+	}
+	
 	private User directRegisterUser(final HttpServletRequest request, final ResourceBundle language,
 			final String httpParameterPostTag, final String email, final String password) throws Exception {
 		User user = createUser(request, email, password, httpParameterPostTag);
@@ -2961,15 +2969,11 @@ public class RegistrationServlet extends HttpServlet {
 	private void deleteDataForShow(final HttpServletRequest request) throws SQLException {
 		final String show = getShowFromSession(request);
 
-		for (final AwardedModel awardedModel : servletDAO.getAwardedModels()) {
-			if (servletDAO.getCategory(awardedModel.categoryID).group.show.equals(show)) {
-				servletDAO.deleteAwardedModel(awardedModel.getId());
-			}
-		}
-		servletDAO.deleteEntries("MAK_AWARDEDMODELS");
-
 		deleteModelsForShow(show);
 		
+		servletDAO.delete(Category.class, "group.show = '" + show + "'");
+		servletDAO.delete(CategoryGroup.class, "show = '" + show + "'");
+
 		systemParameters.remove(show);
 		try {
 			servletDAO.delete(SystemParameter.class, " r.show = '" + show + "'");
@@ -2981,20 +2985,21 @@ public class RegistrationServlet extends HttpServlet {
 		servletDAO.execute("update MAK_PICTURES set id = id + 1 where id < " + logoIDForShow);
 	}
 
-	private void deleteModelsForShow(final String show) {
-		servletDAO.getCategoryGroups(show).forEach(categoryGroup -> {
-			servletDAO.getCategoryList(categoryGroup.getId(), show).forEach(category -> {
-				servletDAO.getModelsInCategory(category.getId()).forEach(model -> {
-					try {
-						servletDAO.deleteModel(model);
-					} catch (SQLException e) {
-						logger.error("", e);
-					}
-				});
-				servletDAO.delete(category);
-			});
+	private void deleteModelsForShow(final String show) throws SQLException {
+		for (final AwardedModel awardedModel : servletDAO.getAwardedModels()) {
+			if (servletDAO.getCategory(awardedModel.categoryID).group.show.equals(show)) {
+				servletDAO.deleteAwardedModel(awardedModel.getId());
+			}
+		}
+		servletDAO.deleteEntries("MAK_AWARDEDMODELS");
+
+		servletDAO.getModelsForShow(show, ServletDAO.INVALID_USERID).forEach(model -> {
+			try {
+				servletDAO.deleteModel(model);
+			} catch (SQLException e) {
+				logger.error("", e);
+			}
 		});
-		servletDAO.delete(CategoryGroup.class, "show = '" + show + "'");
 	}
 
 	public void statistics(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -3415,5 +3420,9 @@ public class RegistrationServlet extends HttpServlet {
 	
 	private ResourceBundle getDefaultLanguage() {
 		return getLanguage(DEFAULT_LANGUAGE);
+	}
+
+	public List<String> getShowsWithPreRegistration() throws SQLException {
+		return servletDAO.getShows().stream().filter(show -> isPreRegistrationAllowed(show)).collect(Collectors.toList());
 	}
 }

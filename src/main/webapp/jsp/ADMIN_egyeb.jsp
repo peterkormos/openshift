@@ -34,6 +34,11 @@ if (show == null) {
 		kateg&oacute;ri&aacute;j&aacute;nak t&ouml;rl&eacute;se az
 		adatb&aacute;zisb&oacute;l </a>
 <p>
+	<a href="../RegistrationServlet/deleteModelForShow"
+		style="background: red; font-weight: bold"> Aktu&aacute;lis
+		verseny &ouml;sszes makettj&eacute;nek t&ouml;rl&eacute;se az
+		adatb&aacute;zisb&oacute;l </a>
+<p>
 	<a href="../RegistrationServlet/deletedirectUsers"
 		style="background: red; font-weight: bold"> &Ouml;sszes
 		helysz&iacute;nen regisztr&aacute;lt felhaszn&aacute;l&oacute;
