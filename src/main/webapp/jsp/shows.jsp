@@ -13,7 +13,9 @@
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 
-final List<String> shows = servletDAO.getShows();
+Optional<String> adminLogin = ServletUtil.getOptionalParameter(request, "adminLogin");
+
+final List<String> shows = adminLogin.isPresent() ? servletDAO.getShows() : servlet.getShowsWithPreRegistration();
 String showInRequest = null;
 
 try {

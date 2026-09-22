@@ -29,7 +29,7 @@ try {
 } catch (final Exception e) {
 }
 
-List<String> shows = show == null ? servletDAO.getShows() : Arrays.asList(show);
+List<String> shows = show == null ? servlet.getShowsWithPreRegistration() : Arrays.asList(show);
 %>
 
 <!DOCTYPE html>
