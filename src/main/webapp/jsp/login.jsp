@@ -31,7 +31,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 <script> 
 	    function checkSubmit(form) {
-	    	var showNotSet = form.<%=RegistrationServlet.RequestParameter.Language.getParameterName()%> == null || form.<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>.value == '';
+	    	var showNotSet = form.<%=RegistrationServlet.RequestParameter.Show.getParameterName()%> == null || form.<%=RegistrationServlet.RequestParameter.Show.getParameterName()%>.value == '';
 	    	var dataUsageNoConsent = !document.getElementById('dataUsageConsentCompetition').checked;
 	    	var submitDisabled = (showNotSet || dataUsageNoConsent);
 	    	var noticeDiv = document.getElementById('noticeDiv');
