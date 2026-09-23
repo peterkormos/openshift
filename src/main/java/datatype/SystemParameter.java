@@ -66,6 +66,11 @@ public class SystemParameter extends Record{
 	  public void setShow(String show) {
 		  this.show = show;
 	  }
+
+	  @Override
+	  public String toString() {
+		return "SystemParameter [" + super.toString() + ", value=" + value + ", name=" + name + ", show=" + show + "]";
+	  }
 	  
 	  
 }
