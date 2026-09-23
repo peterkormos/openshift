@@ -12,7 +12,7 @@
 						</jsp:include>
 						<input
 							name="<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>"
-							value="<%=RegistrationServlet.DEFAULT_LANGUAGE%>>" type="hidden">
+							value="<%=RegistrationServlet.DEFAULT_LANGUAGE%>" type="hidden">
 						<tr>
 							<td colspan="2">email: <input name="email">
 							</td>
