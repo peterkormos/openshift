@@ -71,9 +71,9 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 <body>
 	<form name="input" id="inputForm" onSubmit="return checkSubmit(this)"
-		action="../RegistrationServlet" method="post" accept-charset="UTF-8">
+		action="../RegistrationServlet/login" method="post" accept-charset="UTF-8">
 
-		<input type="hidden" name="command" value="login"> <input
+		<input
 			type="hidden"
 			name="<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>"
 			value="<%=languageCode%>">

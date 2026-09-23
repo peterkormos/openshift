@@ -2,8 +2,7 @@
 <%@page import="servlet.RegistrationServlet"%>
 <link rel="stylesheet" href="base.css" media="screen" />
 <body>
-	<form action="../RegistrationServlet" method="get">
-		<input name="command" value="login" type="hidden">
+	<form action="../RegistrationServlet/login" method="get">
 		<table border="0" height="100%" width="100%">
 			<tr>
 				<td align="center" valign="middle">
