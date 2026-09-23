@@ -15,12 +15,12 @@ ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 
 Optional<String> adminLogin = ServletUtil.getOptionalParameter(request, "adminLogin");
 
-final List<String> shows = adminLogin.isPresent() ? servletDAO.getShows() : servlet.getShowsWithPreRegistration();
+List<String> shows = adminLogin.isPresent() ? servletDAO.getShows() : servlet.getShowsWithPreRegistration();
 String showInRequest = null;
 
 try {
 	showInRequest = RegistrationServlet.getShowFromRequest(request);
-	shows.retainAll(Arrays.asList(showInRequest));
+	shows = Arrays.asList(showInRequest);
 } catch (final Exception e) {
 }
 
