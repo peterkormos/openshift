@@ -66,9 +66,8 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 		<td colspan="2"><a href="../RegistrationServlet/exportMasters">&Ouml;sszes
 				adat export&aacute;l&aacute;sa</a></td>
 
-		<form accept-charset="UTF-8" action="../RegistrationServlet"
+		<form accept-charset="UTF-8" action="../RegistrationServlet/importData"
 			method="post" enctype="multipart/form-data" name="input">
-			<input type="hidden" name="command" value="importData">
 			<td colspan="5"><input type="submit"
 				value="Excelb&#337;l import&aacute;l&aacute;s"> <input
 				type="file" name="mastersFile"></td>

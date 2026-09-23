@@ -12,10 +12,8 @@ String show = (String) session.getAttribute(RegistrationServlet.SessionAttribute
 %>
 
 <body>
-	<form name="input" action="../RegistrationServlet" method="POST"
+	<form name="input" action="../RegistrationServlet/addCategoryGroup" method="POST"
 		accept-charset="UTF-8">
-		<input type="hidden" name="command" value="addCategoryGroup">
-
 		<table border="0">
 			<tr>
 				<th colspan="2">&Uacute;j kateg&oacute;riacsoport

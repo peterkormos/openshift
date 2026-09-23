@@ -44,12 +44,13 @@ if (show == null) {
 		helysz&iacute;nen regisztr&aacute;lt felhaszn&aacute;l&oacute;
 		t&ouml;rl&eacute;se </a>
 <form accept-charset="UTF-8" name="input" id="input6"
-	action="../RegistrationServlet" method="post">
-	<input type="hidden" name="command" value="directRegister"> <input
+	action="../RegistrationServlet/directRegister" method="post">
+	<input
 		type="hidden" name="<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>"
 		value="<%=User.AdminTypes.ShowAdmin.getLanguage()%>"> <input
 		type="hidden" name="country" value="Hungary"> <input type="hidden"
-		name="city" value="city <input type="hidden"
+		name="city" value="city">
+		<input type="hidden"
 		name="gender" value="<%=Gender.Male.name()%>"> <input
 		type="hidden" name="yearofbirth" value="1977"> <input
 		type="submit" name="" value="Helyi admin felv&eacute;tele">
@@ -57,10 +58,10 @@ if (show == null) {
 	password: <input type="text" name="password">
 </form>
 <form accept-charset="UTF-8" name="input"
-	action="../RegistrationServlet" method="post">
+	action="../RegistrationServlet/sql" method="post">
 	<p>SQL update:</p>
 	<p>
-		<input type="hidden" name="command" value="sql"> <input
+		<input
 			name="sql" type="text" value="" size="150">
 	</p>
 	<p>update MAK_SYSTEM set PARAM_VALUE='1'</p>
