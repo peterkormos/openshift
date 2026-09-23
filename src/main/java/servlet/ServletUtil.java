@@ -108,7 +108,6 @@ public class ServletUtil {
 
             return "".equals(value) ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : value;
         } catch (final MissingRequestParameterException e) {
-            e.printStackTrace();
             return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
         }
     }
@@ -129,7 +128,7 @@ public class ServletUtil {
             }
         }
 
-        if (RegistrationServlet.logger.isDebugEnabled()) {
+        if (RegistrationServlet.logger.isDebugEnabled() && throwException) {
             RegistrationServlet.logger.debug("HTTP parameter: " + name + " value: " + value);
         }
 
