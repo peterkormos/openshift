@@ -45,8 +45,9 @@ for (final String show : shows) {
 			style="height: 25mm; vertical-align: middle;"
 			src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
 			<span style="color: red"><b> <%=show%></b></span>
-	</label> <%
- }
- %> <font color='#FF0000' size='+3'>&#8226;</font></td>
+	</label> <font color='#FF0000' size='+3'>&#8226;</font></td>
 </tr>
+<%
+}
+%>
 
