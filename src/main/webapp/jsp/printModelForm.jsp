@@ -14,7 +14,6 @@ final User user = RegistrationServlet.getUser(request);
 	final ServletDAO servletDAO = servlet.getServletDAO();
 
 	final Model model = (Model) session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
-	final Category category = servletDAO.getCategory(model.categoryID);
 	String show = RegistrationServlet.getShowFromSession(session);
 	if (show == null) {
 		show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
@@ -29,6 +28,17 @@ final User user = RegistrationServlet.getUser(request);
 	ServletUtil.getRequestParameter(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
 	boolean firstModel = Boolean.parseBoolean(request.getParameter("firstModel"));
+%>
+
+<%
+if (!model.isAssignedToShow(show)) {
+%>
+<div class="hazard-border" style="display: inline-block;">
+    <div class="hazard-border-content">
+<div class="flash <%=PageNotice.NoticeType.Warning.name()%>"><%=ServletUtil.getLabel(request, servlet, "unlinked.model")%></div>
+<br>
+<%
+}
 %>
 
 <table style="border: 1px solid black">
@@ -57,20 +67,42 @@ final User user = RegistrationServlet.getUser(request);
 					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "delete")%></span>
 					 <%=ServletUtil.getLabel(request, servlet, "delete")%>
 				</a>
-			</div> <%
+			</div> 
+
+<%
+if (model.isAssignedToShow(show)) {
+%>
+			<div class="tooltip">
+				<a
+											<%= firstModel ? "class='pulseBtn'" : ""%>
+					href="../RegistrationServlet/unlinkModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
+					<img src="../icons/unlink.png" height="30" align="center" 
+					/> <span
+					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "unlink.model")%></span>
+					 <%=ServletUtil.getLabel(request, servlet, "unlink.model")%>
+				</a>
+			</div> 
+<%
+}
+%>
+			
+			<%
  	}
  %> <%
- 	List<String> judges = servlet.judgingServletDAO.getJudges(category.getId(), model.getId(),
- 			model.getUserID());
- 	if (!judges.isEmpty()) {
+	final Category category = model.getCategoryForShow(show).orElse(null);
+	 if(category != null) {
+	 	List<String> judges = servlet.judgingServletDAO.getJudges(category.getId(), model.getId(),
+	 			model.getUserID());
+	 	if (!judges.isEmpty()) {
  %><p> <%=language.getString("judge")%>: <%
- 	}
  	for (String judge : judges) {
  %><br> <a
 			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
 
 			<%
-				}
+		}
+	 }
+ 	}
 			%>
 		</td>
 	</tr>
@@ -102,7 +134,9 @@ final User user = RegistrationServlet.getUser(request);
 								<td valign="middle"><font><%=model.getId()%></font></td>
 								<td valign="middle"><font><%=model.getScale()%></font></td>
 								<td valign="middle"><font
-									style="border: 1px solid black; padding: 1mm; font-size: 4mm; white-space: nowrap;"><%=category.categoryCode%></font></td>
+									style="border: 1px solid black; padding: 1mm; font-size: 4mm; white-space: nowrap;"
+									<%=category == null ? "class='flash warning'" : ""%>
+									><%=category == null ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : category.categoryCode%></font></td>
 							</tr>
 							<tr height="3mm">
 								<td colspan="2"><font><%=model.getProducer()%></font></td>
@@ -164,3 +198,11 @@ final User user = RegistrationServlet.getUser(request);
 		</td>
 	</tr>
 </table>
+<%
+if (!model.isAssignedToShow(show)) {
+%>
+  </div>
+</div>
+<%
+}
+%>

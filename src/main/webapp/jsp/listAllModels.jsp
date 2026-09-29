@@ -24,22 +24,13 @@ if (user == null || !user.isAdminUser()) {
 
 final String show = RegistrationServlet.getShowFromSession(session);
 
-final List<? extends Model> models = RegistrationServlet.toPrintedModel(servletDAO.getModelsForShow(show, ServletDAO.INVALID_USERID));
+final List<? extends Model> models = RegistrationServlet.toPrintedModel(RegistrationServlet.getModelsForShow(show, servletDAO.getModels(ServletDAO.INVALID_USERID)), show);
 models.sort(new Comparator<Model>() {
 	@Override
 	public int compare(Model o1, Model o2) {
 		return Integer.compare(o2.getId(), o1.getId());
 	}
 });
-
-final Iterator<? extends Model> it = models.iterator();
-while (it.hasNext()) {
-	final Model model = it.next();
-
-	if (show != null && !servletDAO.getCategory(model.categoryID).group.show.equals(show)) {
-		it.remove();
-	}
-}
 
 session.setAttribute(RegistrationServlet.SessionAttribute.Models.name(), models);
 %>

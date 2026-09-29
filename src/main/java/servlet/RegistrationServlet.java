@@ -341,7 +341,7 @@ public class RegistrationServlet extends HttpServlet {
 			addExceptionToHistory(System.currentTimeMillis(), throwable, request);
 
 			String message = throwable.getMessage();
-			logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message);
+//			logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message);
 
 			if (EmailNotFoundException.class.isInstance(throwable)) {
 				EmailNotFoundException emailNotFoundException = EmailNotFoundException.class.cast(throwable);
@@ -621,7 +621,7 @@ public class RegistrationServlet extends HttpServlet {
 			setToAdminSession(session, user.getAdminType());
 		}
 		
-		List<Model> models = servletDAO.getModelsForShow(show, user.getId());
+		List<Model> models = servletDAO.getModels(user.getId());
 		session.setAttribute(SessionAttribute.Models.name(), models);
 
 		if (isRegistrationAllowed(show, session) && models.isEmpty() && !user.isAdminUser()) {
@@ -920,7 +920,7 @@ public class RegistrationServlet extends HttpServlet {
 		Map<Integer, Category> categories = (Map<Integer, Category>) ServletUtil.getSessionAttribute(request,
 				SessionAttribute.Categories.name());
 
-		List<List<Object>> modelsForExcel = getModelsForShow(show, models, categories).stream()
+		List<List<Object>> modelsForExcel = getModelsForShow(show, models).stream()
 				.sorted(Comparator.comparingInt(Model::getId).reversed())
 				.map(model -> {
 			ArrayList<Object> returned = new ArrayList<>();
@@ -1074,13 +1074,13 @@ public class RegistrationServlet extends HttpServlet {
 		return modelClasses;
 	}
 
-	public static List<Model> getModelsForShow(final String show, final List<Model> models,
-			Map<Integer, Category> categories) {
-		return models.stream().filter(model -> {
-			Category category = categories.get(model.categoryID);
-			if (category == null)
-				return false;
-			return show == null || category.group.show.equals(show);
+	public static List<Model> getModelsForShow(final String show, final List<Model> models) {
+		return getModelsForShow(show, models, false); 
+	}
+	
+	public static List<Model> getModelsForShow(final String show, final List<Model> models, boolean incluedUnlinked) {
+	return models.stream().filter(model -> {
+			return incluedUnlinked ? true : model.isAssignedToShow(show);
 		}).collect(Collectors.toList());
 	}
 
@@ -2123,7 +2123,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 		createModel(model, request);
 		User user = getUser(request);
-		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
+		if (user.isAdminUser() || user.getId() == model.getUserID()) {
 			servletDAO.save(model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
@@ -2142,6 +2142,8 @@ public class RegistrationServlet extends HttpServlet {
 	public synchronized void addModel(final HttpServletRequest request, final HttpServletResponse response) throws IOException
 	{
 		final User user = getUser(request);
+		final HttpSession session = getHttpSession(request);
+		String show = getShowFromSession(session);
 
 		final Model model = new Model(servletDAO.getNextID(Model.class));
 		model.setUser(user);
@@ -2149,7 +2151,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		ResourceBundle language = languageUtil.getLanguage(user.language);
 		final int maxModelsPerCategory = getMaxModelsPerCategory(request);
-		if (servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryID()) == maxModelsPerCategory) {
+		if (servletDAO.getModelsInCategory(model.getUserID(), model.getCategoryForShow(show).get().getId()) == maxModelsPerCategory) {
 			writeErrorResponse(request,
 					response, "Maximum " + language.getString("models.number.per.category") + ": "
 							+ maxModelsPerCategory + "!");
@@ -2158,9 +2160,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.save(model);
 
-		final HttpSession session = getHttpSession(request);
-		String show = getShowFromSession(session);
-		List<Model> models = servletDAO.getModelsForShow(show, user.getId());
+		List<Model> models = servletDAO.getModels(user.getId());
 
 		if (!models.isEmpty() && !user.isAdminUser()) {
 			session.setAttribute(SessionAttribute.Models.name(), models);
@@ -2252,8 +2252,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private Model createModel(final Model model, final HttpServletRequest request, final String httpParameterPostTag)
 			throws NumberFormatException, MissingRequestParameterException {
-		model.setCategoryID(
-				Integer.parseInt(ServletUtil.getRequestParameter(request, "categoryID" + httpParameterPostTag)));
+		model.setCategory(servletDAO.getCategory(Integer.parseInt(ServletUtil.getRequestParameter(request, "categoryID" + httpParameterPostTag))));
 		model.setScale(ServletUtil.getRequestParameter(request, "modelscale" + httpParameterPostTag));
 		model.setName(ServletUtil.getRequestParameter(request, "modelname" + httpParameterPostTag));
 		model.setProducer(ServletUtil.getRequestParameter(request, "modelproducer" + httpParameterPostTag));
@@ -2558,7 +2557,7 @@ public class RegistrationServlet extends HttpServlet {
 		Integer modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
 		final Model model = servletDAO.getModel(modelID);
 
-		if (user.isAdminUser() || (!user.isAdminUser() && user.getId() == model.getUserID())) {
+		if (user.isAdminUser() || user.getId() == model.getUserID()) {
 			servletDAO.deleteModel(model);
 			setOKNoticeInSession(getHttpSession(request), getLanguageFromSession(request).getString("delete") + ": "
 					+ model.scale + " - " + model.name + " - "
@@ -2571,6 +2570,35 @@ public class RegistrationServlet extends HttpServlet {
 		redirectToMainPage(request, response);
 	}
 
+	public void unlinkModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		String show = getShowFromSession(request);
+
+		final int modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
+		
+		final Model model = servletDAO.getModel(modelID);
+		User user = getUser(request);
+		final HttpSession session = getHttpSession(request);
+		if (user.isAdminUser() || user.getId() == model.getUserID()) {
+			unlinkModel(show, model);
+
+			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
+			setOKNoticeInSession(session, getLanguageFromSession(request).getString("modify.model") + ": "
+					+ model.scale + " - " + model.name);
+		}
+		session.removeAttribute(SessionAttribute.ModelID.name());
+		session.removeAttribute(SessionAttribute.Action.name());
+		redirectToMainPage(request, response);
+	}
+
+	private void unlinkModel(String show, final Model model) {
+		model.getCategories().forEach(category -> {
+			if(category.getGroup().getShow().equals(show)) {
+				model.unsetCategory(category);
+			}
+		});
+		servletDAO.save(model);
+	}
+	
 	public void deleteAwardedModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin);
@@ -2682,7 +2710,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			List<Model> models = new LinkedList<>();
 			for (final User user : users) {
-				final List<Model> usersModels = servletDAO.getModelsForShow(getShowFromSession(request), user.getId());
+				final List<Model> usersModels = RegistrationServlet.getModelsForShow(getShowFromSession(request), servletDAO.getModels(user.getId()));
 				models.addAll(usersModels);
 			}
 
@@ -2699,7 +2727,7 @@ public class RegistrationServlet extends HttpServlet {
 		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 				+ getLogoIDForShow(getShowFromSession(request));
 		int rows = modelRowsPerPage.isPresent() ? Integer.parseInt(modelRowsPerPage.get()) : 1;
-		List<? extends Model> printedModel = toPrintedModel(model);
+		List<? extends Model> printedModel = toPrintedModel(model, getShowFromSession(request));
 		while (!printedModel.isEmpty()) {
 			int currentModelsOnPage = Math.min(modelsOnPage, printedModel.size());
 			final List<Model> subList = new ArrayList<>(printedModel.subList(0, currentModelsOnPage));
@@ -2710,7 +2738,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 	}
 		
-	public static List<? extends Model> toPrintedModel(List<Model> models) {
+	public static List<? extends Model> toPrintedModel(List<Model> models, String show) {
 		List<PrintedModel> returned = new ArrayList<PrintedModel>(models.size());
 
 		for (int i = 0; i < models.size(); i++) {
@@ -2719,7 +2747,7 @@ public class RegistrationServlet extends HttpServlet {
 			Optional<Model> previousModel = Optional.ofNullable(i - 1 >= 0 ? models.get(i - 1) : null);
 			Optional<Model> nextModel = Optional.ofNullable(i + 1 < models.size() ? models.get(i + 1) : null);
 
-			PrintedModel printedModel = new PrintedModel(model, shouldHighlightBorder(previousModel, model, nextModel));
+			PrintedModel printedModel = new PrintedModel(model, shouldHighlightBorder(previousModel, model, nextModel, show));
 
 			returned.add(printedModel);
 		}
@@ -2727,14 +2755,14 @@ public class RegistrationServlet extends HttpServlet {
 		return returned;
 	}
 
-	static boolean shouldHighlightBorder(Optional<Model> previousModel, Model currentModel, Optional<Model> nextModel) {
-		return sameUserAndCategory(previousModel, currentModel) || 
-				sameUserAndCategory(nextModel, currentModel);
+	static boolean shouldHighlightBorder(Optional<Model> previousModel, Model currentModel, Optional<Model> nextModel, String show) {
+		return sameUserAndCategory(previousModel, currentModel, show) || 
+				sameUserAndCategory(nextModel, currentModel, show);
 	}
 
-	static boolean sameUserAndCategory(Optional<Model> anotherModel, Model currentModel) {
+	static boolean sameUserAndCategory(Optional<Model> anotherModel, Model currentModel, String show) {
 		return anotherModel.isPresent() ? anotherModel.get().getUserID() == currentModel.getUserID() && 
-				anotherModel.get().getCategoryID() == currentModel.getCategoryID() : false;
+				anotherModel.get().getCategoryForShow(show) == currentModel.getCategoryForShow(show) : false;
 	}
 
 	public void printCardsForAllModels(final HttpServletRequest request, final HttpServletResponse response)
@@ -2788,7 +2816,7 @@ public class RegistrationServlet extends HttpServlet {
 			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 					+ getLogoIDForShow(getShowFromSession(request));
 
-			buff.append(printModels(toPrintedModel(subList), printBuffer, 1,
+			buff.append(printModels(toPrintedModel(subList, getShowFromSession(request)), printBuffer, 1,
 					3, false, logoURL));
 
 			ServletUtil.writeResponse(response, buff);
@@ -2802,7 +2830,7 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception, IOException {
 		final StringBuilder buff = new StringBuilder();
 
-		final List<Model> usersModels = servletDAO.getModelsForShow(getShowFromSession(request), userID);
+		final List<Model> usersModels = RegistrationServlet.getModelsForShow(getShowFromSession(request), servletDAO.getModels(userID));
 		printModels(request, printBuffer, buff, usersModels, maxModelsPerPage, modelRowsPerPage);
 		
 		ServletUtil.writeResponse(response, buff);
@@ -2993,12 +3021,8 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		servletDAO.deleteEntries("MAK_AWARDEDMODELS");
 
-		servletDAO.getModelsForShow(show, ServletDAO.INVALID_USERID).forEach(model -> {
-			try {
-				servletDAO.deleteModel(model);
-			} catch (SQLException e) {
-				logger.error("", e);
-			}
+		RegistrationServlet.getModelsForShow(show, servletDAO.getModels(ServletDAO.INVALID_USERID)).forEach(model -> {
+			unlinkModel(show, model);
 		});
 	}
 
@@ -3094,7 +3118,7 @@ public class RegistrationServlet extends HttpServlet {
 			User user;
 			try {
 				user = servletDAO.getUser(am.getUserID());
-				final Category category = servletDAO.getCategory(am.getCategoryID());
+				final Category category = servletDAO.getCategory(am.categoryID);
 
 				buff.append(buffer.toString().replaceAll("__FULLNAME__", String.valueOf(user.getFullName()))
 						.replaceAll("__CATEGORY_CODE__", String.valueOf(category.categoryCode))
@@ -3291,7 +3315,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		User user = getUser(request);
-		List<Model> models = servletDAO.getModelsForShow(getShowFromSession(session), user.getId());
+		List<Model> models = servletDAO.getModels(user.getId());
 
 		if (!models.isEmpty() && !user.isAdminUser()) {
 			session.setAttribute(SessionAttribute.Models.name(), models);
@@ -3343,7 +3367,7 @@ public class RegistrationServlet extends HttpServlet {
 		String message = ServletUtil.getRequestParameter(request, "message");
 		int emailsSent = 0;
 		for (User user : servletDAO.getUsers())
-			if (!servletDAO.getModelsForShow(getShowFromSession(request), user.getId()).isEmpty())
+			if (!RegistrationServlet.getModelsForShow(getShowFromSession(request), servletDAO.getModels(user.getId())).isEmpty())
 				try {
 					final StringBuilder messageBody = new StringBuilder();
 					final ResourceBundle language = languageUtil.getLanguage(user.language);

@@ -352,3 +352,23 @@ fieldset {
       right: 60px;     /* Adjust as needed for horizontal position */
       z-index: 1000;   /* Ensures the icon is on top of other content */
     }
+
+.hazard-border {
+    padding: 10px;
+
+    background: repeating-linear-gradient(
+        135deg,
+        #000000 0,
+        #000000 30px,
+        #ffff00 30px,
+        #ffff00 60px
+    );
+}
+.hazard-border-content {
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}

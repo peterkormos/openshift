@@ -83,7 +83,9 @@
 	    }
 	}
 	
-	servlet.sendEmail(servlet.getServerConfigParamter("email.from"), "Error", messageBody);
+	if(request.getRequestURL().indexOf("localhost") == -1) { 
+		servlet.sendEmail(servlet.getServerConfigParamter("email.from"), "Error", messageBody);
+	}
 %>
 </body>
 </html>

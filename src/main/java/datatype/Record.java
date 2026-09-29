@@ -1,6 +1,7 @@
 package datatype;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -36,5 +37,22 @@ public abstract class Record implements Comparable<Record>, Serializable {
 	@Override
 	public int compareTo(Record o) {
 		return new Integer(getId()).compareTo(o.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Record other = (Record) obj;
+		return getId() == other.getId();
 	}
 }

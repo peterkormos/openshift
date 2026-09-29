@@ -164,7 +164,7 @@ Sz&iacute;nk&oacute;dok:
 				continue;
 			}
 			
-			final Category category = servletDAO.getCategory(model.categoryID);
+			final Category category = model.getCategoryForShow(show).get();
 			
 			if (onlyPhotos) {
 				try {

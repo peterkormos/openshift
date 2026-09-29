@@ -155,7 +155,7 @@ public class ServletDAO extends HibernateDAO
 		}
 	}
 
-  String createWhereStatement(final HttpServletRequest request, String where, final String sQLfield, final String httpParameter,
+  String createWhereStatement(final HttpServletRequest request, String where, final String jpaField, final String httpParameter,
       final boolean stringParameter)
   {
 
@@ -170,11 +170,11 @@ public class ServletDAO extends HibernateDAO
 
 		if (stringParameter)
 		{
-		  where += sQLfield + " like '%" + ServletUtil.getRequestParameter(request, httpParameter) + "%'";
+		  where += jpaField + " like '%" + ServletUtil.getRequestParameter(request, httpParameter) + "%'";
 		}
 		else
 		{
-		  where += sQLfield + " = " + ServletUtil.getRequestParameter(request, httpParameter);
+		  where += jpaField + " = " + ServletUtil.getRequestParameter(request, httpParameter);
 		}
 	  }
 	}
@@ -189,12 +189,12 @@ public class ServletDAO extends HibernateDAO
   {
 	String where = "";
 
-	where = createWhereStatement(request, where, "categoryID", "categoryID", false);
-	where = createWhereStatement(request, where, "user.id", "userID", false);
-	where = createWhereStatement(request, where, "id", RegistrationServlet.RequestParameter.ModelId.getParameterName() , false);
-	where = createWhereStatement(request, where, "name", "modelname", true);
-	where = createWhereStatement(request, where, "markings", "markings", true);
-	where = createWhereStatement(request, where, "producer", "modelproducer", true);
+	where = createWhereStatement(request, where, "c.id", "categoryID", false);
+	where = createWhereStatement(request, where, "r.user.id", "userID", false);
+	where = createWhereStatement(request, where, "r.id", RegistrationServlet.RequestParameter.ModelId.getParameterName() , false);
+	where = createWhereStatement(request, where, "r.name", "modelname", true);
+	where = createWhereStatement(request, where, "r.markings", "markings", true);
+	where = createWhereStatement(request, where, "r.producer", "modelproducer", true);
 
 	List<Model> models = getModels(where);
     if(ServletUtil.isCheckedIn(request, "filterToOversized")) {
@@ -205,22 +205,23 @@ public class ServletDAO extends HibernateDAO
   }
 
 	public int getModelsInCategory(final int userID, final int categoryID) {
-		return getModels("user.id = " + userID + " and categoryID = " + categoryID).size();
+		return getModels("r.user.id = " + userID + " and c.id = " + categoryID).size();
 	}
 
   public List<Model> getModels(final int userID)
   {
-	return userID == INVALID_USERID ? getModels("") : getModels("user.id = " + userID);
+	return userID == INVALID_USERID ? getModels("") : getModels("r.user.id = " + userID);
   }
 
   public List<Model> getModelsInCategory(final int categoryID)
   {
-	return getModels("categoryID = " + categoryID);
+	return getModels("c.id = " + categoryID);
   }
 
   public List<Model> getModels(final String where)
   {
-	  return where.isEmpty() ? getList(Model.class, "1=1 order by user.id, categoryID") : getList(Model.class, where + " order by user.id, categoryID");
+	  String joinTables = "left join r.categories c";
+	  return where.isEmpty() ? getList(Model.class, joinTables, "1=1 order by r.user.id, c.id") : getList(Model.class, joinTables, where + " order by r.user.id, c.id");
   }
 
   public Model getModel(final int modelID) 
@@ -422,10 +423,6 @@ void deleteModels(final int categoryId) throws SQLException {
 	      }
 	}
 	
-	public List<Model> getModelsForShow(final String show, final int userID) {
-		return RegistrationServlet.getModelsForShow(show, getModels(userID), getCategoryMap(show));
-	}
-
 	public boolean userExists(String lastName, int yearOfBirth) {
 		try {
 			List<User> list = getList(User.class, "r.lastName = '" + lastName + "' and r.yearOfBirth = " + yearOfBirth);

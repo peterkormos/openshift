@@ -140,6 +140,11 @@ public class HibernateDAO
 
   public <T> List<T> getList(Class<T> recordClass, String whereClause)
   {
+	  return getList(recordClass, "", whereClause);
+  }
+
+  public <T> List<T> getList(Class<T> recordClass, String joinTables, String whereClause)
+  {
 	  Session session = null;
 	  
 	  try
@@ -148,7 +153,7 @@ public class HibernateDAO
 		  
 		  session.beginTransaction();
 		  
-		  List<T> returned = (List<T>) session.createQuery("From " + recordClass.getName() + " as r where " + whereClause)
+		  List<T> returned = (List<T>) session.createQuery("select r from " + recordClass.getName() + " as r " + joinTables + " where " + whereClause)
 				  .list();
 		  
 		  if (returned == null)

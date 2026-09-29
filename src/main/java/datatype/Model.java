@@ -3,8 +3,13 @@ package datatype;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
@@ -33,10 +38,24 @@ public class Model extends Record {
 
 	private static final long serialVersionUID = -3161543148518903037L;
 
+	@Deprecated
     @Column(name = "CATEGORY_ID")
     public int categoryID;
+	
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "MAK_MAK_CATEGORY")
+    @Nullable
+    public Set<Category> categories = new HashSet<>();
 
-    @Column(name = "MODEL_SCALE")
+    public Set<Category> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(Set<Category> categories) {
+		this.categories = categories;
+	}
+
+	@Column(name = "MODEL_SCALE")
     public String scale;
     @Column(name = "MODEL_NAME")
     public String name;
@@ -82,9 +101,16 @@ public class Model extends Record {
         return category;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
-        this.categoryID = this.category.getId();
+	public void setCategory(Category category) {
+		this.category = category;
+		this.categoryID = this.category.getId();
+		getCategories().add(category);
+	}
+
+	public void unsetCategory(Category category) {
+		this.category = null;
+		this.categoryID = 0;
+		getCategories().remove(category);
     }
 
     public Model() {
@@ -97,10 +123,6 @@ public class Model extends Record {
 
     public int getCategoryID() {
         return categoryID;
-    }
-
-    public void setCategoryID(int categoryID) {
-        this.categoryID = categoryID;
     }
 
     public String getScale() {
@@ -192,27 +214,11 @@ public class Model extends Record {
     	setId(id);
   }
     
-    public Model(final int id, User user, int categoryID, String scale, String name, String producer, String comment,
-	  String identification, String markings, boolean gluedToBase)
-  {
-    	this(id);
-	this.user = user;
-	this.categoryID = categoryID;
-	this.scale = scale;
-	this.name = name;
-	this.producer = producer;
-	this.comment = comment;
-
-	this.identification = identification;
-	this.markings = markings;
-	this.gluedToBase = gluedToBase;
-	  }
-  
-	public Model(Model model)
+    public Model(Model model)
   {
 	this(model.getId());
 	this.user = model.getUser();
-	this.categoryID = model.categoryID;
+	this.categories = model.categories;
 	this.scale = model.scale;
 	this.name = model.name;
 	this.producer = model.producer;
@@ -227,7 +233,7 @@ public class Model extends Record {
 
     @Override
     public String toString() {
-        String returned = super.toString() + " userID: " + getUserID() + " categoryID: " + categoryID + " scale: " + scale + " name: "
+        String returned = super.toString() + " userID: " + getUserID() + " categoryies: " + categories + " scale: " + scale + " name: "
                 + name + " producer: " + producer + " comment: " + comment +
 
                 " identification: " + identification + " markings: " + markings + " gluedToBase: " + gluedToBase +
@@ -283,5 +289,15 @@ public class Model extends Record {
 	
 	public boolean isOversized() {
 		return getArea() > OversizedAreaInCm;
+	}
+
+	public Optional<Category> getCategoryForShow(String show) {
+		return getCategories().stream().filter(category -> {
+			return category.getGroup().getShow().equals(show);
+		}).findFirst();
+	}
+	
+	public boolean isAssignedToShow(String show) {
+		return getCategoryForShow(show).isPresent();
 	}
 }

@@ -275,12 +275,12 @@ if(!servlet.isAdminSession(session))
 
 				<td>
 					<%
-					final Category category = model == null ? null : servletDAO.getCategory(model.categoryID);
+					final Category category = model == null ? null : model.getCategoryForShow(show).orElse(null);
 
-					String categoryLabel = model == null ? ServletUtil.getLabel(request, servlet, "select")
-							: category.categoryCode + " - " + category.categoryDescription;
+								String categoryLabel = category == null ? ServletUtil.getLabel(request, servlet, "select")
+										: category.categoryCode + " - " + category.categoryDescription;
 
-					String categoryLabelValue = model == null ? "" : String.valueOf(category.getId());
+								String categoryLabelValue = category == null ? "" : String.valueOf(category.getId());
 					%> <jsp:include page="categories.jsp">
 						<jsp:param name="label"
 							value='<%=ServletUtil.getLabel(request, servlet, "category")%>' />
