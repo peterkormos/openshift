@@ -37,10 +37,6 @@ public class Model extends Record {
     public static final int OversizedAreaInCm = 1000;
 
 	private static final long serialVersionUID = -3161543148518903037L;
-
-	@Deprecated
-    @Column(name = "CATEGORY_ID")
-    public int categoryID;
 	
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "MAK_MAK_CATEGORY")
@@ -103,13 +99,11 @@ public class Model extends Record {
 
 	public void setCategory(Category category) {
 		this.category = category;
-		this.categoryID = this.category.getId();
 		getCategories().add(category);
 	}
 
 	public void unsetCategory(Category category) {
 		this.category = null;
-		this.categoryID = 0;
 		getCategories().remove(category);
     }
 
@@ -119,10 +113,6 @@ public class Model extends Record {
 
     public int getUserID() {
         return user.getId();
-    }
-
-    public int getCategoryID() {
-        return categoryID;
     }
 
     public String getScale() {

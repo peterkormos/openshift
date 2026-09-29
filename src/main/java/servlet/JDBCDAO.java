@@ -110,7 +110,7 @@ public class JDBCDAO {
 
 			final List<AwardedModel> returned = new LinkedList<AwardedModel>();
 			while (rs.next()) {
-				returned.add(new AwardedModel(servletDAO.getModel(rs.getInt("ID")), decodeStringFromDB(rs, "AWARD")));
+				returned.add(new AwardedModel(servletDAO.getModel(rs.getInt("ID")), decodeStringFromDB(rs, "AWARD"), 0));
 			}
 
 			return returned;

@@ -487,8 +487,8 @@ public class RegistrationServlet extends HttpServlet {
 
 		final StringBuilder buff = new StringBuilder();
 
-		buff.append(servletDAO.getCategory(model.categoryID).categoryCode);
-		buff.append(" - ");
+//		buff.append(servletDAO.getCategory(model.categoryID).categoryCode);
+//		buff.append(" - ");
 		buff.append(model.scale);
 		buff.append(" - ");
 		buff.append(model.name);
@@ -780,7 +780,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		if (user != null && user.email != null && !user.isLocalUser()) {
-			if(!sendEmailWithModels(user, true))
+			if(!sendEmailWithModels(user, true, getShowFromSession(request)))
 			 {
 				setErrorNoticeInSession(getHttpSession(request), language.getString("email.not.sent"));
 			}
@@ -925,7 +925,7 @@ public class RegistrationServlet extends HttpServlet {
 				.sorted(Comparator.comparingInt(Model::getId).reversed())
 				.map(model -> {
 			ArrayList<Object> returned = new ArrayList<>();
-			Category category = categories.get(model.categoryID);
+			Category category = model.getCategoryForShow(show).get();
 			final User modelsUser = userIDs.get(model.getUserID());
 
 			returned.add(StringEscapeUtils.unescapeHtml4(category.group.show));
@@ -1383,7 +1383,7 @@ public class RegistrationServlet extends HttpServlet {
 		redirectToMainPage(request, response);
 	}
 
-	public void deleteModelForShow(final HttpServletRequest request, final HttpServletResponse response)
+	public void deleteModelsForShow(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin);
 		
@@ -1438,7 +1438,7 @@ public class RegistrationServlet extends HttpServlet {
 		loginSuccessful(request, response, user, getShowFromRequest(request));
 		
 		if (!user.isLocalUser()) {
-			if (!sendEmailWithModels(user, true)) {
+			if (!sendEmailWithModels(user, true /*insertUserDetails*/, null /*show*/)) {
 				setErrorNoticeInSession(getHttpSession(request), language.getString("email.not.sent"));
 			}
 		}
@@ -1506,7 +1506,7 @@ public class RegistrationServlet extends HttpServlet {
 		redirectToStartPage(request, response);
 	}
 
-	private boolean sendEmailWithModels(final User user, final boolean insertUserDetails) {
+	private boolean sendEmailWithModels(final User user, final boolean insertUserDetails, String show) {
 		final StringBuilder message = new StringBuilder();
 		final ResourceBundle language = languageUtil.getLanguage(user.language);
 
@@ -1546,7 +1546,7 @@ public class RegistrationServlet extends HttpServlet {
 		for (final Model model : models) {
 
 			message.append("\n\r<hr>");
-			final Category category = servletDAO.getCategory(model.categoryID);
+			final Category category = model.getCategoryForShow(show).get();
 			List<EmailParameter> modelParameters = Arrays.asList(//
 					EmailParameter.create(language.getString("show"), category.group.show), //
 					EmailParameter.create(language.getString("modelID"), String.valueOf(model.getId())), //
@@ -2129,7 +2129,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("modify.model") + ": "
-					+ model.scale + " - " + model.name + " - " + servletDAO.getCategory(model.categoryID).categoryCode);
+					+ model.scale + " - " + model.name + " - " + model.getCategoryForShow(getShowFromSession(session)).get().categoryCode);
 		}
 		session.removeAttribute(SessionAttribute.ModelID.name());
 		session.removeAttribute(SessionAttribute.Action.name());
@@ -2170,12 +2170,12 @@ public class RegistrationServlet extends HttpServlet {
 		if (!ServletUtil.getOptionalParameter(request, "finishRegistration").isPresent()) {
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("add") + ": "
 					+ model.scale + " - " + model.name + " - "
-					+ servletDAO.getCategory(model.categoryID).categoryCode);
+					+ model.getCategoryForShow(show).get().categoryCode);
 			boolean goToParentDir = request.getPathInfo() != null;
 			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/modelForm.jsp");
 		} else {
 			if (!(isAdminSession(session) || user.isLocalUser())) {
-				if(!sendEmailWithModels(user, false /* insertUserDetails */)) {
+				if(!sendEmailWithModels(user, false /* insertUserDetails */, show)) {
 					setErrorNoticeInSession(session, language.getString("email.not.sent"));
 				}
 				else {
@@ -2560,9 +2560,10 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (user.isAdminUser() || user.getId() == model.getUserID()) {
 			servletDAO.deleteModel(model);
-			setOKNoticeInSession(getHttpSession(request), getLanguageFromSession(request).getString("delete") + ": "
+			HttpSession session = getHttpSession(request);
+			setOKNoticeInSession(session, getLanguageFromSession(request).getString("delete") + ": "
 					+ model.scale + " - " + model.name + " - "
-					+ servletDAO.getCategory(model.categoryID).categoryCode);
+					+ model.getCategoryForShow(getShowFromSession(session)).get().categoryCode);
 		}
 	}
 
@@ -2728,17 +2729,18 @@ public class RegistrationServlet extends HttpServlet {
 	private void printModels(final HttpServletRequest request, StringBuilder printBuffer, final StringBuilder buff,
 			List<Model> model, final Optional<String> maxModelsPerPage, final Optional<String> modelRowsPerPage) throws SQLException, Exception, IOException {
 		int modelsOnPage = maxModelsPerPage.isPresent() ? Integer.parseInt(maxModelsPerPage.get()) : 3;
+		String show = getShowFromSession(request);
 		String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
-				+ getLogoIDForShow(getShowFromSession(request));
+				+ getLogoIDForShow(show);
 		int rows = modelRowsPerPage.isPresent() ? Integer.parseInt(modelRowsPerPage.get()) : 1;
-		List<? extends Model> printedModel = toPrintedModel(model, getShowFromSession(request));
+		List<? extends Model> printedModel = toPrintedModel(model, show);
 		while (!printedModel.isEmpty()) {
 			int currentModelsOnPage = Math.min(modelsOnPage, printedModel.size());
 			final List<Model> subList = new ArrayList<>(printedModel.subList(0, currentModelsOnPage));
 			printedModel.removeAll(subList);
 
 			boolean shouldPageBreak = currentModelsOnPage > 0;
-			buff.append(printModels(subList, printBuffer, rows, (int) Math.ceil(modelsOnPage/rows) , shouldPageBreak, logoURL));
+			buff.append(printModels(subList, printBuffer, rows, (int) Math.ceil(modelsOnPage/rows) , shouldPageBreak, logoURL, show));
 		}
 	}
 		
@@ -2778,7 +2780,8 @@ public class RegistrationServlet extends HttpServlet {
 		final int rows = 4;
 
 		final List<Model> allModels = new LinkedList<Model>();
-		final List<Category> categories = servletDAO.getCategoryList(getShowFromSession(request));
+		String show = getShowFromSession(request);
+		final List<Category> categories = servletDAO.getCategoryList(show);
 		for (final Category category : categories) {
 			final List<Model> models = servletDAO.getModelsInCategory(category.getId());
 			for (final Model model : models) {
@@ -2792,9 +2795,9 @@ public class RegistrationServlet extends HttpServlet {
 			final List<Model> sublist = allModels.subList(0, Math.min(cols * rows, allModels.size()));
 
 			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
-					+ getLogoIDForShow(getShowFromSession(request));
+					+ getLogoIDForShow(show);
 			ServletUtil.writeResponse(response,
-					printModels(sublist, printCardBuffer, rows, cols, true, logoURL));
+					printModels(sublist, printCardBuffer, rows, cols, true, logoURL, show));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
@@ -2817,11 +2820,12 @@ public class RegistrationServlet extends HttpServlet {
 
 			final List<Model> subList = new LinkedList<>();
 			subList.add(servletDAO.getModel(Integer.parseInt(modelID)));
+			String show = getShowFromSession(request);
 			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
-					+ getLogoIDForShow(getShowFromSession(request));
+					+ getLogoIDForShow(show);
 
-			buff.append(printModels(toPrintedModel(subList, getShowFromSession(request)), printBuffer, 1,
-					3, false, logoURL));
+			buff.append(printModels(toPrintedModel(subList, show), printBuffer, 1,
+					3, false, logoURL, show));
 
 			ServletUtil.writeResponse(response, buff);
 		}
@@ -2841,7 +2845,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	StringBuilder printModels(final List<? extends Model> models, final StringBuilder printBuffer, final int rows,
-			final int cols, boolean shouldPageBreak, String logoURL) throws Exception, IOException {
+			final int cols, boolean shouldPageBreak, String logoURL, String show) throws Exception, IOException {
 
 		final int width = 100 / cols;
 		final int height = 100 / rows;
@@ -2874,7 +2878,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__YEAR_OF_BIRTH__",
 									String.valueOf(servletDAO.getUser(model.getUserID()).yearOfBirth))
 							.replaceAll("__MODEL_SCALE__", model.scale)
-							.replaceAll("__CATEGORY_CODE__", servletDAO.getCategory(model.categoryID).categoryCode)
+							.replaceAll("__CATEGORY_CODE__", model.getCategoryForShow(show).get().categoryCode)
 							.replaceAll("__MODEL_NAME__", model.name)
 							.replaceAll("__MODEL_NATIONALITY__", model.markings)
 							.replaceAll("__MODEL_IDENTIFICATION__", model.identification)
@@ -2952,7 +2956,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		HttpSession session = getHttpSession(request);
 		if (!(isAdminSession(session) || user.isLocalUser())) {
-			if (!sendEmailWithModels(user, false)) {
+			if (!sendEmailWithModels(user, false, getShowFromSession(request))) {
 				setErrorNoticeInSession(session, getLanguageFromSession(request).getString("email.not.sent"));
 			}
 			else {
@@ -3107,7 +3111,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			final String award = ServletUtil.getRequestParameter(request, "award" + httpParameterPostTag).trim();
 
-			servletDAO.saveAwardedModel(new AwardedModel(model, award));
+			servletDAO.saveAwardedModel(new AwardedModel(model, award, model.getCategoryForShow(getShowFromSession(request)).get().getId()));
 		}
 
 		response.sendRedirect(request.getRequestURI() + "/getawardedModelsPage");

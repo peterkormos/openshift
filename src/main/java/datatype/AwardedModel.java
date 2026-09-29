@@ -4,8 +4,13 @@ import java.io.Serializable;
 
 public class AwardedModel extends Model {
 	private String award;
+    public int categoryID;
 
-	public AwardedModel(Model model, String award) {
+    public int getCategoryID() {
+        return categoryID;
+    }
+
+	public AwardedModel(Model model, String award, int categoryID) {
 		super(model);
 		this.setAward(award);
 	}
