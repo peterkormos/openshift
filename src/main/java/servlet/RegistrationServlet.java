@@ -38,6 +38,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -1080,7 +1081,7 @@ public class RegistrationServlet extends HttpServlet {
 	
 	public static List<Model> getModelsForShow(final String show, final List<Model> models, boolean incluedUnlinked) {
 	return models.stream().filter(model -> {
-			return incluedUnlinked ? true : model.isAssignedToShow(show);
+			return incluedUnlinked ? model.getCategories().isEmpty() || !model.isLinkedToShow(show) : model.isLinkedToShow(show);
 		}).collect(Collectors.toList());
 	}
 
@@ -2591,11 +2592,14 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void unlinkModel(String show, final Model model) {
+		final AtomicReference<Category> category2 = new AtomicReference<Category>();
 		model.getCategories().forEach(category -> {
 			if(category.getGroup().getShow().equals(show)) {
-				model.unsetCategory(category);
+				category2.set(category);
 			}
 		});
+		model.unsetCategory(category2.get());
+		
 		servletDAO.save(model);
 	}
 	

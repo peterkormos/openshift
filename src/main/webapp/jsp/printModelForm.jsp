@@ -31,7 +31,7 @@ final User user = RegistrationServlet.getUser(request);
 %>
 
 <%
-if (!model.isAssignedToShow(show)) {
+if (!model.isLinkedToShow(show)) {
 %>
 <div class="hazard-border" style="display: inline-block;">
     <div class="hazard-border-content">
@@ -45,12 +45,12 @@ if (!model.isAssignedToShow(show)) {
 	<tr>
 		<td>
 			<%
-				if (servlet.isRegistrationAllowed(show, session)) {
+			if (servlet.isRegistrationAllowed(show, session)) {
 			%>
 			<div class="tooltip">
 				<a
-											<%= firstModel ? "class='pulseBtn'" : ""%>
-					href="../RegistrationServlet/inputForModifyModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
+											<%=firstModel ? "class='pulseBtn'" : ""%>
+					href="../RegistrationServlet/inputForModifyModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
 					<img src="../icons/modify2.png" height="30" align="center" 
 					/> <span
 					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "modify")%></span>
@@ -60,8 +60,8 @@ if (!model.isAssignedToShow(show)) {
 
 			<div class="tooltip">
 				<a
-											<%= firstModel ? "class='pulseBtn'" : ""%>
-					href="../RegistrationServlet/deleteModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
+											<%=firstModel ? "class='pulseBtn'" : ""%>
+					href="../RegistrationServlet/deleteModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
 					<img src="../icons/delete2.png" height="30" align="center" 
 					/> <span
 					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "delete")%></span>
@@ -70,12 +70,12 @@ if (!model.isAssignedToShow(show)) {
 			</div> 
 
 <%
-if (model.isAssignedToShow(show)) {
-%>
+ if (model.isLinkedToShow(show)) {
+ %>
 			<div class="tooltip">
 				<a
-											<%= firstModel ? "class='pulseBtn'" : ""%>
-					href="../RegistrationServlet/unlinkModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName() %>=<%=model.getId()%>">
+											<%=firstModel ? "class='pulseBtn'" : ""%>
+					href="../RegistrationServlet/unlinkModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
 					<img src="../icons/unlink.png" height="30" align="center" 
 					/> <span
 					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "unlink.model")%></span>
@@ -83,26 +83,26 @@ if (model.isAssignedToShow(show)) {
 				</a>
 			</div> 
 <%
-}
-%>
+ }
+ %>
 			
 			<%
- 	}
- %> <%
-	final Category category = model.getCategoryForShow(show).orElse(null);
-	 if(category != null) {
-	 	List<String> judges = servlet.judgingServletDAO.getJudges(category.getId(), model.getId(),
-	 			model.getUserID());
-	 	if (!judges.isEmpty()) {
+						}
+						%> <%
+ final Category category = model.getCategoryForShow(show).orElse(null);
+ 	 if(category != null) {
+ 	 	List<String> judges = servlet.judgingServletDAO.getJudges(category.getId(), model.getId(),
+ 	 			model.getUserID());
+ 	 	if (!judges.isEmpty()) {
  %><p> <%=language.getString("judge")%>: <%
- 	for (String judge : judges) {
+ for (String judge : judges) {
  %><br> <a
 			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
 
 			<%
-		}
-	 }
- 	}
+			}
+				 }
+			 	}
 			%>
 		</td>
 	</tr>
@@ -168,38 +168,38 @@ if (model.isAssignedToShow(show)) {
 				<tr>
 					<td>&nbsp;</td>
 					<%
-						for (DetailingGroup group : DetailingGroup.values()) {
+					for (DetailingGroup group : DetailingGroup.values()) {
 					%>
 					<td align="center"><%=language.getString("detailing." + group.name())%></td>
 					<%
-						}
+					}
 					%>
 				</tr>
 				<%
-					for (DetailingCriteria criteria : DetailingCriteria.values()) {
-						if (!criteria.isVisible())
-							continue;
+				for (DetailingCriteria criteria : DetailingCriteria.values()) {
+								if (!criteria.isVisible())
+									continue;
 				%>
 				<tr>
 					<td><%=language.getString("detailing." + criteria.name())%></td>
 					<%
-						for (DetailingGroup group : DetailingGroup.values()) {
+					for (DetailingGroup group : DetailingGroup.values()) {
 					%>
 					<td align="center"><%=model.isDetailed(group, criteria) ? "X" : "&nbsp"%>
 					</td>
 					<%
-						}
+					}
 					%>
 				</tr>
 				<%
-					}
+				}
 				%>
 			</table>
 		</td>
 	</tr>
 </table>
 <%
-if (!model.isAssignedToShow(show)) {
+if (!model.isLinkedToShow(show)) {
 %>
   </div>
 </div>

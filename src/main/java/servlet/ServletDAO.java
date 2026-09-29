@@ -221,7 +221,8 @@ public class ServletDAO extends HibernateDAO
   public List<Model> getModels(final String where)
   {
 	  String joinTables = "left join r.categories c";
-	  return where.isEmpty() ? getList(Model.class, joinTables, "1=1 order by r.user.id, c.id") : getList(Model.class, joinTables, where + " order by r.user.id, c.id");
+	  List<Model> models = where.isEmpty() ? getList(Model.class, joinTables, "1=1 order by r.user.id, c.id") : getList(Model.class, joinTables, where + " order by r.user.id, c.id");
+	  return models.stream().distinct().toList();
   }
 
   public Model getModel(final int modelID) 

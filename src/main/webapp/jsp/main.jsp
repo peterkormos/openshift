@@ -30,11 +30,9 @@ if (show == null) {
 List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 if (models == null) {
 	models = RegistrationServlet.getModelsForShow(show, servletDAO.getModels(user.getId()));
+	session.setAttribute(RegistrationServlet.SessionAttribute.Models.name(), models);
 }
-else {
-	session.removeAttribute(RegistrationServlet.SessionAttribute.Models.name());
-}
-	session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
+session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
 %>
 <html>
 <head>
@@ -141,5 +139,8 @@ else {
 
 	<jsp:include page="listMyModels.jsp" />
 
+<%
+	session.removeAttribute(RegistrationServlet.SessionAttribute.Models.name());
+%>
 </body>
 </html>

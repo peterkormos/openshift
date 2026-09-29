@@ -297,7 +297,7 @@ public class Model extends Record {
 		}).findFirst();
 	}
 	
-	public boolean isAssignedToShow(String show) {
+	public boolean isLinkedToShow(String show) {
 		return getCategoryForShow(show).isPresent();
 	}
 }
