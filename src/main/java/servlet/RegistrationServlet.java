@@ -2131,6 +2131,7 @@ public class RegistrationServlet extends HttpServlet {
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("modify.model") + ": "
 					+ model.scale + " - " + model.name + " - " + model.getCategoryForShow(getShowFromSession(session)).get().categoryCode);
 		}
+		session.removeAttribute(SessionAttribute.Models.name());
 		session.removeAttribute(SessionAttribute.ModelID.name());
 		session.removeAttribute(SessionAttribute.Action.name());
 		redirectToMainPage(request, response);
@@ -2569,6 +2570,8 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void deleteModel(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		deleteModel(request);
+		HttpSession session = getHttpSession(request);
+		session.removeAttribute(SessionAttribute.Models.name());
 		redirectToMainPage(request, response);
 	}
 

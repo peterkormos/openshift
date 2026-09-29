@@ -139,8 +139,5 @@ session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
 
 	<jsp:include page="listMyModels.jsp" />
 
-<%
-	session.removeAttribute(RegistrationServlet.SessionAttribute.Models.name());
-%>
 </body>
 </html>

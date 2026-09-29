@@ -99,6 +99,11 @@ public class Model extends Record {
 
 	public void setCategory(Category category) {
 		this.category = category;
+		
+		Category existingCategory = getCategoryForShow(category.getGroup().getShow()).orElse(null);
+		if(existingCategory != null) {
+			getCategories().remove(existingCategory);
+		}
 		getCategories().add(category);
 	}
 
