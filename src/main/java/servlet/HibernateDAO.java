@@ -3,6 +3,7 @@ package servlet;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Column;
 
@@ -153,8 +154,9 @@ public class HibernateDAO
 		  
 		  session.beginTransaction();
 		  
-		  List<T> returned = (List<T>) session.createQuery("select r from " + recordClass.getName() + " as r " + joinTables + " where " + whereClause)
-				  .list();
+		  String query = "select r from " + recordClass.getName() + " as r " + joinTables + " where " + whereClause;
+//		  System.out.println(query);
+		  List<T> returned = (List<T>) session.createQuery(query).list();
 		  
 		  if (returned == null)
 		  {
@@ -169,7 +171,12 @@ public class HibernateDAO
 	  }
   }
   
-  public <T> T get(Class<T> recordClass, String whereClause)
+	public <T> T get(Class<T> recordClass, String whereClause) {
+		return getOptional(recordClass, whereClause)
+				.orElseThrow(() -> new IllegalArgumentException("No record is found with whereClause: " + whereClause));
+	}
+  
+  public <T> Optional<T> getOptional(Class<T> recordClass, String whereClause)
   {
 	  Session session = null;
 	  
@@ -182,12 +189,7 @@ public class HibernateDAO
 		  T returned = (T) session.createQuery("From " + recordClass.getName() + " as r where " + whereClause)
 				  .uniqueResult();
 		  
-		  if (returned == null)
-		  {
-			  throw new IllegalArgumentException("No record is found with whereClause: " + whereClause);
-		  }
-		  
-		  return returned;
+		  return Optional.ofNullable(returned);
 	  }
 	  finally
 	  {
@@ -281,6 +283,10 @@ public class HibernateDAO
 	{
 	}
 
+	save((Object)record);
+  }
+
+  public Object save(Object record) {
 	Session session = null;
 	try
 	{
@@ -290,6 +296,7 @@ public class HibernateDAO
 	  session.getTransaction().commit();
 	  
 	  logger.debug("save(): " + record);
+	  return record;
 	}
 	finally
 	{

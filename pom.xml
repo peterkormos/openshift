@@ -229,7 +229,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<db.driver.class>org.apache.derby.jdbc.EmbeddedDriver</db.driver.class>
-		<hibernate.dialect>org.hibernate.dialect.DerbyDialect</hibernate.dialect>
+		<hibernate.dialect>org.hibernate.dialect.DerbyTenSevenDialect</hibernate.dialect>
 		<db.url>jdbc:derby:makettDB;create=true</db.url>
 		<db.user></db.user>
 		<db.password></db.password>

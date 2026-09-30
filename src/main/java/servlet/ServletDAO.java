@@ -24,6 +24,7 @@ import datatype.AwardedModel;
 import datatype.Category;
 import datatype.CategoryGroup;
 import datatype.LoginConsent;
+import datatype.MXModelCategory;
 import datatype.Model;
 import datatype.ModelClass;
 import datatype.SystemParameter;
@@ -108,12 +109,12 @@ public class ServletDAO extends HibernateDAO
 
   public List<User> getUsers() throws SQLException
   {
-	  return getList(User.class, "enabled=true order by lastName, firstName");
+	  return getList(User.class, "enabled=1 order by lastName, firstName");
   }
 
   public List<User> getMasterAwardedUsers() throws SQLException
   {
-	  return getList(User.class, "enabled=true and modelClasses is not null order by lastName, firstName");
+	  return getList(User.class, "enabled=1 and modelClasses is not null order by lastName, firstName");
   }
   
 	public boolean saveModelClass(int userID, ModelClass modelClass) throws SQLException {
@@ -205,7 +206,7 @@ public class ServletDAO extends HibernateDAO
   }
 
 	public int getModelsInCategory(final int userID, final int categoryID) {
-		return getModels("r.user.id = " + userID + " and c.id = " + categoryID).size();
+		return getModels("r.user.id = " + userID + " and c.id = " + categoryID, Optional.of(categoryID)).size();
 	}
 
   public List<Model> getModels(final int userID)
@@ -215,15 +216,26 @@ public class ServletDAO extends HibernateDAO
 
   public List<Model> getModelsInCategory(final int categoryID)
   {
-	return getModels("c.id = " + categoryID);
+	return getModels("c.id = " + categoryID, Optional.of(categoryID));
   }
 
-  public List<Model> getModels(final String where)
-  {
-	  String joinTables = "left join r.categories c";
-	  List<Model> models = where.isEmpty() ? getList(Model.class, joinTables, "1=1 order by r.user.id, c.id") : getList(Model.class, joinTables, where + " order by r.user.id, c.id");
-	  return models.stream().distinct().collect(Collectors.toList());
-  }
+	public List<Model> getModels(String where) {
+		return getModels(where, Optional.empty());
+	}
+
+	public List<Model> getModels(String where, Optional<Integer> categoryID) {
+		String joinTables = " left join r.categories c";
+		if(where.isEmpty()) {
+			where = "1=1 order by r.user.id, c.id";
+		}
+		else {
+			where = where + " order by r.user.id, c.id";
+		}
+		List<Model> models = getList(Model.class, joinTables, where);
+		return models.stream().distinct().filter(model -> 
+			categoryID.isPresent() ? !isArchivedModel(model.getId(), categoryID.get()) : true
+		).collect(Collectors.toList());
+	}
 
   public Model getModel(final int modelID) 
   {
@@ -441,5 +453,19 @@ void deleteModels(final int categoryId) throws SQLException {
 		} catch (Exception e) {
 		}
 		return false;
+	}
+
+	public void archiveModel(int modelID, int categoryID) {
+		MXModelCategory mxModelCategory = get(MXModelCategory.class,
+				"modelID=" + modelID + " and categoryID=" + categoryID);
+		mxModelCategory.setArchived(true);
+		
+		save(mxModelCategory);
+	}
+
+	public boolean isArchivedModel(int modelID, int categoryID) {
+		Optional<MXModelCategory> mxModelCategory = getOptional(MXModelCategory.class,
+				"modelID=" + modelID + " and categoryID=" + categoryID);
+		return mxModelCategory.isPresent() ? mxModelCategory.get().getArchived() : false;
 	}
 }

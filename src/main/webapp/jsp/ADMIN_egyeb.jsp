@@ -28,15 +28,15 @@ if (show == null) {
 	felhaszn&aacute;l&oacute; t&ouml;rl&eacute;se az
 	adatb&aacute;zisb&oacute;l </a>
 <p>
+	<a href="../RegistrationServlet/deleteModelsForShow"
+		style="background: red; font-weight: bold"> Aktu&aacute;lis
+		verseny &ouml;sszes makettj&eacute;nek t&ouml;rl&eacute;se az
+		adatb&aacute;zisb&oacute;l </a>
+<p>
 	<a href="../RegistrationServlet/deleteDataForShow"
 		style="background: red; font-weight: bold"> Aktu&aacute;lis
 		verseny &ouml;sszes makettj&eacute;nek,
 		kateg&oacute;ri&aacute;j&aacute;nak t&ouml;rl&eacute;se az
-		adatb&aacute;zisb&oacute;l </a>
-<p>
-	<a href="../RegistrationServlet/deleteModelsForShow"
-		style="background: red; font-weight: bold"> Aktu&aacute;lis
-		verseny &ouml;sszes makettj&eacute;nek t&ouml;rl&eacute;se az
 		adatb&aacute;zisb&oacute;l </a>
 <p>
 	<a href="../RegistrationServlet/deletedirectUsers"

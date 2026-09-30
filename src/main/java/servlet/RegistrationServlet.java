@@ -622,7 +622,7 @@ public class RegistrationServlet extends HttpServlet {
 			setToAdminSession(session, user.getAdminType());
 		}
 		
-		List<Model> models = servletDAO.getModels(user.getId());
+		List<Model> models = getModelsForShow(show, servletDAO.getModels(user.getId()), true);
 		session.setAttribute(SessionAttribute.Models.name(), models);
 
 		if (isRegistrationAllowed(show, session) && models.isEmpty() && !user.isAdminUser()) {
@@ -1080,9 +1080,17 @@ public class RegistrationServlet extends HttpServlet {
 	}
 	
 	public static List<Model> getModelsForShow(final String show, final List<Model> models, boolean incluedUnlinked) {
-	return models.stream().filter(model -> {
-			return incluedUnlinked ? model.getCategories().isEmpty() || model.isLinkedToShow(show) || !model.isLinkedToShow(show) : model.isLinkedToShow(show);
-		}).collect(Collectors.toList());
+		return models.stream()
+				.filter(model -> incluedUnlinked
+//						? model.getCategories().isEmpty() || model.isLinkedToShow(show) || !model.isLinkedToShow(show)
+						? true
+						: model.isLinkedToShow(show))
+				.filter(model -> {
+					Optional<Category> category = model.getCategoryForShow(show);
+					return category.isPresent() ? !servletDAO.isArchivedModel(model.getId(), category.get().getId()) : true;
+				}
+				)
+				.collect(Collectors.toList());
 	}
 
 	public String importData(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1512,7 +1520,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		message.append("<html><body>\n\r");
 
-		final List<Model> models = servletDAO.getModels(user.getId());
+		final List<Model> models = getModelsForShow(show, servletDAO.getModels(user.getId()), true);
 
 		if (!models.isEmpty()) {
 			message.append(language.getString("email.body1"));
@@ -2162,7 +2170,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		servletDAO.save(model);
 
-		List<Model> models = servletDAO.getModels(user.getId());
+		List<Model> models = getModelsForShow(show, servletDAO.getModels(user.getId()), true);
 
 		if (!models.isEmpty() && !user.isAdminUser()) {
 			session.setAttribute(SessionAttribute.Models.name(), models);
@@ -2612,7 +2620,15 @@ public class RegistrationServlet extends HttpServlet {
 			throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
-		servletDAO.deleteAwardedModel(Integer.valueOf(ServletUtil.getRequestParameter(request, "modelID")));
+		Integer modelId = Integer.valueOf(ServletUtil.getRequestParameter(request, "modelID"));
+		
+		String show = getShowFromSession(request);
+		servletDAO.getAwards(modelId).forEach(award -> {
+			Category category = servletDAO.getCategory(award.getCategoryID());
+			if(show.equals(category.getGroup().getShow())) {
+				servletDAO.delete(award);
+			}
+		});
 
 		response.sendRedirect("jsp/judging/deleteAwardedModel.jsp");
 	}
@@ -3030,6 +3046,13 @@ public class RegistrationServlet extends HttpServlet {
 			if (!hasAward(model)) {
 				unlinkModel(show, model);
 			}
+			else
+			{
+				Optional<Category> category = model.getCategoryForShow(show);
+				if(category.isPresent()) {
+					servletDAO.archiveModel(model.getId(), category.get().getId());
+				}
+			}
 		});
 	}
 
@@ -3330,7 +3353,7 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		User user = getUser(request);
-		List<Model> models = servletDAO.getModels(user.getId());
+		List<Model> models = getModelsForShow(getShowFromSession(request), servletDAO.getModels(user.getId()), true);
 
 		if (!models.isEmpty() && !user.isAdminUser()) {
 			session.setAttribute(SessionAttribute.Models.name(), models);
