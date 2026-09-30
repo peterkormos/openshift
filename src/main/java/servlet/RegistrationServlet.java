@@ -1081,7 +1081,7 @@ public class RegistrationServlet extends HttpServlet {
 	
 	public static List<Model> getModelsForShow(final String show, final List<Model> models, boolean incluedUnlinked) {
 	return models.stream().filter(model -> {
-			return incluedUnlinked ? model.getCategories().isEmpty() || !model.isLinkedToShow(show) : model.isLinkedToShow(show);
+			return incluedUnlinked ? model.getCategories().isEmpty() || model.isLinkedToShow(show) || !model.isLinkedToShow(show) : model.isLinkedToShow(show);
 		}).collect(Collectors.toList());
 	}
 
@@ -2590,6 +2590,7 @@ public class RegistrationServlet extends HttpServlet {
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("modify.model") + ": "
 					+ model.scale + " - " + model.name);
 		}
+		session.removeAttribute(SessionAttribute.Models.name());
 		session.removeAttribute(SessionAttribute.ModelID.name());
 		session.removeAttribute(SessionAttribute.Action.name());
 		redirectToMainPage(request, response);

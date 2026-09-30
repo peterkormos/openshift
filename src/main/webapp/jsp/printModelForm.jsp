@@ -132,11 +132,13 @@ if (!isLinkedToShow) {
 								<td valign="middle"><font><%=user.getId()%></font></td>
 								<td valign="middle"><font><%=model.getId()%></font></td>
 								<td valign="middle"><font><%=model.getScale()%></font></td>
-								<td valign="middle"><font
-									style="border: 1px solid black; padding: 1mm; font-size: 4mm; white-space: nowrap;"
+								<td valign="middle">
+									<div
+									style='border: 1px solid black; padding: 1mm; font-size: 4mm; white-space: nowrap;
+									<%=category == null ? " background-image: none;" : ""%>
+									'
 									<%=category == null ? "class='flash warning'" : ""%>
 									>
-									
 									<%
 									if(category == null) {
 										%>
@@ -144,13 +146,13 @@ if (!isLinkedToShow) {
 										<%
 									}
 									else {
-										%>
-										category.categoryCode
-										<%
+									%>
+										<%=category.categoryCode %>
+									<%
 									}
 									%>
-									
-									</font></td>
+									</div>
+								</td>
 							</tr>
 							<tr height="3mm">
 								<td colspan="2"><font><%=model.getProducer()%></font></td>

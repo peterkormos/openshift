@@ -29,7 +29,7 @@ if (show == null) {
 
 List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 if (models == null) {
-	models = RegistrationServlet.getModelsForShow(show, servletDAO.getModels(user.getId()));
+	models = RegistrationServlet.getModelsForShow(show, servletDAO.getModels(user.getId()), true);
 	session.setAttribute(RegistrationServlet.SessionAttribute.Models.name(), models);
 }
 session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
