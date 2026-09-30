@@ -11,7 +11,7 @@ ServletDAO servletDAO = servlet.getServletDAO();
 final List<Model> models = new LinkedList<Model>();
 
 for (AwardedModel am : servletDAO.getAwardedModels()) {
-	models.add(am);
+	models.add(servletDAO.getModel(am.getModelID()));
 }
 
 session.setAttribute(RegistrationServlet.SessionAttribute.Models.name(), models);

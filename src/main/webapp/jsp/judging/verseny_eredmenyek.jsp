@@ -7,7 +7,7 @@
 	scope="application" />
 
 <%
-ResourceBundle language = RegistrationServlet.getLanguageFromSession(request)
+ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 String languageCode = null;
 
 if (language == null) {

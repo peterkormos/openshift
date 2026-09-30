@@ -212,7 +212,7 @@ Sz&iacute;nk&oacute;dok:
 				if (!forJudges) {
 					if (insertAwards) {
 		%>
-		<td align='center'><%=servletDAO.getAward(model)%></td>
+		<td align='center'><%=servletDAO.getAward(model.getId(), category.getId())%></td>
 		<%
 			}
 		%>

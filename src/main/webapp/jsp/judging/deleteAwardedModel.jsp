@@ -7,11 +7,14 @@
 <form name='input' action='../../RegistrationServlet' method='put'>
 	<input type='hidden' name='command' value='deleteAwardedModel'>
 	<%
-	for (AwardedModel model : RegistrationServlet.servletDAO.getAwardedModels()) {
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	ServletDAO servletDAO = servlet.getServletDAO();
+	for (AwardedModel awardedModel : servletDAO.getAwardedModels()) {
+		Model model = servletDAO.getModel(awardedModel.getModelID());
 	%>
 	<label> <input type='radio' name='modelID'
-		value='<%=model.getId()%>' /> <%=model.id%> - <%=model.scale%> - <%=model.name%>
-		- <%=RegistrationServlet.servletDAO.getUser(model.getUserID()).getFullName()%> - <%=model.getAward()%>
+		value='<%=model.getId()%>' /> <%=model.getId()%> - <%=model.getScale()%> - <%=model.getName()%>
+		- <%=model.getUser().getFullName()%> - <%=awardedModel.getAward()%>
 	</label> <br>
 	<%
 }

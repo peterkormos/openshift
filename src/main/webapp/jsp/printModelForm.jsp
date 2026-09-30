@@ -27,11 +27,13 @@ final User user = RegistrationServlet.getUser(request);
 	boolean forJudges = Boolean.parseBoolean(
 	ServletUtil.getRequestParameter(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
-	boolean firstModel = Boolean.parseBoolean(request.getParameter("firstModel"));
+	boolean isLinkedToShow = model.isLinkedToShow(show);
+	boolean pulseButton = Boolean.parseBoolean(request.getParameter("pulseButton")) || !isLinkedToShow;
+	boolean hasAward = RegistrationServlet.hasAward(model);
 %>
 
 <%
-if (!model.isLinkedToShow(show)) {
+if (!isLinkedToShow) {
 %>
 <div class="hazard-border" style="display: inline-block;">
     <div class="hazard-border-content">
@@ -49,7 +51,7 @@ if (!model.isLinkedToShow(show)) {
 			%>
 			<div class="tooltip">
 				<a
-											<%=firstModel ? "class='pulseBtn'" : ""%>
+											<%=pulseButton ? "class='pulseBtn'" : ""%>
 					href="../RegistrationServlet/inputForModifyModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
 					<img src="../icons/modify2.png" height="30" align="center" 
 					/> <span
@@ -58,9 +60,12 @@ if (!model.isLinkedToShow(show)) {
 				</a>
 			</div>
 
+<%
+ if (!hasAward) {
+ %>
 			<div class="tooltip">
 				<a
-											<%=firstModel ? "class='pulseBtn'" : ""%>
+											<%=pulseButton ? "class='pulseBtn'" : ""%>
 					href="../RegistrationServlet/deleteModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
 					<img src="../icons/delete2.png" height="30" align="center" 
 					/> <span
@@ -68,13 +73,16 @@ if (!model.isLinkedToShow(show)) {
 					 <%=ServletUtil.getLabel(request, servlet, "delete")%>
 				</a>
 			</div> 
+<%
+ }
+ %>
 
 <%
- if (model.isLinkedToShow(show)) {
+ if (isLinkedToShow && !hasAward) {
  %>
 			<div class="tooltip">
 				<a
-											<%=firstModel ? "class='pulseBtn'" : ""%>
+											<%=pulseButton ? "class='pulseBtn'" : ""%>
 					href="../RegistrationServlet/unlinkModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
 					<img src="../icons/unlink.png" height="30" align="center" 
 					/> <span
@@ -199,7 +207,7 @@ if (!model.isLinkedToShow(show)) {
 	</tr>
 </table>
 <%
-if (!model.isLinkedToShow(show)) {
+if (!isLinkedToShow) {
 %>
   </div>
 </div>

@@ -74,60 +74,6 @@ public class JDBCDAO {
 
 	}
 
-	public String getAward(Model model) throws SQLException {
-		PreparedStatement queryStatement = null;
-		ResultSet rs = null;
-
-		try {
-			queryStatement = getDBConnection().prepareStatement(
-					"SELECT * FROM MAK_AWARDEDMODELS" + (model == null ? "" : " WHERE ID = " + model.getId()));
-
-			rs = queryStatement.executeQuery();
-
-			return rs.next() ? decodeStringFromDB(rs, "AWARD") : "-";
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (queryStatement != null) {
-					queryStatement.close();
-				}
-			} catch (final Exception ex) {
-				logger.fatal("!!! ServletDAO.getAward(): ", ex);
-			}
-		}
-	}
-
-	public List<AwardedModel> getAwardedModels() throws SQLException {
-		PreparedStatement queryStatement = null;
-		ResultSet rs = null;
-
-		try {
-			queryStatement = getDBConnection().prepareStatement("SELECT * FROM MAK_AWARDEDMODELS");
-
-			rs = queryStatement.executeQuery();
-
-			final List<AwardedModel> returned = new LinkedList<AwardedModel>();
-			while (rs.next()) {
-				returned.add(new AwardedModel(servletDAO.getModel(rs.getInt("ID")), decodeStringFromDB(rs, "AWARD"), 0));
-			}
-
-			return returned;
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (queryStatement != null) {
-					queryStatement.close();
-				}
-			} catch (final Exception ex) {
-				logger.fatal("!!! ServletDAO.getAwardedModels(): ", ex);
-			}
-		}
-	}
-
 	public List<String> getShows() throws SQLException {
 		final List<String> returned = new LinkedList<String>();
 
@@ -154,36 +100,6 @@ public class JDBCDAO {
 				}
 			} catch (final Exception ex) {
 				logger.fatal("!!! getShows(): ", ex);
-			}
-		}
-	}
-
-	public void saveAwardedModel(final AwardedModel model) throws SQLException {
-		PreparedStatement queryStatement = null;
-		final ResultSet rs = null;
-
-		logger.trace("ServletDAO.saveAwardedModel(): " + model);
-
-		try {
-			queryStatement = getDBConnection()
-					.prepareStatement("insert into MAK_AWARDEDMODELS" + " (ID, AWARD) values (?,?)");
-
-			queryStatement.setInt(1, model.getId());
-
-			queryStatement.setString(2, model.getAward());
-
-			queryStatement.executeUpdate();
-
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (queryStatement != null) {
-					queryStatement.close();
-				}
-			} catch (final Exception ex) {
-				logger.fatal("!!! ServletDAO.saveAwardedModel(): ", ex);
 			}
 		}
 	}

@@ -2,26 +2,55 @@ package datatype;
 
 import java.io.Serializable;
 
-public class AwardedModel extends Model {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "MAK_AWARDEDMODELS")
+public class AwardedModel extends Record{
+	@Id
+	@Column(name = "ID")
+	public int id;
+
+	@Column(name = "MODEL_ID")
+	public int modelID;
+	@Column(name = "CATEGORY_ID")
+	public int categoryID;
+	@Column(name =  "AWARD")
 	private String award;
-    public int categoryID;
+	
+	@Override
+	public int getId() {
+		return id;
+	}
+	
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public int getModelID() {
+		return modelID;
+	}
 
     public int getCategoryID() {
         return categoryID;
     }
 
-	public AwardedModel(Model model, String award, int categoryID) {
-		super(model);
+	public AwardedModel(int id, int modelID, String award, int categoryID) {
+		this.modelID = modelID;
+		this.categoryID = categoryID;
 		this.setAward(award);
 	}
 
 	public AwardedModel() {
-
 	}
 
 	@Override
 	public String toString() {
-		return " award: " + getAward() + " model: " + super.toString();
+		return " award: " + getAward() + " model: " + modelID  + " categoryID: " + categoryID ;
 	}
 
 	public String getAward() {
@@ -31,5 +60,4 @@ public class AwardedModel extends Model {
 	public void setAward(String award) {
 		this.award = award;
 	}
-
 }

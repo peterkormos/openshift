@@ -266,7 +266,7 @@ public void deleteModel(final Model model) throws SQLException
 
   public void deleteAwardedModel(final int id) throws SQLException
   {
-	  jdbcDAO.deleteEntry("MAK_AWARDEDMODELS", "ID", id);
+	  delete(AwardedModel.class, "id = " + id);
   }
 
 
@@ -348,15 +348,28 @@ void deleteModels(final int categoryId) throws SQLException {
 	}
 
 	public List<AwardedModel> getAwardedModels() throws SQLException {
-		return jdbcDAO.getAwardedModels();
+		return getAll(AwardedModel.class);
 	}
 
 	public Map<Integer, List<AwardedModel>> getAwardedModelsMap() throws SQLException {
 		return getAwardedModels().stream().collect(Collectors.groupingBy(AwardedModel::getCategoryID));
 	}
 
-	public String getAward(Model model) throws SQLException {
-		return jdbcDAO.getAward(model);
+	public String getAward(final int modelID, final int categoryID) throws SQLException {
+		Optional<AwardedModel> awardedModel = getAwardedModel(modelID, categoryID);
+		return awardedModel.isPresent() ? awardedModel.get().getAward() : null;
+	}
+
+	public Optional<AwardedModel> getAwardedModel(final int modelID, final int categoryID) {
+		try {
+			return Optional.of(get(AwardedModel.class, "modelID=" + modelID + " and categoryID=" + categoryID));
+		} catch (IllegalArgumentException e) {
+			return Optional.empty(); 
+		} 
+	}
+	
+	public List<AwardedModel> getAwards(final int modelID) {
+		return getList(AwardedModel.class, "modelID=" + modelID);
 	}
 
 	public void setSystemParameter(String show, final RegistrationServlet.SystemParameter parameter, String paramValue) {
@@ -390,10 +403,6 @@ void deleteModels(final int categoryId) throws SQLException {
 	public String getSystemParameterWithDefault(final String show, final RegistrationServlet.SystemParameter parameter, String defaultValue) {
 		String systemParameter = getSystemParameter(show, parameter);
 		return RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE.equals(systemParameter) ? defaultValue : systemParameter;
-	}
-
-	public void saveAwardedModel(final AwardedModel model) throws SQLException {
-		jdbcDAO.saveAwardedModel(model);
 	}
 
 	public byte[] loadImage(int modelID) throws SQLException {

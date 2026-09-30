@@ -8,6 +8,7 @@
 
 <%
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+ServletDAO servletDAO = servlet.getServletDAO();
 List<AwardedModel> awardedModels = RegistrationServlet.servletDAO.getAwardedModels();
 %>
 <head>
@@ -41,11 +42,13 @@ List<AwardedModel> awardedModels = RegistrationServlet.servletDAO.getAwardedMode
 		for (AwardedModel awardedModel : awardedModels) {
 			if (awardedModel.categoryID != category.getId())
 				continue;
+			Model model = servletDAO.getModel(awardedModel.getModelID());
+
 		%>
 		<tr bgcolor="<%=highlight()%>">
 			<td align="center"><%=category.categoryCode%> - <%=category.categoryDescription%></td>
-			<td align="center"><%=awardedModel.name%></td>
-			<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.getUserID()).getFullName()%></td>
+			<td align="center"><%=model.getName()%></td>
+			<td align="center"><%=RegistrationServlet.servletDAO.getUser(model.getUserID()).getFullName()%></td>
 			<td align="center"><%=awardedModel.getAward()%></td>
 		</tr>
 		<%

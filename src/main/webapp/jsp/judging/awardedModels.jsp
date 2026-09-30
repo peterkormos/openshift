@@ -9,6 +9,7 @@
 final String CATEGORY_ID = "categoryID";
 
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+ServletDAO servletDAO = servlet.getServletDAO();
 %>
 <head>
 <link rel="stylesheet" href="../base.css" media="screen" />
@@ -55,13 +56,14 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 		</tr>
 		<%
 		for (AwardedModel awardedModel : awardedModels.get(category.getId())) {
+			Model model = servletDAO.getModel(awardedModel.getModelID());
 		%>
 		<tr>
-			<td align="center"><%=awardedModel.name%></td>
-			<td align="center"><%=RegistrationServlet.servletDAO.getUser(awardedModel.getUserID()).getFullName()%></td>
+			<td align="center"><%=model.getName()%></td>
+			<td align="center"><%=model.getUser().getFullName()%></td>
 			<td align="center"><%=awardedModel.getAward()%></td>
 			<td align="center"><img
-				src='<%=servlet.getServletURL(request)%>/<%=Command.LOADIMAGE.name()%>/<%=awardedModel.getId()%>'>
+				src='<%=servlet.getServletURL(request)%>/<%=Command.LOADIMAGE.name()%>/<%=model.getId()%>'>
 			</td>
 		</tr>
 		<%

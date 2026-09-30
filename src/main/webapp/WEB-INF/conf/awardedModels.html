@@ -34,7 +34,7 @@ function sendRequest(model)
      	}
    }
    
-	req.open("GET", url + "modelID=" + model.value, true);
+	req.open("GET", url + "m=" + model.value, true);
 	req.onreadystatechange= function()
 	{   
 		if (req.readyState == 4)

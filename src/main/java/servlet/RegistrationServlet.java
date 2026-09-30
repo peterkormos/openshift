@@ -2583,7 +2583,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 		User user = getUser(request);
 		final HttpSession session = getHttpSession(request);
-		if (user.isAdminUser() || user.getId() == model.getUserID()) {
+		if (user.isAdminUser() || (user.getId() == model.getUserID() && !hasAward(model))) {
 			unlinkModel(show, model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
@@ -3025,16 +3025,15 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	private void deleteModelsForShow(final String show) throws SQLException {
-		for (final AwardedModel awardedModel : servletDAO.getAwardedModels()) {
-			if (servletDAO.getCategory(awardedModel.categoryID).group.show.equals(show)) {
-				servletDAO.deleteAwardedModel(awardedModel.getId());
-			}
-		}
-		servletDAO.deleteEntries("MAK_AWARDEDMODELS");
-
 		RegistrationServlet.getModelsForShow(show, servletDAO.getModels(ServletDAO.INVALID_USERID)).forEach(model -> {
-			unlinkModel(show, model);
+			if (!hasAward(model)) {
+				unlinkModel(show, model);
+			}
 		});
+	}
+
+	public static boolean hasAward(Model model) {
+		return !servletDAO.getAwards(model.getId()).isEmpty();
 	}
 
 	public void statistics(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -3114,7 +3113,7 @@ public class RegistrationServlet extends HttpServlet {
 
 			final String award = ServletUtil.getRequestParameter(request, "award" + httpParameterPostTag).trim();
 
-			servletDAO.saveAwardedModel(new AwardedModel(model, award, model.getCategoryForShow(getShowFromSession(request)).get().getId()));
+			servletDAO.save(new AwardedModel(servletDAO.getNextID(AwardedModel.class), model.getId(), award, model.getCategoryForShow(getShowFromSession(request)).get().getId()));
 		}
 
 		response.sendRedirect(request.getRequestURI() + "/getawardedModelsPage");
@@ -3128,12 +3127,13 @@ public class RegistrationServlet extends HttpServlet {
 		RegistrationServlet.servletDAO.getAwardedModels().forEach(am -> {
 			User user;
 			try {
-				user = servletDAO.getUser(am.getUserID());
+				Model model = servletDAO.getModel(am.getModelID());
+				user = servletDAO.getUser(model.getUserID());
 				final Category category = servletDAO.getCategory(am.categoryID);
 
 				buff.append(buffer.toString().replaceAll("__FULLNAME__", String.valueOf(user.getFullName()))
 						.replaceAll("__CATEGORY_CODE__", String.valueOf(category.categoryCode))
-						.replaceAll("__MODEL_NAME__", String.valueOf(am.name))
+						.replaceAll("__MODEL_NAME__", String.valueOf(model.getName()))
 						.replaceAll("__MODEL_ID__", String.valueOf(am.getId()))
 
 						.replaceAll("__AWARD__", am.getAward()));
