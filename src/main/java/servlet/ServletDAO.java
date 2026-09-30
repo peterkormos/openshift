@@ -455,10 +455,10 @@ void deleteModels(final int categoryId) throws SQLException {
 		return false;
 	}
 
-	public void archiveModel(int modelID, int categoryID) {
+	public void archiveModel(int modelID, int categoryID, boolean archivedFlag) {
 		MXModelCategory mxModelCategory = get(MXModelCategory.class,
 				"modelID=" + modelID + " and categoryID=" + categoryID);
-		mxModelCategory.setArchived(true);
+		mxModelCategory.setArchived(archivedFlag);
 		
 		save(mxModelCategory);
 	}

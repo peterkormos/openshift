@@ -2627,6 +2627,7 @@ public class RegistrationServlet extends HttpServlet {
 			Category category = servletDAO.getCategory(award.getCategoryID());
 			if(show.equals(category.getGroup().getShow())) {
 				servletDAO.delete(award);
+				servletDAO.archiveModel(award.getModelID(), award.getCategoryID(), false /*archivedFlag*/);				
 			}
 		});
 
@@ -3050,7 +3051,7 @@ public class RegistrationServlet extends HttpServlet {
 			{
 				Optional<Category> category = model.getCategoryForShow(show);
 				if(category.isPresent()) {
-					servletDAO.archiveModel(model.getId(), category.get().getId());
+					servletDAO.archiveModel(model.getId(), category.get().getId(), true /*archivedFlag*/);
 				}
 			}
 		});
