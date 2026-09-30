@@ -49,16 +49,7 @@ if (!isLinkedToShow) {
 			<%
 			if (servlet.isRegistrationAllowed(show, session)) {
 			%>
-			<div class="tooltip">
-				<a
-											<%=pulseButton ? "class='pulseBtn'" : ""%>
-					href="../RegistrationServlet/inputForModifyModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
-					<img src="../icons/modify2.png" height="30" align="center" 
-					/> <span
-					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "modify")%></span>
-					 <%=ServletUtil.getLabel(request, servlet, "modify")%>
-				</a>
-			</div>
+		<jsp:include page="modifyModelButton.jsp" />
 
 <%
  if (!hasAward) {
@@ -144,7 +135,22 @@ if (!isLinkedToShow) {
 								<td valign="middle"><font
 									style="border: 1px solid black; padding: 1mm; font-size: 4mm; white-space: nowrap;"
 									<%=category == null ? "class='flash warning'" : ""%>
-									><%=category == null ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : category.categoryCode%></font></td>
+									>
+									
+									<%
+									if(category == null) {
+										%>
+										<jsp:include page="modifyModelButton.jsp" />
+										<%
+									}
+									else {
+										%>
+										category.categoryCode
+										<%
+									}
+									%>
+									
+									</font></td>
 							</tr>
 							<tr height="3mm">
 								<td colspan="2"><font><%=model.getProducer()%></font></td>
