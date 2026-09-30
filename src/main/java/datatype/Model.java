@@ -37,6 +37,10 @@ public class Model extends Record {
     public static final int OversizedAreaInCm = 1000;
 
 	private static final long serialVersionUID = -3161543148518903037L;
+
+	@Id
+	@Column(name = "MODEL_ID")
+	public int id;	
 	
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "MAK_MAK_CATEGORY")
@@ -78,12 +82,13 @@ public class Model extends Record {
     @Transient
     public Map<DetailingGroup, Map<DetailingCriteria, Boolean>> details;
     
-    @Transient
-    public Category category;
-
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     public User user;
+	@Column(name = "MODEL_width")
+	private int width;
+	@Column(name = "MODEL_height")
+	private int length;
 
 	public User getUser() {
         return user;
@@ -93,13 +98,8 @@ public class Model extends Record {
         this.user = user;
     }
 
-    public Category getCategory() {
-        return category;
-    }
 
 	public void setCategory(Category category) {
-		this.category = category;
-		
 		Category existingCategory = getCategoryForShow(category.getGroup().getShow()).orElse(null);
 		if(existingCategory != null) {
 			getCategories().remove(existingCategory);
@@ -108,7 +108,6 @@ public class Model extends Record {
 	}
 
 	public void unsetCategory(Category category) {
-		this.category = null;
 		getCategories().remove(category);
     }
 
@@ -238,10 +237,6 @@ public class Model extends Record {
         return returned;
     }
 
-	@Id
-	@Column(name = "MODEL_ID")
-	public int id;
-
 	@Override
 	public int getId() {
 		return id;
@@ -251,11 +246,6 @@ public class Model extends Record {
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	@Column(name = "MODEL_width")
-	private int width;
-	@Column(name = "MODEL_height")
-	private int length;
 	
 	public int getWidth() {
 		return width;
