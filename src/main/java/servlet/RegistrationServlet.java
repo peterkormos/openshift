@@ -3109,11 +3109,14 @@ public class RegistrationServlet extends HttpServlet {
 
 			final Model model = servletDAO.getModel(Integer.parseInt(modelID));
 			final User user = servletDAO.getUser(model.getUserID());
-			// Category category = servletDAO.getCategory(model.categoryID);
-
 			final String award = ServletUtil.getRequestParameter(request, "award" + httpParameterPostTag).trim();
 
-			servletDAO.save(new AwardedModel(servletDAO.getNextID(AwardedModel.class), model.getId(), award, model.getCategoryForShow(getShowFromSession(request)).get().getId()));
+			Optional<Category> category = model.getCategoryForShow(getShowFromSession(request));
+			if (!category.isPresent()) {
+				continue;
+			}
+
+			servletDAO.save(new AwardedModel(servletDAO.getNextID(AwardedModel.class), model.getId(), award, category.get().getId()));
 		}
 
 		response.sendRedirect(request.getRequestURI() + "/getawardedModelsPage");
