@@ -61,4 +61,7 @@ final ResourceBundle language = servlet.getLanguageForCurrentUser(request);
 	<p>
 		<jsp:include page="ADMIN_mester.jsp" />
 	</p>
+	<p>
+		<a href="judging/verseny_eredmenyek.jsp">Verseny eredm&eacute;nyek r&ouml;gz&iacute;t&eacute;se</a>
+	</p>
 </body>

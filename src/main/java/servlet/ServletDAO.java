@@ -264,9 +264,9 @@ public void deleteModel(final Model model) throws SQLException
 	jdbcDAO.deleteEntry("MAK_PICTURES", "ID", model.getId());
   }
 
-  public void deleteAwardedModel(final int id) throws SQLException
+  public void deleteAwardedModel(final int modelID) throws SQLException
   {
-	  delete(AwardedModel.class, "id = " + id);
+	  delete(AwardedModel.class, "modelID = " + modelID);
   }
 
 

@@ -30,11 +30,11 @@ language = languageUtil.getLanguage(languageCode);
 		<tr>
 			<td>D&iacute;jazott makettek:</td>
 			<td><a href="../../RegistrationServlet/getawardedModelsPage">
-					<img src="../../icons/add.png" height="30" align="center"> <%=language.getString("judging.type.form")%>
+					<img src="../../icons/add.png" height="30" align="center"> Verseny eredm&eacute;nyek 
 					megad&aacute;sa
 			</a></td>
 			<td><a href="deleteAwardedModel.jsp"> <img
-					src="../../icons/delete2.png" height="30" align="center"> <%=language.getString("judging.type.form")%>
+					src="../../icons/delete2.png" height="30" align="center"> Verseny eredm&eacute;nyek
 					t&ouml;rl&eacute;se (RegServlet
 					admin belepes utan !)
 			</a></td>

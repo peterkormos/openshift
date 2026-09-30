@@ -2609,7 +2609,7 @@ public class RegistrationServlet extends HttpServlet {
 	
 	public void deleteAwardedModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		authCheck(request, AdminTypes.SuperAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
 		servletDAO.deleteAwardedModel(Integer.valueOf(ServletUtil.getRequestParameter(request, "modelID")));
 
@@ -3055,7 +3055,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void getawardedModelsPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
 		final StringBuilder buff = new StringBuilder();
 		String languageCode = getLanguageCodeForCurrentUserWithDefault(request);
@@ -3081,21 +3081,21 @@ public class RegistrationServlet extends HttpServlet {
 
 	public void printAwardedModels(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
 		printAwardedModels(request, response, cerificateOfMeritBuffer);
 	}
 
 	public void getPresentationPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
 		printAwardedModels(request, response, presentationBuffer);
 	}
 
 	public void addAwardedModels(final HttpServletRequest request, final HttpServletResponse response)
 			throws MissingRequestParameterException, NumberFormatException, SQLException, IOException {
-		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin);
+		authCheck(request, AdminTypes.SuperAdmin, AdminTypes.ShowAdmin, AdminTypes.MasterModelerAdmin);
 
 		final int rows = Integer.parseInt(ServletUtil.getRequestParameter(request, "rows"));
 
