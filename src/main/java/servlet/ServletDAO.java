@@ -383,6 +383,10 @@ void deleteModels(final int categoryId) throws SQLException {
 	public List<AwardedModel> getAwards(final int modelID) {
 		return getList(AwardedModel.class, "modelID=" + modelID);
 	}
+	
+	public boolean hasAward(final int modelID) {
+		return count(AwardedModel.class, "modelID=" + modelID) > 0;
+	}
 
 	public void setSystemParameter(String show, final RegistrationServlet.SystemParameter parameter, String paramValue) {
 		Optional<SystemParameter> systemParameterOptional = getSystemParameterOptional(show, parameter);

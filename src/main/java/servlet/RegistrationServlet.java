@@ -3057,7 +3057,7 @@ public class RegistrationServlet extends HttpServlet {
 		});
 	}
 
-	public static boolean hasAward(final Model model, final String show) {
+	public boolean hasAward(final Model model, final String show) {
 		Optional<Category> category = model.getCategoryForShow(show);
 		return category.isPresent() ? servletDAO.getAwardedModel(model.getId(), category.get().getId()).isPresent() : false;
 	}

@@ -29,7 +29,8 @@ final User user = RegistrationServlet.getUser(request);
 
 	boolean isLinkedToShow = model.isLinkedToShow(show);
 	boolean pulseButton = Boolean.parseBoolean(request.getParameter("pulseButton")) || !isLinkedToShow;
-	boolean hasAward = RegistrationServlet.hasAward(model, show);
+	boolean hasAward = servletDAO.hasAward(model.getId());
+	boolean hasAwardForShow = servlet.hasAward(model, show);
 %>
 
 <%
@@ -69,7 +70,7 @@ if (!isLinkedToShow) {
  %>
 
 <%
- if (isLinkedToShow && !hasAward) {
+ if (isLinkedToShow && !hasAwardForShow) {
  %>
 			<div class="tooltip">
 				<a
