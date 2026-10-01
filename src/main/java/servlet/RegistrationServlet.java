@@ -2591,7 +2591,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 		User user = getUser(request);
 		final HttpSession session = getHttpSession(request);
-		if (user.isAdminUser() || (user.getId() == model.getUserID() && !hasAward(model))) {
+		if ((user.isAdminUser() || user.getId() == model.getUserID()) && !hasAward(model, show)) {
 			unlinkModel(show, model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
@@ -3044,7 +3044,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void deleteModelsForShow(final String show) throws SQLException {
 		RegistrationServlet.getModelsForShow(show, servletDAO.getModels(ServletDAO.INVALID_USERID)).forEach(model -> {
-			if (!hasAward(model)) {
+			if (!hasAward(model, show)) {
 				unlinkModel(show, model);
 			}
 			else
@@ -3057,8 +3057,9 @@ public class RegistrationServlet extends HttpServlet {
 		});
 	}
 
-	public static boolean hasAward(Model model) {
-		return !servletDAO.getAwards(model.getId()).isEmpty();
+	public static boolean hasAward(final Model model, final String show) {
+		Optional<Category> category = model.getCategoryForShow(show);
+		return category.isPresent() ? servletDAO.getAwardedModel(model.getId(), category.get().getId()).isPresent() : false;
 	}
 
 	public void statistics(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

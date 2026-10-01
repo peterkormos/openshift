@@ -29,7 +29,7 @@ final User user = RegistrationServlet.getUser(request);
 
 	boolean isLinkedToShow = model.isLinkedToShow(show);
 	boolean pulseButton = Boolean.parseBoolean(request.getParameter("pulseButton")) || !isLinkedToShow;
-	boolean hasAward = RegistrationServlet.hasAward(model);
+	boolean hasAward = RegistrationServlet.hasAward(model, show);
 %>
 
 <%
