@@ -3143,6 +3143,7 @@ public class RegistrationServlet extends HttpServlet {
 			}
 
 			servletDAO.save(new AwardedModel(servletDAO.getNextID(AwardedModel.class), model.getId(), award, category.get().getId()));
+			servletDAO.archiveModel(model.getId(), category.get().getId(), true /*archivedFlag*/);
 		}
 
 		response.sendRedirect(request.getRequestURI() + "/getawardedModelsPage");
