@@ -231,26 +231,18 @@ public class HibernateDAO
 	  }
   }
   
-  public <T> int count(Class<T> recordClass, String whereClause)
-  {
-	  Session session = null;
-	  
-	  try
-	  {
-		  session = getHibernateSession();
-		  
-		  session.beginTransaction();
-		  
-		  int returned = (int) session.createQuery("count(*) From " + recordClass.getName() + " as r where " + whereClause)
-				  .uniqueResult();
-		  
-		  return returned;
-	  }
-	  finally
-	  {
-		  closeSession(session);
-	  }
-  }
+	public <T> int count(Class<T> recordClass, String whereClause) {
+		Session session = null;
+		try {
+			session = getHibernateSession();
+			session.beginTransaction();
+
+			whereClause = "select count(*) From " + recordClass.getName() + " as r where " + whereClause;
+			return ((Number) session.createQuery(whereClause).uniqueResult()).intValue();
+		} finally {
+			closeSession(session);
+		}
+	}
   
   @SuppressWarnings("unchecked")
   public <T> List<T> getAll(Class<T> recordClass)

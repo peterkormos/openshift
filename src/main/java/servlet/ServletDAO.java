@@ -47,7 +47,7 @@ public class ServletDAO extends HibernateDAO
   }
 
 	boolean userExists(final String email) throws Exception {
-		return !getList(User.class, "upper(email) = upper('" + email + "')").isEmpty();
+		return count(User.class, "upper(email) = upper('" + email + "')") > 0;
 	}
 
   public List<Category> getCategoryList(final String show)
@@ -451,9 +451,8 @@ void deleteModels(final int categoryId) throws SQLException {
 	
 	public boolean userExists(String lastName, int yearOfBirth) {
 		try {
-			List<User> list = getList(User.class, "r.lastName = '" + lastName + "' and r.yearOfBirth = " + yearOfBirth);
-			
-			return !list.isEmpty();
+			String whereClause = "r.lastName = '" + lastName + "' and r.yearOfBirth = " + yearOfBirth;
+			return count(User.class, whereClause) > 0;
 		} catch (Exception e) {
 		}
 		return false;
