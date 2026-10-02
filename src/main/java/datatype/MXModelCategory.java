@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -22,6 +24,10 @@ public class MXModelCategory implements Serializable{
 	
 	@Column(name = "archived")
 	private boolean archived;
+	
+	@ManyToOne
+	@JoinColumn(name = "MAK_MODEL_MODEL_ID")
+	private Model model;
 	
 	public MXModelCategory() {
 	}
@@ -42,7 +48,7 @@ public class MXModelCategory implements Serializable{
 		this.categoryID = cateoryID;
 	}
 
-	public boolean getArchived() {
+	public boolean isArchived() {
 		return archived;
 	}
 

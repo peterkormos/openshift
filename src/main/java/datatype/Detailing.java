@@ -13,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
@@ -34,6 +35,13 @@ public class Detailing extends Record {
 	private DetailingCriteria detailingCriteria;
 	@Column
 	private Boolean checked;
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "MAK_MAK_DETAILING"
+    , joinColumns = @JoinColumn(name = "DETAILING_ID")
+    , inverseJoinColumns = @JoinColumn(name = "MAK_MODEL_MODEL_ID")
+    )
+	private Model model;
 
 	@Deprecated
 	public Detailing() {
@@ -96,4 +104,8 @@ public class Detailing extends Record {
 	public void setId(int id) {
 		this.id = id;
 	}
+
+	public void setModel(Model model) {
+		this.model = model;
 	}
+}

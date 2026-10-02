@@ -1087,7 +1087,7 @@ public class RegistrationServlet extends HttpServlet {
 						: model.isLinkedToShow(show))
 				.filter(model -> {
 					Optional<Category> category = model.getCategoryForShow(show);
-					return category.isPresent() ? !servletDAO.isArchivedModel(model.getId(), category.get().getId()) : true;
+					return category.isPresent() ? !model.isArchived(category.get().getId()) : true;
 				}
 				)
 				.collect(Collectors.toList());
@@ -1386,7 +1386,6 @@ public class RegistrationServlet extends HttpServlet {
 	public void deleteDataForShow(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		authCheck(request, AdminTypes.SuperAdmin);
-
 		deleteDataForShow(request);
 		redirectToMainPage(request, response);
 	}
@@ -2130,9 +2129,11 @@ public class RegistrationServlet extends HttpServlet {
 		final int modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
 
 		final Model model = servletDAO.getModel(modelID);
+		model.detailing.forEach(d -> d.setModel(null));
 		createModel(model, request);
 		User user = getUser(request);
 		if (user.isAdminUser() || user.getId() == model.getUserID()) {
+			servletDAO.deleteDetailing(model.getId());
 			servletDAO.save(model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
@@ -2271,8 +2272,8 @@ public class RegistrationServlet extends HttpServlet {
 				ServletUtil.getOptionalRequestParameter(request, "identification" + httpParameterPostTag));
 		model.setMarkings(ServletUtil.getOptionalRequestParameter(request, "markings" + httpParameterPostTag));
 		model.setGluedToBase(ServletUtil.isCheckedIn(request, "gluedToBase" + httpParameterPostTag));
-		model.setDetailing(getDetailing(request));
-
+		model.getDetailing().clear();
+		model.setDetailing(getDetailing(request, model));
 		return setDimensions(model, request, httpParameterPostTag);
 	}
 
@@ -2292,7 +2293,7 @@ public class RegistrationServlet extends HttpServlet {
 		return model;
 	}
 
-	private Collection<Detailing> getDetailing(final HttpServletRequest request) {
+	private Collection<Detailing> getDetailing(final HttpServletRequest request, Model model) {
 		final Collection<Detailing> detailing = new LinkedList<>();
 
 		for (DetailingGroup group : DetailingGroup.values()) {
@@ -2301,6 +2302,7 @@ public class RegistrationServlet extends HttpServlet {
 				if (checked) {
 					Detailing newDetailing = new Detailing(servletDAO.getNextID(Detailing.class), group, criteria,
 							checked);
+					newDetailing.setModel(model);
 					servletDAO.save(newDetailing);
 					detailing.add(newDetailing);
 				}

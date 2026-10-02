@@ -23,6 +23,7 @@ import org.hibernate.Session;
 import datatype.AwardedModel;
 import datatype.Category;
 import datatype.CategoryGroup;
+import datatype.Detailing;
 import datatype.LoginConsent;
 import datatype.MXModelCategory;
 import datatype.Model;
@@ -233,7 +234,7 @@ public class ServletDAO extends HibernateDAO
 		}
 		List<Model> models = getList(Model.class, joinTables, where);
 		return models.stream().distinct().filter(model -> 
-			categoryID.isPresent() ? !isArchivedModel(model.getId(), categoryID.get()) : true
+			categoryID.isPresent() ? !model.isArchived(categoryID.get()) : true
 		).collect(Collectors.toList());
 	}
 
@@ -469,6 +470,10 @@ void deleteModels(final int categoryId) throws SQLException {
 	public boolean isArchivedModel(int modelID, int categoryID) {
 		Optional<MXModelCategory> mxModelCategory = getOptional(MXModelCategory.class,
 				"modelID=" + modelID + " and categoryID=" + categoryID);
-		return mxModelCategory.isPresent() ? mxModelCategory.get().getArchived() : false;
+		return mxModelCategory.isPresent() ? mxModelCategory.get().isArchived() : false;
+	}
+
+	public void deleteDetailing(int modelID) {
+		delete(Detailing.class, "model.id = " + modelID);
 	}
 }

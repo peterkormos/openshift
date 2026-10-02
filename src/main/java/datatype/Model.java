@@ -24,8 +24,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PostLoad;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -71,16 +73,14 @@ public class Model extends Record {
     @Column(name = "GLUEDTOBASE")
     public boolean gluedToBase;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "MAK_MAK_DETAILING")
+    @OneToMany(mappedBy = "model", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Nullable
-    public Collection<Detailing> detailing;
+    public Collection<Detailing> detailing;    
+    @Transient
+    public Map<DetailingGroup, Map<DetailingCriteria, Boolean>> details;
 
     @Column(name = "crd")
     public Date creationDate = new Date();
-
-    @Transient
-    public Map<DetailingGroup, Map<DetailingCriteria, Boolean>> details;
     
     @ManyToOne
     @JoinColumn(name = "USER_ID")
@@ -89,6 +89,16 @@ public class Model extends Record {
 	private int width;
 	@Column(name = "MODEL_height")
 	private int length;
+	
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "model")
+    @MapKey(name = "categoryID")
+    @Nullable
+    public Map<Integer, MXModelCategory> mxModelCategories;
+    
+	public boolean isArchived(int categoryID) {
+		MXModelCategory mx = mxModelCategories.get(categoryID);
+		return mx != null && mx.isArchived();
+	}
 
 	public User getUser() {
         return user;
@@ -177,8 +187,12 @@ public class Model extends Record {
 
     public void setDetailing(Collection<Detailing> detailing) {
         this.detailing = detailing;
+        details = null;
     }
 
+    public Collection<Detailing> getDetailing() {
+		return detailing;
+	}
     
     @PostLoad
     public void postLoad() {
