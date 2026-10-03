@@ -2901,7 +2901,8 @@ public class RegistrationServlet extends HttpServlet {
 
 		session.setAttribute(SessionAttribute.Action.name(), "modifyUser");
 
-		response.sendRedirect("jsp/user.jsp");
+		boolean goToParentDir = request.getPathInfo() != null;
+		response.sendRedirect((goToParentDir ? "../" : "") + "jsp/user.jsp");
 	}
 
 	public String getServletURL(final HttpServletRequest request) {
