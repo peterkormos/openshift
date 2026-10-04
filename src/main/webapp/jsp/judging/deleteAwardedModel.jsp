@@ -15,7 +15,7 @@
 	%>
 	<label> <input type='radio' name='modelID'
 		value='<%=model.getId()%>' /> <%=category.getGroup().getShow()%> - <%=category.getCategoryCode()%>
-		- <%=category.getCategoryDescription()%> - <%=model.getId()%> - <%=model.getScale()%>
+		- <%=category.getCategoryDescription()%> - <%=model.getShowID(category)%> - <%=model.getScale()%>
 		- <%=model.getName()%> - <%=model.getUser().getFullName()%> - <%=awardedModel.getAward()%>
 	</label> <br>
 	<%

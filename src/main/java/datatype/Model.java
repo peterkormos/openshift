@@ -94,11 +94,6 @@ public class Model extends Record {
     @MapKey(name = "categoryID")
     @Nullable
     public Map<Integer, MXModelCategory> mxModelCategories;
-    
-	public boolean isArchived(int categoryID) {
-		MXModelCategory mx = mxModelCategories.get(categoryID);
-		return mx != null && mx.isArchived();
-	}
 
 	public User getUser() {
         return user;
@@ -298,5 +293,40 @@ public class Model extends Record {
 	
 	public boolean isLinkedToShow(String show) {
 		return getCategoryForShow(show).isPresent();
+	}
+    
+	public boolean isArchived(int categoryID) {
+		if(mxModelCategories == null) {
+			return false;
+		}
+
+		MXModelCategory mx = mxModelCategories.get(categoryID);
+		return mx != null && mx.isArchived();
+	}
+	
+	public String getShowID(Category category) {
+		if(category == null) {
+			return "";
+		}
+		
+		Integer showID = getShowID(category.getId());
+		if(showID == null) {
+			return "";
+		}
+		
+		return String.valueOf(showID);
+	}
+	
+	public Integer getShowID(int categoryID) {
+		if(mxModelCategories == null) {
+			return null;
+		}
+		
+		MXModelCategory mxModelCategory = mxModelCategories.get(categoryID);
+		return mxModelCategory != null ? mxModelCategory.getShowID() : null;
+	}
+	
+	public Map<Integer, MXModelCategory> getMxModelCategories() {
+		return mxModelCategories;
 	}
 }

@@ -95,17 +95,22 @@ public class HibernateDAO
   
   public int getNextID(Class<? extends Record> recordClass)
   {
+	  return getNextID(recordClass, "r.id", "");
+  }
+  
+  public int getNextID(Class recordClass, String idField, String joinTables, String whereClause)
+  {
 	Session session = null;
-
 	try
 	{
 	  session = getHibernateSession();
-
 	  session.beginTransaction();
 
-	  Integer currentMaxvalue = (Integer) session.createQuery("select max(id) From " + recordClass.getSimpleName())
-		  .uniqueResult();
-	  return (currentMaxvalue == null ? 0 : currentMaxvalue) + 1;
+		Integer currentMaxvalue = (Integer) session
+				.createQuery(
+						"select max(" + idField + ") From " + recordClass.getSimpleName() + " as r " + joinTables + (whereClause.isEmpty() ? "" : " where " + whereClause))
+				.uniqueResult();
+		  return (currentMaxvalue == null ? 0 : currentMaxvalue) + 1;
 	}
 	finally
 	{
@@ -232,12 +237,16 @@ public class HibernateDAO
   }
   
 	public <T> int count(Class<T> recordClass, String whereClause) {
+		return count(recordClass, "", whereClause);
+	}
+
+	public <T> int count(Class<T> recordClass, String joinTables, String whereClause) {
 		Session session = null;
 		try {
 			session = getHibernateSession();
 			session.beginTransaction();
 
-			whereClause = "select count(*) From " + recordClass.getName() + " as r where " + whereClause;
+			whereClause = "select count(*) From " + recordClass.getName() + " as r" + joinTables + " where " + whereClause;
 			return ((Number) session.createQuery(whereClause).uniqueResult()).intValue();
 		} finally {
 			closeSession(session);
@@ -263,7 +272,7 @@ public class HibernateDAO
 	}
   }
 
-  public void save(Record record)
+  public <T extends Record> void save(T record)
   {
 	try
 	{
@@ -278,7 +287,7 @@ public class HibernateDAO
 	save((Object)record);
   }
 
-  public Object save(Object record) {
+  public void save(Object record) {
 	Session session = null;
 	try
 	{
@@ -288,12 +297,29 @@ public class HibernateDAO
 	  session.getTransaction().commit();
 	  
 	  logger.debug("save(): " + record);
-	  return record;
 	}
 	finally
 	{
 	  closeSession(session);
 	}
+  }
+  
+  public Object refresh(Object record) {
+	  Session session = null;
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  session.refresh(record);
+		  session.getTransaction().commit();
+		  
+		  logger.debug("refresh(): " + record);
+		  return record;
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
   }
 
   public void update(Record record) 
@@ -334,5 +360,10 @@ public class HibernateDAO
 	{
 	  closeSession(session);
 	}
+  }
+
+  public int getNextID(Class recordClass, String idField, String whereClause)
+  {
+	  return getNextID(recordClass, idField, "", whereClause);
   }
 }

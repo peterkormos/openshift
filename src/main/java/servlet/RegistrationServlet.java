@@ -933,7 +933,7 @@ public class RegistrationServlet extends HttpServlet {
 			returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.city));
 			returned.add(StringEscapeUtils.unescapeHtml4(modelsUser.country));
 			returned.add(modelsUser.getId());
-			returned.add(model.getId());
+			returned.add(model.getShowID(category));
 			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryCode));
 			returned.add(StringEscapeUtils.unescapeHtml4(model.name));
 			returned.add(StringEscapeUtils.unescapeHtml4(model.scale));
@@ -1556,7 +1556,7 @@ public class RegistrationServlet extends HttpServlet {
 			final Category category = model.getCategoryForShow(show).get();
 			List<EmailParameter> modelParameters = Arrays.asList(//
 					EmailParameter.create(language.getString("show"), category.group.show), //
-					EmailParameter.create(language.getString("modelID"), String.valueOf(model.getId())), //
+					EmailParameter.create(language.getString("modelID"), model.getShowID(category)), //
 					EmailParameter.create(language.getString("models.name"), model.name), //
 					EmailParameter.create(language.getString("scale"), model.scale), //
 					EmailParameter.create(language.getString("models.producer"), model.producer), //
@@ -2128,17 +2128,25 @@ public class RegistrationServlet extends HttpServlet {
 
 		final int modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
 
-		final Model model = servletDAO.getModel(modelID);
+		Model model = servletDAO.getModel(modelID);
 		model.detailing.forEach(d -> d.setModel(null));
 		createModel(model, request);
+
 		User user = getUser(request);
 		if (user.isAdminUser() || user.getId() == model.getUserID()) {
 			servletDAO.deleteDetailing(model.getId());
 			servletDAO.save(model);
-
+			servletDAO.refresh(model);
+			
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
+			String show = getShowFromSession(session);
+			Category category = model.getCategoryForShow(show).get();
+			
+			if(model.getShowID(category.getId()) == null) {
+				servletDAO.setShowID(model.getId(), category.getId(), show);
+			}
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("modify.model") + ": "
-					+ model.scale + " - " + model.name + " - " + model.getCategoryForShow(getShowFromSession(session)).get().categoryCode);
+					+ model.scale + " - " + model.name + " - " + category.categoryCode);
 		}
 		session.removeAttribute(SessionAttribute.Models.name());
 		session.removeAttribute(SessionAttribute.ModelID.name());
@@ -2170,6 +2178,8 @@ public class RegistrationServlet extends HttpServlet {
 		}
 
 		servletDAO.save(model);
+		servletDAO.refresh(model);
+		servletDAO.setShowID(model.getId(), model.getCategoryForShow(show).get().getId(), show);
 
 		List<Model> models = getModelsForShow(show, servletDAO.getModels(user.getId()), true);
 
@@ -2272,8 +2282,12 @@ public class RegistrationServlet extends HttpServlet {
 				ServletUtil.getOptionalRequestParameter(request, "identification" + httpParameterPostTag));
 		model.setMarkings(ServletUtil.getOptionalRequestParameter(request, "markings" + httpParameterPostTag));
 		model.setGluedToBase(ServletUtil.isCheckedIn(request, "gluedToBase" + httpParameterPostTag));
-		model.getDetailing().clear();
-		model.setDetailing(getDetailing(request, model));
+		Collection<Detailing> detailing = model.getDetailing();
+		if(detailing != null) {
+			detailing.clear();
+		}
+		detailing = getDetailing(request, model);
+		model.setDetailing(detailing);
 		return setDimensions(model, request, httpParameterPostTag);
 	}
 
@@ -2888,6 +2902,7 @@ public class RegistrationServlet extends HttpServlet {
 
 				if (model != null) {
 					User user = model.getUser();
+					Category category = model.getCategoryForShow(show).get();
 					String print = printBuffer.toString().replaceAll("__FULLNAME__", String.valueOf(user.lastName))
 							// .replaceAll("__FIRSTNAME__",
 							// String.valueOf(user.firstName))
@@ -2897,11 +2912,11 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__COUNTRY__", String.valueOf(user.country))
 
 							.replaceAll("__USER_ID__", String.valueOf(model.getUserID()))
-							.replaceAll("__MODEL_ID__", String.valueOf(model.getId()))
+							.replaceAll("__MODEL_ID__", model.getShowID(category))
 							.replaceAll("__YEAR_OF_BIRTH__",
 									String.valueOf(servletDAO.getUser(model.getUserID()).yearOfBirth))
 							.replaceAll("__MODEL_SCALE__", model.scale)
-							.replaceAll("__CATEGORY_CODE__", model.getCategoryForShow(show).get().categoryCode)
+							.replaceAll("__CATEGORY_CODE__", category.categoryCode)
 							.replaceAll("__MODEL_NAME__", model.name)
 							.replaceAll("__MODEL_NATIONALITY__", model.markings)
 							.replaceAll("__MODEL_IDENTIFICATION__", model.identification)

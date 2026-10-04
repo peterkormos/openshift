@@ -210,6 +210,7 @@ public class ServletDAO extends HibernateDAO
 		return getModels("r.user.id = " + userID + " and c.id = " + categoryID, Optional.of(categoryID)).size();
 	}
 
+
   public List<Model> getModels(final int userID)
   {
 	return userID == INVALID_USERID ? getModels("") : getModels("r.user.id = " + userID);
@@ -257,7 +258,7 @@ public class ServletDAO extends HibernateDAO
   {
 	  return get(Category.class, " r.categoryCode = '" + categoryCode + "' and r.group.show = '" + show + "'");
   }
-  
+	
   public void deleteEntries(final String table) throws SQLException
   {
 	  jdbcDAO.deleteEntry(table, null, 0);
@@ -475,5 +476,20 @@ void deleteModels(final int categoryId) throws SQLException {
 
 	public void deleteDetailing(int modelID) {
 		delete(Detailing.class, "model.id = " + modelID);
+	}
+	
+	public void setShowID(int modelID, int categoryID, String show) {
+		String whereClause = "modelID=" + modelID + " and categoryID=" + categoryID + " and (archived is null or archived=false)";
+
+		MXModelCategory mxModelCategory = get(MXModelCategory.class, whereClause);
+		
+		int showID = getNextID(MXModelCategory.class, "r.showID", " left join r.model m left join m.categories c", "c.group.show = '" + show + "'");
+		mxModelCategory.setShowID(showID);
+
+		save(mxModelCategory);
+	}
+	  
+	public int getModelsInShow(final String show) {
+		return count(Model.class, " left join r.categories c", "c.group.show = '" + show + "'");
 	}
 }

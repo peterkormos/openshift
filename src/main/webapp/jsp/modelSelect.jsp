@@ -11,7 +11,7 @@
 
 	String show = RegistrationServlet.getShowFromSession(session);
 
-	for (final Model model : servlet.getModelsForShow(show, user.getId()))
+	for (final Model model : servlet.getModelsForShow(show, servletDAO.getModels(user.getId())))
 	{
 %>
 <label>

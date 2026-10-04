@@ -15,9 +15,7 @@ final User user = RegistrationServlet.getUser(request);
 
 	final Model model = (Model) session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
 	String show = RegistrationServlet.getShowFromSession(session);
-	if (show == null) {
-		show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
-	}
+	final Category category = model.getCategoryForShow(show).orElse(null);
 
 	boolean insertAwards = Boolean
 	.parseBoolean(ServletUtil.getRequestParameter(request, "insertAwards", false));
@@ -31,6 +29,13 @@ final User user = RegistrationServlet.getUser(request);
 	boolean pulseButton = Boolean.parseBoolean(request.getParameter("pulseButton")) || !isLinkedToShow;
 	boolean hasAward = servletDAO.hasAward(model.getId());
 	boolean hasAwardForShow = servlet.hasAward(model, show);
+	
+	boolean isLinkedToOtherShows = false;
+	if(category != null) {
+		List linkedRemainingShows = new LinkedList(model.getCategories());
+		linkedRemainingShows.remove(category);
+		isLinkedToOtherShows = linkedRemainingShows.size() > 0;
+	}
 %>
 
 <%
@@ -53,7 +58,7 @@ if (!isLinkedToShow) {
 		<jsp:include page="modifyModelButton.jsp" />
 
 <%
- if (!hasAward) {
+ if (!hasAward && !isLinkedToOtherShows) {
  %>
 			<div class="tooltip">
 				<a
@@ -89,7 +94,6 @@ if (!isLinkedToShow) {
 			<%
 						}
 						%> <%
- final Category category = model.getCategoryForShow(show).orElse(null);
  	 if(category != null) {
  	 	List<String> judges = servlet.judgingServletDAO.getJudges(category.getId(), model.getId(),
  	 			model.getUserID());
@@ -131,7 +135,7 @@ if (!isLinkedToShow) {
 							</tr>
 							<tr>
 								<td valign="middle"><font><%=user.getId()%></font></td>
-								<td valign="middle"><font><%=model.getId()%></font></td>
+								<td valign="middle"><font><%=model.getShowID(category)%></font></td>
 								<td valign="middle"><font><%=model.getScale()%></font></td>
 								<td valign="middle">
 									<div

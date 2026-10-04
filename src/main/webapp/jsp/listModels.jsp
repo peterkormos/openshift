@@ -263,7 +263,7 @@ Sz&iacute;nk&oacute;dok:
 		%>
 		<td align='center'><%=model.getUserID()%></td>
 
-		<td align='center'><%=model.getId()%></td>
+		<td align='center'><%=model.getShowID(category)%></td>
 		<%
 			}
 		%>
