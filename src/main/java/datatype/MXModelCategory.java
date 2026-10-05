@@ -63,7 +63,7 @@ public class MXModelCategory implements Serializable{
 	}
 	
 	public Integer getShowID() {
-		return showID == null ? getModelID() : showID;
+		return showID;
 	}
 	
 	@Override

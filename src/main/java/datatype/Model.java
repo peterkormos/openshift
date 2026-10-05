@@ -325,7 +325,16 @@ public class Model extends Record {
 		}
 		
 		MXModelCategory mxModelCategory = mxModelCategories.get(categoryID);
-		return mxModelCategory != null ? mxModelCategory.getShowID() : null;
+		return mxModelCategory != null ? mxModelCategory.getShowID() == null ? getId() : mxModelCategory.getShowID() : null;
+	}
+	
+	public boolean isShowIDSet(int categoryID) {
+		if(mxModelCategories == null) {
+			return false;
+		}
+		
+		MXModelCategory mxModelCategory = mxModelCategories.get(categoryID);
+		return (mxModelCategory != null ? mxModelCategory.getShowID() : null) != null;
 	}
 	
 	public Map<Integer, MXModelCategory> getMxModelCategories() {

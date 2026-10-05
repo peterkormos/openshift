@@ -2141,8 +2141,7 @@ public class RegistrationServlet extends HttpServlet {
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
 			String show = getShowFromSession(session);
 			Category category = model.getCategoryForShow(show).get();
-			
-			if(model.getShowID(category.getId()) == null) {
+			if(!model.isShowIDSet(category.getId())) {
 				servletDAO.setShowID(model.getId(), category.getId(), show);
 			}
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("modify.model") + ": "

@@ -483,7 +483,7 @@ void deleteModels(final int categoryId) throws SQLException {
 
 		MXModelCategory mxModelCategory = get(MXModelCategory.class, whereClause);
 		
-		int showID = getNextID(MXModelCategory.class, "r.showID", " left join r.model m left join m.categories c", "c.group.show = '" + show + "'");
+		int showID = getNextID(MXModelCategory.class, "r.showID", " join r.model m join m.categories c join c.group g ", "r.modelID = m.id and r.categoryID = c.id and g.show = '" + show + "'");
 		mxModelCategory.setShowID(showID);
 
 		save(mxModelCategory);
