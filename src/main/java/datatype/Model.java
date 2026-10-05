@@ -226,12 +226,14 @@ public class Model extends Record {
 	this.name = model.name;
 	this.producer = model.producer;
 	this.comment = model.comment;
-
 	this.identification = model.identification;
 	this.markings = model.markings;
 	this.gluedToBase = model.gluedToBase;
-
 	this.detailing = model.detailing;
+	this.creationDate = model.creationDate;
+	this.length = model.length;
+	this.width = model.width;
+	this.mxModelCategories = model.mxModelCategories;
     }
 
     @Override

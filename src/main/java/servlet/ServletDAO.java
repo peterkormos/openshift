@@ -189,7 +189,7 @@ public class ServletDAO extends HibernateDAO
 
   public List<Model> selectModels(final HttpServletRequest request) throws SQLException
   {
-	String where = "";
+	String where = "c.group.show = '" + RegistrationServlet.getShowFromSession(request) + "'";
 
 	where = createWhereStatement(request, where, "c.id", "categoryID", false);
 	where = createWhereStatement(request, where, "r.user.id", "userID", false);

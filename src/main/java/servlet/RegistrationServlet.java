@@ -2586,9 +2586,10 @@ public class RegistrationServlet extends HttpServlet {
 		if (user.isAdminUser() || user.getId() == model.getUserID()) {
 			servletDAO.deleteModel(model);
 			HttpSession session = getHttpSession(request);
+			Optional<Category> category = model.getCategoryForShow(getShowFromSession(session));
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("delete") + ": "
-					+ model.scale + " - " + model.name + " - "
-					+ model.getCategoryForShow(getShowFromSession(session)).get().categoryCode);
+					+ model.scale + " - " + model.name 
+					+ (category.isPresent() ? " - " + category.get().categoryCode : ""));
 		}
 	}
 

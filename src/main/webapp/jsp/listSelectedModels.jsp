@@ -7,6 +7,7 @@
 <%
     RegistrationServlet servlet = RegistrationServlet.getInstance(config);
   ServletDAO servletDAO = servlet.getServletDAO();
+  final String show = RegistrationServlet.getShowFromSession(session);
 
   User user = servlet.getUser(request);
 
@@ -14,7 +15,10 @@
   if(ServletUtil.isCheckedIn(request, "filterToOversized")) {
 	models.sort(new Comparator<Model>() {
 		public int compare(Model m1, Model m2) {
-			return Integer.compare(m1.getCategoryID(), m2.getCategoryID());
+			final Category c1 = m1.getCategoryForShow(show).get();
+			final Category c2 = m2.getCategoryForShow(show).get();
+
+			return Integer.compare(c1.getId(), c2.getId());
 		}
 	});	  
   }
