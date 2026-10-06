@@ -189,7 +189,7 @@ public class RegistrationServlet extends HttpServlet {
 						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
 			}
 
-			emailUtil = new EmailUtil(getServerConfigParamter("email.from"), false, getServerConfigParamter("email.from"), getServerConfigParamter("email.from"));
+			emailUtil = new EmailUtil(getServerConfigParamter("email.smtpServer"), false, getServerConfigParamter("email.from"), getServerConfigParamter("email.password"));
 
 			printCardBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/printCard.html"));
 			batchAddModelBuffer = loadFile(
