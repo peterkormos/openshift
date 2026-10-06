@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -713,6 +714,47 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 
+		redirectToMainPage(request, response);
+	}
+	
+	public void jpa(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin);
+		
+		User user = getUser(request);
+		if (user.isAdminUser()) {
+			String jpa = ServletUtil.getRequestParameter(request, "jpa");
+
+			final StringBuilder buff = new StringBuilder();
+			buff.append(jpa);
+			buff.append("\n<br>\n");
+			buff.append("<table border='1'>\n");
+
+			boolean highlight = false;
+			for (Object record : servletDAO.executeJPA(jpa)) {
+				if (highlight)
+					buff.append("  <tr bgcolor='eaeaea' >\n");
+				else
+					buff.append("  <tr>\n");
+				buff.append("    <td>" + record + "</td>\n");
+				buff.append("  </tr>\n");
+				highlight = !highlight;
+			}
+			buff.append("</table>\n");
+			ServletUtil.writeResponse(response, buff);
+			return;
+		}
+		
+		redirectToMainPage(request, response);
+	}
+	
+	public void deleteOldModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin);
+		
+		User user = getUser(request);
+		if (user.isAdminUser()) {
+			servletDAO.getModels("crd < ");
+		}
+		
 		redirectToMainPage(request, response);
 	}
 

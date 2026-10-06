@@ -264,6 +264,22 @@ public class HibernateDAO
 	}
   }
 
+  @SuppressWarnings("unchecked")
+  public List executeJPA(String jpa)
+  {
+	  Session session = null;
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  return new LinkedList(session.createQuery(jpa).list());
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
   public void save(Record record)
   {
 	try

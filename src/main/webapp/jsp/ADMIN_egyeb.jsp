@@ -28,15 +28,15 @@ if (show == null) {
 	felhaszn&aacute;l&oacute; t&ouml;rl&eacute;se az
 	adatb&aacute;zisb&oacute;l </a>
 <p>
-	<a href="../RegistrationServlet/deleteDataForShow"
-		style="background: red; font-weight: bold"> Aktu&aacute;lis
-		verseny &ouml;sszes makettj&eacute;nek,
-		kateg&oacute;ri&aacute;j&aacute;nak t&ouml;rl&eacute;se az
-		adatb&aacute;zisb&oacute;l </a>
-<p>
 	<a href="../RegistrationServlet/deleteModelForShow"
 		style="background: red; font-weight: bold"> Aktu&aacute;lis
-		verseny &ouml;sszes makettj&eacute;nek t&ouml;rl&eacute;se az
+		verseny &ouml;sszes makett kapcsolat&aacute;nak t&ouml;rl&eacute;se az
+		adatb&aacute;zisb&oacute;l </a>
+<p>
+	<a href="../RegistrationServlet/deleteDataForShow"
+		style="background: red; font-weight: bold"> Aktu&aacute;lis
+		verseny &ouml;sszes makett kapcsolat&aacute;nak,
+		kateg&oacute;ri&aacute;j&aacute;nak t&ouml;rl&eacute;se az
 		adatb&aacute;zisb&oacute;l </a>
 <p>
 	<a href="../RegistrationServlet/deletedirectUsers"
@@ -64,6 +64,7 @@ if (show == null) {
 		<input
 			name="sql" type="text" value="" size="150">
 	</p>
+</form>
 	<p>update MAK_SYSTEM set PARAM_VALUE='1'</p>
 	<p>update MAK_USERS set USER_password='secret' where email='admin'</p>
 	<p>update MAK_USERS set USER_LANGUAGE='CATEGORY' where
@@ -76,13 +77,21 @@ if (show == null) {
 	<p>alter table MAK_USERS drop column USER_NAME
 	<p>alter table MAK_MODEL add crd date DEFAULT CURRENT_DATE
 	<p>select crd, count(*) from mak_model group by crd
+
+<form accept-charset="UTF-8" name="input"
+	action="../RegistrationServlet/jpa" method="post">
+	<p>JPA update:</p>
+	<p>
+		<input
+			name="jpa" type="text" value="" size="150">
+	</p>
 </form>
 
 <form accept-charset="UTF-8" name="input"
 	action="../RegistrationServlet/sendEmails" method="post">
-	Mindenkinek email küldése. Szöveg:
+	Mindenkinek email kÃ¼ldÃ©se. SzÃ¶veg:
 	<textarea name='message' type="text" cols='100' rows='3'></textarea>
-	<input type="submit" value="Küld">
+	<input type="submit" value="KÃ¼ld">
 </form>
 
 <p>
