@@ -724,36 +724,31 @@ public class RegistrationServlet extends HttpServlet {
 		User user = getUser(request);
 		if (user.isAdminUser()) {
 			String jpa = ServletUtil.getRequestParameter(request, "jpa");
-
-			final StringBuilder buff = new StringBuilder();
-			buff.append(jpa);
-			buff.append("\n<br>\n");
-			buff.append("<table border='1'>\n");
-
-			boolean highlight = false;
-			for (Object record : servletDAO.executeJPA(jpa)) {
-				if (highlight)
-					buff.append("  <tr bgcolor='eaeaea' >\n");
-				else
-					buff.append("  <tr>\n");
-				buff.append("    <td>" + record + "</td>\n");
-				buff.append("  </tr>\n");
-				highlight = !highlight;
+			String jpaType = ServletUtil.getRequestParameter(request, "jpaType");
+			
+			if("update".equals(jpaType)) {
+				servletDAO.executeJPAUpdate(jpa);
 			}
-			buff.append("</table>\n");
-			ServletUtil.writeResponse(response, buff);
-			return;
-		}
-		
-		redirectToMainPage(request, response);
-	}
-	
-	public void deleteOldModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		authCheck(request, AdminTypes.SuperAdmin);
-		
-		User user = getUser(request);
-		if (user.isAdminUser()) {
-			servletDAO.getModels("crd < ");
+			else {
+				final StringBuilder buff = new StringBuilder();
+				buff.append(jpa);
+				buff.append("\n<br>\n");
+				buff.append("<table border='1'>\n");
+
+				boolean highlight = false;
+				for (Object record : servletDAO.executeJPAQuery(jpa)) {
+					if (highlight)
+						buff.append("  <tr bgcolor='eaeaea' >\n");
+					else
+						buff.append("  <tr>\n");
+					buff.append("    <td>" + record + "</td>\n");
+					buff.append("  </tr>\n");
+					highlight = !highlight;
+				}
+				buff.append("</table>\n");
+				ServletUtil.writeResponse(response, buff);
+				return;
+			}
 		}
 		
 		redirectToMainPage(request, response);
@@ -3468,5 +3463,16 @@ public class RegistrationServlet extends HttpServlet {
 
 	public List<String> getShowsWithPreRegistration() throws SQLException {
 		return servletDAO.getShows().stream().filter(show -> isPreRegistrationAllowed(show)).collect(Collectors.toList());
+	}
+	
+	public void deleteOldModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin);
+		
+		User user = getUser(request);
+		if (user.isAdminUser()) {
+			servletDAO.selectOldModels().forEach(model -> servletDAO.delete(model));
+		}
+		
+		redirectToMainPage(request, response);
 	}
 }

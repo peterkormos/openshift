@@ -265,7 +265,7 @@ public class HibernateDAO
   }
 
   @SuppressWarnings("unchecked")
-  public List executeJPA(String jpa)
+  public List executeJPAQuery(String jpa)
   {
 	  Session session = null;
 	  try
@@ -273,6 +273,22 @@ public class HibernateDAO
 		  session = getHibernateSession();
 		  session.beginTransaction();
 		  return new LinkedList(session.createQuery(jpa).list());
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  @SuppressWarnings("unchecked")
+  public void executeJPAUpdate(String jpa)
+  {
+	  Session session = null;
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  session.createQuery(jpa).executeUpdate();
 	  }
 	  finally
 	  {

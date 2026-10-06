@@ -39,6 +39,10 @@ if (show == null) {
 		kateg&oacute;ri&aacute;j&aacute;nak t&ouml;rl&eacute;se az
 		adatb&aacute;zisb&oacute;l </a>
 <p>
+	<a href="../RegistrationServlet/deleteOldModels"
+		style="background: red; font-weight: bold"> R&eacute;gi makettek t&ouml;rl&eacute;se az
+		adatb&aacute;zisb&oacute;l </a>
+<p>
 	<a href="../RegistrationServlet/deletedirectUsers"
 		style="background: red; font-weight: bold"> &Ouml;sszes
 		helysz&iacute;nen regisztr&aacute;lt felhaszn&aacute;l&oacute;
@@ -80,7 +84,10 @@ if (show == null) {
 
 <form accept-charset="UTF-8" name="input"
 	action="../RegistrationServlet/jpa" method="post">
-	<p>JPA update:</p>
+	<p>JPA:</p>
+	<p>
+	<label><input type='radio' name="jpaType" value="update">update</label>
+	<label><input type='radio' name="jpaType" value="select">select</label>
 	<p>
 		<input
 			name="jpa" type="text" value="" size="150">
