@@ -20,14 +20,18 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.Message;
 
-public class EmailUtil {
+public class GmailUtil {
 
     private final Gmail service;
 
-    public EmailUtil() throws IOException, GeneralSecurityException {
+    public GmailUtil() throws IOException, GeneralSecurityException {
         service = GoogleAPIHelper.getGmailService(GmailScopes.all());
     }
 
+    /*
+     * Less secure app access
+     * https://myaccount.google.com/security
+     */
     public void sendEmail(final String from, String to, String subject, String htmlMessage)
             throws MessagingException, IOException {
         MimeMessage emailContent = createEmail(to, from, subject, htmlMessage);

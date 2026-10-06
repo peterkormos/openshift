@@ -91,8 +91,9 @@ import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import tools.InitDB;
 import util.CommonSessionAttribute;
+import util.EmailUtil;
 import util.LanguageUtil;
-import util.gapi.EmailUtil;
+import util.gapi.GmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
 	public String VERSION = "2026.09.22.";
@@ -188,7 +189,7 @@ public class RegistrationServlet extends HttpServlet {
 						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
 			}
 
-			emailUtil = new EmailUtil();
+			emailUtil = new EmailUtil(getServerConfigParamter("email.from"), false, getServerConfigParamter("email.from"), getServerConfigParamter("email.from"));
 
 			printCardBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/printCard.html"));
 			batchAddModelBuffer = loadFile(
@@ -1582,7 +1583,7 @@ public class RegistrationServlet extends HttpServlet {
 			return false;
 		}
 		try {
-			emailUtil.sendEmail(getServerConfigParamter("email.from"), to, subject, message.toString());
+			emailUtil.sendEmail(to, subject, message.toString());
 			return true;
 		} catch (Exception e) {
 			logger.error("", e);
