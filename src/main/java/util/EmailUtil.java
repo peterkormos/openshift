@@ -40,35 +40,36 @@ public class EmailUtil {
 
     public void standardSendEmail(final String to, final String subject, final String htmlMessage) throws MessagingException  {
         if (from == null) {
-            throw new IllegalArgumentException("!!! Utils.sendMessage(): FROM address is null!");
+            throw new IllegalArgumentException("FROM address is null!");
         }
 
         if (from.indexOf("@") == -1) {
-            throw new IllegalArgumentException("!!! Utils.sendMessage(): invalid FROM e-mail address: " + from);
+            throw new IllegalArgumentException("invalid FROM e-mail address: " + from);
         }
 
         if (to == null) {
-            throw new IllegalArgumentException("!!! Utils.sendMessage(): TO address is null !");
+            throw new IllegalArgumentException("TO address is null !");
         }
 
         if (to.indexOf("@") == -1) {
-            throw new IllegalArgumentException("!!! Utils.sendMessage(): invalid TO e-mail address: " + to);
+            throw new IllegalArgumentException("invalid TO e-mail address: " + to);
         }
 
         final Properties props = new Properties();
         props.put("mail.smtp.host", smtpServer);
         props.put("mail.debug", debugSMTP);
         props.put("mail.smtp.socketFactory.fallback", "false");
-//        props.put("mail.smtp.socketFactory.port", "465");
+
+        props.put("mail.smtp.port", "25");
+        props.put("mail.smtp.auth", "false");
+        props.put("mail.smtp.starttls.enable", "false");
+
+        //        props.put("mail.smtp.socketFactory.port", "465");
 //        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 //        props.put("mail.smtp.auth", "true");
 //        props.put("mail.smtp.port", "465");
 //        props.put("mail.smtp.starttls.enable", "true");
 //        props.put("mail.smtp.EnableSSL.enable", "true");
-        props.put("mail.smtp.port", "25");
-        props.put("mail.smtp.auth", "false");
-        props.put("mail.smtp.starttls.enable", "false");
-        
 //        final Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
 //            @Override
 //            protected PasswordAuthentication getPasswordAuthentication() {
