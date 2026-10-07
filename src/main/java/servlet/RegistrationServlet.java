@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -92,8 +93,9 @@ import tools.ExcelUtil;
 import tools.ExcelUtil.Workbook;
 import tools.InitDB;
 import util.CommonSessionAttribute;
+import util.EmailUtil;
 import util.LanguageUtil;
-import util.gapi.EmailUtil;
+import util.gapi.GmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
 	public String VERSION = "2026.09.22.";
@@ -189,7 +191,7 @@ public class RegistrationServlet extends HttpServlet {
 						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
 			}
 
-			emailUtil = new EmailUtil();
+			emailUtil = new EmailUtil(getServerConfigParamter("email.smtpServer"), false, getServerConfigParamter("email.from"), getServerConfigParamter("email.password"));
 
 			printCardBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/printCard.html"));
 			batchAddModelBuffer = loadFile(
@@ -714,6 +716,42 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 
+		redirectToMainPage(request, response);
+	}
+	
+	public void jpa(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin);
+		
+		User user = getUser(request);
+		if (user.isAdminUser()) {
+			String jpa = ServletUtil.getRequestParameter(request, "jpa");
+			String jpaType = ServletUtil.getRequestParameter(request, "jpaType");
+			
+			if("update".equals(jpaType)) {
+				servletDAO.executeJPAUpdate(jpa);
+			}
+			else {
+				final StringBuilder buff = new StringBuilder();
+				buff.append(jpa);
+				buff.append("\n<br>\n");
+				buff.append("<table border='1'>\n");
+
+				boolean highlight = false;
+				for (Object record : servletDAO.executeJPAQuery(jpa)) {
+					if (highlight)
+						buff.append("  <tr bgcolor='eaeaea' >\n");
+					else
+						buff.append("  <tr>\n");
+					buff.append("    <td>" + record + "</td>\n");
+					buff.append("  </tr>\n");
+					highlight = !highlight;
+				}
+				buff.append("</table>\n");
+				ServletUtil.writeResponse(response, buff);
+				return;
+			}
+		}
+		
 		redirectToMainPage(request, response);
 	}
 
@@ -1590,7 +1628,7 @@ public class RegistrationServlet extends HttpServlet {
 			return false;
 		}
 		try {
-			emailUtil.sendEmail(getServerConfigParamter("email.from"), to, subject, message.toString());
+			emailUtil.sendEmail(to, subject, message.toString());
 			return true;
 		} catch (Exception e) {
 			logger.error("", e);
@@ -3507,5 +3545,16 @@ public class RegistrationServlet extends HttpServlet {
 
 	public List<String> getShowsWithPreRegistration() throws SQLException {
 		return servletDAO.getShows().stream().filter(show -> isPreRegistrationAllowed(show)).collect(Collectors.toList());
+	}
+	
+	public void deleteOldModels(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin);
+		
+		User user = getUser(request);
+		if (user.isAdminUser()) {
+			servletDAO.selectOldModels().forEach(model -> servletDAO.delete(model));
+		}
+		
+		redirectToMainPage(request, response);
 	}
 }

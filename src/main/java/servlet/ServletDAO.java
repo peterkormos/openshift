@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -460,6 +464,29 @@ void deleteModels(final int categoryId) throws SQLException {
 		return false;
 	}
 
+	public List<Model> selectOldModels() {
+		Session session = null;
+		try {
+			session = getHibernateSession();
+			session.beginTransaction();
+
+			Query query = session
+					.createQuery("select r From Model as r where crd is null or crd < :creationDate");
+			
+			query.setParameter("creationDate", Date.from(LocalDate.now().minusYears(5).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			
+			List<Model> returned = (List<Model>) query.list();
+
+			if (returned == null) {
+				returned = new ArrayList<Model>();
+			}
+
+			return returned;
+		} finally {
+			closeSession(session);
+		}
+	}
+	
 	public void archiveModel(int modelID, int categoryID, boolean archivedFlag) {
 		MXModelCategory mxModelCategory = get(MXModelCategory.class,
 				"modelID=" + modelID + " and categoryID=" + categoryID);

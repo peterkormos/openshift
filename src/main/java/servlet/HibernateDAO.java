@@ -272,7 +272,39 @@ public class HibernateDAO
 	}
   }
 
-  public <T extends Record> void save(T record)
+  @SuppressWarnings("unchecked")
+  public List executeJPAQuery(String jpa)
+  {
+	  Session session = null;
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  return new LinkedList(session.createQuery(jpa).list());
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  @SuppressWarnings("unchecked")
+  public void executeJPAUpdate(String jpa)
+  {
+	  Session session = null;
+	  try
+	  {
+		  session = getHibernateSession();
+		  session.beginTransaction();
+		  session.createQuery(jpa).executeUpdate();
+	  }
+	  finally
+	  {
+		  closeSession(session);
+	  }
+  }
+  
+  public void save(Record record)
   {
 	try
 	{
