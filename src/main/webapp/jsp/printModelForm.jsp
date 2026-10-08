@@ -112,7 +112,7 @@ if (!isLinkedToShow) {
 	</tr>
 	<tr>
 		<td>
-			<table style="border-collapse: collapse">
+			<table style="border-collapse: collapse; width: 100%">
 				<tr>
 					<td style="border-bottom: 1px solid; border-bottom-style: dashed;">
 						<table style="box-shadow: none; height: 100%; width: 100%">
