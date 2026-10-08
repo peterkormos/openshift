@@ -13,11 +13,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -41,6 +41,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -95,10 +96,9 @@ import tools.InitDB;
 import util.CommonSessionAttribute;
 import util.EmailUtil;
 import util.LanguageUtil;
-import util.gapi.GmailUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2026.09.22.";
+	public String VERSION = "2026.10.08.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -446,10 +446,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append("<html>\n");
 
-		buff.append("<head>\n");
-		boolean goToParentDir = request.getPathInfo() != null;
-		buff.append("<link href='"+(goToParentDir ? "../" : "")+"jsp/base.css' rel='stylesheet' type='text/css'>\n");
-		buff.append("</head>\n");
+		insertBaseCSS(request, buff);
 
 		buff.append("<body>\n");
 		buff.append("<div class='flash error'>\n");
@@ -716,42 +713,6 @@ public class RegistrationServlet extends HttpServlet {
 			}
 		}
 
-		redirectToMainPage(request, response);
-	}
-	
-	public void jpa(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		authCheck(request, AdminTypes.SuperAdmin);
-		
-		User user = getUser(request);
-		if (user.isAdminUser()) {
-			String jpa = ServletUtil.getRequestParameter(request, "jpa");
-			String jpaType = ServletUtil.getRequestParameter(request, "jpaType");
-			
-			if("update".equals(jpaType)) {
-				servletDAO.executeJPAUpdate(jpa);
-			}
-			else {
-				final StringBuilder buff = new StringBuilder();
-				buff.append(jpa);
-				buff.append("\n<br>\n");
-				buff.append("<table border='1'>\n");
-
-				boolean highlight = false;
-				for (Object record : servletDAO.executeJPAQuery(jpa)) {
-					if (highlight)
-						buff.append("  <tr bgcolor='eaeaea' >\n");
-					else
-						buff.append("  <tr>\n");
-					buff.append("    <td>" + record + "</td>\n");
-					buff.append("  </tr>\n");
-					highlight = !highlight;
-				}
-				buff.append("</table>\n");
-				ServletUtil.writeResponse(response, buff);
-				return;
-			}
-		}
-		
 		redirectToMainPage(request, response);
 	}
 
@@ -1771,7 +1732,7 @@ public class RegistrationServlet extends HttpServlet {
 		authCheck(request, AdminTypes.SuperAdmin);
 
 		User user = getUser(request);
-		ServletUtil.writeResponse(response, getUserTable(user));
+		ServletUtil.writeResponse(response, getUserTable(request, user));
 	}
 
 	public void listCategories(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1779,17 +1740,15 @@ public class RegistrationServlet extends HttpServlet {
 
 		final StringBuilder buff = new StringBuilder();
 
-		getCategoryTable(buff, servletDAO.getCategoryList(getShowFromSession(request)),
+		getCategoryTable(request, buff, servletDAO.getCategoryList(getShowFromSession(request)),
 				getLanguageFromSession(request));
 
 		ServletUtil.writeResponse(response, buff);
 	}
 
-	private void getCategoryTable(final StringBuilder buff, final List<Category> categories,
+	private void getCategoryTable(final HttpServletRequest request, final StringBuilder buff, final List<Category> categories,
 			final ResourceBundle language) throws SQLException {
-		buff.append("<head>\n");
-		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
-		buff.append("</head>\n");
+		insertBaseCSS(request, buff);
 
 		buff.append("<table border=1>");
 		buff.append("<tr>");
@@ -1867,16 +1826,14 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</table>");
 	}
 
-	public StringBuilder getUserTable(final User loggedInUser) throws Exception {
+	public StringBuilder getUserTable(final HttpServletRequest request, final User loggedInUser) throws Exception {
 		final ResourceBundle language = languageUtil.getLanguage(loggedInUser.language);
 
 		final StringBuilder buff = new StringBuilder();
 
 		final List<User> users = servletDAO.getUsers();
 
-		buff.append("<head>\n");
-		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
-		buff.append("</head>\n");
+		insertBaseCSS(request, buff);
 
 		buff.append("<table border=1>");
 		buff.append("<tr>");
@@ -2033,10 +1990,7 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 
 		buff.append("<html>");
-		buff.append("<head>");
-		buff.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
-		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
-		buff.append("</head>");
+		insertBaseCSS(request, buff);
 		buff.append("<body>");
 
 		buff.append("<form accept-charset=\"UTF-8\" name='input' action='./addCategory' method='POST'>");
@@ -2432,7 +2386,7 @@ public class RegistrationServlet extends HttpServlet {
 		ServletUtil.writeResponse(response, buff);
 	}
 
-	private StringBuilder inputForSelectModel(final User user, final String action, final String submitLabel,
+	private StringBuilder inputForSelectModel(final HttpServletRequest request, final User user, final String action, final String submitLabel,
 			final List<Model> models) throws Exception {
 		final StringBuilder buff = new StringBuilder();
 
@@ -2440,7 +2394,8 @@ public class RegistrationServlet extends HttpServlet {
 			return buff;
 		}
 
-		buff.append("<link rel='stylesheet' href='jsp/base.css' media='screen' />");
+		insertBaseCSS(request, buff);
+
 		buff.append(
 				"<form accept-charset='UTF-8' name='input' action='RegistrationServlet' method='put' target='_top'>");
 		buff.append("<input type='hidden' name='command' value='");
@@ -2499,10 +2454,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		buff.append("<html>");
 
-		buff.append("<head>\n");
-		buff.append("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />\n");
-		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
-		buff.append("</head>\n");
+		insertBaseCSS(request, buff);
 
 		buff.append("<body>\n");
 		buff.append("<form accept-charset='UTF-8' name='input' action='../RegistrationServlet' method='put' >");
@@ -2695,9 +2647,8 @@ public class RegistrationServlet extends HttpServlet {
 		final StringBuilder buff = new StringBuilder();
 		final ResourceBundle language = getLanguageFromSession(request);
 
-		buff.append("<head>\n");
-		buff.append("<link href='../jsp/base.css' rel='stylesheet' type='text/css'>\n");
-		buff.append("</head>\n");
+		insertBaseCSS(request, buff);
+
 		buff.append("<body><table border=1>");
 		buff.append("<tr>");
 		buff.append("<th style='white-space: nowrap'>");
@@ -3556,5 +3507,95 @@ public class RegistrationServlet extends HttpServlet {
 		}
 		
 		redirectToMainPage(request, response);
+	}
+	
+	public void jpa(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		authCheck(request, AdminTypes.SuperAdmin);
+		
+		User user = getUser(request);
+		if (user.isAdminUser()) {
+			String jpa = ServletUtil.getRequestParameter(request, "jpa");
+			String jpaType = ServletUtil.getRequestParameter(request, "jpaType");
+			
+			if("update".equals(jpaType)) {
+				servletDAO.executeJPAUpdate(jpa);
+			}
+			else {
+				final StringBuilder buff = new StringBuilder();
+				
+				insertBaseCSS(request, buff);
+
+				buff.append(jpa);
+				buff.append("\n<br>\n");
+
+				boolean highlight = false;
+				boolean addHeader = true;
+				buff.append("<table border='1'>\n");
+				for (Object record : servletDAO.executeJPAQuery(jpa)) {
+					insertObjectTable(record, buff, addHeader, highlight, false /*insertTable*/);
+					if(addHeader) {
+						addHeader = false;
+					}
+					highlight = !highlight;
+				}
+				buff.append("</table>\n");
+				ServletUtil.writeResponse(response, buff);
+				return;
+			}
+		}
+		
+		redirectToMainPage(request, response);
+	}
+
+	private void insertBaseCSS(final HttpServletRequest request, final StringBuilder buff) {
+		buff.append("<head>\n");
+		boolean goToParentDir = request.getPathInfo() != null;
+		buff.append("<link href='"+(goToParentDir ? "../" : "")+"jsp/base.css' rel='stylesheet' type='text/css'>\n");
+		buff.append("</head>\n");
+	}
+
+	private void insertObjectTable(Object record, StringBuilder buff, boolean addHeader, boolean highlight, boolean insertTable) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		if(insertTable) {
+			buff.append("<table border='1'>\n");
+		}
+		Predicate<Method> methodFilter = m -> m.getParameterCount() == 0 && (m.getName().contains("get") || m.getName().contains("is") || m.getName().contains("has"))
+				&& !Arrays.asList("hashCode", "getClass", "getDeclaringClass").contains(m.getName());
+		List<Method> methods = Arrays.asList(record.getClass().getMethods());
+		methods.sort((m1,m2) -> m1.getName().compareTo(m2.getName()));
+
+		if(addHeader) {
+			buff.append("  <tr>\n");
+			for(Method m : methods) {
+				if(methodFilter.test(m)) {
+					buff.append("    <th>" + m.getName().replace("get", "") + "</th>\n");
+				}
+			}
+			buff.append("  </tr>\n");
+		}
+		
+		if (highlight)
+			buff.append("  <tr bgcolor='eaeaea' >\n");
+		else
+			buff.append("  <tr>\n");
+		
+		for(Method m : methods) {
+			if(methodFilter.test(m)) {
+				Object fieldValue = m.invoke(record, null);
+				if(fieldValue != null && fieldValue.getClass().getPackage().getName().startsWith("datatype")) {
+					buff.append("    <td>\n");
+					insertObjectTable(fieldValue, buff, true /* addHeader */, false /* highlight*/, true /*insertTable*/);
+					buff.append("    </td>\n");
+
+				}
+				else {
+					buff.append("    <td>" + fieldValue + "</td>\n");
+				}
+			}
+		}
+		
+		buff.append("  </tr>\n");
+		if(insertTable) {
+			buff.append("</table>\n");
+		}
 	}
 }

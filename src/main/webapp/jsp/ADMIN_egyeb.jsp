@@ -61,13 +61,18 @@ if (show == null) {
 	email: <input type="text" name="fullname" value="<%=show%>">
 	password: <input type="text" name="password">
 </form>
+
+<form accept-charset="UTF-8" name="input"
+	action="../RegistrationServlet/jpa" method="post">
+	JPA:
+	<label><input type='radio' name="jpaType" value="update">update</label>
+	<label><input type='radio' name="jpaType" value="select" checked="checked">select</label>
+	<input name="jpa" type="text" value="" size="150">
+</form>
 <form accept-charset="UTF-8" name="input"
 	action="../RegistrationServlet/sql" method="post">
-	<p>SQL update:</p>
-	<p>
-		<input
-			name="sql" type="text" value="" size="150">
-	</p>
+	SQL update:
+	<input name="sql" type="text" value="" size="150">
 </form>
 	<p>update MAK_SYSTEM set PARAM_VALUE='1'</p>
 	<p>update MAK_USERS set USER_password='secret' where email='admin'</p>
@@ -81,18 +86,6 @@ if (show == null) {
 	<p>alter table MAK_USERS drop column USER_NAME
 	<p>alter table MAK_MODEL add crd date DEFAULT CURRENT_DATE
 	<p>select crd, count(*) from mak_model group by crd
-
-<form accept-charset="UTF-8" name="input"
-	action="../RegistrationServlet/jpa" method="post">
-	<p>JPA:</p>
-	<p>
-	<label><input type='radio' name="jpaType" value="update">update</label>
-	<label><input type='radio' name="jpaType" value="select" checked="checked">select</label>
-	<p>
-		<input
-			name="jpa" type="text" value="" size="150">
-	</p>
-</form>
 
 <form accept-charset="UTF-8" name="input"
 	action="../RegistrationServlet/sendEmails" method="post">

@@ -21,7 +21,7 @@ import servlet.RegistrationServlet;
 @Table(name = "MAK_USERS")
 public class User extends Record {
 	public static enum AdminTypes {
-		SuperAdmin("ADMIN"), ShowAdmin("CATEGORY"), MasterModelerAdmin("Mester");
+		SuperAdmin("ADMIN"), ShowAdmin("CATEGORY"), MasterModelerAdmin("Mester"), NotAdmin(null);
 
 		private String language;
 
@@ -31,6 +31,10 @@ public class User extends Record {
 		
 		public String getLanguage() {
 			return language;
+		}
+		
+		public void setLanguage(String language) {
+			this.language = language;
 		}
 	};
 
@@ -284,7 +288,11 @@ public class User extends Record {
 	}
 
 	public AdminTypes getAdminType() {
-		return EnumGroup.of(AdminTypes.class, getLanguage(), (group, language) -> group.getLanguage().equals(language));
+		try {
+			return EnumGroup.of(AdminTypes.class, getLanguage(), (group, language) -> group.getLanguage().equals(language));
+		} catch (Exception e) {
+			return AdminTypes.NotAdmin;
+		}
 	}
 
 	public Date getLastLogin() {
