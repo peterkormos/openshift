@@ -22,7 +22,7 @@ public class DumpToFile
 	FileWriter fw = new FileWriter("users.html");
 	User loggedInUser = new User();
 	loggedInUser.setLanguage("ADMIN");
-	fw.write(servlet.getUserTable(loggedInUser).toString());
+	fw.write(servlet.getUserTable(null, loggedInUser).toString());
 	fw.close();
 	System.out.println("Writing users done.....");
 

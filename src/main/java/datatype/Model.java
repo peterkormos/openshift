@@ -340,4 +340,12 @@ public class Model extends Record {
 	public Map<Integer, MXModelCategory> getMxModelCategories() {
 		return mxModelCategories;
 	}
+	
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
 }
