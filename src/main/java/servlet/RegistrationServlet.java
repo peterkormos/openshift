@@ -940,6 +940,7 @@ public class RegistrationServlet extends HttpServlet {
 			returned.add(StringEscapeUtils.unescapeHtml4(model.markings));
 			returned.add(StringEscapeUtils.unescapeHtml4(model.producer));
 			returned.add(StringEscapeUtils.unescapeHtml4(category.categoryDescription));
+			returned.add(model.getId());
 			return returned;
 
 		}).collect(Collectors.toList());
@@ -956,7 +957,9 @@ public class RegistrationServlet extends HttpServlet {
 						StringEscapeUtils.unescapeHtml4(language.getString("models.identification")),
 						StringEscapeUtils.unescapeHtml4(language.getString("models.markings")),
 						StringEscapeUtils.unescapeHtml4(language.getString("models.producer")),
-						StringEscapeUtils.unescapeHtml4(language.getString("category.description"))),
+						StringEscapeUtils.unescapeHtml4(language.getString("category.description")),
+						"GMID"
+						),
 				modelsForExcel);
 
 		u.writeTo(response.getOutputStream());

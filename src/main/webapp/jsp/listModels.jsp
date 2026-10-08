@@ -101,6 +101,8 @@ Sz&iacute;nk&oacute;dok:
 
 		<th align='center' style='white-space: nowrap'><%=language.getString("modelID")%>
 		</th>
+		<th align='center' style='white-space: nowrap'>GMID
+		</th>
 		<%
 			}
 		%>
@@ -264,6 +266,7 @@ Sz&iacute;nk&oacute;dok:
 		<td align='center'><%=model.getUserID()%></td>
 
 		<td align='center'><%=model.getShowID(category)%></td>
+		<td align='center'><%=model.getId()%></td>
 		<%
 			}
 		%>
