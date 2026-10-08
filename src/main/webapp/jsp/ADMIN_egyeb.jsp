@@ -87,7 +87,7 @@ if (show == null) {
 	<p>JPA:</p>
 	<p>
 	<label><input type='radio' name="jpaType" value="update">update</label>
-	<label><input type='radio' name="jpaType" value="select">select</label>
+	<label><input type='radio' name="jpaType" value="select" checked="checked">select</label>
 	<p>
 		<input
 			name="jpa" type="text" value="" size="150">
