@@ -15,12 +15,11 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
 User user = null;
 try {
-	user = servlet.getUser(request);
+	user = servlet.getUserOrRedirectToStartPage(request, response);
 } catch (Exception ex) {
 }
 
 if (user == null || !user.isAdminUser()) {
-	RegistrationServlet.redirectToStartPage(request, response);
 	return;
 }
 

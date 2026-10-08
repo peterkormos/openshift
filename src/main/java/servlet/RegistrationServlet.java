@@ -2320,6 +2320,15 @@ public class RegistrationServlet extends HttpServlet {
 		return detailing;
 	}
 
+	public static final User getUserOrRedirectToStartPage(final HttpServletRequest request, final HttpServletResponse response) throws UserNotLoggedInException, IOException {
+		try {
+			return getUser(request);
+		} catch (UserNotLoggedInException e) {
+			RegistrationServlet.redirectToStartPage(request, response);
+			throw e;
+		}
+	}
+	
 	public static final User getUser(final HttpServletRequest request) throws UserNotLoggedInException {
 		final HttpSession session = getHttpSession(request);
 

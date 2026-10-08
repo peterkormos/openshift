@@ -4,6 +4,16 @@
 <%@page import="servlet.*"%>
 <%@page import="util.*"%>
 
+<%
+	User user = null;
+	try {
+		user = RegistrationServlet.getUserOrRedirectToStartPage(request, response);
+	}
+	catch(Exception ex) {
+		return;
+	}
+%>
+
 <html>
 
 <head>

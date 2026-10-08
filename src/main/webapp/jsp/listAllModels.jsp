@@ -13,12 +13,11 @@ ServletDAO servletDAO = servlet.getServletDAO();
 
 User user = null;
 try {
-	user = servlet.getUser(request);
+	user = servlet.getUserOrRedirectToStartPage(request, response);
 } catch (Exception ex) {
 }
 
 if (user == null || !user.isAdminUser()) {
-	RegistrationServlet.redirectToStartPage(request, response);
 	return;
 }
 

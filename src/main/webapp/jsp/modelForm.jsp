@@ -10,10 +10,9 @@
 <%
 	User user = null;
 	try {
-		user = RegistrationServlet.getUser(request);
+		user = RegistrationServlet.getUserOrRedirectToStartPage(request, response);
 	}
 	catch(Exception ex) {
-		RegistrationServlet.redirectToStartPage(request, response);
 		return;
 	}
 	
