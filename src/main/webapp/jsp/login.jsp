@@ -89,26 +89,42 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 							<jsp:include page="shows.jsp"></jsp:include>
 						<tr>
 							<td align="center">
-								<jsp:include page="textInput.jsp">
-									<jsp:param name="name" value="email" />
-									<jsp:param name="label"
-										value='<%=ServletUtil.getLabel(request, servlet, "email")%>' />
-									<jsp:param name="mandatory" value="true" />
-								</jsp:include>
+								<div
+									style="display: flex; justify-content: center; align-items: flex-start; gap: 10px;">
+									<div style="text-align: left;">
+										<b><%=languageCode.equals("HU") ? "MANER" : "MORES"%></b><br>
+										<hr>
+										<%=languageCode.equals("HU") ? "<b>MA</b>kett" : "<b>MO</b>dell"%>
+										<br> 
+										<%=languageCode.equals("HU") ? "<b>NE</b>vezési" : "<b>RE</b>gistration"%>
+										<br> 
+										<%=languageCode.equals("HU") ? "<b>R</b>endszer" : "<b>S</b>ystem"%>
+									</div>
+									<img
+										style="align-self: center; display: block; height: 60px; vertical-align: middle;"
+										src="../icons/logo.png" alt="Logo">
+									<div>
+										<jsp:include page="textInput.jsp">
+											<jsp:param name="name" value="email" />
+											<jsp:param name="label"
+												value='<%=ServletUtil.getLabel(request, servlet, "email")%>' />
+											<jsp:param name="mandatory" value="true" />
+										</jsp:include>
+										<br>
+										<jsp:include page="textInput.jsp">
+											<jsp:param name="name" value="password" />
+											<jsp:param name="inputType" value="password" />
+											<jsp:param name="label"
+												value='<%=ServletUtil.getLabel(request, servlet, "password")%>' />
+											<jsp:param name="mandatory" value="true" />
+										</jsp:include>
+									</div>
+								</div>
 							</td>
 						</tr>
 						<tr>
 							<td align="center">
-								<jsp:include page="textInput.jsp">
-									<jsp:param name="name" value="password" />
-									<jsp:param name="inputType" value="password" />
-									<jsp:param name="label"
-										value='<%=ServletUtil.getLabel(request, servlet, "password")%>' />
-									<jsp:param name="mandatory" value="true" />
-								</jsp:include>
-								<p>
-									<a
-										href="reminder.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
+								<a href="reminder.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=<%=languageCode%>"><%=language.getString("password.reminder")%></a>
 							</td>
 						</tr>
 						<jsp:include page="loginConsent.jsp"></jsp:include>
