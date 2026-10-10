@@ -519,4 +519,16 @@ void deleteModels(final int categoryId) throws SQLException {
 	public int getModelsInShow(final String show) {
 		return count(Model.class, " left join r.categories c", "c.group.show = '" + show + "'");
 	}
+	
+	public void deleteCategory(String show) {
+		delete(Category.class, "r.group in (select g from datatype.CategoryGroup g where g.show = '" + show + "')");
+	}
+
+	public void deleteCategoryGroup(String show) {
+		delete(CategoryGroup.class, "r.show = '" + show + "'");
+	}
+
+	public void deleteSystemParameters(String show) {
+		delete(SystemParameter.class, " r.show = '" + show + "'");
+	}
 }

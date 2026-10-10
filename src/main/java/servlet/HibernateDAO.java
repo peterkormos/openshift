@@ -210,7 +210,8 @@ public class HibernateDAO
 	  {
 		  session = getHibernateSession();
 		  session.beginTransaction();
-		  session.createQuery("delete from " + recordClass.getName() + " where " + setWhereClause).executeUpdate();
+		  String queryString = "delete from " + recordClass.getName() + " as r where " + setWhereClause;
+		  session.createQuery(queryString).executeUpdate();
 		  session.getTransaction().commit();
 	  }
 	  finally
@@ -297,6 +298,7 @@ public class HibernateDAO
 		  session = getHibernateSession();
 		  session.beginTransaction();
 		  session.createQuery(jpa).executeUpdate();
+		  session.getTransaction().commit();
 	  }
 	  finally
 	  {

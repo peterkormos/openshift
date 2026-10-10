@@ -3048,12 +3048,12 @@ public class RegistrationServlet extends HttpServlet {
 
 		deleteModelsForShow(show);
 		
-		servletDAO.delete(Category.class, "group.show = '" + show + "'");
-		servletDAO.delete(CategoryGroup.class, "show = '" + show + "'");
+		servletDAO.deleteCategory(show);
+		servletDAO.deleteCategoryGroup(show);
 
 		systemParameters.remove(show);
 		try {
-			servletDAO.delete(SystemParameter.class, " r.show = '" + show + "'");
+			servletDAO.deleteSystemParameters(show);
 		} catch (Exception e) {
 		}
 
