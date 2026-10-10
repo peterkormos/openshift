@@ -7,6 +7,8 @@
 <input type='hidden' name='command' value='<%= request.getParameter("action") %>'>
 <%
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	ServletDAO servletDAO = servlet.getServletDAO();
+	
 	User user = servlet.getUser(request);
 
 	String show = RegistrationServlet.getShowFromSession(session);

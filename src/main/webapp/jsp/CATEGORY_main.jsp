@@ -87,7 +87,7 @@ String show = RegistrationServlet.getShowFromSession(session);
 		<table style="box-shadow: none; border: 0px; width:100%">
 			<tr>
 				<td colspan="5">
-<a href='helyi.jsp'>Helyi bel&eacute;p&eacute;si oldal
+<a href='helyi.jsp?<%=RegistrationServlet.addHTMLShowReference(RegistrationServlet.encodeShowName(show))%>'>Helyi bel&eacute;p&eacute;si oldal
 	bet&ouml;lt&eacute;se...</a>
 </td>
 			</tr>

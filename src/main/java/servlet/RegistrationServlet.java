@@ -98,7 +98,7 @@ import util.EmailUtil;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "2026.10.08.";
+	public String VERSION = "2026.10.10.";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -3012,7 +3012,8 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (isAdminSession(session)) {
 			boolean goToParentDir = request.getPathInfo() != null;
-			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/helyi.jsp");
+			String show = RegistrationServlet.encodeShowName(getShowFromSession(session));
+			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/helyi.jsp?"+RegistrationServlet.addHTMLShowReference(show));
 		} else {
 			redirectToStartPage(request, response);
 		}

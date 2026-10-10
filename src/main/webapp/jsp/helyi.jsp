@@ -11,6 +11,14 @@
 <jsp:useBean id="languageUtil" class="util.LanguageUtil"
 	scope="application" />
 
+<%
+String show = null;
+try {
+	show = RegistrationServlet.getShowFromRequestAsIs(request);
+} catch (final Exception e) {
+}
+%>
+
 <html>
 <head>
 <meta http-equiv="Cache-Control"
@@ -24,7 +32,7 @@
 <body>
 	<div class="header"></div>
 	<p>
-		<a href="./login.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><b>F&#337;oldali
+		<a href="./login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><b>F&#337;oldali
 				bejelentkez&eacute;s</b></a>
 	</p>
 	<p></p>
