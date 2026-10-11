@@ -83,8 +83,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 				<td align="center" valign="middle">
 					<table border="0">
 						<tr>
-							<td colspan="2"><FONT COLOR='#ffffff'>Verzi&oacute;:
-									<%=servlet.getVersion()%></FONT></td>
+							<td colspan="2"><FONT COLOR='#ffffff'><%=servlet.getVersion()%></FONT></td>
 						</tr>
 							<jsp:include page="shows.jsp"></jsp:include>
 						<tr>
@@ -94,7 +93,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 									<div style="text-align: left;">
 										<b><%=languageCode.equals("HU") ? "MANER" : "MORES"%></b><br>
 										<hr>
-										<%=languageCode.equals("HU") ? "<b>MA</b>kett" : "<b>MO</b>dell"%>
+										<%=languageCode.equals("HU") ? "<b>MA</b>kett" : "<b>MO</b>del"%>
 										<br> 
 										<%=languageCode.equals("HU") ? "<b>NE</b>vezési" : "<b>RE</b>gistration"%>
 										<br> 
