@@ -46,12 +46,12 @@ public class LanguageUtil {
 		Map<String, String> languages = new LinkedHashMap<>();
 		
 		languages.put("HU", "Magyar");
-		languages.put("EN", "English");
-		languages.put("SK", "Slovensk&aacute;");
-		languages.put("CZ", "Cesk&aacute;");
-		languages.put("PL", "Polski");
 		languages.put("IT", "Italiano");
+		languages.put("PL", "Polski");
+		languages.put("CZ", "Cesk&aacute;");
+		languages.put("SK", "Slovensk&aacute;");
 		languages.put("DE", "Deutsch");
+		languages.put("EN", "English");
 		languages.put("RU", "&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;");
 
 		return languages;
@@ -61,12 +61,12 @@ public class LanguageUtil {
 		Map<String, String> languages = new LinkedHashMap<>();
 		
 		languages.put("HU", "hu.gif");
-		languages.put("EN", "gb.gif");
-		languages.put("SK", "sk.gif");
-		languages.put("CZ", "cz.gif");
-		languages.put("PL", "pl.png");
 		languages.put("IT", "it.png");
+		languages.put("PL", "pl.png");
+		languages.put("CZ", "cz.gif");
+		languages.put("SK", "sk.gif");
 		languages.put("DE", "de.gif");
+		languages.put("EN", "gb.gif");
 		languages.put("RU", "ru.png");
 		
 		return languages;

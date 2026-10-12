@@ -43,18 +43,48 @@ try {
 							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=HU">Elfelejtette jelszav&aacute;t?</a></td>
 						</tr>
 						<tr>
-							<td><img src="../icons/gb.gif"></td>
-							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName() %>=EN">Login</a></td>
+							<td>
+							<img src="../icons/it.png">
+<!-- 							<img src="../icons/new.png">  -->
+							</td>
+							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%=RegistrationServlet.RequestParameter.Language.getParameterName() %>=IT">Accedere</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=EN">Create account
-									for new users</a></td>
+								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=IT">Creazione dell'account per i nuovi utenti</a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=EN">Forgot Password?</a></td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=IT">Password dimenticato</a></td>
+						</tr>
+						<tr>
+							<td><img src="../icons/pl.png"></td>
+							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%=RegistrationServlet.RequestParameter.Language.getParameterName() %>=PL">Zaloguj si&#281;</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td align="center"><a
+								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=PL">Zarejestruj si&#281;</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=PL">Nie pami&#281;tam has&#322;a</a></td>
+						</tr>
+						<tr>
+							<td><img src="../icons/cz.gif"></td>
+							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%=RegistrationServlet.RequestParameter.Language.getParameterName() %>=CZ">Prihl&aacute;&#353;en&iacute;</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td align="center"><a
+								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=CZ">Nov&aacute;
+									registrace</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=CZ">Zapomneli
+									jste heslo?</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/sk.gif"></td>
@@ -73,50 +103,6 @@ try {
 									heslo?</a></td>
 						</tr>
 						<tr>
-							<td><img src="../icons/cz.gif"></td>
-							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%=RegistrationServlet.RequestParameter.Language.getParameterName() %>=CZ">Prihl&aacute;&#353;en&iacute;</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td align="center"><a
-								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=CZ">Nov&aacute;
-									registrace</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=CZ">Zapomneli
-									jste heslo?</a></td>
-						</tr>
-						<tr>
-							<td><img src="../icons/pl.png"></td>
-							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%=RegistrationServlet.RequestParameter.Language.getParameterName() %>=PL">Zaloguj si&#281;</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td align="center"><a
-								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=PL">Zarejestruj si&#281;</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=PL">Nie pami&#281;tam has&#322;a</a></td>
-						</tr>
-						<tr>
-							<td>
-							<img src="../icons/it.png">
-<!-- 							<img src="../icons/new.png">  -->
-							</td>
-							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%=RegistrationServlet.RequestParameter.Language.getParameterName() %>=IT">Accedere</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td align="center"><a
-								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=IT">Creazione dell'account per i nuovi utenti</a></td>
-							<td>
-								<div align="center">-</div>
-							</td>
-							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=IT">Password dimenticato</a></td>
-						</tr>
-						<tr>
 							<td><img src="../icons/de.gif"></td>
 							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%=RegistrationServlet.RequestParameter.Language.getParameterName() %>=DE">Anmelden</a></td>
 							<td>
@@ -128,6 +114,20 @@ try {
 								<div align="center">-</div>
 							</td>
 							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=DE">Passwort vergessen</a></td>
+						</tr>
+						<tr>
+							<td><img src="../icons/gb.gif"></td>
+							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName() %>=EN">Login</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td align="center"><a
+								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=EN">Create account
+									for new users</a></td>
+							<td>
+								<div align="center">-</div>
+							</td>
+							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=EN">Forgot Password?</a></td>
 						</tr>
 						<tr>
 							<td><img src="../icons/ru.png"></td>
