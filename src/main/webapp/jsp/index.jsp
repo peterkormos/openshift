@@ -25,8 +25,7 @@ try {
 	<div class="header"></div>
 	<table border="0" height="100%" width="100%">
 		<tr>
-			<td align="center" valign="middle">Welcome to the online model
-				registration system....
+			<td align="center" valign="middle">Welcome to <b>MORES</b>, the <b>MO</b>del <b>RE</b>gistration <b>S</b>ystem....
 				<p></p>
 				<table border="0" cellspacing="5">
 					<tbody>
