@@ -32,7 +32,7 @@ try {
 <body>
 	<div class="header"></div>
 	<p>
-		<a href="./login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><b>F&#337;oldali
+		<a href="./login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%>&<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><b>F&#337;oldali
 				bejelentkez&eacute;s</b></a>
 	</p>
 	<p></p>

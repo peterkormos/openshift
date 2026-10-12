@@ -3057,7 +3057,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static String addHTMLShowReference(String show){
-		return show == null ? "" : RequestParameter.Show.getParameterName() + "=" + show + "&";
+		return show == null ? "" : RequestParameter.Show.getParameterName() + "=" + show;
 	}
 
 	private void deleteDataForShow(final HttpServletRequest request) throws SQLException {

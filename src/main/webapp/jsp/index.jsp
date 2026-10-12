@@ -43,12 +43,12 @@ try {
 %>
 						<tr>
 							<td><img src="<%=request.getParameter("pathOffset") != null ? request.getParameter("pathOffset") : ""%>../icons/<%=languageEntry.getValue() %>"></td>
-							<td><a href="login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName() %>=<%=languageEntry.getKey() %>"><%=language.getString("login") %></a></td>
+							<td><a href="login.jsp?<%= RequestParameter.Language.getParameterName() %>=<%=languageEntry.getKey() %>&<%=RegistrationServlet.addHTMLShowReference(show)%>"><%=language.getString("login") %></a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%=RegistrationServlet.addHTMLShowReference(show)%><%= RequestParameter.Language.getParameterName()%>=<%=languageEntry.getKey() %>"><%=language.getString("register") %></a></td>
+								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%= RequestParameter.Language.getParameterName()%>=<%=languageEntry.getKey() %>&<%=RegistrationServlet.addHTMLShowReference(show)%>"><%=language.getString("register") %></a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
