@@ -42,11 +42,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
@@ -98,7 +100,6 @@ import util.EmailUtil;
 import util.LanguageUtil;
 
 public class RegistrationServlet extends HttpServlet {
-	public String VERSION = "20261011";
 	public static final String DEFAULT_LANGUAGE = "HU";
 	
 	public static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -173,35 +174,38 @@ public class RegistrationServlet extends HttpServlet {
 	@Override
 	public void init(final ServletConfig config) throws UnavailableException, ServletException {
 		try {
-			DOMConfigurator.configure(config.getServletContext().getResource("/WEB-INF/conf/log4j.xml"));
+			ServletContext servletContext = config.getServletContext();
+			String version = getImplementationVersion(servletContext);
+			
+			DOMConfigurator.configure(servletContext.getResource("/WEB-INF/conf/log4j.xml"));
 
-			servletConfig.load(config.getServletContext().getResourceAsStream("/WEB-INF/conf/servlet.ini"));
+			servletConfig.load(servletContext.getResourceAsStream("/WEB-INF/conf/servlet.ini"));
 
 			logger.fatal("************************ Logging restarted ************************");
-			System.out.println("VERSION: " + VERSION);
-			logger.fatal("VERSION: " + VERSION);
+			System.out.println("VERSION: " + version);
+			logger.fatal("VERSION: " + version);
 
 			DriverManager.registerDriver((Driver) Class.forName(getServerConfigParamter("db.driver")).newInstance());
 
 			if (servletDAO == null) {
 				servletDAO = new ServletDAO(getServerConfigParamter("db.url"), getServerConfigParamter("db.username"),
 						getServerConfigParamter("db.password"),
-						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
+						servletContext.getResource("/WEB-INF/conf/hibernate.cfg.xml"));
 				judgingServletDAO = new JudgingServletDAO(
-						config.getServletContext().getResource("/WEB-INF/conf/hibernate.cfg.xml"));
+						servletContext.getResource("/WEB-INF/conf/hibernate.cfg.xml"));
 			}
 
 			emailUtil = new EmailUtil(getServerConfigParamter("email.smtpServer"), false, getServerConfigParamter("email.from"), getServerConfigParamter("email.password"));
 
-			printCardBuffer = loadFile(config.getServletContext().getResourceAsStream("/WEB-INF/conf/printCard.html"));
+			printCardBuffer = loadFile(servletContext.getResourceAsStream("/WEB-INF/conf/printCard.html"));
 			batchAddModelBuffer = loadFile(
-					config.getServletContext().getResourceAsStream("/WEB-INF/conf/batchAddModel.html"));
+					servletContext.getResourceAsStream("/WEB-INF/conf/batchAddModel.html"));
 			awardedModelsBuffer = loadFile(
-					config.getServletContext().getResourceAsStream("/WEB-INF/conf/awardedModels.html"));
+					servletContext.getResourceAsStream("/WEB-INF/conf/awardedModels.html"));
 			cerificateOfMeritBuffer = loadFile(
-					config.getServletContext().getResourceAsStream("/WEB-INF/conf/cerificateOfMerit.html"));
+					servletContext.getResourceAsStream("/WEB-INF/conf/cerificateOfMerit.html"));
 			presentationBuffer = loadFile(
-					config.getServletContext().getResourceAsStream("/WEB-INF/conf/presentation.html"));
+					servletContext.getResourceAsStream("/WEB-INF/conf/presentation.html"));
 
 			try {
 				new InitDB();
@@ -231,6 +235,18 @@ public class RegistrationServlet extends HttpServlet {
 			}
 			throw new ServletException(e);
 		}
+	}
+
+	public String getImplementationVersion(ServletContext context) {
+		try (InputStream inputStream = context.getResourceAsStream("/META-INF/MANIFEST.MF")) {
+            if (inputStream != null) {
+                Manifest manifest = new Manifest(inputStream);
+                return manifest.getMainAttributes().getValue("Implementation-Version");
+            }
+        } catch (Exception e) {
+        	return e.getMessage();
+        }
+        return "Unknown Version";
 	}
 
 	public static RegistrationServlet getInstance(ServletConfig config) throws Exception {
@@ -3388,11 +3404,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void getVersion(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		ServletUtil.writeResponse(response, new StringBuilder(getVersion()));
-	}
-
-	public String getVersion() {
-		return VERSION;
+		ServletUtil.writeResponse(response, new StringBuilder(getImplementationVersion(getServletContext())));
 	}
 
 	public boolean isPreRegistrationAllowed(String show) {

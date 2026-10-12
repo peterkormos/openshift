@@ -122,16 +122,28 @@
 				<version>1.4</version>
 				<executions>
 					<execution>
+						<id>maven-version-and-scm</id>
 						<phase>validate</phase>
 						<goals>
 							<goal>create</goal>
 						</goals>
+						<configuration>
+							<doCheck>false</doCheck>
+							<doUpdate>false</doUpdate>
+						</configuration>
+					</execution>
+					<execution>
+						<id>custom-timestamp</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>create-timestamp</goal>
+						</goals>
+						<configuration>
+							<timestampFormat>yyyy.MM.dd.</timestampFormat>
+							<timestampPropertyName>myTimestamp</timestampPropertyName>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<doCheck>false</doCheck>
-					<doUpdate>false</doUpdate>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -142,6 +154,7 @@
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
 						<manifestEntries>
+							<Implementation-Version>${myTimestamp}</Implementation-Version>
 							<Implementation-Build>${buildNumber}</Implementation-Build>
 							<Implementation-Branch>${scmBranch}</Implementation-Branch>
 						</manifestEntries>

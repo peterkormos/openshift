@@ -83,7 +83,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 				<td align="center" valign="middle">
 					<table border="0">
 						<tr>
-							<td colspan="2"><FONT COLOR='#ffffff'><%=servlet.getVersion()%></FONT></td>
+							<td colspan="2"><FONT COLOR='#ffffff'><%=servlet.getImplementationVersion(getServletContext())%></FONT></td>
 						</tr>
 							<jsp:include page="shows.jsp"></jsp:include>
 						<tr>
