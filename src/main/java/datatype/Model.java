@@ -91,7 +91,7 @@ public class Model extends Record {
 	private int length;
 	
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "model")
-    @MapKey(name = "categoryID")
+    @MapKey(name = "key.categoryID")
     @Nullable
     public Map<Integer, MXModelCategory> mxModelCategories;
 
@@ -108,6 +108,7 @@ public class Model extends Record {
 		Category existingCategory = getCategoryForShow(category.getGroup().getShow()).orElse(null);
 		if(existingCategory != null) {
 			getCategories().remove(existingCategory);
+			getMxModelCategories().remove(existingCategory.getId());
 		}
 		getCategories().add(category);
 	}
@@ -347,5 +348,14 @@ public class Model extends Record {
 	
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+	
+	public String getShowID(String show) {
+		Optional<Category> category = getCategoryForShow(show);
+		if (category.isPresent()) {
+			return getShowID(category.get());
+		}
+
+		return "";
 	}
 }

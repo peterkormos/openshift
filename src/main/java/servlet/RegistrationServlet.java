@@ -2800,13 +2800,14 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	static boolean shouldHighlightBorder(Optional<Model> previousModel, Model currentModel, Optional<Model> nextModel, String show) {
-		return sameUserAndCategory(previousModel, currentModel, show) || 
+		boolean highlight = sameUserAndCategory(previousModel, currentModel, show) || 
 				sameUserAndCategory(nextModel, currentModel, show);
+		return highlight;
 	}
 
 	static boolean sameUserAndCategory(Optional<Model> anotherModel, Model currentModel, String show) {
 		return anotherModel.isPresent() ? anotherModel.get().getUserID() == currentModel.getUserID() && 
-				anotherModel.get().getCategoryForShow(show) == currentModel.getCategoryForShow(show) : false;
+				anotherModel.get().getCategoryForShow(show).get().getId() == currentModel.getCategoryForShow(show).get().getId() : false;
 	}
 
 	public void printCardsForAllModels(final HttpServletRequest request, final HttpServletResponse response)

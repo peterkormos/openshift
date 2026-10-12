@@ -489,7 +489,7 @@ void deleteModels(final int categoryId) throws SQLException {
 	
 	public void archiveModel(int modelID, int categoryID, boolean archivedFlag) {
 		MXModelCategory mxModelCategory = get(MXModelCategory.class,
-				"modelID=" + modelID + " and categoryID=" + categoryID);
+				"key.modelID=" + modelID + " and key.categoryID=" + categoryID);
 		mxModelCategory.setArchived(archivedFlag);
 		
 		save(mxModelCategory);
@@ -497,7 +497,7 @@ void deleteModels(final int categoryId) throws SQLException {
 
 	public boolean isArchivedModel(int modelID, int categoryID) {
 		Optional<MXModelCategory> mxModelCategory = getOptional(MXModelCategory.class,
-				"modelID=" + modelID + " and categoryID=" + categoryID);
+				"key.modelID=" + modelID + " and key.categoryID=" + categoryID);
 		return mxModelCategory.isPresent() ? mxModelCategory.get().isArchived() : false;
 	}
 
@@ -506,11 +506,11 @@ void deleteModels(final int categoryId) throws SQLException {
 	}
 	
 	public void setShowID(int modelID, int categoryID, String show) {
-		String whereClause = "modelID=" + modelID + " and categoryID=" + categoryID + " and (archived is null or archived=false)";
+		String whereClause = "key.modelID=" + modelID + " and key.categoryID=" + categoryID + " and (archived is null or archived=false)";
 
 		MXModelCategory mxModelCategory = get(MXModelCategory.class, whereClause);
 		
-		int showID = getNextID(MXModelCategory.class, "r.showID", " join r.model m join m.categories c join c.group g ", "r.modelID = m.id and r.categoryID = c.id and g.show = '" + show + "'");
+		int showID = getNextID(MXModelCategory.class, "r.showID", " join r.model m join m.categories c join c.group g ", "r.key.modelID = m.id and r.key.categoryID = c.id and g.show = '" + show + "'");
 		mxModelCategory.setShowID(showID);
 
 		save(mxModelCategory);

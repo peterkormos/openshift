@@ -27,7 +27,7 @@ final List<? extends Model> models = RegistrationServlet.toPrintedModel(Registra
 models.sort(new Comparator<Model>() {
 	@Override
 	public int compare(Model o1, Model o2) {
-		return Integer.compare(o2.getId(), o1.getId());
+		return o2.getShowID(show).compareTo(o1.getShowID(show));
 	}
 });
 

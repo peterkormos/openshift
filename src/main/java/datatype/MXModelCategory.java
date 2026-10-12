@@ -4,8 +4,10 @@ import java.io.Serializable;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -15,13 +17,8 @@ import javax.persistence.Table;
 public class MXModelCategory implements Serializable{
 	private static final long serialVersionUID = -5961409022121136799L;
 
-	@Id
-	@Column(name = "MAK_MODEL_MODEL_ID")
-	private int modelID;
-	
-	@Id
-	@Column(name = "CATEGORIES_CATEGORY_ID")
-	private int categoryID;
+	@EmbeddedId
+	private MXModelCategoryKey key;
 	
 	@Column(name = "archived")
 	@Nullable
@@ -32,26 +29,26 @@ public class MXModelCategory implements Serializable{
 	private Integer showID;
 
 	@ManyToOne
-	@JoinColumn(name = "MAK_MODEL_MODEL_ID")
+	@JoinColumn(name = "MAK_MODEL_MODEL_ID", insertable = false, updatable = false)
 	private Model model;
 	
 	public MXModelCategory() {
 	}
 
 	public int getModelID() {
-		return modelID;
+		return key.getModelID();
 	}
 
 	public void setModelID(int modelID) {
-		this.modelID = modelID;
+		this.key.setModelID(modelID);
 	}
 
 	public int getCategoryID() {
-		return categoryID;
+		return key.getCategoryID();
 	}
 
 	public void setCategoryID(int cateoryID) {
-		this.categoryID = cateoryID;
+		this.key.setCategoryID(cateoryID);
 	}
 
 	public boolean isArchived() {
@@ -68,7 +65,7 @@ public class MXModelCategory implements Serializable{
 	
 	@Override
 	public String toString() {
-		return "MXModelCategory [modelID=" + modelID + ", categoryID=" + categoryID + ", archived=" + archived
+		return "MXModelCategory [modelID=" + key.getModelID() + ", categoryID=" + key.getCategoryID() + ", archived=" + archived
 				+ ", showID=" + showID + "]";
 	}
 
