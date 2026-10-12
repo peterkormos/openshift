@@ -3,6 +3,11 @@
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 
+<html>
+<head>
+<link rel="stylesheet" href="../base.css" media="screen" />
+</head>
+<body>
 
 <form name='input' action='../../RegistrationServlet' method='put'>
 	<input type='hidden' name='command' value='deleteAwardedModel'>
