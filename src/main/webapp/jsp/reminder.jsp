@@ -45,11 +45,10 @@
 							</td>
 						</tr>
 						<tr>
-							<td><input type="submit"
+							<td align="center"><input type="submit"
 								value="<%=language.getString("send.reminder")%>"></td>
 						</tr>
 					</table>
-
 				</form>
 			</td>
 		</tr>
