@@ -9,6 +9,7 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
 ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
+String defaultSelectedValue = request.getParameter("defaultSelectedValue");
 %>
 
 <div class="input-caption-container">
@@ -16,7 +17,15 @@ boolean mandatory = Boolean.parseBoolean(request.getParameter("mandatory"));
 		onchange="updateMandatoryFieldMark(this);"
 		<%=mandatory ? "required='required'" : ""%>
 		>
-		<option value='<%=request.getParameter("defaultSelectedValue")%>'><%=request.getParameter("defaultSelectedLabel")%></option>
+		<option value='<%=defaultSelectedValue%>'><%=request.getParameter("defaultSelectedLabel")%></option>
+		<%
+		if(RegistrationServlet.isModelFieldSet(defaultSelectedValue)) {
+		%>
+		<option value='<%=RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE%>'><%=ServletUtil.getLabel(request, servlet, "select")%></option>			
+		<%
+		}
+		%>
+		
 		<optgroup label="<%=language.getString("highlighted.country")%>">
 			<option value='Hungary'>Magyarorsz&aacute;g</option>
 			<option value='Austria'>Austria</option>

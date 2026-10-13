@@ -365,7 +365,7 @@ if(!servlet.isAdminSession(session))
 				<td>
 					<%
 					String markingsLabel = model == null ? ServletUtil.getLabel(request, servlet, "select") : model.markings;
-					String markingsLabelValue = model == null ? "-" : model.markings;
+					String markingsLabelValue = model == null ? RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE : model.markings;
 					%> <jsp:include page="countries.jsp">
 						<jsp:param name="defaultSelectedLabel" value="<%=markingsLabel%>" />
 						<jsp:param name="label"

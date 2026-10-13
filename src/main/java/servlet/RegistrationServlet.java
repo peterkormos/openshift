@@ -3624,4 +3624,8 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append("</table>\n");
 		}
 	}
+	
+	public static boolean isModelFieldSet(String fieldValue) {
+		return fieldValue != null && !ATTRIBUTE_NOT_FOUND_VALUE.equals(fieldValue);
+	}
 }

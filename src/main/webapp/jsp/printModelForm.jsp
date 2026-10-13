@@ -166,10 +166,16 @@ if (!isLinkedToShow) {
 								<td colspan="4"><b><font
 										style="font-family: Calibri, Optima, Arial, sans-serif; font-size: 5mm"><%=model.getName()%></font></b></td>
 							</tr>
+						<%
+						if(RegistrationServlet.isModelFieldSet(model.getIdentification()) || RegistrationServlet.isModelFieldSet(model.getMarkings())) {
+							%>
 							<tr>
 								<td colspan="2"><font><%=model.getIdentification()%></font></td>
 								<td colspan="2"><font><%=model.getMarkings()%></font></td>
 							</tr>
+						<%
+						}
+						%>
 <!-- 							<tr> -->
 <%-- 								<td colspan="2"><%=language.getString("models.producer")%></td> --%>
 <%-- 								<td colspan="2"><%=language.getString("models.markings")%></td> --%>
@@ -179,6 +185,9 @@ if (!isLinkedToShow) {
 			</table>
 		</td>
 	</tr>
+<%
+if(!model.getDetailing().isEmpty()) {
+	%>
 	<tr>
 		<td style="height: 1.5mm;"></td>
 	</tr>
@@ -218,6 +227,9 @@ if (!isLinkedToShow) {
 			</table>
 		</td>
 	</tr>
+<%
+}
+%>
 </table>
 <%
 if (!isLinkedToShow) {
