@@ -1329,8 +1329,22 @@ public class RegistrationServlet extends HttpServlet {
 		final List<List> data = (List<List>) Serialization.deserialize(e);
 		e.close();
 
-
+		final List<Category> categories = data.get(2);
+		buff.append("<p>Storing Categories");
+		for (final Category category : categories) {
+			buff.append(".");
+			if (category.getModelClass() == null) {
+				category.setModelClass(ModelClass.Other);
+			}
+			servletDAO.save(category.getGroup());
+			servletDAO.save(category);
+		}
+		buff.append("<p>Storing CategoryGroups");
 		final List<CategoryGroup> categoryGroups = data.get(1);
+		for (final CategoryGroup categoryGroup : categoryGroups) {
+			buff.append(".");
+			servletDAO.save(categoryGroup);
+		}
 
 		if (!categoryGroups.isEmpty()) {
 			deleteModelsForShow(getShowFromSession(request));
@@ -1350,25 +1364,11 @@ public class RegistrationServlet extends HttpServlet {
 						
 						model.setDetailing(newDetailing);
 					}
+					
+					model.getMxModelCategories().values().forEach(mx -> servletDAO.save(mx));
 					servletDAO.save(model);
 					buff.append(".");
 				}
-			}
-
-			final List<Category> categories = data.get(2);
-			buff.append("<p>Storing Categories");
-			for (final Category category : categories) {
-				buff.append(".");
-				if (category.getModelClass() == null) {
-					category.setModelClass(ModelClass.Other);
-				}
-				servletDAO.save(category.getGroup());
-				servletDAO.save(category);
-			}
-			buff.append("<p>Storing CategoryGroups");
-			for (final CategoryGroup categoryGroup : categoryGroups) {
-				buff.append(".");
-				servletDAO.save(categoryGroup);
 			}
 		}
 
