@@ -68,6 +68,14 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
 import datatype.AgeGroup;
 import datatype.AwardedModel;
 import datatype.Category;
@@ -496,17 +504,81 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void getModelInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		String languageCode;
+		try {
+			languageCode = getLanguageCodeInRequest(request);
+		} catch (Exception e) {
+			languageCode = getLanguageCodeForCurrentUserWithDefault(request);
+		}
+		ResourceBundle language = languageUtil.getLanguage(languageCode);
+
 		final String modelID = ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName());
 
 		final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-
+		
+		String show;
+		try {
+			show = getShowFromRequest(request);
+		} catch (Exception e) {
+			show = getShowFromSession(request);
+		}
+		Optional<Category> categoryOptional = model.getCategoryForShow(show);
+		if(!categoryOptional.isPresent()) {
+			writeErrorResponse(request, response, "Error: <b>Model's category not found for show!</b>");
+			return;
+		}
+		
 		final StringBuilder buff = new StringBuilder();
 
-//		buff.append(servletDAO.getCategory(model.categoryID).categoryCode);
-//		buff.append(" - ");
-		buff.append(model.scale);
-		buff.append(" - ");
-		buff.append(model.name);
+		Category category = categoryOptional.get();
+//		model.getUser().getFullName()
+		
+		buff.append("<table border=1>");
+		
+		buff.append("<tr>");
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append(language.getString("show"));
+		buff.append("</th>");
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append(language.getString("category.code"));
+		buff.append("</th>");
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append(language.getString("category.description"));
+		buff.append("</th>");
+		buff.append("</th>");
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append("GMID");
+		buff.append("</th>");
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append(language.getString("modelID"));
+		buff.append("</th>");
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append(language.getString("scale"));
+		buff.append("</th>");
+		buff.append("<th style='white-space: nowrap'>");
+		buff.append(language.getString("models.name"));
+		buff.append("</th>");
+		buff.append("</tr>");
+		
+		buff.append("<tr>");
+		buff.append("<td>");
+		buff.append(show);
+		buff.append("</td><td>");
+		buff.append(category.getCategoryCode());
+		buff.append("</td><td>");
+		buff.append(category.getCategoryDescription());
+		buff.append("</td><td>");
+		buff.append(model.getId());
+		buff.append("</td><td>");
+		buff.append(model.getShowID(category.getId()));
+		buff.append("</td><td>");
+		buff.append(model.getScale());
+		buff.append("</td><td>");
+		buff.append(model.getName());
+		buff.append("</td>");
+		buff.append("</tr>");
+		
+		buff.append("</table>");
 
 		ServletUtil.writeResponse(response, buff);
 	}
@@ -2794,7 +2866,7 @@ public class RegistrationServlet extends HttpServlet {
 			printedModel.removeAll(subList);
 
 			boolean shouldPageBreak = currentModelsOnPage > 0;
-			buff.append(printModels(subList, printBuffer, rows, (int) Math.ceil(modelsOnPage/rows) , shouldPageBreak, logoURL, show));
+			buff.append(printModels(subList, printBuffer, rows, (int) Math.ceil(modelsOnPage/rows) , shouldPageBreak, logoURL, request));
 		}
 	}
 		
@@ -2852,7 +2924,7 @@ public class RegistrationServlet extends HttpServlet {
 			String logoURL = getServletURL(request) + "/" + Command.LOADIMAGE.name() + "/"
 					+ getLogoIDForShow(show);
 			ServletUtil.writeResponse(response,
-					printModels(sublist, printCardBuffer, rows, cols, true, logoURL, show));
+					printModels(sublist, printCardBuffer, rows, cols, true, logoURL, request));
 			sublist.clear();
 		} while (!allModels.isEmpty());
 
@@ -2880,7 +2952,7 @@ public class RegistrationServlet extends HttpServlet {
 					+ getLogoIDForShow(show);
 
 			buff.append(printModels(toPrintedModel(subList, show), printBuffer, 1,
-					3, false, logoURL, show));
+					3, false, logoURL, request));
 
 			ServletUtil.writeResponse(response, buff);
 		}
@@ -2900,14 +2972,14 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	StringBuilder printModels(final List<? extends Model> models, final StringBuilder printBuffer, final int rows,
-			final int cols, boolean shouldPageBreak, String logoURL, String show) throws Exception, IOException {
-
+			final int cols, boolean shouldPageBreak, String logoURL, final HttpServletRequest request) throws Exception, IOException {
 		final int width = 100 / cols;
 		final int height = 100 / rows;
 
 		final StringBuilder buff = new StringBuilder();
 		buff.append("\n\n<table cellpadding='0' cellspacing='10' width='100%' height='100%' "
 				+ (shouldPageBreak ? "style='page-break-after: always;' " : "") + "border='0' >");
+		String show = getShowFromSession(request);
 
 		int modelIndex = 0;
 		for (int row = 0; row < rows; row++) {
@@ -2921,6 +2993,10 @@ public class RegistrationServlet extends HttpServlet {
 				if (model != null) {
 					User user = model.getUser();
 					Category category = model.getCategoryForShow(show).get();
+					String qrCodeURL = getServletURL(request) + "/qrCode?" + //
+							RequestParameter.ModelId.getParameterName() + "=" + model.getId() + //
+							"&" + RegistrationServlet.addHTMLShowReference(RegistrationServlet.encodeShowName(show)) + //
+							"&" + RequestParameter.Language.getParameterName() + "=EN";
 					String print = printBuffer.toString().replaceAll("__FULLNAME__", String.valueOf(user.lastName))
 							// .replaceAll("__FIRSTNAME__",
 							// String.valueOf(user.firstName))
@@ -2942,6 +3018,7 @@ public class RegistrationServlet extends HttpServlet {
 							.replaceAll("__MODEL_COMMENT__", model.comment)
 							.replaceAll("__GLUED_TO_BASE__", getGluedToBaseHTMLCode(getDefaultLanguage(), model, "."))
 							.replaceAll("__LOGO_URL__", logoURL)
+							.replaceAll("__QRCODE_URL__", qrCodeURL )
 							.replaceAll("__BORDER-WIDTH__", shouldHighlightBorder(model) ? "3px" : "1px")
 							.replaceAll("__BORDER-COLOR__", shouldHighlightBorder(model) ? "orange" : "black")
 					;
@@ -3029,8 +3106,8 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (isAdminSession(session)) {
 			boolean goToParentDir = request.getPathInfo() != null;
-			String show = RegistrationServlet.encodeShowName(getShowFromSession(session));
-			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/helyi.jsp?"+RegistrationServlet.addHTMLShowReference(show));
+			String showInRequest = RegistrationServlet.encodeShowName(getShowFromSession(session));
+			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/helyi.jsp?"+RegistrationServlet.addHTMLShowReference(showInRequest));
 		} else {
 			redirectToStartPage(request, response);
 		}
@@ -3627,5 +3704,37 @@ public class RegistrationServlet extends HttpServlet {
 	
 	public static boolean isModelFieldSet(String fieldValue) {
 		return fieldValue != null && !ATTRIBUTE_NOT_FOUND_VALUE.equals(fieldValue);
+	}
+	
+	public void qrCode(final HttpServletRequest request, final HttpServletResponse response) throws IOException, WriterException {
+		final int modelID = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
+		String showInRequest = getShowFromRequestAsIs(request);
+		String languageCode;
+		try {
+			languageCode = getLanguageCodeInRequest(request);
+		} catch (Exception e) {
+			languageCode = getLanguageCodeForCurrentUserWithDefault(request);
+		}
+		
+		String text = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+				+ request.getContextPath() + request.getServletPath() + "/getModelInfo?" //
+				+ RequestParameter.ModelId.getParameterName() + "=" + modelID + //
+				"&" + RequestParameter.Show.getParameterName() + "=" + showInRequest + //
+				"&" + RequestParameter.Language.getParameterName() + "=" + languageCode //
+				;
+		response.setContentType("image/png");
+		qrCode(text , response.getOutputStream());
+	}
+	
+	private void qrCode(String text, OutputStream outputStream) throws IOException, WriterException {
+		Map<EncodeHintType, Object> hints = new HashMap<>();
+		hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+		hints.put(EncodeHintType.MARGIN, 0);
+		hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+
+		int size=300;
+		BitMatrix matrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, size, size, hints);
+
+		MatrixToImageWriter.writeToStream(matrix, "PNG", outputStream);
 	}
 }
