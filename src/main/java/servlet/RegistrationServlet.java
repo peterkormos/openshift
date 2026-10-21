@@ -3708,6 +3708,7 @@ public class RegistrationServlet extends HttpServlet {
 	
 	public void qrCode(final HttpServletRequest request, final HttpServletResponse response) throws IOException, WriterException {
 		final int modelID = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
+		Optional<String> ecl = ServletUtil.getOptionalParameter(request, "ecl");
 		String showInRequest = getShowFromRequestAsIs(request);
 		String languageCode;
 		try {
@@ -3723,14 +3724,14 @@ public class RegistrationServlet extends HttpServlet {
 				"&" + RequestParameter.Language.getParameterName() + "=" + languageCode //
 				;
 		response.setContentType("image/png");
-		qrCode(text , response.getOutputStream());
+		qrCode(text, ecl, response.getOutputStream());
 	}
 	
-	private void qrCode(String text, OutputStream outputStream) throws IOException, WriterException {
+	private void qrCode(String text, Optional<String> ecl, OutputStream outputStream) throws IOException, WriterException {
 		Map<EncodeHintType, Object> hints = new HashMap<>();
 		hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 		hints.put(EncodeHintType.MARGIN, 0);
-		hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+		hints.put(EncodeHintType.ERROR_CORRECTION, ecl.isPresent() ? ErrorCorrectionLevel.valueOf(ecl.get()) : ErrorCorrectionLevel.L);
 
 		int size=300;
 		BitMatrix matrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, size, size, hints);
