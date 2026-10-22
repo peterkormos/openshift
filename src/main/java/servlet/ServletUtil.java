@@ -135,7 +135,7 @@ public class ServletUtil {
         return encodeString(value.trim());
     }
 
-	public static Object getSessionAttribute(final HttpServletRequest request, String name) throws UserNotLoggedInException {
+	public static Object getSessionAttribute(final HttpServletRequest request, String name) {
 		final HttpSession session = request.getSession(false);
 
 		if (session == null) {
@@ -143,6 +143,10 @@ public class ServletUtil {
 		}
 
 		return session.getAttribute(name);
+	}
+
+	public static Object getSessionAttribute(HttpServletRequest request, Enum<?> name) {
+	    return getSessionAttribute(request, name.name());
 	}
 
 	public static void writeResponse(final HttpServletResponse response, final StringBuilder message) throws IOException {
@@ -213,5 +217,10 @@ public class ServletUtil {
 		else {
 			return label;
 		}
+	}
+
+	public static void setSessionAttribute(HttpServletRequest request, Enum<?> name, Object value) {
+	    final HttpSession session = request.getSession(true);
+	    session.setAttribute(name.name(), value);
 	}
 }

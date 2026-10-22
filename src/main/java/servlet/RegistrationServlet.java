@@ -2103,13 +2103,21 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</form></body></html>");
 		ServletUtil.writeResponse(response, buff);
 	}
+	
+	public static boolean canModifyModel(final User user, final Model model) {
+		if(user == null) {
+			return false;
+		}
+		
+		return user.isAdminUser() || user.getId() == model.getUserID();
+	}
 
 	public void inputForModifyModel(final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
 		User user = getUser(request);
 		final int modelID = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
 		final Model model = servletDAO.getModel(modelID);
-		if (user.isAdminUser() || user.getId() == model.getUserID()) {
+		if (canModifyModel(user, model)) {
 			getModelForm(request, response, Command.modifyModel.name(), "modify", model);
 		} else {
 			redirectToMainPage(request, response);
@@ -2136,7 +2144,7 @@ public class RegistrationServlet extends HttpServlet {
 		createModel(model, request);
 
 		User user = getUser(request);
-		if (user.isAdminUser() || user.getId() == model.getUserID()) {
+		if (canModifyModel(user, model)) {
 			servletDAO.deleteDetailing(model.getId());
 			servletDAO.save(model);
 			servletDAO.refresh(model);
@@ -2592,10 +2600,11 @@ public class RegistrationServlet extends HttpServlet {
 		Integer modelID = Integer.valueOf(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
 		final Model model = servletDAO.getModel(modelID);
 
-		if (user.isAdminUser() || user.getId() == model.getUserID()) {
+		HttpSession session = getHttpSession(request);
+		String show = getShowFromSession(session);
+		if (canModifyModel(user, model) && !hasAward(model, show)) {
 			servletDAO.deleteModel(model);
-			HttpSession session = getHttpSession(request);
-			Optional<Category> category = model.getCategoryForShow(getShowFromSession(session));
+			Optional<Category> category = model.getCategoryForShow(show);
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("delete") + ": "
 					+ model.scale + " - " + model.name 
 					+ (category.isPresent() ? " - " + category.get().categoryCode : ""));
@@ -2617,7 +2626,7 @@ public class RegistrationServlet extends HttpServlet {
 		final Model model = servletDAO.getModel(modelID);
 		User user = getUser(request);
 		final HttpSession session = getHttpSession(request);
-		if ((user.isAdminUser() || user.getId() == model.getUserID()) && !hasAward(model, show)) {
+		if (canModifyModel(user, model) && !hasAward(model, show)) {
 			unlinkModel(show, model);
 
 			session.removeAttribute(RegistrationServlet.SessionAttribute.Notices.name());
@@ -3623,6 +3632,7 @@ public class RegistrationServlet extends HttpServlet {
 	public void qrCode(final HttpServletRequest request, final HttpServletResponse response) throws IOException, WriterException {
 		final int modelID = Integer.parseInt(ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName()));
 		Optional<String> ecl = ServletUtil.getOptionalParameter(request, "ecl");
+		Optional<String> format = ServletUtil.getOptionalParameter(request, "format");
 		String showInRequest = getShowFromRequestAsIs(request);
 		String languageCode;
 		try {
@@ -3638,17 +3648,21 @@ public class RegistrationServlet extends HttpServlet {
 				;
 //		System.out.println(text);
 		response.setContentType("image/png");
-		qrCode(text, ecl, response.getOutputStream());
+		qrCode(text, ecl, format, response.getOutputStream());
 	}
 	
-	private void qrCode(String text, Optional<String> ecl, OutputStream outputStream) throws IOException, WriterException {
+	private void qrCode(String text, Optional<String> ecl, Optional<String> format, OutputStream outputStream) throws IOException, WriterException {
 		Map<EncodeHintType, Object> hints = new HashMap<>();
 		hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 		hints.put(EncodeHintType.MARGIN, 0);
-		hints.put(EncodeHintType.ERROR_CORRECTION, ecl.isPresent() ? ErrorCorrectionLevel.valueOf(ecl.get()) : ErrorCorrectionLevel.L);
+		if(ecl.isPresent()) {
+			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.valueOf(ecl.get()));
+		}
 
 		int size=300;
-		BitMatrix matrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, size, size, hints);
+		BitMatrix matrix = new MultiFormatWriter().encode(text, 
+				format.isPresent() ? BarcodeFormat.valueOf(format.get()) : BarcodeFormat.QR_CODE
+				, size, size, hints);
 
 		MatrixToImageWriter.writeToStream(matrix, "PNG", outputStream);
 	}

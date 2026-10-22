@@ -76,10 +76,12 @@ boolean isNormalUser = !"admin".equals(judge);
 		<a
 			href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>">
 			<img src="../../icons/add.png" height="30" align="center"> <%=language.getString("judging.type.form")%></a>
+	</p>
 	<p>
 		<a
 			href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetCategories.name()%>?<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>=true">
 			<img src="../../icons/stare.png" height="30" align="center"> <%=language.getString("judging.type.looking")%></a>
+	</p>
 		<%
 		if (judge != null) {
 		%>
@@ -97,6 +99,7 @@ boolean isNormalUser = !"admin".equals(judge);
 		<%
 		if (judge != null && !isNormalUser) {
 		%>	
+	</p>
 	
 	<p>
 		<a href="verseny_eredmenyek.jsp"><img src="../../icons/add.png"

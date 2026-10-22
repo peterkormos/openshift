@@ -8,11 +8,25 @@
 
 <%@include file="util.jsp"%>
 
+<jsp:useBean id="languageUtil" class="util.LanguageUtil"
+	scope="application" />
+
 <%
-RegistrationServlet servlet = RegistrationServlet.getInstance(config);
+	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ServletDAO servletDAO = servlet.getServletDAO();
 
-	final ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
+	ResourceBundle language; 
+	try {
+		language = languageUtil.getLanguage(RegistrationServlet.getLanguageCodeInRequest(request));
+	} catch (Exception e) {
+		language = RegistrationServlet.getLanguageFromSession(request);
+	}
+
+	User user = null;
+	try {
+		user = RegistrationServlet.getUser(request);
+	} catch (Exception ex) {
+	}
 
 	String actionPathPrefix = ServletUtil.getOptionalParameter(request, "actionPathPrefix").orElse("");
 	
@@ -25,13 +39,14 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ServletUtil.getRequestParameter(request, JudgingServlet.RequestParameter.ForJudges.name(), false));
 
 	boolean filterToOversized = ServletUtil.isCheckedIn(request, "filterToOversized");
-  List<? extends Model> models = (List<? extends Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
+	List<? extends Model> models = (List<? extends Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
   
-  String show = RegistrationServlet.getShowFromSession(session);
-  if (show == null)
-  {
-    show = RegistrationServlet.ATTRIBUTE_NOT_FOUND_VALUE;
-  }
+	String show;
+	try {
+		show = RegistrationServlet.getShowFromRequest(request);
+	} catch (Exception e) {
+		show = RegistrationServlet.getShowFromSession(request);
+	}
 %>
 
 <link href="base.css" rel="stylesheet" type="text/css">
@@ -186,7 +201,7 @@ Sz&iacute;nk&oacute;dok:
 	>
 		<td>
 <%
-  if (servlet.isRegistrationAllowed(show, session))
+  if (servlet.isRegistrationAllowed(show, session) && RegistrationServlet.canModifyModel(user, model))
   {
 %>
 			<div class="tooltip">
@@ -352,7 +367,7 @@ Sz&iacute;nk&oacute;dok:
 		</td>
 		<td>
 <%
-  if (servlet.isRegistrationAllowed(show, session))
+  if (servlet.isRegistrationAllowed(show, session) && RegistrationServlet.canModifyModel(user, model))
   {
 %>
 			<div class="tooltip">

@@ -1,6 +1,6 @@
 <%@page import="servlet.*"%>
 <%@page import="datatype.judging.*"%>
-<%@page import="datatype.Model"%>
+<%@page import="datatype.*"%>
 <%@page import="java.util.*"%>
 <%@ page import="java.io.*"%>
 
@@ -26,6 +26,7 @@
     String category = servletDAO.getCategory(categoryId).getCategoryCode();
 	Map<Integer, JudgingScore> scores = judgingResult.getScores();
 	JudgedModel judgedModel = judgingResult.isModelPresent() ? judgingResult : null;
+	final Model model = (Model) session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
 	
 	boolean listMode = Boolean.parseBoolean(
 	ServletUtil.getOptionalRequestParameter(request, "listMode").
@@ -87,7 +88,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 				<jsp:param name="name"
 					value="<%=JudgingServlet.RequestParameter.ModellerID.name()%>" />
 				<jsp:param name="value"
-					value='<%=judgedModel == null ? "" : judgedModel.getModellerID()%>' />
+					value='<%=judgedModel == null ? model == null ? "" : model.getUserID() : judgedModel.getModellerID()%>' />
 				<jsp:param name="disabled" value='true' />
 				<jsp:param name="size" value='3' />
 			</jsp:include> 
@@ -98,7 +99,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 				<jsp:param name="name"
 					value="<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>" />
 				<jsp:param name="value"
-					value='<%=judgedModel == null ? "" : judgedModel.getModelID()%>' />
+					value='<%=judgedModel == null ? model == null ? "" : model.getId() : judgedModel.getModelID()%>' />
 				<jsp:param name="size" value='3' />
 				<jsp:param name="onChange" value='setModelInSession(this.value);' />
 			</jsp:include> <input type="button" value=">">
@@ -131,7 +132,7 @@ String getJudgingCriteriaName(JudgingCriteria criteria, JudgingResult judgingRes
 				<jsp:param name="name"
 					value="<%=JudgingServlet.RequestParameter.ModelsName.name()%>" />
 				<jsp:param name="value"
-					value='<%=judgedModel == null ? "" : judgedModel.getModelsName()%>' />
+					value='<%=judgedModel == null ? model == null ? "" : model.getName() : judgedModel.getModelsName()%>' />
 				<jsp:param name="disabled" value='true' />
 				<jsp:param name="caption"
 					value='<%=language.getString("models.name")%>' />

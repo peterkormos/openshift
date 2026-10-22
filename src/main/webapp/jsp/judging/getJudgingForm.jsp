@@ -1,6 +1,6 @@
 <%@page import="servlet.*" %>
 <%@page import="datatype.judging.*"%>
-<%@page import="datatype.Model"%>
+<%@page import="datatype.*"%>
 <%@page import="java.util.*"%>
 
 <head>

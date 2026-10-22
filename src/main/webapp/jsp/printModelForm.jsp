@@ -70,7 +70,7 @@ if (!isLinkedToShow) {
 
 <table style="border: 1px solid black">
 <%
-if(user != null) {
+if(RegistrationServlet.canModifyModel(user, model)) {
 %>
 	<tr>
 		<td>

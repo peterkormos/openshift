@@ -3,6 +3,7 @@
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 <%@page import="servlet.RegistrationServlet.RequestParameter"%>
+<%@page import="servlet.JudgingServlet.SessionAttribute"%>
 <%@page import="util.*"%>
 
 <jsp:useBean id="languageUtil" class="util.LanguageUtil"
@@ -21,8 +22,14 @@ try {
 ResourceBundle language = languageUtil.getLanguage(languageCode);
 
 final String modelID = ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName());
-final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-session.setAttribute(RegistrationServlet.SessionAttribute.Model.name(), model);
+final Model model;
+try {
+	model = servletDAO.getModel(Integer.parseInt(modelID));
+	session.setAttribute(RegistrationServlet.SessionAttribute.Model.name(), model);
+} catch (Exception e) {
+	RegistrationServlet.redirectToStartPage(request, response);
+	return;
+}
 
 String show;
 try {
@@ -33,12 +40,14 @@ try {
 
 Optional<Category> categoryOptional = model.getCategoryForShow(show);
 if (!categoryOptional.isPresent()) {
-	servlet.writeErrorResponse(request, response, "Error: <b>Model's category not found for show!</b>");
+	RegistrationServlet.redirectToStartPage(request, response);
 	return;
 }
 Category category = categoryOptional.get();
 
 boolean preRegistrationAllowed = servlet.isPreRegistrationAllowed(show);
+
+String judge = (String) session.getAttribute(SessionAttribute.Judge.name());
 %>
 
 <html>
@@ -52,29 +61,41 @@ boolean preRegistrationAllowed = servlet.isPreRegistrationAllowed(show);
 <link href="base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<table border=1>
-		<tr>
-			<th style='white-space: nowrap'><%=language.getString("show")%></th>
-			<th style='white-space: nowrap'><%=language.getString("category.code")%></th>
-			<th style='white-space: nowrap'><%=language.getString("category.description")%></th>
-			<th style='white-space: nowrap'>GMID</th>
-			<th style='white-space: nowrap'><%=language.getString("modelID")%></th>
-			<th style='white-space: nowrap'><%=language.getString("scale")%></th>
-			<th style='white-space: nowrap'><%=language.getString("models.name")%></th>
-		</tr>
-
-		<tr>
-			<td><%=show%></td>
-			<td><%=category.getCategoryCode()%></td>
-			<td><%=category.getCategoryDescription()%></td>
-			<td><%=model.getId()%></td>
-			<td><%=model.getShowID(category.getId())%></td>
-			<td><%=model.getScale()%></td>
-			<td><%=model.getName()%></td>
-		</tr>
-	</table>
+	<%
+	if (judge != null) {
+	%>
+	<p>
+		<a
+			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingForm.name()%>?<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>=false&<%=JudgingServlet.RequestParameter.Category.name()%>=<%=category.getId()%>">
+			<img src="../icons/add.png" height="30" align="center"> <%=language.getString("judging.type.form")%></a>
+		<a
+			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingForm.name()%>?<%=JudgingServlet.RequestParameter.SimpleJudging.name()%>=true&<%=JudgingServlet.RequestParameter.Category.name()%>=<%=category.getId()%>">
+			<img src="../icons/stare.png" height="30" align="center"> <%=language.getString("judging.type.looking")%></a>
+	</p>
+	<%
+	}
+	%>
 	<p>
 		<jsp:include page="printModelForm.jsp" />
 	</p>
+	<%
+	if (judge != null) {
+	%>
+	<hr>
+	<b> <%=category.getCategoryCode()%> - <%=category.getCategoryDescription()%>:
+	</b>
+	<%
+	for (Model modelInCategory : servletDAO.getModelsInCategory(category.getId())) {
+		session.setAttribute(RegistrationServlet.SessionAttribute.Model.name(), modelInCategory);
+	%>
+	<p>
+		<jsp:include page="printModelForm.jsp" />
+	</p>
+	<%
+	session.removeAttribute(RegistrationServlet.SessionAttribute.Model.name());
+	}
+	}
+	%>
+
 </body>
 </html>
