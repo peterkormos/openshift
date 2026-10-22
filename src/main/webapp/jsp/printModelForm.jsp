@@ -6,15 +6,34 @@
 
 <%@page import="java.util.*"%>
 
+<jsp:useBean id="languageUtil" class="util.LanguageUtil"
+	scope="application" />
+
 <%
-final User user = RegistrationServlet.getUser(request);
+	User user = null;
+	try {
+		user = RegistrationServlet.getUser(request);
+	} catch (Exception ex) {
+	}
 
 	final RegistrationServlet servlet = RegistrationServlet.getInstance(config);
-	final ResourceBundle language = RegistrationServlet.getLanguageFromSession(request);
 	final ServletDAO servletDAO = servlet.getServletDAO();
 
+	ResourceBundle language; 
+	try {
+		language = languageUtil.getLanguage(RegistrationServlet.getLanguageCodeInRequest(request));
+	} catch (Exception e) {
+		language = RegistrationServlet.getLanguageFromSession(request);
+	}
+
+	String show;
+	try {
+		show = RegistrationServlet.getShowFromRequest(request);
+	} catch (Exception e) {
+		show = RegistrationServlet.getShowFromSession(request);
+	}
+
 	final Model model = (Model) session.getAttribute(RegistrationServlet.SessionAttribute.Model.name());
-	String show = RegistrationServlet.getShowFromSession(session);
 	final Category category = model.getCategoryForShow(show).orElse(null);
 
 	boolean insertAwards = Boolean
@@ -50,6 +69,9 @@ if (!isLinkedToShow) {
 %>
 
 <table style="border: 1px solid black">
+<%
+if(user != null) {
+%>
 	<tr>
 		<td>
 			<%
@@ -110,6 +132,9 @@ if (!isLinkedToShow) {
 			%>
 		</td>
 	</tr>
+<%
+}
+%>
 	<tr>
 		<td>
 			<table style="border-collapse: collapse; width: 100%">
@@ -134,7 +159,7 @@ if (!isLinkedToShow) {
 								<td valign="top"><%=language.getString("category.code")%></td>
 							</tr>
 							<tr>
-								<td valign="middle"><font><%=user.getId()%></font></td>
+								<td valign="middle"><font><%=model.getUserID()%></font></td>
 								<td valign="middle"><font><%=model.getShowID(category)%></font></td>
 								<td valign="middle"><font><%=model.getScale()%></font></td>
 								<td valign="middle">

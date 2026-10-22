@@ -465,7 +465,7 @@ public class RegistrationServlet extends HttpServlet {
 				new Object[] { request, response });
 	}
 
-	private void writeErrorResponse(HttpServletRequest request, final HttpServletResponse response, final String message) throws IOException {
+	public void writeErrorResponse(HttpServletRequest request, final HttpServletResponse response, final String message) throws IOException {
 		final StringBuilder buff = new StringBuilder();
 
 		buff.append("<html>\n");
@@ -501,86 +501,6 @@ public class RegistrationServlet extends HttpServlet {
 		StringBuilder printBuffer = getPrintBuffer(request);
 		printModelsForUser(request, response, userID, printBuffer, maxModelsPerPage, modelRowsPerPage);
 		showPrintDialog(response);
-	}
-
-	public void getModelInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		String languageCode;
-		try {
-			languageCode = getLanguageCodeInRequest(request);
-		} catch (Exception e) {
-			languageCode = getLanguageCodeForCurrentUserWithDefault(request);
-		}
-		ResourceBundle language = languageUtil.getLanguage(languageCode);
-
-		final String modelID = ServletUtil.getRequestParameter(request, RequestParameter.ModelId.getParameterName());
-
-		final Model model = servletDAO.getModel(Integer.parseInt(modelID));
-		
-		String show;
-		try {
-			show = getShowFromRequest(request);
-		} catch (Exception e) {
-			show = getShowFromSession(request);
-		}
-		Optional<Category> categoryOptional = model.getCategoryForShow(show);
-		if(!categoryOptional.isPresent()) {
-			writeErrorResponse(request, response, "Error: <b>Model's category not found for show!</b>");
-			return;
-		}
-		
-		final StringBuilder buff = new StringBuilder();
-
-		Category category = categoryOptional.get();
-//		model.getUser().getFullName()
-		
-		buff.append("<table border=1>");
-		
-		buff.append("<tr>");
-		buff.append("<th style='white-space: nowrap'>");
-		buff.append(language.getString("show"));
-		buff.append("</th>");
-		buff.append("<th style='white-space: nowrap'>");
-		buff.append(language.getString("category.code"));
-		buff.append("</th>");
-		buff.append("<th style='white-space: nowrap'>");
-		buff.append(language.getString("category.description"));
-		buff.append("</th>");
-		buff.append("</th>");
-		buff.append("<th style='white-space: nowrap'>");
-		buff.append("GMID");
-		buff.append("</th>");
-		buff.append("<th style='white-space: nowrap'>");
-		buff.append(language.getString("modelID"));
-		buff.append("</th>");
-		buff.append("<th style='white-space: nowrap'>");
-		buff.append(language.getString("scale"));
-		buff.append("</th>");
-		buff.append("<th style='white-space: nowrap'>");
-		buff.append(language.getString("models.name"));
-		buff.append("</th>");
-		buff.append("</tr>");
-		
-		buff.append("<tr>");
-		buff.append("<td>");
-		buff.append(show);
-		buff.append("</td><td>");
-		buff.append(category.getCategoryCode());
-		buff.append("</td><td>");
-		buff.append(category.getCategoryDescription());
-		buff.append("</td><td>");
-		buff.append(model.getId());
-		buff.append("</td><td>");
-		buff.append(model.getShowID(category.getId()));
-		buff.append("</td><td>");
-		buff.append(model.getScale());
-		buff.append("</td><td>");
-		buff.append(model.getName());
-		buff.append("</td>");
-		buff.append("</tr>");
-		
-		buff.append("</table>");
-
-		ServletUtil.writeResponse(response, buff);
 	}
 
 	public void getSimilarLastNames(final HttpServletRequest request, final HttpServletResponse response)
@@ -3075,14 +2995,8 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public String getServletURL(final HttpServletRequest request) {
-		final StringBuffer requestURL = request.getRequestURL();
-
-		if (requestURL.indexOf(".jsp") > -1) {
-			return requestURL.substring(0, requestURL.indexOf("jsp/")) + getClass().getSimpleName();
-		}
-
-		return requestURL.toString().substring(0,
-				requestURL.indexOf(getClass().getSimpleName()) + getClass().getSimpleName().length());
+		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+		+ request.getContextPath() + request.getServletPath();
 	}
 
 	public void sendEmail(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -3716,13 +3630,13 @@ public class RegistrationServlet extends HttpServlet {
 		} catch (Exception e) {
 			languageCode = getLanguageCodeForCurrentUserWithDefault(request);
 		}
-		
 		String text = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-				+ request.getContextPath() + request.getServletPath() + "/getModelInfo?" //
+				+ request.getContextPath() + "/jsp/modelInfo.jsp?" //
 				+ RequestParameter.ModelId.getParameterName() + "=" + modelID + //
 				"&" + RequestParameter.Show.getParameterName() + "=" + showInRequest + //
 				"&" + RequestParameter.Language.getParameterName() + "=" + languageCode //
 				;
+//		System.out.println(text);
 		response.setContentType("image/png");
 		qrCode(text, ecl, response.getOutputStream());
 	}
