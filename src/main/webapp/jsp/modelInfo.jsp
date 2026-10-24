@@ -13,6 +13,8 @@
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 ServletDAO servletDAO = RegistrationServlet.getServletDAO();
 
+servlet.debugRequest(request);
+
 String languageCode;
 try {
 	languageCode = RegistrationServlet.getLanguageCodeInRequest(request);
@@ -61,6 +63,10 @@ String judge = (String) session.getAttribute(SessionAttribute.Judge.name());
 <link href="base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+<p>
+Mit lenne j&oacute; l&aacute;tni itt? Seg&iacute;ts minket fejleszteni a rendszert &eacute;s &iacute;rd meg nek&uuml;nk ötleteidet...
+<hr>
+</p>
 	<%
 	if (judge != null) {
 	%>

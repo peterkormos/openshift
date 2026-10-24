@@ -189,10 +189,6 @@ public class RegistrationServlet extends HttpServlet {
 
 			servletConfig.load(servletContext.getResourceAsStream("/WEB-INF/conf/servlet.ini"));
 
-			logger.fatal("************************ Logging restarted ************************");
-			System.out.println("VERSION: " + version);
-			logger.fatal("VERSION: " + version);
-
 			DriverManager.registerDriver((Driver) Class.forName(getServerConfigParamter("db.driver")).newInstance());
 
 			if (servletDAO == null) {
@@ -326,21 +322,8 @@ public class RegistrationServlet extends HttpServlet {
 			throws ServletException, IOException {
 		final long startTime = System.currentTimeMillis();
 		String command = null;
-		String userInfo = null;
 		
 		try {
-			if (logger.isTraceEnabled()) {
-				HttpSession httpSession = request.getSession(false);
-				if (httpSession != null) {
-					userInfo = httpSession.getId();
-					User userInSession = getUserInSession(httpSession);
-					if (userInSession != null) {
-						userInfo += " " + userInSession.getEmail();
-					}
-				} else
-					userInfo = "N/A";
-			}
-			
 //			debugRequest(request);
 
 			if (request.getCharacterEncoding() == null) {
@@ -390,9 +373,9 @@ public class RegistrationServlet extends HttpServlet {
 				writeCategoryModificationErrorResponse(request, response);
 				return;
 			} else if (AuthorizationException.class.isInstance(throwable)) {
-				logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message, throwable);
+				logger.fatal("!!! doPost(): userInfo: " + getUserInfo(request) + ", " + message, throwable);
 			} else {
-				logger.fatal("!!! doPost(): userInfo: " + userInfo + ", " + message, throwable);
+				logger.fatal("!!! doPost(): userInfo: " + getUserInfo(request) + ", " + message, throwable);
 				checkHTTP(request);
 				writeErrorResponse(request, response, "Error: <b>" + message + "</b>");
 				return;
@@ -400,19 +383,33 @@ public class RegistrationServlet extends HttpServlet {
 			redirectToMainPage(request, response);
 		}
 		finally {
-			logger.trace("doPost() userInfo: " + userInfo + " command: " + command + " processTime: "
+			logger.trace("doPost() userInfo: " + getUserInfo(request) + " command: " + command + " processTime: "
 					+ (System.currentTimeMillis() - startTime));
 		}
 	}
 
-	private void debugRequest(HttpServletRequest request) {
-		System.out.println("ContextPath: " + request.getContextPath());
-		System.out.println("PathInfo: " + request.getPathInfo());
-		System.out.println("RemoteAddr: " + request.getRemoteAddr());
-		System.out.println("RemoteHost: " + request.getRemoteHost());
-		System.out.println("RequestURI: " + request.getRequestURI());
-		System.out.println("ServletPath: " + request.getServletPath());
-		System.out.println("RequestURL: " + request.getRequestURL());
+	String getUserInfo(final HttpServletRequest request) {
+		String userInfo;
+		HttpSession httpSession = request.getSession(false);
+		if (httpSession != null) {
+			userInfo = httpSession.getId();
+			User userInSession = getUserInSession(httpSession);
+			if (userInSession != null) {
+				userInfo += " " + userInSession.getEmail();
+			}
+		} else
+			userInfo = "N/A";
+		return userInfo;
+	}
+
+	public void debugRequest(HttpServletRequest request) {
+		logger.debug("RequestURL: " + request.getRequestURL());
+		logger.debug("PathInfo: " + request.getPathInfo());
+//		logger.debug("ContextPath: " + request.getContextPath());
+//		logger.debug("RemoteAddr: " + request.getRemoteAddr());
+//		logger.debug("RemoteHost: " + request.getRemoteHost());
+//		logger.debug("RequestURI: " + request.getRequestURI());
+//		logger.debug("ServletPath: " + request.getServletPath());
 	}
 
 	private LanguageUtil languageUtil = new LanguageUtil();
