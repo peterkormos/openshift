@@ -3009,7 +3009,7 @@ public class RegistrationServlet extends HttpServlet {
 				: language.getString("no") + "<br><em>no</em>";
 
 		return "<div style='border: 3px solid " + borderColor + "; padding: 2px'>" + "<img src='" + imageBaseDir
-				+ "/icons/" + imageFileName
+				+ "/../icons/" + imageFileName
 				+ "' style='float: right; vertical-align: middle; padding-left: 3px;'  height='25px'>"
 				+ "<font style='font-family: Calibri, Optima, Arial, sans-serif;font-size: 3mm'>" + gluedToBaseText
 				+ "</font>" + "</div>";
