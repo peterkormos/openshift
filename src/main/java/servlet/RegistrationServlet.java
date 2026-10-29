@@ -132,6 +132,8 @@ public class RegistrationServlet extends HttpServlet {
 
 	public static JudgingServletDAO judgingServletDAO;
 
+	private static String jspUrlBase = "j";
+
 	public static enum SessionAttribute {
 		Notices, Action, SubmitLabel, Show, ModelID, Models, MainPageFile, ShowId, Model, Categories, AdminSession
 	}
@@ -443,7 +445,7 @@ public class RegistrationServlet extends HttpServlet {
 					response.setContentType("text/html");
 					writeErrorResponse(request, response, e.getMessage());
 				}
-			} if ("j".equals(command)) {
+			} if (jspUrlBase.equals(command)) {
 				command = splitText[1];
 				
 				if(jspPageNames.contains(command)) {
@@ -699,7 +701,8 @@ public class RegistrationServlet extends HttpServlet {
 
 	private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws IOException {
-		boolean goToParentDir = request.getPathInfo() != null;
+		String pathInfo = request.getPathInfo();
+		boolean goToParentDir = pathInfo != null && pathInfo.indexOf(jspUrlBase+"/") > -1;
 		String redirectUrl = (goToParentDir ? "../" : "") + getMainPageFile(request);
 		response.sendRedirect(redirectUrl);
 	}
@@ -717,11 +720,11 @@ public class RegistrationServlet extends HttpServlet {
 			return request.getRequestURI();
 		}
 
-		return "jsp/" + mainPageFile;
+		return mainPageFile;
 	}
 
 	public static String getDefaultMainPageFile() {
-		return "main.jsp";
+		return jspUrlBase  + "/main";
 	}
 
 	public void sql(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -1483,7 +1486,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		writeErrorResponse(request, response,
 				language.getString("authentication.failed") + " " + language.getString("email") + ": [" + email
-						+ "]. <a href='" + (goToParentDir ? ".." : ".") + "/jsp/reminder.jsp?"
+						+ "]. <a href='" + (goToParentDir ? ".." : ".") + "/reminder?"
 						+ RequestParameter.Language.getParameterName() + "=" + LanguageUtil.getLanguage(language) + "'>"
 						+ language.getString("forgot.password") + "</a>");
 	}
@@ -1492,7 +1495,7 @@ public class RegistrationServlet extends HttpServlet {
 			final ResourceBundle language, final String noiceLabel, final NoticeType noticeType) throws IOException, ServletException {
 		setNoticeInSession(getHttpSession(request), noticeType, language.getString(noiceLabel));
 
-		request.getRequestDispatcher("/jsp/afterRegister.jsp").forward(request, response);
+		request.getRequestDispatcher(jspUrlBase + "/afterRegister").forward(request, response);
 	}
 
 	public void modifyUser(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2216,8 +2219,7 @@ public class RegistrationServlet extends HttpServlet {
 			setOKNoticeInSession(session, getLanguageFromSession(request).getString("add") + ": "
 					+ model.scale + " - " + model.name + " - "
 					+ model.getCategoryForShow(show).get().categoryCode);
-			boolean goToParentDir = request.getPathInfo() != null;
-			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/modelForm.jsp");
+			sendJspRedirect(response, "modelForm");
 		} else {
 			if (!(isAdminSession(session) || user.isLocalUser())) {
 				if(!sendEmailWithModels(user, false /* insertUserDetails */, show)) {
@@ -3014,8 +3016,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		session.setAttribute(SessionAttribute.Action.name(), "modifyUser");
 
-		boolean goToParentDir = request.getPathInfo() != null;
-		response.sendRedirect((goToParentDir ? "../" : "") + "jsp/user.jsp");
+		sendJspRedirect(response, "user");
 	}
 
 	public String getServletURL(final HttpServletRequest request) {
@@ -3043,9 +3044,8 @@ public class RegistrationServlet extends HttpServlet {
 		HttpSession session = getHttpSession(request);
 
 		if (isAdminSession(session)) {
-			boolean goToParentDir = request.getPathInfo() != null;
 			String showInRequest = RegistrationServlet.encodeShowName(getShowFromSession(session));
-			response.sendRedirect((goToParentDir ? "../" : "") + "jsp/helyi.jsp?"+RegistrationServlet.addHTMLShowReference(showInRequest));
+			sendJspRedirect(response, "helyi?"+RegistrationServlet.addHTMLShowReference(showInRequest));
 		} else {
 			redirectToStartPage(request, response);
 		}
@@ -3060,10 +3060,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public static String getStartPage(HttpServletRequest request) {
 		String show = RegistrationServlet.getShowFromSession(request);
-		boolean goToParentDir = request.getPathInfo() != null;
-		return (goToParentDir ? "../" : "") + //
-				(request.getRequestURI().contains("jsp") ? "" : "jsp/") + // 
-				"index.jsp?" + //
+		return jspUrlBase+ "index?" + //
 				addHTMLShowReference(encodeShowName(show));
 	}
 
@@ -3115,7 +3112,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public void statistics(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		response.sendRedirect((request.getPathInfo() != null ? "../" : "") + "jsp/statistics.jsp");
+		sendJspRedirect(response, "statistics");
 	}
 
 	public void exceptionHistory(final HttpServletRequest request, final HttpServletResponse response)
@@ -3414,8 +3411,11 @@ public class RegistrationServlet extends HttpServlet {
 			session.setAttribute(SessionAttribute.Models.name(), models);
 		}
 
-		boolean goToParentDir = request.getPathInfo() != null;
-		response.sendRedirect((goToParentDir ? "../" : "") + "jsp/modelForm.jsp");
+		sendJspRedirect(response, "modelForm");
+	}
+
+	private void sendJspRedirect(HttpServletResponse response, String jspPageName) throws IOException {
+		response.sendRedirect(jspUrlBase + "/" + jspPageName);
 	}
 
 	public void getVersion(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -3656,7 +3656,7 @@ public class RegistrationServlet extends HttpServlet {
 			languageCode = getLanguageCodeForCurrentUserWithDefault(request);
 		}
 		String text = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-				+ request.getContextPath() + "/jsp/modelInfo.jsp?" //
+				+ request.getContextPath() + jspUrlBase + "/modelInfo?" //
 				+ RequestParameter.ModelId.getParameterName() + "=" + modelID + //
 				"&" + RequestParameter.Show.getParameterName() + "=" + showInRequest + //
 				"&" + RequestParameter.Language.getParameterName() + "=" + languageCode //

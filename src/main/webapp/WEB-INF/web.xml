@@ -31,7 +31,7 @@
     
 	<error-page>
 		<error-code>404</error-code>
-		<location>/jsp/index.jsp</location>
+		<location>/index.jsp</location>
 	</error-page>
 
 	<error-page>

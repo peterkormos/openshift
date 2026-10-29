@@ -27,7 +27,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script type="text/javascript" src="util.js"></script>
+<script type="text/javascript" src="../../jsp/util.js"></script>
 
 <script> 
 	    function checkSubmit(form) {
@@ -67,11 +67,11 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 </script>
 </head>
 
-<link rel="stylesheet" href="base.css" media="screen" />
+<link rel="stylesheet" href="../../jsp/base.css" media="screen" />
 
 <body>
 	<form name="input" id="inputForm" onSubmit="return checkSubmit(this)"
-		action="../RegistrationServlet/login" method="post" accept-charset="UTF-8">
+		action="../login" method="post" accept-charset="UTF-8">
 
 		<input
 			type="hidden"
@@ -101,7 +101,7 @@ ResourceBundle language = languageUtil.getLanguage(languageCode);
 									</div>
 									<img
 										style="align-self: center; display: block; height: 60px; vertical-align: middle;"
-										src="../icons/logo.png" alt="Logo">
+										src="../../icons/logo.png" alt="Logo">
 									<div>
 										<jsp:include page="textInput.jsp">
 											<jsp:param name="name" value="email" />

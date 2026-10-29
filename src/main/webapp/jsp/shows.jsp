@@ -26,7 +26,7 @@ try {
 		name='<%=RegistrationServlet.RequestParameter.Show.getParameterName()%>'
 		value='<%=RegistrationServlet.encodeShowName(showInRequest)%>' /> <img
 		style="height: 25mm; vertical-align: middle;"
-		src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(showInRequest)%>">
+		src="../<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(showInRequest)%>">
 		<span style="color: red"><b> <%=showInRequest%></b></span></td>
 </tr>
 <%
@@ -43,7 +43,7 @@ for (final String show : shows) {
 			<%=(shows.size() == 1 ? " checked='checked'" : "")%>
 			required='required' /> <img
 			style="height: 25mm; vertical-align: middle;"
-			src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
+			src="../<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
 			<span style="color: red"><b> <%=show%></b></span>
 	</label> <font color='#FF0000' size='+3'>&#8226;</font></td>
 </tr>

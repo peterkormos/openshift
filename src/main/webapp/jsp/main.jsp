@@ -42,18 +42,18 @@ session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="base.css" rel="stylesheet" type="text/css">
+<link href="../../jsp/base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 
 	<div class="header"></div>
 
 	<form name="input" id="input" onsubmit="myFunction()"
-		action="../RegistrationServlet" method="put" accept-charset="UTF-8">
+		action=".." method="put" accept-charset="UTF-8">
 		<table style="border: 0px; width: 100%">
 			<tr>
 				<td rowspan="2"><img style="height: 25mm"
-					src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
+					src="../<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
 				</td>
 				<td colspan="5" style="width: 100%; white-space: nowrap">
 				<FONT
@@ -74,10 +74,10 @@ session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
 				%>
 				<td style="white-space: nowrap; vertical-align: top;">
 					<div class="tooltip">
-						<a href="../RegistrationServlet/inputForAddModel"
+						<a href="../inputForAddModel"
 						<%= models.isEmpty() ? "class='pulseBtn'" : ""%>
 						> <img
-							src="../icons/add.png" height="30" align="center" /> <span
+							src="../../icons/add.png" height="30" align="center" /> <span
 							class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "add")%></span>
 							 <%=ServletUtil.getLabel(request, servlet, "add")%>
 						</a>
@@ -89,8 +89,8 @@ session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
 
 				<td style="white-space: nowrap; vertical-align: top;">
 					<div class="tooltip">
-						<a href="../RegistrationServlet/sendEmail"> <img
-							src="../icons/email.png" height="30" align="center" /> <span
+						<a href="../sendEmail"> <img
+							src="../../icons/email.png" height="30" align="center" /> <span
 							class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "send.email")%></span>
 							 <%=ServletUtil.getLabel(request, servlet, "send.email")%>
 						</a>
@@ -101,8 +101,8 @@ session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
 
 				<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">
-						<a href="../RegistrationServlet/logout"> <img
-							src="../icons/exit.png" height="30" align="center" /> <span
+						<a href="../logout"> <img
+							src="../../icons/exit.png" height="30" align="center" /> <span
 							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "logout")%></span>
 						</a>
 					</div>
@@ -110,8 +110,8 @@ session.removeAttribute(RegistrationServlet.SessionAttribute.Action.name());
 
 				<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">
-						<a href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=modifyUser" >
-							<img src="../icons/modify2.png" height="30" align="center" /><span
+						<a href="user?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=modifyUser" >
+							<img src="../../icons/modify2.png" height="30" align="center" /><span
 							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "modify.user")%></span>
 						</a>
 					</div>

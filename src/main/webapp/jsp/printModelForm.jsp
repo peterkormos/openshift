@@ -85,8 +85,8 @@ if(RegistrationServlet.canModifyModel(user, model)) {
 			<div class="tooltip">
 				<a
 											<%=pulseButton ? "class='pulseBtn'" : ""%>
-					href="../RegistrationServlet/deleteModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
-					<img src="../icons/delete2.png" height="30" align="center" 
+					href="../deleteModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
+					<img src="../../icons/delete2.png" height="30" align="center" 
 					/> <span
 					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "delete")%></span>
 					 <%=ServletUtil.getLabel(request, servlet, "delete")%>
@@ -102,8 +102,8 @@ if(RegistrationServlet.canModifyModel(user, model)) {
 			<div class="tooltip">
 				<a
 											<%=pulseButton ? "class='pulseBtn'" : ""%>
-					href="../RegistrationServlet/unlinkModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
-					<img src="../icons/unlink.png" height="30" align="center" 
+					href="../unlinkModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
+					<img src="../../icons/unlink.png" height="30" align="center" 
 					/> <span
 					class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "unlink.model")%></span>
 					 <%=ServletUtil.getLabel(request, servlet, "unlink.model")%>
@@ -123,7 +123,7 @@ if(RegistrationServlet.canModifyModel(user, model)) {
  %><p> <%=language.getString("judge")%>: <%
  for (String judge : judges) {
  %><br> <a
-			href="../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
+			href="../../JudgingServlet/<%=JudgingServlet.RequestType.GetJudgingSheet.name()%>?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>&<%=JudgingServlet.RequestParameter.ModellerID%>=<%=model.getUserID()%>&<%=JudgingServlet.RequestParameter.Category%>=<%=category.categoryCode%>&<%=JudgingServlet.RequestParameter.Judge%>=<%=java.net.URLEncoder.encode(judge)%>"><%=judge%></a>
 
 			<%
 			}

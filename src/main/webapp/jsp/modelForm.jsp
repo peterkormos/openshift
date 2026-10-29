@@ -31,7 +31,7 @@
 		response.sendRedirect("main.jsp");
 	}
 
-	String logoURL = "../RegistrationServlet/"+RegistrationServlet.Command.LOADIMAGE.name()+"/"+servlet.getLogoIDForShow(servlet.getShowFromSession(request));
+	String logoURL = "../"+RegistrationServlet.Command.LOADIMAGE.name()+"/"+servlet.getLogoIDForShow(servlet.getShowFromSession(request));
 	List<Model> models = (List<Model>) session.getAttribute(RegistrationServlet.SessionAttribute.Models.name());
 %>
 
@@ -39,8 +39,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="base.css" media="screen">
-<script type="text/javascript" src="util.js"></script>
+<link rel="stylesheet" href="../../jsp/base.css" media="screen">
+<script type="text/javascript" src="../../jsp/util.js"></script>
 
 <script type="text/javascript">
 function checkMandatory(form)
@@ -83,8 +83,8 @@ if(!servlet.isAdminSession(session))
 	function updateGluedToBaseImg(element) {
 		var gluedToBaseImgElement = document.getElementById('gluedToBaseImg');
 		gluedToBaseImgElement.style = 'visibility: visible';
-		gluedToBaseImgElement.src = element.value == 'on' ? '../icons/glued.jpg'
-				: '../icons/notglued.jpg';
+		gluedToBaseImgElement.src = element.value == 'on' ? '../../icons/glued.jpg'
+				: '../../icons/notglued.jpg';
 	}
 	
 	function checkDimensions()
@@ -119,15 +119,15 @@ if(!servlet.isAdminSession(session))
 	<jsp:include page="notices.jsp" />
 
 	<form
-		action="<%=(String) session.getAttribute(RegistrationServlet.SessionAttribute.MainPageFile.name())%>">
+		action="../<%=(String) session.getAttribute(RegistrationServlet.SessionAttribute.MainPageFile.name())%>">
 		<table style="border: 0px; box-shadow: none; width: 100%">
 			<tr>
 				<td style="white-space: nowrap;"><input class="main" type='submit'
 					value='<%=ServletUtil.getLabel(request, servlet, "proceed.to.main")%>'>
 					
 					<div class="tooltip">
-						<a href="../RegistrationServlet/sendEmail"> <img
-							src="../icons/email.png" height="30" align="center" /> <span
+						<a href="../sendEmail"> <img
+							src="../../icons/email.png" height="30" align="center" /> <span
 							class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "send.email")%></span>
 							 <%=ServletUtil.getLabel(request, servlet, "send.email")%>
 						</a>
@@ -141,8 +141,8 @@ if(!servlet.isAdminSession(session))
 
 				<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">
-						<a href="../RegistrationServlet/logout"> <img
-							src="../icons/exit.png" height="30" align="center" /> <span
+						<a href="../logout"> <img
+							src="../../icons/exit.png" height="30" align="center" /> <span
 							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "logout")%></span>
 						</a>
 					</div>
@@ -152,7 +152,7 @@ if(!servlet.isAdminSession(session))
 					<div class="tooltip">
 						<a href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=modifyUser"
 							>
-							<img src="../icons/modify2.png" height="30" align="center" /><span
+							<img src="../../icons/modify2.png" height="30" align="center" /><span
 							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "modify.user")%></span>
 						</a>
 					</div>
@@ -163,7 +163,7 @@ if(!servlet.isAdminSession(session))
 
 	<jsp:include page="ADMIN_helyi.jsp" />
 
-	<form name='input' id='input' action='../RegistrationServlet/<%=action%>'
+	<form name='input' id='input' action='../<%=action%>'
 		method='POST' accept-charset="UTF-8"
 		onkeypress="return event.keyCode != 13;"
 		onsubmit="return checkMandatory(this);">
@@ -263,7 +263,7 @@ if(!servlet.isAdminSession(session))
 					</div>
 						<img
 							id='gluedToBaseImg'
-							src='../icons/<%=(model != null && model.gluedToBase ? "glued.jpg" : "notglued.jpg")%>'
+							src='../../icons/<%=(model != null && model.gluedToBase ? "glued.jpg" : "notglued.jpg")%>'
 							style='float: float: middle; <%=model == null ? "visibility: hidden;" : ""%>'>
 				</td>
 			</tr>
@@ -460,7 +460,7 @@ if(!servlet.isAdminSession(session))
 	<div class="tooltip fixed-icon-container">
 		<a href="#bottom" class='pulseBtn'
 			> <img
-			src="../icons/list.png" height="60"> <span class="tooltiptext">
+			src="../../icons/list.png" height="60"> <span class="tooltiptext">
 				<%=ServletUtil.getLabel(request, servlet, "list.models")%></span></a>
 	</div>
 	<jsp:include page="listMyModels.jsp" />

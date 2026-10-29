@@ -16,8 +16,8 @@ if (servlet.isRegistrationAllowed(show, session)) {
 %>
 <div class="tooltip">
 	<a <%=pulseButton ? "class='pulseBtn'" : ""%>
-		href="../RegistrationServlet/inputForModifyModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
-		<img src="../icons/modify2.png" height="30" align="center" />
+		href="../inputForModifyModel?<%=RegistrationServlet.RequestParameter.ModelId.getParameterName()%>=<%=model.getId()%>">
+		<img src="../../icons/modify2.png" height="30" align="center" />
 		<span class="tooltiptext"> <%=ServletUtil.getLabel(request, servlet, "modify")%></span>
 		<%=ServletUtil.getLabel(request, servlet, "modify")%>
 	</a>

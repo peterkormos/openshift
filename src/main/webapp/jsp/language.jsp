@@ -68,7 +68,7 @@ Map<String, String> languageIcons = LanguageUtil.getLanguageIcons();
 				value="<%=language.getKey() %>"
 				<%=language.getKey().equals(request.getParameter("selectValue")) ? "checked='checked'" : "" %>
 			>
-			<img src="<%=request.getParameter("pathOffset") != null ? request.getParameter("pathOffset") : ""%>../icons/<%=language.getValue() %>">
+			<img src="<%=request.getParameter("pathOffset") != null ? request.getParameter("pathOffset") : ""%>../../icons/<%=language.getValue() %>">
 		</label>
 		<%
 		}		

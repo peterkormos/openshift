@@ -112,7 +112,7 @@ function checkDeleteUserRequest()
 		return true;
 	}
 </script>
-<link rel="stylesheet" href="base.css" media="screen" type="text/css" />
+<link rel="stylesheet" href="../../jsp/base.css" media="screen" type="text/css" />
 </head>
 
 
@@ -226,7 +226,7 @@ function checkDeleteUserRequest()
 							<%
 							if (user != null && user.getGender() == null) {
 							%>
-							<img src="../icons/new.png">
+							<img src="../../icons/new.png">
 							<%
 							}
 							%>
@@ -338,7 +338,7 @@ function checkDeleteUserRequest()
 		<p>
 			<a href="#" onClick="checkDeleteUserRequest();"
 				style="color: rgb(255, 0, 0); font-weight: bold"> <img
-				src="../icons/delete.png" height="30" align="center"> <%=ServletUtil.getLabel(request, servlet, "delete.user")%></a>
+				src="../../icons/delete.png" height="30" align="center"> <%=ServletUtil.getLabel(request, servlet, "delete.user")%></a>
 		</p>
 
 		<%

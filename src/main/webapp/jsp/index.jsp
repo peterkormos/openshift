@@ -17,7 +17,7 @@
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="base.css" media="screen" />
+<link rel="stylesheet" href="../../jsp/base.css" media="screen" />
 </head>
 
 <%
@@ -42,17 +42,17 @@ try {
 		ResourceBundle language = languageUtil.getLanguage(languageEntry.getKey());
 %>
 						<tr>
-							<td><img src="<%=request.getParameter("pathOffset") != null ? request.getParameter("pathOffset") : ""%>../icons/<%=languageEntry.getValue() %>"></td>
-							<td><a href="login.jsp?<%= RequestParameter.Language.getParameterName() %>=<%=languageEntry.getKey() %>&<%=RegistrationServlet.addHTMLShowReference(show)%>"><%=language.getString("login") %></a></td>
+							<td><img src="<%=request.getParameter("pathOffset") != null ? request.getParameter("pathOffset") : ""%>../../icons/<%=languageEntry.getValue() %>"></td>
+							<td><a href="login?<%= RequestParameter.Language.getParameterName() %>=<%=languageEntry.getKey() %>&<%=RegistrationServlet.addHTMLShowReference(show)%>"><%=language.getString("login") %></a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%= RequestParameter.Language.getParameterName()%>=<%=languageEntry.getKey() %>&<%=RegistrationServlet.addHTMLShowReference(show)%>"><%=language.getString("register") %></a></td>
+								href="user?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%= RequestParameter.Language.getParameterName()%>=<%=languageEntry.getKey() %>&<%=RegistrationServlet.addHTMLShowReference(show)%>"><%=language.getString("register") %></a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
-							<td  align="right"><a href="reminder.jsp?<%= RequestParameter.Language.getParameterName()%>=<%=languageEntry.getKey() %>"><%=language.getString("forgot.password") %></a></td>
+							<td  align="right"><a href="reminder?<%= RequestParameter.Language.getParameterName()%>=<%=languageEntry.getKey() %>"><%=language.getString("forgot.password") %></a></td>
 						</tr>
 <%
 	}		
