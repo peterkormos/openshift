@@ -44,6 +44,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -174,6 +175,8 @@ public class RegistrationServlet extends HttpServlet {
 			return parameterName;
 		}
 	};
+	
+	private List<String> jspPageNames; 
 
 	public RegistrationServlet() throws Exception {
 		instance = this;
@@ -184,6 +187,9 @@ public class RegistrationServlet extends HttpServlet {
 		try {
 			ServletContext servletContext = config.getServletContext();
 			String version = getImplementationVersion(servletContext);
+			
+			jspPageNames = ((Stream<String>)servletContext.getResourcePaths("/jsp/").stream()).map(path -> path.replace("/jsp/", "") //
+				.replace(".jsp", "")).collect(Collectors.toList());
 			
 			DOMConfigurator.configure(servletContext.getResource("/WEB-INF/conf/log4j.xml"));
 
@@ -422,7 +428,8 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (pathInfo.indexOf('/') > -1) {
 			final String[] splitText = pathInfo.split("/");
-			final String command = splitText[0];
+			String command = splitText[0];
+			
 			if (Command.LOADIMAGE.name().equals(command)) {
 				response.setContentType("image/jpeg");
 
@@ -436,7 +443,18 @@ public class RegistrationServlet extends HttpServlet {
 					response.setContentType("text/html");
 					writeErrorResponse(request, response, e.getMessage());
 				}
-			} else
+			} if ("j".equals(command)) {
+				command = splitText[1];
+				
+				System.out.println(command); 
+				System.out.println(jspPageNames); 
+				if(jspPageNames.contains(command)) {
+					command = "/jsp/"+command+".jsp";
+					 request.getRequestDispatcher(command).forward(request, response);
+					return command;
+				}
+			}
+			else
 				throw new IllegalArgumentException("Unrecognized path: " + pathInfo);
 			return command;
 		} else {

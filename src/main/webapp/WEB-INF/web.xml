@@ -17,6 +17,7 @@
 	<servlet-mapping>
 		<servlet-name>RegistrationServlet</servlet-name>
 		<url-pattern>/RegistrationServlet/*</url-pattern>
+		<url-pattern>/R/*</url-pattern>
 	</servlet-mapping>
     
 	<servlet-mapping>
@@ -24,8 +25,12 @@
 		<url-pattern>/JudgingServlet/*</url-pattern>
 	</servlet-mapping>
 
+    <welcome-file-list>
+        <welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
+    
 	<error-page>
-	<error-code>404</error-code>
+		<error-code>404</error-code>
 		<location>/jsp/index.jsp</location>
 	</error-page>
 
