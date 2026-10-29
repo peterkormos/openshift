@@ -3050,7 +3050,7 @@ public class RegistrationServlet extends HttpServlet {
 
 		if (isAdminSession(session)) {
 			String showInRequest = RegistrationServlet.encodeShowName(getShowFromSession(session));
-			sendJspRedirect(response, "helyi?"+RegistrationServlet.addHTMLShowReference(showInRequest));
+			response.sendRedirect("../jsp/helyi.jsp?"+RegistrationServlet.addHTMLShowReference(showInRequest));
 		} else {
 			redirectToStartPage(request, response);
 		}
