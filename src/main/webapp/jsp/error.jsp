@@ -86,6 +86,9 @@
 	if(request.getRequestURL().indexOf("localhost") == -1) { 
 		servlet.sendEmail(servlet.getServerConfigParamter("email.error.to"), "Error", messageBody);
 	}
+	else {
+		out.print(messageBody.toString());
+	}
 %>
 </body>
 </html>

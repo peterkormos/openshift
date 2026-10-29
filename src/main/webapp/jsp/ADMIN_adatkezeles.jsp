@@ -1,7 +1,7 @@
 	<tr>
-		<td><a href="../RegistrationServlet/exportData">&Ouml;sszes
+		<td><a href="../exportData">&Ouml;sszes
 				adat export&aacute;l&aacute;sa</a></td>
-		<td><a href="../RegistrationServlet/exportCategoryData">Csak
+		<td><a href="../exportCategoryData">Csak
 				a kateg&oacute;ri&aacute;k export&aacute;l&aacute;sa</a></td>
 	</tr>
 

@@ -119,7 +119,7 @@ if(!servlet.isAdminSession(session))
 	<jsp:include page="notices.jsp" />
 
 	<form
-		action="../<%=(String) session.getAttribute(RegistrationServlet.SessionAttribute.MainPageFile.name())%>">
+		action="../<%=RegistrationServlet.jspUrlBase %>/<%=(String) session.getAttribute(RegistrationServlet.SessionAttribute.MainPageFile.name())%>">
 		<table style="border: 0px; box-shadow: none; width: 100%">
 			<tr>
 				<td style="white-space: nowrap;"><input class="main" type='submit'
@@ -150,7 +150,7 @@ if(!servlet.isAdminSession(session))
 
 				<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">
-						<a href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=modifyUser"
+						<a href="user?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=modifyUser"
 							>
 							<img src="../../icons/modify2.png" height="30" align="center" /><span
 							class="tooltiptext tooltiptext-right"> <%=ServletUtil.getLabel(request, servlet, "modify.user")%></span>

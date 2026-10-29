@@ -30,7 +30,7 @@
 		<tr>
 			<td align="center" valign="middle">
 
-				<form name="input" action="../RegistrationServlet/reminder"
+				<form name="input" action="../reminder"
 					method="put" accept-charset="UTF-8">
 					<input type="hidden" name="<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>" value="<%=languageCode %>" >
 					<table border="0">

@@ -10,45 +10,45 @@ if (show == null) {
 }
 %>
 <p>
-	<a href="../RegistrationServlet/encodeCategorGroups">Kateg&oacute;riacsoport
+	<a href="../encodeCategorGroups">Kateg&oacute;riacsoport
 		k&oacute;dol&aacute;sa</a> - <a
-		href="../RegistrationServlet/encodeCategories">Kateg&oacute;ria
-		k&oacute;dol&aacute;sa</a> - <a href="../RegistrationServlet/encodeModels">Makett
+		href="../encodeCategories">Kateg&oacute;ria
+		k&oacute;dol&aacute;sa</a> - <a href="../encodeModels">Makett
 		k&oacute;dol&aacute;sa</a>
 </p>
 <em><strong>Hibakezel&eacute;s..</strong>.</em>
 <p>
-	<a href="../RegistrationServlet/exceptionHistory">Exception history</a>
+	<a href="../exceptionHistory">Exception history</a>
 	<a href="ADMIN_systemParameters.jsp">SystemParameters</a>
 </p>
 <p>
 	<em><strong><font color="#FF0000">VIGY&Aacute;ZAT!!!!</font></strong></em>
 </p>
-<a href="../RegistrationServlet/inputForDeleteUsers"> 1
+<a href="../inputForDeleteUsers"> 1
 	felhaszn&aacute;l&oacute; t&ouml;rl&eacute;se az
 	adatb&aacute;zisb&oacute;l </a>
 <p>
-	<a href="../RegistrationServlet/deleteModelsForShow"
+	<a href="../deleteModelsForShow"
 		style="background: red; font-weight: bold"> Aktu&aacute;lis
 		verseny makett kapcsolatainak t&ouml;rl&eacute;se az
 		adatb&aacute;zisb&oacute;l </a>
 <p>
-	<a href="../RegistrationServlet/deleteDataForShow"
+	<a href="../deleteDataForShow"
 		style="background: red; font-weight: bold"> Aktu&aacute;lis
 		verseny makett kapcsolatainak,
 		kateg&oacute;ri&aacute;j&aacute;nak t&ouml;rl&eacute;se az
 		adatb&aacute;zisb&oacute;l </a>
 <p>
-	<a href="../RegistrationServlet/deleteOldModels"
+	<a href="../deleteOldModels"
 		style="background: red; font-weight: bold"> R&eacute;gi makettek t&ouml;rl&eacute;se az
 		adatb&aacute;zisb&oacute;l </a>
 <p>
-	<a href="../RegistrationServlet/deletedirectUsers"
+	<a href="../deletedirectUsers"
 		style="background: red; font-weight: bold"> &Ouml;sszes
 		helysz&iacute;nen regisztr&aacute;lt felhaszn&aacute;l&oacute;
 		t&ouml;rl&eacute;se </a>
 <form accept-charset="UTF-8" name="input" id="input6"
-	action="../RegistrationServlet/directRegister" method="post">
+	action="../directRegister" method="post">
 	<input
 		type="hidden" name="<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>"
 		value="<%=User.AdminTypes.ShowAdmin.getLanguage()%>"> <input
@@ -63,14 +63,14 @@ if (show == null) {
 </form>
 
 <form accept-charset="UTF-8" name="input"
-	action="../RegistrationServlet/jpa" method="post">
+	action="../jpa" method="post">
 	JPA:
 	<label><input type='radio' name="jpaType" value="update">update</label>
 	<label><input type='radio' name="jpaType" value="select" checked="checked">select</label>
 	<input name="jpa" type="text" value="" size="150">
 </form>
 <form accept-charset="UTF-8" name="input"
-	action="../RegistrationServlet/sql" method="post">
+	action="../sql" method="post">
 	SQL update:
 	<input name="sql" type="text" value="" size="150">
 </form>
@@ -88,7 +88,7 @@ if (show == null) {
 	<p>select crd, count(*) from mak_model group by crd
 
 <form accept-charset="UTF-8" name="input"
-	action="../RegistrationServlet/sendEmails" method="post">
+	action="../sendEmails" method="post">
 	Mindenkinek email k&uuml;ld&eacute;se. Sz&ouml;veg:
 	<textarea name='message' type="text" cols='100' rows='3'></textarea>
 	<input type="submit" value="K&uuml;ld">

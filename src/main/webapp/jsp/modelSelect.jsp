@@ -3,8 +3,7 @@
 <%@page import="datatype.*"%>
 <%@page import="servlet.*"%>
 
-<form id='modelSelect' action='../RegistrationServlet' method='put' accept-charset="UTF-8">
-<input type='hidden' name='command' value='<%= request.getParameter("action") %>'>
+<form id='modelSelect' action='../<%= request.getParameter("action") %>' method='put' accept-charset="UTF-8">
 <%
 	RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	ServletDAO servletDAO = servlet.getServletDAO();

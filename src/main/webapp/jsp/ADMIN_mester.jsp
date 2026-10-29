@@ -29,7 +29,7 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 			<th colspan="7" style='white-space: nowrap'>Mesterek r&ouml;z&iacute;t&eacute;se</th>
 		</tr>
 <form accept-charset="UTF-8" name="input" id="input5"
-	action="../RegistrationServlet/saveModelClass" method="post">
+	action="../saveModelClass" method="post">
 		<tr>
 			<td>Makettez&#337; neve:</td>
 			<td colspan="6"><input name="lastname" type="text" id="fullnameID"
@@ -62,10 +62,10 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 		<th colspan="7" style='white-space: nowrap'>Adatkezel&eacute;s</th>
 	</tr>
 	<tr>
-		<td colspan="2"><a href="../RegistrationServlet/exportMasters">&Ouml;sszes
+		<td colspan="2"><a href="../exportMasters">&Ouml;sszes
 				adat export&aacute;l&aacute;sa</a></td>
 
-		<form accept-charset="UTF-8" action="../RegistrationServlet/importData"
+		<form accept-charset="UTF-8" action="../importData"
 			method="post" enctype="multipart/form-data" name="input">
 			<td colspan="5"><input type="submit"
 				value="Excelb&#337;l import&aacute;l&aacute;s"> <input
@@ -107,8 +107,8 @@ List<User> users = servletDAO.getMasterAwardedUsers();
 	%>
 			<div class="tooltip">
 				<a
-					href="../RegistrationServlet/deleteMasterUser?userID=<%=moUser.getId()%>">
-					<img src="../icons/delete2.png" height="30" align="center" /> <span
+					href="../deleteMasterUser?userID=<%=moUser.getId()%>">
+					<img src="../../icons/delete2.png" height="30" align="center" /> <span
 					class="tooltiptext"> <%=language.getString("delete")%></span>
 				</a>
 			</div>

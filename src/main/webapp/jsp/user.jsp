@@ -61,7 +61,7 @@ function checkDeleteUserRequest()
 	
 	if(confirmed)
 	{
-		document.getElementById('input').action="../RegistrationServlet/deleteUser";
+		document.getElementById('input').action="../deleteUser";
 		document.getElementById('input').submit();
 	}
 }
@@ -121,7 +121,7 @@ function checkDeleteUserRequest()
 	<div class="header"></div>
 
 	<form autocomplete="off" name="input" id="input"
-		action="../RegistrationServlet/<%=action%>" method="put"
+		action="../<%=action%>" method="put"
 		accept-charset="UTF-8"
 <%-- 		onSubmit='return checkEmail(this) <%= passwordCheck %> && checkName(this)'> --%>
 		onSubmit='return checkEmail(this) <%= passwordCheck %> && checkName(this)'>

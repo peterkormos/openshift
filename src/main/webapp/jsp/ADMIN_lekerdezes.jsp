@@ -25,26 +25,26 @@ if (user == null || !user.isAdminUser()) {
 		<th colspan="5">Lek&eacute;rdez&eacute;sek</th>
 	</tr>
 	<tr>
-		<td><a href="../RegistrationServlet/exportExcel"><strong>&Ouml;sszes
+		<td><a href="../exportExcel"><strong>&Ouml;sszes
 					benevezett makett Excelbe</strong></a></td>
-		<td><a href="listAllModels.jsp"> &Ouml;sszes benevezett
+		<td><a href="listAllModels"> &Ouml;sszes benevezett
 				makett list&aacute;z&aacute;sa</a></td>
-		<td><a href="customQuery.jsp">Egyedi
+		<td><a href="customQuery">Egyedi
 				lek&eacute;rdez&eacute;sek</a> <%
  if (user.isSuperAdminUser()) {
- %> - <a href="../RegistrationServlet/listUsers">&Ouml;sszes
+ %> - <a href="../listUsers">&Ouml;sszes
 				felhaszn&aacute;l&oacute; list&aacute;z&aacute;sa</a> <%
  }
  %></td>
 	</tr>
 	<tr>
 		<td><a
-			href="statistics.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU&shortStatistics=true"><strong>Egyszer&#369;
+			href="statistics?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU&shortStatistics=true"><strong>Egyszer&#369;
 					statisztika k&eacute;sz&iacute;t&eacute;se</strong></a></td>
 		<td><a
-			href="statistics.jsp?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
+			href="statistics?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
 					statisztika k&eacute;sz&iacute;t&eacute;se</strong></a></td>
 		<td><a
-			href="../RegistrationServlet/exportStatistics?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
+			href="../exportStatistics?<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><strong>&Ouml;sszes
 					Statisztika Excelbe</strong></a></td>
 	</tr>

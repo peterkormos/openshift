@@ -5,14 +5,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href='base.css' rel='stylesheet' type='text/css'>
+<link href='../../jsp/base.css' rel='stylesheet' type='text/css'>
 </head>
 <%
 String show = (String) session.getAttribute(RegistrationServlet.SessionAttribute.Show.name());
 %>
 
 <body>
-	<form name="input" action="../RegistrationServlet/addCategoryGroup" method="POST"
+	<form name="input" action="../addCategoryGroup" method="POST"
 		accept-charset="UTF-8">
 		<table border="0">
 			<tr>

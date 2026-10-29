@@ -73,11 +73,11 @@ if (show == null) {
 <!--
 -
 <a
-	href="../RegistrationServlet/printAllModels?printPreRegisteredModels=false">
+	href="../printAllModels?printPreRegisteredModels=false">
     Nevez&eacute;si 
     lapok nyomtat&aacute;sa (Helysz&iacute;nen nevezettek)</a> - 
 <a
-	href="../RegistrationServlet/printAllModels?printPreRegisteredModels=true&printCardsForAllModels=true">
+	href="../printAllModels?printPreRegisteredModels=true&printCardsForAllModels=true">
 	A
 		makettek mell&eacute; kisk&aacute;rty&aacute;k nyomtat&aacute;sa</a>
 -->

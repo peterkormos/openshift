@@ -132,7 +132,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public static JudgingServletDAO judgingServletDAO;
 
-	private static String jspUrlBase = "j";
+	public static String jspUrlBase = "j";
 
 	public static enum SessionAttribute {
 		Notices, Action, SubmitLabel, Show, ModelID, Models, MainPageFile, ShowId, Model, Categories, AdminSession
@@ -445,7 +445,8 @@ public class RegistrationServlet extends HttpServlet {
 					response.setContentType("text/html");
 					writeErrorResponse(request, response, e.getMessage());
 				}
-			} if (jspUrlBase.equals(command)) {
+			} 
+			else if (jspUrlBase.equals(command)) {
 				command = splitText[1];
 				
 				if(jspPageNames.contains(command)) {
@@ -453,8 +454,6 @@ public class RegistrationServlet extends HttpServlet {
 					 request.getRequestDispatcher(command).forward(request, response);
 					return command;
 				}
-			}
-			else
 			}
 			else
 				throw new IllegalArgumentException("Unrecognized path: " + pathInfo);
@@ -702,8 +701,15 @@ public class RegistrationServlet extends HttpServlet {
 	private void redirectToMainPage(final HttpServletRequest request, final HttpServletResponse response)
 			throws IOException {
 		String pathInfo = request.getPathInfo();
-		boolean goToParentDir = pathInfo != null && pathInfo.indexOf(jspUrlBase+"/") > -1;
-		String redirectUrl = (goToParentDir ? "../" : "") + getMainPageFile(request);
+		
+		String redirectUrl;
+		if (pathInfo == null) {
+			redirectUrl = "." + request.getServletPath() + "/" + jspUrlBase + "/" + getMainPageFile(request);
+		} else {
+			boolean jspUrl = pathInfo.indexOf(jspUrlBase + "/") > -1;
+			redirectUrl = (jspUrl ? "" : jspUrlBase + "/") + getMainPageFile(request);
+		}
+		
 		response.sendRedirect(redirectUrl);
 	}
 
@@ -724,7 +730,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static String getDefaultMainPageFile() {
-		return jspUrlBase  + "/main";
+		return "main";
 	}
 
 	public void sql(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -2502,8 +2508,7 @@ public class RegistrationServlet extends HttpServlet {
 		insertBaseCSS(request, buff);
 
 		buff.append("<body>\n");
-		buff.append("<form accept-charset='UTF-8' name='input' action='../RegistrationServlet' method='put' >");
-		buff.append("<input type='hidden' name='command' value='" + command + "'>");
+		buff.append("<form accept-charset='UTF-8' name='input' action='../RegistrationServlet/" + command + "' method='put' >");
 		if (show != null) {
 			buff.append("<input type='hidden' name='show' value='" + encodeShowName(show) + "'>");
 		}
@@ -3059,8 +3064,11 @@ public class RegistrationServlet extends HttpServlet {
 	}
 
 	public static String getStartPage(HttpServletRequest request) {
+		String pathInfo = request.getPathInfo();
+		boolean jspUrl = pathInfo != null && pathInfo.indexOf(jspUrlBase+"/") > -1;
+
 		String show = RegistrationServlet.getShowFromSession(request);
-		return jspUrlBase+ "index?" + //
+		return (jspUrl ? "./" : "./" + jspUrlBase + "/") + "index?" + //
 				addHTMLShowReference(encodeShowName(show));
 	}
 

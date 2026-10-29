@@ -9,22 +9,22 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 </tr>
 	<tr>
 		<th>Kateg&oacute;riacsoport</th>
-		<td><a href="addCategoryGroup.jsp">&uacute;j
+		<td><a href="addCategoryGroup">&uacute;j
 				hozz&aacute;ad&aacute;sa</a></td>
 		<td></td>
-		<td><a href="../RegistrationServlet/inputForDeleteCategoryGroup">
+		<td><a href="../inputForDeleteCategoryGroup">
 				t&ouml;rl&eacute;se</a></td>
-		<td><a href="../RegistrationServlet/inputForDeleteCategoryGroup">
+		<td><a href="../inputForDeleteCategoryGroup">
 				list&aacute;z&aacute;sa</a></td>
 	</tr>
 	<tr>
 		<th>Kateg&oacute;ria</th>
-		<td><a href="../RegistrationServlet/inputForAddCategory">&uacute;j
+		<td><a href="../inputForAddCategory">&uacute;j
 				hozz&aacute;ad&aacute;sa</a></td>
-		<td><a href="../RegistrationServlet/listCategories">
+		<td><a href="../listCategories">
 				m&oacute;dos&iacute;t&aacute;s</a></td>
-		<td><a href="../RegistrationServlet/listCategories">t&ouml;rl&eacute;se</a></td>
-		<td><a href="../RegistrationServlet/listCategories">list&aacute;z&aacute;sa</a></td>
+		<td><a href="../listCategories">t&ouml;rl&eacute;se</a></td>
+		<td><a href="../listCategories">list&aacute;z&aacute;sa</a></td>
 	</tr>
 	<tr class="flash Warning">
 		<th>Max. makettek kateg&oacute;ri&aacute;nk&eacute;nt</th>
@@ -51,6 +51,6 @@ RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 	</tr>
 	<tr>
 		<th>Export</th>
-		<td><a href="../RegistrationServlet/exportCategoryExcel"><strong>&Ouml;sszes
+		<td><a href="../exportCategoryExcel"><strong>&Ouml;sszes
 					kateg&oacute;ria Excelbe</strong></a></td>
 	</tr>

@@ -35,17 +35,17 @@ String show = RegistrationServlet.getShowFromSession(session);
 			<td style="width: 100%;">
 				<div>
 					<img style="vertical-align: middle; height: 25mm"
-						src="../RegistrationServlet/<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
+						src="../<%=RegistrationServlet.Command.LOADIMAGE.name()%>/<%=servlet.getLogoIDForShow(show)%>">
 
-					<a href="../RegistrationServlet/inputForLogoUpload">Versenyhez
+					<a href="../inputForLogoUpload">Versenyhez
 						log&oacute; felt&ouml;lt&eacute;s</a>
 				</div>
 			</td>
 
 			<td style="width: 40px; text-align: right; vertical-align: top;">
 				<div class="tooltip">
-					<a href="../RegistrationServlet/logout"> <img
-						src="../icons/exit.png" height="30" align="center" /> <span
+					<a href="../logout"> <img
+						src="../../icons/exit.png" height="30" align="center" /> <span
 						class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
 					</a>
 				</div>
@@ -56,9 +56,9 @@ String show = RegistrationServlet.getShowFromSession(session);
 			%>
 			<td style="width: 40px; text-align: right; vertical-align: top;">
 					<div class="tooltip">
-						<a href="user.jsp?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=modifyUser"
+						<a href="user?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=modifyUser"
 							>
-							<img src="../icons/modify2.png" height="30" align="center" /><span
+							<img src="../../icons/modify2.png" height="30" align="center" /><span
 							class="tooltiptext tooltiptext-right"> <%=language.getString("modify.user")%></span>
 						</a>
 					</div>
@@ -77,8 +77,8 @@ String show = RegistrationServlet.getShowFromSession(session);
 	<p></p>
 
 	<form accept-charset="UTF-8" name="input" id="input4"
-		action="../RegistrationServlet" method="post">
-		<input type="hidden" id="command4" name="command" value="CATEGORY_main.jsp"> 
+		action="../../R" method="post">
+		<input type="hidden" id="command4" name="command" value="CATEGORY_main"> 
 		<input
 			type="hidden" id="paramName" name="paramName" value="">
 		<input
@@ -87,7 +87,7 @@ String show = RegistrationServlet.getShowFromSession(session);
 		<table style="box-shadow: none; border: 0px; width:100%">
 			<tr>
 				<td colspan="5">
-<a href='helyi.jsp?<%=RegistrationServlet.addHTMLShowReference(RegistrationServlet.encodeShowName(show))%>'>Helyi bel&eacute;p&eacute;si oldal
+<a href='../../jsp/helyi.jsp?<%=RegistrationServlet.addHTMLShowReference(RegistrationServlet.encodeShowName(show))%>'>Helyi bel&eacute;p&eacute;si oldal
 	bet&ouml;lt&eacute;se...</a>
 </td>
 			</tr>
@@ -96,9 +96,9 @@ String show = RegistrationServlet.getShowFromSession(session);
 			</tr>
 
 			<tr>
-				<td><a href="../RegistrationServlet/inputForLoginUser">nev&eacute;ben
+				<td><a href="../inputForLoginUser">nev&eacute;ben
 						bel&eacute;p&eacute;s</a></td>
-				<td><a href="../RegistrationServlet/inputForPrint">
+				<td><a href="../inputForPrint">
 						nevez&eacute;si lapjainak nyomtat&aacute;sa </a></td>
 			</tr>
 			<tr>

@@ -17,7 +17,7 @@
 <html>
 
 <head>
-<link rel="stylesheet" href="base.css" media="screen" />
+<link rel="stylesheet" href="../../jsp/base.css" media="screen" />
 <script type="text/javascript" src="findUser.js"></script>
 <script src="jquery.min.js"></script>
 </head>

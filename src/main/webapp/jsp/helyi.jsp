@@ -32,13 +32,13 @@ try {
 <body>
 	<div class="header"></div>
 	<p>
-		<a href="./login.jsp?<%=RegistrationServlet.addHTMLShowReference(show)%>&<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><b>F&#337;oldali
+		<a href="../R/<%=RegistrationServlet.jspUrlBase %>/login?<%=RegistrationServlet.addHTMLShowReference(show)%>&<%=RegistrationServlet.RequestParameter.Language.getParameterName()%>=HU"><b>F&#337;oldali
 				bejelentkez&eacute;s</b></a>
 	</p>
 	<p></p>
 	<p>
 		<%
-		addAdminLink(session, out, "./user.jsp?directRegister=true&"+RequestParameter.Action.getParameterName()+"=directRegister&" + RequestParameter.Language.getParameterName() + "=HU", "Regisztr&aacute;lni egy (tal&aacute;n) ismeretlen makettez&#337;t &eacute;s makettjeit");
+		addAdminLink(session, out, "../R/"+RegistrationServlet.jspUrlBase +"/user?directRegister=true&"+RequestParameter.Action.getParameterName()+"=directRegister&" + RequestParameter.Language.getParameterName() + "=HU", "Regisztr&aacute;lni egy (tal&aacute;n) ismeretlen makettez&#337;t &eacute;s makettjeit");
 		%>
 
 <!-- 		- <a -->
@@ -48,12 +48,12 @@ try {
 	<p>
 		<b>Egy m&aacute;r regisztr&aacute;lt makettez&#337;... </b>
 		<%
-		addAdminLink(session, out, "../RegistrationServlet/inputForLoginUser?" + RequestParameter.Language.getParameterName() + "=HU",
+		addAdminLink(session, out, "../R/inputForLoginUser?" + RequestParameter.Language.getParameterName() + "=HU",
 				"nev&eacute;ben bel&eacute;p&eacute;s");
 		%>
 		-
 		<%
-		addAdminLink(session, out, "../RegistrationServlet/inputForPrint?" + RequestParameter.Language.getParameterName() + "=HU",
+		addAdminLink(session, out, "../R/inputForPrint?" + RequestParameter.Language.getParameterName() + "=HU",
 				"nevez&eacute;si lapjainak nyomtat&aacute;sa");
 		%>
 	</p>
