@@ -446,13 +446,13 @@ public class RegistrationServlet extends HttpServlet {
 			} if ("j".equals(command)) {
 				command = splitText[1];
 				
-				System.out.println(command); 
-				System.out.println(jspPageNames); 
 				if(jspPageNames.contains(command)) {
 					command = "/jsp/"+command+".jsp";
 					 request.getRequestDispatcher(command).forward(request, response);
 					return command;
 				}
+			}
+			else
 			}
 			else
 				throw new IllegalArgumentException("Unrecognized path: " + pathInfo);
