@@ -4,7 +4,7 @@
 <%@page import="servlet.*"%>
 <%@page import="util.*"%>
 
-<link href="base.css" rel="stylesheet" type="text/css">
+<link href="../../jsp/base.css" rel="stylesheet" type="text/css">
 
 <table style='width: 100%; border-collapse: collapse;' border='1'>
 	<tr>

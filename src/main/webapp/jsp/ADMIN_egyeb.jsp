@@ -19,7 +19,7 @@ if (show == null) {
 <em><strong>Hibakezel&eacute;s..</strong>.</em>
 <p>
 	<a href="../exceptionHistory">Exception history</a>
-	<a href="ADMIN_systemParameters.jsp">SystemParameters</a>
+	<a href="ADMIN_systemParameters">SystemParameters</a>
 </p>
 <p>
 	<em><strong><font color="#FF0000">VIGY&Aacute;ZAT!!!!</font></strong></em>

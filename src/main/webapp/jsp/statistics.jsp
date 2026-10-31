@@ -42,7 +42,7 @@ List<String> shows = show == null ? servlet.getShowsWithPreRegistration() : Arra
 <body>
 	<%
 	for (String currentShow : shows) {
-		String logoURL = "../RegistrationServlet/" + RegistrationServlet.Command.LOADIMAGE.name() + "/"
+		String logoURL = "../" + RegistrationServlet.Command.LOADIMAGE.name() + "/"
 		+ servlet.getLogoIDForShow(currentShow);
 	%>
 	<table style='width: 100%; border-collapse: collapse;' border='1'>

@@ -10,10 +10,10 @@ final ResourceBundle language = RegistrationServlet.getLanguageFromSession(reque
 
 <html>
 <head>
-<link rel="stylesheet" href="base.css" media="screen" />
+<link rel="stylesheet" href="../../jsp/base.css" media="screen" />
 </head>
 <body>
-	<form name='input' action='listSelectedModels.jsp' method='put'>
+	<form name='input' action='listSelectedModels' method='put'>
 		<table border='0'>
 
 			<tr>
