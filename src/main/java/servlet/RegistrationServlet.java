@@ -706,7 +706,7 @@ public class RegistrationServlet extends HttpServlet {
 		if (pathInfo == null) {
 			redirectUrl = "." + request.getServletPath() + "/" + jspUrlBase + "/" + getMainPageFile(request);
 		} else {
-			boolean jspUrl = pathInfo.indexOf(jspUrlBase + "/") > -1;
+			boolean jspUrl = pathInfo.indexOf("/"+jspUrlBase + "/") > -1;
 			redirectUrl = (jspUrl ? "" : jspUrlBase + "/") + getMainPageFile(request);
 		}
 		
@@ -3065,7 +3065,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public static String getStartPage(HttpServletRequest request) {
 		String pathInfo = request.getPathInfo();
-		boolean jspUrl = pathInfo != null && pathInfo.indexOf(jspUrlBase+"/") > -1;
+		boolean jspUrl = pathInfo != null && pathInfo.indexOf("/"+jspUrlBase+"/") > -1;
 
 		String show = RegistrationServlet.getShowFromSession(request);
 		return (jspUrl ? "./" : "./" + jspUrlBase + "/") + "index?" + //

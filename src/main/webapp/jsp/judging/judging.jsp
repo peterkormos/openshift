@@ -55,7 +55,6 @@ boolean isNormalUser = !"admin".equals(judge);
 					<jsp:param name="label" value='<%=language.getString("language")%>' />
 					<jsp:param name="selectValue" value="<%=languageCode%>" />
 					<jsp:param name="required" value="required" />
-					<jsp:param name="pathOffset" value="../" />
 				</jsp:include>
 			
 				<input type="submit" value='<%=language.getString("login")%>'>
