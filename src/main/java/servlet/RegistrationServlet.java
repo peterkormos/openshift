@@ -133,6 +133,7 @@ public class RegistrationServlet extends HttpServlet {
 	public static JudgingServletDAO judgingServletDAO;
 
 	public static String jspUrlBase = "j";
+	public static String ServletShortName = "R";
 
 	public static enum SessionAttribute {
 		Notices, Action, SubmitLabel, Show, ModelID, Models, MainPageFile, ShowId, Model, Categories, AdminSession
@@ -3068,8 +3069,8 @@ public class RegistrationServlet extends HttpServlet {
 		boolean jspUrl = pathInfo != null && pathInfo.indexOf("/"+jspUrlBase+"/") > -1;
 
 		String show = RegistrationServlet.getShowFromSession(request);
-		return (jspUrl ? "./" : "./" + jspUrlBase + "/") + "index?" + //
-				addHTMLShowReference(encodeShowName(show));
+		return (jspUrl ? "./" : "./" + jspUrlBase + "/") + "index" + //
+		(show != null ? "?" + addHTMLShowReference(encodeShowName(show)) : "");
 	}
 
 	public static String encodeShowName(String show) {

@@ -8,6 +8,21 @@
 <jsp:useBean id="languageUtil" class="util.LanguageUtil"
 	scope="application" />
 
+<%
+if(request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI) == null) {
+	response.sendRedirect("../" + RegistrationServlet.ServletShortName + "/" + RegistrationServlet.getStartPage(request));
+	return;
+}
+
+String show = null;
+try {
+	show = RegistrationServlet.getShowFromRequestAsIs(request);
+} catch (final Exception e) {
+}
+
+String showReference = show != null ? "&" + RegistrationServlet.addHTMLShowReference(show) : "";
+%>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -19,14 +34,6 @@
 
 <link rel="stylesheet" href="../../jsp/base.css" media="screen" />
 </head>
-
-<%
-String show = null;
-try {
-	show = RegistrationServlet.getShowFromRequestAsIs(request);
-} catch (final Exception e) {
-}
-%>
  
 <body style="font-family: sans-serif;">
 	<div class="header"></div>
@@ -43,12 +50,12 @@ try {
 %>
 						<tr>
 							<td><img src="<%=request.getParameter("pathOffset") != null ? request.getParameter("pathOffset") : ""%>../../icons/<%=languageEntry.getValue() %>"></td>
-							<td><a href="login?<%= RequestParameter.Language.getParameterName() %>=<%=languageEntry.getKey() %>&<%=RegistrationServlet.addHTMLShowReference(show)%>"><%=language.getString("login") %></a></td>
+							<td><a href="login?<%= RequestParameter.Language.getParameterName() %>=<%=languageEntry.getKey() %><%=showReference%>"><%=language.getString("login") %></a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
 							<td align="center"><a
-								href="user?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%= RequestParameter.Language.getParameterName()%>=<%=languageEntry.getKey() %>&<%=RegistrationServlet.addHTMLShowReference(show)%>"><%=language.getString("register") %></a></td>
+								href="user?<%=RegistrationServlet.RequestParameter.Action.getParameterName()%>=register&<%= RequestParameter.Language.getParameterName()%>=<%=languageEntry.getKey() %><%=showReference%>"><%=language.getString("register") %></a></td>
 							<td>
 								<div align="center">-</div>
 							</td>
