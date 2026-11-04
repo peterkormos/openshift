@@ -314,7 +314,7 @@ Sz&iacute;nk&oacute;dok:
 		<%
 			if (!insertAwards && withDetailing) {
 		%>
-		<td align='center'><%=RegistrationServlet.getGluedToBaseHTMLCode(language, model, "..")%></td>
+		<td align='center'><%=RegistrationServlet.getGluedToBaseHTMLCode(language, model, "../..")%></td>
 
 		<td align='center'><%=model.comment%></td>
 

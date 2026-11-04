@@ -144,7 +144,7 @@ if(RegistrationServlet.canModifyModel(user, model)) {
 							<tr>
 								<td style="white-space: nowrap;"><%=language.getString("glued.to.base")%></td>
 
-								<td><font><%=RegistrationServlet.getGluedToBaseHTMLCode(language, model, "..")%></font></td>
+								<td><font><%=RegistrationServlet.getGluedToBaseHTMLCode(language, model, "../..")%></font></td>
 							</tr>
 						</table>
 					</td>
