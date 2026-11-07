@@ -1,8 +1,8 @@
 <%@page import="servlet.RegistrationServlet.RequestParameter"%>
 <%@page import="servlet.RegistrationServlet"%>
-<link rel="stylesheet" href="base.css" media="screen" />
+<link rel="stylesheet" href="../../jsp/base.css" media="screen" />
 <body>
-	<form action="../RegistrationServlet/login" method="get">
+	<form action="../login" method="get">
 		<table border="0" height="100%" width="100%">
 			<tr>
 				<td align="center" valign="middle">

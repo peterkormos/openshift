@@ -42,7 +42,7 @@ final ResourceBundle language = servlet.getLanguageForCurrentUser(request);
 
 			<td style="width: 40px; text-align: right; vertical-align: top;">
 				<div class="tooltip">
-					<a href="../RegistrationServlet/logout"> <img
+					<a href="../logout"> <img
 						src="../icons/exit.png" height="30" align="center" /> <span
 						class="tooltiptext tooltiptext-right"> <%=language.getString("logout")%></span>
 					</a>
