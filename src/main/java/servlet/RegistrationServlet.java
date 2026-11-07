@@ -1848,7 +1848,7 @@ public class RegistrationServlet extends HttpServlet {
 			buff.append(ServletUtil.encodeString(category.getModelClass().getTitle()));
 			buff.append("</td>");
 			buff.append("<td align='center' >");
-			buff.append(ServletUtil.encodeString(category.getAgeGroup().toString()));
+			buff.append(category.getAgeGroup().toHTMLString());
 			buff.append("</td>");
 			buff.append("<td align='center' style='white-space: nowrap'>");
 			buff.append("<a href='inputForAddCategory?categoryID=" + category.getId() + "'>"
@@ -2104,13 +2104,13 @@ public class RegistrationServlet extends HttpServlet {
 		buff.append("</td>");
 		buff.append("<td><select name='ageGroup'>");
 		if (category.getAgeGroup() != null)
-			buff.append("<option value='" + category.getAgeGroup().name() + "'>" + category.getAgeGroup().toString()
+			buff.append("<option value='" + category.getAgeGroup().name() + "'>" + category.getAgeGroup().toHTMLString()
 					+ "</option>");
 		else
-			buff.append("<option value='" + AgeGroup.ALL.name() + "' selected>" + AgeGroup.ALL.toString() + "</option>");
+			buff.append("<option value='" + AgeGroup.ALL.name() + "' selected>" + AgeGroup.ALL.toHTMLString() + "</option>");
 
-		for (final AgeGroup mc : AgeGroup.values()) {
-			buff.append("<option value='" + mc.name() + "'>" + mc.toString() + "</option>");
+		for (final AgeGroup ag : AgeGroup.values()) {
+			buff.append("<option value='" + ag.name() + "'>" + ag.toHTMLString() + "</option>");
 		}
 		buff.append("</select>");
 		buff.append("</td>");

@@ -1,5 +1,7 @@
 package datatype;
 
+import servlet.ServletUtil;
+
 public enum AgeGroup {
 	ADULT("Felnőtt", 19, 999), JUNIOR("Junior", 16, 18), YOUNGSTER("Serdülő", 13, 15), CHILD("Gyerek", 0, 12),
 	UpToAdult("Felnőttig", 0, 18), ALL("Minden", 0, 999);
@@ -8,6 +10,10 @@ public enum AgeGroup {
 	private int to;
 	private String title;
 
+	public String toHTMLString() {
+		return ServletUtil.encodeString(toString());
+	}
+	
 	public String toString() {
 		return title + " (" + from + "-" + to + ")";
 	}
