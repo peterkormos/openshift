@@ -24,24 +24,10 @@ public enum AgeGroup {
 		this.to = to;
 	}
 
-	private boolean isIn(int age) {
-		return age >= from && age <= to;
+	public boolean isIn(int age) {
+		return age <= from || (age >= from && age <= to);
 	}
 
-	public boolean contains(AgeGroup userAge) {
-		return from <= userAge.from && to >= userAge.to;
-	}
-
-	public static AgeGroup get(int age) {
-		for (AgeGroup group : AgeGroup.values()) {
-			if (group.isIn(age)) {
-				return group;
-			}
-		}
-
-		throw new IllegalArgumentException("Wrong age: " + age);
-	}
-	
 	public static AgeGroup of(String name) {
 		return EnumGroup.of(AgeGroup.class, name, (group, name2) -> group.toString().equals(name2));
 	}

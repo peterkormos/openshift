@@ -47,8 +47,7 @@ onchange="updateMandatoryFieldMark(this); checkMandatoryElement(this);"
 					  {
 						continue;
 					  }
-
-					  if (!category.getAgeGroup().contains(AgeGroup.get(user.getAge())))
+					  if (!category.getAgeGroup().isIn(user.getAge()))
 					  { 
 						continue;
 					  }
