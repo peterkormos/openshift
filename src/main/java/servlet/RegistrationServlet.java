@@ -3069,7 +3069,7 @@ public class RegistrationServlet extends HttpServlet {
 		boolean jspUrl = pathInfo != null && pathInfo.indexOf("/"+jspUrlBase+"/") > -1;
 
 		String pathBase = 
-				pathInfo.indexOf("/jsp/") > -1 ? "../R/" : 
+				request.getRequestURI().indexOf("/jsp/") > -1 ? "../"+ServletShortName+"/" : 
 			"./";
 		String show = RegistrationServlet.getShowFromSession(request);
 		return (jspUrl ? pathBase : pathBase + jspUrlBase + "/") + "index" + //
