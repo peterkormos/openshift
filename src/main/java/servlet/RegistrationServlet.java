@@ -3068,8 +3068,11 @@ public class RegistrationServlet extends HttpServlet {
 		String pathInfo = request.getPathInfo();
 		boolean jspUrl = pathInfo != null && pathInfo.indexOf("/"+jspUrlBase+"/") > -1;
 
+		String pathBase = 
+				pathInfo.indexOf("/jsp/") > -1 ? "../R/" : 
+			"./";
 		String show = RegistrationServlet.getShowFromSession(request);
-		return (jspUrl ? "./" : "./" + jspUrlBase + "/") + "index" + //
+		return (jspUrl ? pathBase : pathBase + jspUrlBase + "/") + "index" + //
 		(show != null ? "?" + addHTMLShowReference(encodeShowName(show)) : "");
 	}
 
