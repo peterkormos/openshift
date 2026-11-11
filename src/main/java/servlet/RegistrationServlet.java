@@ -134,6 +134,7 @@ public class RegistrationServlet extends HttpServlet {
 
 	public static String jspUrlBase = "j";
 	public static String ServletShortName = "R";
+	private static final String oldJSPPathBase = "/jsp/";
 
 	public static enum SessionAttribute {
 		Notices, Action, SubmitLabel, Show, ModelID, Models, MainPageFile, ShowId, Model, Categories, AdminSession
@@ -191,7 +192,7 @@ public class RegistrationServlet extends HttpServlet {
 			ServletContext servletContext = config.getServletContext();
 			String version = getImplementationVersion(servletContext);
 			
-			jspPageNames = ((Stream<String>)servletContext.getResourcePaths("/jsp/").stream()).map(path -> path.replace("/jsp/", "") //
+			jspPageNames = ((Stream<String>)servletContext.getResourcePaths(oldJSPPathBase).stream()).map(path -> path.replace(oldJSPPathBase, "") //
 				.replace(".jsp", "")).collect(Collectors.toList());
 			
 			DOMConfigurator.configure(servletContext.getResource("/WEB-INF/conf/log4j.xml"));
@@ -451,7 +452,7 @@ public class RegistrationServlet extends HttpServlet {
 				command = splitText[1];
 				
 				if(jspPageNames.contains(command)) {
-					command = "/jsp/"+command+".jsp";
+					command = oldJSPPathBase+command+".jsp";
 					 request.getRequestDispatcher(command).forward(request, response);
 					return command;
 				}
@@ -3069,7 +3070,7 @@ public class RegistrationServlet extends HttpServlet {
 		boolean jspUrl = pathInfo != null && pathInfo.indexOf("/"+jspUrlBase+"/") > -1;
 
 		String pathBase = 
-				request.getRequestURI().indexOf("/jsp/") > -1 ? "../"+ServletShortName+"/" : 
+				request.getRequestURI().indexOf(oldJSPPathBase) > -1 ? "../"+ServletShortName+"/" : 
 			"./";
 		String show = RegistrationServlet.getShowFromSession(request);
 		return (jspUrl ? pathBase : pathBase + jspUrlBase + "/") + "index" + //
