@@ -345,9 +345,8 @@ public class RegistrationServlet extends HttpServlet {
 				return;
 			}
 
-			final String pathInfo = request.getPathInfo();
-			if (pathInfo != null) {
-				command = processRestful(request, response, pathInfo.substring(1));
+			if ((command = request.getPathInfo()) != null) {
+				command = processRestful(request, response, command.substring(1));
 			} else {
 				command = ServletUtil.getRequestParameter(request, "command");
 				handleRequest(request, response, command);
