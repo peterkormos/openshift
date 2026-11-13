@@ -10,6 +10,10 @@
 	scope="application" />
 
 <%
+if(RegistrationServlet.oldJSPURLRequest(request, response)) {
+	return;
+}
+
 RegistrationServlet servlet = RegistrationServlet.getInstance(config);
 
 final String languageCode;

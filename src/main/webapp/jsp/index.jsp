@@ -9,8 +9,7 @@
 	scope="application" />
 
 <%
-if(request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI) == null) {
-	response.sendRedirect("../" + RegistrationServlet.ServletShortName + "/" + RegistrationServlet.getStartPage(request));
+if(RegistrationServlet.oldJSPURLRequest(request, response)) {
 	return;
 }
 

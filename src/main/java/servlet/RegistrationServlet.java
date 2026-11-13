@@ -48,6 +48,7 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -3692,5 +3693,14 @@ public class RegistrationServlet extends HttpServlet {
 				, size, size, hints);
 
 		MatrixToImageWriter.writeToStream(matrix, "PNG", outputStream);
+	}
+
+	public static boolean oldJSPURLRequest(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+		if(request.getAttribute("javax.servlet.forward.request_uri") == null) {
+			response.sendRedirect("../" + RegistrationServlet.ServletShortName + "/" + RegistrationServlet.getStartPage(request));
+			return true;
+		}
+
+		return false;
 	}
 }
