@@ -52,8 +52,8 @@ String passwordCheck = RegistrationServlet.isAdminSession(session) ? "" :  "&& c
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script type="text/javascript" src="findUser.js"></script>
-<script type="text/javascript" src="util.js"></script>
+<script type="text/javascript" src="../../jsp/findUser.js"></script>
+<script type="text/javascript" src="../../jsp/util.js"></script>
 <script type="text/javascript">
 function checkDeleteUserRequest()
 {
