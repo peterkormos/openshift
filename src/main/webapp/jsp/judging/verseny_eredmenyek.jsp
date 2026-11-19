@@ -29,7 +29,7 @@ language = languageUtil.getLanguage(languageCode);
 	<table style="box-shadow: none; border-collapse: collapse;" border="1">
 		<tr>
 			<td>D&iacute;jazott makettek:</td>
-			<td><a href="../../RegistrationServlet/getawardedModelsPage">
+			<td><a href="../../<%=RegistrationServlet.ServletShortName%>/getawardedModelsPage">
 					<img src="../../icons/add.png" height="30" align="center"> Verseny eredm&eacute;nyek 
 					megad&aacute;sa
 			</a></td>
@@ -54,8 +54,8 @@ language = languageUtil.getLanguage(languageCode);
 		</tr>
 		<tr>
 			<td></td>
-			<td><a href="../../RegistrationServlet/printAwardedModels"><%=language.getString("print.models")%></a></td>
-			<td><a href="../../RegistrationServlet/getPresentationPage"><%=language.getString("presentation")%></a></td>
+			<td><a href="../../<%=RegistrationServlet.ServletShortName%>/printAwardedModels"><%=language.getString("print.models")%></a></td>
+			<td><a href="../../<%=RegistrationServlet.ServletShortName%>/getPresentationPage"><%=language.getString("presentation")%></a></td>
 		</tr>
 	</table>
 	</p>

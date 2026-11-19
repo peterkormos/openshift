@@ -50,7 +50,7 @@ function addRow()
 	var newRow = mytable.insertRow(-1);
 	document.input.rows.value = parseInt(document.input.rows.value) + 1;
 
-	newRow.insertCell(-1).innerHTML="__MODELID__: ";
+	newRow.insertCell(-1).innerHTML="__MODELID__ (GMID): ";
 
 	var newCat = document.getElementById('modelID').cloneNode(true);
 	newCat.style.visibility = 'visible'
